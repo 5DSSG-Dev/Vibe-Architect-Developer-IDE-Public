@@ -1,0 +1,12 @@
+{
+  "name": "to3d-desktop-automation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node batch-to3d.mjs --config config.json"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  // Cloudflare static-assets deploy for the Vite build. Having this file means
+  // Cloudflare skips its automatic Vite setup, which needs Vite 6 or later.
+  "name": "vibe-architect-developer-ide",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

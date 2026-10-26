@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.server.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": false,
+    "rootDir": ".",
+    "outDir": "dist-server",
+    "declaration": false,
+    "sourceMap": true
+  },
+  "include": [
+    "server/**/*.ts",
+    "src/admin/domain/**/*.ts",
+    "src/admin/data/operationsDataSource.ts",
+    "src/admin/data/replayFixture.ts"
+  ],
+  "exclude": ["server/**/*.test.ts", "src/**/*.test.ts"]
+}

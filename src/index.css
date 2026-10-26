@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-obsidian: #080b10;
+  --color-neon-cyan: #00f3ff;
+  --color-neon-emerald: #00ff9d;
+  --color-neon-amber: #ffb000;
+  --color-neon-crimson: #ff2a6d;
+  --color-neon-violet: #a855f7;
+  --color-neon-blue: #00a2ff;
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  /* Legibility pinstripe: thin black glyph outline + soft blur.
+   * Reused by .legible-glass and appended to the .glow-* stacks so colored
+   * neon text keeps its glow AND stays crisp over dark, busy glass panels. */
+  --pinstripe:
+    -1px -1px 0 rgba(0, 0, 0, 0.92),
+     1px -1px 0 rgba(0, 0, 0, 0.92),
+    -1px  1px 0 rgba(0, 0, 0, 0.92),
+     1px  1px 0 rgba(0, 0, 0, 0.92),
+     0 0 2px rgba(0, 0, 0, 0.85);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-obsidian);
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.font-orbitron {
+  font-family: var(--font-orbitron);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glassmorphism Panel Component */
+.panel-glass {
+  background: rgba(13, 19, 30, 0.72);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 243, 255, 0.22);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(0, 243, 255, 0.05);
+}
+
+.panel-glass-header {
+  background: rgba(8, 11, 16, 0.85);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 243, 255, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.panel-glass-subtle {
+  background: rgba(15, 23, 42, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Cyberpunk Interactive Buttons */
+.btn-cyber {
+  position: relative;
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.btn-cyber:hover {
+  background: linear-gradient(135deg, rgba(0, 243, 255, 0.25) 0%, rgba(168, 85, 247, 0.3) 100%);
+  border-color: #00f3ff;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5), inset 0 0 10px rgba(0, 243, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-cyber:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.btn-cyber-emerald {
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.1) 0%, rgba(0, 243, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 255, 157, 0.4);
+  color: #00ff9d;
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.6);
+}
+
+.btn-cyber-emerald:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.25) 0%, rgba(0, 243, 255, 0.25) 100%);
+  border-color: #00ff9d;
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.5), inset 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+.btn-cyber-crimson {
+  background: linear-gradient(135deg, rgba(255, 42, 109, 0.15) 0%, rgba(255, 176, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 42, 109, 0.4);
+  color: #ff2a6d;
+  text-shadow: 0 0 8px rgba(255, 42, 109, 0.6);
+}
+
+.btn-cyber-crimson:hover {
+  background: linear-gradient(135deg, rgba(255, 42, 109, 0.3) 0%, rgba(255, 176, 0, 0.2) 100%);
+  border-color: #ff2a6d;
+  box-shadow: 0 0 20px rgba(255, 42, 109, 0.6);
+}
+
+/* Trust State Badges */
+.badge-canonical {
+  background: rgba(0, 255, 157, 0.15);
+  border: 1px solid rgba(0, 255, 157, 0.4);
+  color: #00ff9d;
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+}
+
+.badge-validated {
+  background: rgba(0, 243, 255, 0.15);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  color: #00f3ff;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.badge-formulated {
+  background: rgba(255, 176, 0, 0.15);
+  border: 1px solid rgba(255, 176, 0, 0.4);
+  color: #ffb000;
+  box-shadow: 0 0 10px rgba(255, 176, 0, 0.2);
+}
+
+.badge-experimental {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #a855f7;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+}
+
+/* Glowing text helpers.
+ * The class is doubled (e.g. .glow-cyan.glow-cyan) so it carries higher
+ * specificity than the (0,1,0) legibility pinstripe rule below and wins
+ * wherever a glow heading sits inside a .legible-glass / .animate-modal-zoom
+ * surface. Each stack keeps its colored neon glow AND appends the black
+ * pinstripe, so glow text reads as color + outline, never a flat outline. */
+.glow-cyan.glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.4), var(--pinstripe);
+}
+
+.glow-emerald.glow-emerald {
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.7), 0 0 20px rgba(0, 255, 157, 0.4), var(--pinstripe);
+}
+
+.glow-amber.glow-amber {
+  text-shadow: 0 0 10px rgba(255, 176, 0, 0.7), 0 0 20px rgba(255, 176, 0, 0.4), var(--pinstripe);
+}
+
+.glow-crimson.glow-crimson {
+  text-shadow: 0 0 10px rgba(255, 42, 109, 0.7), 0 0 20px rgba(255, 42, 109, 0.4), var(--pinstripe);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(8, 11, 16, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.6);
+}
+
+/* Modal Transitions */
+@keyframes modal-zoom-in {
+  0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes backdrop-fade-in {
+  0% { opacity: 0; -webkit-backdrop-filter: blur(0px); backdrop-filter: blur(0px); }
+  100% { opacity: 1; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+}
+
+.animate-modal-zoom {
+  animation: modal-zoom-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-backdrop-fade {
+  animation: backdrop-fade-in 0.4s ease-out forwards;
+}
+
+/* Legibility pinstripe.
+ * The modal/builder screens put thin light text over dark, busy glass panels,
+ * which reads as blurred and low-contrast. A thin black outline around every
+ * glyph (the same treatment the 3D Totems use) separates the letters from the
+ * background so they stay crisp. text-shadow does not inherit, so the panel AND
+ * its descendants are targeted.
+ *
+ * .legible-glass is the reusable form — add it to the root of any
+ * light-text-over-dark-glass overlay/screen. .animate-modal-zoom keeps the
+ * same treatment so the existing zoom-in modals need no change. Glow headings
+ * (.glow-*) override this via their higher-specificity rule above, so they
+ * keep their color while still carrying the pinstripe. */
+.legible-glass,
+.legible-glass *,
+.animate-modal-zoom,
+.animate-modal-zoom * {
+  text-shadow: var(--pinstripe);
+}

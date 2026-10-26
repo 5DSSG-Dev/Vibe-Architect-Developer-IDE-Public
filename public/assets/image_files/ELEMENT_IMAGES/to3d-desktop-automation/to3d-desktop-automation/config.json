@@ -1,0 +1,28 @@
+{
+  "to3dUrl": "https://chatgpt.com/",
+  "sourceDir": "C:/Users/TraceyPrutch/Downloads/ELEMENT_IMAGES/2D_IMAGE_FILES_TO_BE_CONVERTED",
+  "completedDir": "C:/Users/TraceyPrutch/Downloads/ELEMENT_IMAGES/FINISHED_GLB_FILES",
+  "processedSourceDir": "C:/Users/TraceyPrutch/Pictures/to3d-processed-sources",
+  "failedDir": "C:/Users/TraceyPrutch/Pictures/to3d-failed",
+  "browserProfileDir": "C:/Users/TraceyPrutch/AppData/Local/to3d-automation-browser-profile",
+  "outputNameMode": "source-name",
+  "quality": "high",
+  "usage": "game",
+  "selectors": {
+    "fileInput": "input[type='file']",
+    "submitButton": "button:has-text('Generate'), button:has-text('Create'), button:has-text('Convert')",
+    "downloadButton": "a:has-text('Download'), button:has-text('Download')",
+    "busyIndicator": "text=/generating|processing|converting|queued/i"
+  },
+  "timeouts": {
+    "pageReadyMs": 120000,
+    "generationMs": 1800000,
+    "betweenImagesMs": 1500
+  },
+  "supportedExtensions": [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+  ]
+}

@@ -1,0 +1,47 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node
+node_modules
+dist
+dist-ssr
+dist-server
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+/coverage
+
+# Frameworks
+.next/
+out/
+build/
+
+# Nested agent worktree — kept as a local linked worktree, never committed as a gitlink
+/agent-description-builder-skill/
+
+# Tool output (Housekeeping Ledger H27, H28)
+/.playwright-cli/
+/.playwright-mcp/
+*.pid
+# Compiler build output
+*.obj

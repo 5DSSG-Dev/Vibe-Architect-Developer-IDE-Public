@@ -1,0 +1,44 @@
+{
+  "registryVersion": 1,
+  "mintProject": {
+    "projectId": "zd7d5w8wan0btktpd1wrm58c1d8c5j0e",
+    "name": "AEGIS Shield Emblem"
+  },
+  "assetRoot": "public/assets/models",
+  "assets": {
+    "aegis-shield": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks72s3j5mhm5t65grfvds9jja98c43ad"
+      },
+      "transform": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "original_glb": {
+          "artifactId": "original_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "prismatic-aegis-emblem-a98c43ad-original.glb",
+          "byteSize": 877764,
+          "localPath": "public/assets/models/prismatic-aegis-emblem.glb",
+          "loaderHint": "gltf",
+          "extensionsUsed": [],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# Scoped line-ending policy — IDE continuity lane and the standards its records bind.
+# LF-only keeps the content-hash bindings in IDE-TOTEM-* Totem records stable across
+# checkouts (git core.autocrlf=true would otherwise rewrite these to CRLF and drift
+# the recorded sha256). Deliberately scoped; native/stellar is only covered for
+# byte-sensitive paths that are known to be LF-bound by their manifests.
+/totems/**                                                text eol=lf
+/docs/AEGIS_TOTEM_TUMBLER_CROSSING_SEAM_STANDARD_v0.1.md  text eol=lf
+/docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md text eol=lf
+
+# Preserve hash-bound upstream formatting in the vendored Stellar conformance package.
+/native/stellar/v0_1/vendor/stellar-conformance-v0.1-r3/stellar-conformance-v0.1/** text eol=lf whitespace=-blank-at-eol,-blank-at-eof
+# Keep offline D4 review authority pins byte-stable for hash validation.
+/native/stellar/v0_1/service/trust/d4-review-authority.* text eol=lf
+# Keep manifest-bound D3 verifier scripts byte-stable on Windows.
+/native/stellar/v0_1/release/**/scripts/verify-d3-offline.ps1 text eol=lf
+/native/stellar/v0_1/evidence/**/scripts/verify-d3-offline.ps1 text eol=lf
+# Append-only coordination files: keep every peer's lines on merge.
+/.aegis/claims.md merge=union
+/.aegis/lanes/*.md merge=union
+# Byte-checked files: tests compare these byte-for-byte (Housekeeping, 2026-10-24).
+# With core.autocrlf=true, Git would rewrite them to CRLF on checkout and break the checks.
+/public/draco/**                          -text
+/public/basis/**                          -text
+/native/stellar/v0_1/service/trust/**     text eol=lf
+# STP records and lanes are hash-chained; keep LF so the chain validates on every checkout.
+/.aegis/**                                text eol=lf
+*.glb filter=lfs diff=lfs merge=lfs -text
+public/assets/**/*.png filter=lfs diff=lfs merge=lfs -text

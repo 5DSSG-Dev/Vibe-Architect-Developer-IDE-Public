@@ -1,0 +1,30 @@
+{
+  "source": "official npm package",
+  "package": "three",
+  "version": "0.184.0",
+  "tarball": "https://registry.npmjs.org/three/-/three-0.184.0.tgz",
+  "npmIntegrity": "sha512-wtTRjG92pM5eUg/KuUnHsqSAlPM296brTOcLgMRqEeylYTh/CdtvKUvCyyCQTzFuStieWxvZb8mVTMvdPyUpxg==",
+  "npmShasum": "5bca0a3851eea5345e4c205567b40dfa49b791b5",
+  "derivation": "scripts/patch_basis_transcoder_csp.mjs replaces the two Emscripten generated-function Embind call sites with equivalent closure-based invokers and removes the dormant Function-constructor global fallback.",
+  "files": {
+    "basis_transcoder.js": {
+      "bytes": 57443,
+      "sha256": "9100e72356386a2c8ac04ac8e574080bbe7598ce46cc10fac62482520b5f755b"
+    },
+    "basis_transcoder.wasm": {
+      "bytes": 527333,
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a"
+    }
+  },
+  "upstream": {
+    "basis_transcoder.js": {
+      "bytes": 57529,
+      "sha256": "8478b5b6d6b74e7d3082b89f6417321d8d1dc0307f2b30d4484bb11b441696a1"
+    },
+    "basis_transcoder.wasm": {
+      "bytes": 527333,
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a"
+    }
+  },
+  "reason": "The installed 0.168.0 and official 0.184.0 Basis wrappers both generate JavaScript functions through Emscripten Embind. The served wrapper is a pinned, locally derived CSP-safe form and remains self-hosted."
+}
