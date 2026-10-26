@@ -936,3 +936,44 @@ Role: architect
 Channel: cli
 
 Architect verified in session: satisfied with the fail-closed reply-governance module and its green verification (typecheck clean, gateway 52/52).
+
+### 2026-10-26T23:57:34.411Z | verus | finding S13
+Chain-Prev: 3148a29dca0edc95c1f092eebafa8af7768919754fb2f7b53734d02561bbf3ff
+Chain-Hash: 5dbb8d0d61bf59fa7caf3284bb82908d58487e31c682da8fa4be2a411330cfc8
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:201; server/app.ts:210; server/luminary-governance.ts:60
+Channel: cli
+
+The verified reply-governance gate (server/luminary-governance.ts, P12) is a pure function with no mount point: no gateway endpoint calls governReply(). The Express gateway (server/app.ts) exposes only Entra+role-gated /api/admin/* routes via router factories mounted as app.use('/api/admin/...', requireAdmin, router); there is no Luminary reply route. express.json({limit:'32kb'}) already mirrors DEFAULT_MAX_CONTENT_BYTES (32768) and a 413 handler exists. Two design points are unsettled and the Architect's to decide: (a) P2 placed the reviewer-reachable path as a Cloudflare Pages Function /api/luminary/ask, but the gateway and the gate are Express in server/ — where the governed endpoint lives is open; (b) every current /api/* route is admin-auth'd, which a hackathon reviewer cannot pass, so the reply endpoint's auth model is open.
+
+### 2026-10-26T23:57:40.727Z | verus | gap G12
+Chain-Prev: 5dbb8d0d61bf59fa7caf3284bb82908d58487e31c682da8fa4be2a411330cfc8
+Chain-Hash: 9e8cb5b53efc4d2b70ec2055bd4a32630f1e74320d1ee60755bb5b738d4bfe29
+Stage: Gap
+Kind: gap
+Channel: cli
+
+The AEGIS governance gate is proven but unreachable: no server surface runs a candidate model reply through governReply() before it reaches a person, so the honest floor (P5) is not yet enforced at any boundary. M1.a stays IN-PROGRESS until the gate governs an actual reply path. This can and should close ahead of M1.b/M2 (the real Meta model call) by wiring the gate provider-agnostically against an injected reply source.
+
+### 2026-10-26T23:57:53.009Z | verus | change P13
+Chain-Prev: 9e8cb5b53efc4d2b70ec2055bd4a32630f1e74320d1ee60755bb5b738d4bfe29
+Chain-Hash: b62e02a22710411804c3c7aec2ca017e3a930202f9596d329931fe6fd047f9da
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G12
+Channel: cli
+
+Add a provider-agnostic governed reply router that wires the P12 gate into a gateway endpoint, ahead of any real model call. Shape: createLuminaryReplyRouter(askModel) in server/, where askModel is an injected async (prompt) => unknown candidate reply — no provider is chosen or called here (that stays M1.b/M2/P1/P2). Handler for POST (path TBD by the Architect, e.g. /api/luminary/ask per P2): validate the request body (non-empty string prompt, else 400 malformed_request); call askModel; pass its result through governReply(); on ok respond 200 { reply: { modelId, content } }; on a Shortfall respond with a typed fail-closed body { error: 'luminary_shortfall', shortfall } and a 5xx/4xx mapped per code (never fallback prose) — this is P5's honest floor enforced at the boundary. Tests (server/luminary-reply-router.test.ts, node:test + supertest-free express app harness) exercise the mapping with fake askModel fns: happy path, each Shortfall code, and malformed request — no network. Two decisions are the Architect's and are NOT settled by this proposal: the endpoint's home (Express router in server/ vs the P2 Cloudflare Pages Function) and its auth model (reviewer-reachable, so not the admin Entra gate). Recommend: build the router factory + handler + tests as an Express router now (smallest proven step, reuses the gateway's json/413 limits), and leave mounting/auth/path for the Architect to settle when P2's provider path lands.
+
+### 2026-10-26T23:57:58.777Z | verus | status
+Chain-Prev: b62e02a22710411804c3c7aec2ca017e3a930202f9596d329931fe6fd047f9da
+Chain-Hash: 3e067c795aee45a6ee19a89691ac3b4461e36b45457000012caef53e82c6fffd
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Presented
+Channel: cli
+
+Presented for the Architect's approval: wire the verified P12 gate into a provider-agnostic governed reply router, with endpoint home and auth model left as the Architect's decisions.
