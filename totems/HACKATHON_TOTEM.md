@@ -81,6 +81,14 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-26 | verus | M1.a first step VERIFIED — reply-governance gate
+- The fail-closed reply-governance gate (`server/luminary-governance.ts` + tests) is built,
+  green (server typecheck clean; gateway suite 52/52), and **Architect-VERIFIED** as STP-0002
+  P12. This is the first executable piece of M1.a.
+- M1.a (AEGIS Governance layer) remains `IN-PROGRESS`: the gate exists and is proven, but is
+  **not yet wired** into a gateway reply endpoint or the Luminary reply path — that wiring is
+  the next step, ahead of M1.b (Meta model) which depends on M2.
+
 ### 2026-10-26 | verus | Architect confirmed the submission gate + M1 adopted
 - Architect CONFIRMED the submission gate: **M1 + M5 + M6** (M2 is M1's dependency). This is the
   settled gate for the manifest.
