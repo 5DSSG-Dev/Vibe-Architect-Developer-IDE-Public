@@ -861,3 +861,56 @@ Closes: G11
 Channel: cli
 
 M1.a first build step: add a server-side AEGIS reply-governance module (e.g. server/luminary-governance.ts) that validates a structured reply against an explicit schema and returns either the validated reply or a named Shortfall {code, message, modelId}. Fail-closed: anything not provably valid becomes a Shortfall, never fallback text posing as an answer. Provider-agnostic (no model call inside it) so it can be unit-tested against fixtures now and wired ahead of M1.b. Ships with tests covering empty/malformed/oversized/missing-model-id. This is a Proposal for the Architect, not approval.
+
+### 2026-10-26T23:46:42.290Z | verus | status
+Chain-Prev: ad04e3bdf0456e781ee0a9bb24bc7127e64c94a180c370a539cc549121307d1b
+Chain-Hash: 1e783aff8f4ec97df50a160f1420e3b13f1917d74a9c75e497466449e3f974f8
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Presented
+Channel: cli
+
+P12 → Presented.
+
+### 2026-10-26T23:46:42.577Z | tracey-prutch | status
+Chain-Prev: 1e783aff8f4ec97df50a160f1420e3b13f1917d74a9c75e497466449e3f974f8
+Chain-Hash: 0d205f05f5ad09329d08b8f49922cdc2053e55d84196cfd8b6c62710f7d5c198
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect approved in session: build the fail-closed reply-governance module and tests.
+
+### 2026-10-26T23:46:43.024Z | verus | status
+Chain-Prev: 0d205f05f5ad09329d08b8f49922cdc2053e55d84196cfd8b6c62710f7d5c198
+Chain-Hash: 9798e4b8f386b815f6031444930813eb632ad0463d94fc26aef5ad25d82937ea
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Executing
+Channel: cli
+
+P12 → Executing.
+
+### 2026-10-26T23:46:43.351Z | verus | stage
+Chain-Prev: 9798e4b8f386b815f6031444930813eb632ad0463d94fc26aef5ad25d82937ea
+Chain-Hash: 265b51181893846045a37285c83fe1f5dfc7c67565e3e69d8d4932fb988daf6b
+Stage: Execution
+Kind: stage
+Channel: cli
+
+Stage: Situation → Execution.
+
+### 2026-10-26T23:48:44.135Z | verus | note N7
+Chain-Prev: 265b51181893846045a37285c83fe1f5dfc7c67565e3e69d8d4932fb988daf6b
+Chain-Hash: a0e774c97d07e6853c9c8971739d05720b789d005b8bd68baffda5d5e38b5ddb
+Stage: Execution
+Kind: note
+Evidence: server/luminary-governance.ts; server/luminary-governance.test.ts
+Channel: cli
+
+P12 executed: added server/luminary-governance.ts (governReply: fail-closed, provider-agnostic — object+non-empty modelId+non-empty content within a UTF-8 byte ceiling, else a named Shortfall {empty_reply|malformed_reply|oversized_reply|missing_model_id}) and server/luminary-governance.test.ts (10 tests, all passing via tsx --test: pass/trim/exact-content, non-object, blank modelId, non-string content, empty, oversized, UTF-8 byte measure, boundary, default ceiling). Isolated/additive (imports only node Buffer); full gateway suite + project typecheck pending dep install in this fresh worktree. Awaiting Architect verification (aegis-stp verify P12).
