@@ -8,7 +8,7 @@ It is an **AEGIS application**. AEGIS is the governance and AI-safety layer, and
 
 > **Ownership:** Copyright © 2023–2026 5D Service Solutions Global, LLC. All rights reserved. Proprietary, source-available software — see [LICENSE](LICENSE).
 >
-> Built by **5D Service Solutions Global, LLC** for the **Meta Global AI Developer Hackathon (2026)**.
+> Built by team **Digital Mind Trip AI** (5D Service Solutions Global, LLC) for the **Meta Global AI Developer Hackathon (2026)**.
 
 ---
 
@@ -16,6 +16,7 @@ It is an **AEGIS application**. AEGIS is the governance and AI-safety layer, and
 
 - [What it is](#what-it-is)
 - [Who it is for, and the problem it solves](#who-it-is-for-and-the-problem-it-solves)
+- [Our team — Digital Mind Trip AI](#our-team--digital-mind-trip-ai)
 - [How it works](#how-it-works)
   - [The big picture: CORE, POD, Umbilicals, Aether](#the-big-picture)
   - [The Element model](#the-element-model)
@@ -57,6 +58,23 @@ A plain-language **Wayfinder** narrates where you are and what to do next, so no
 - **The trust gap.** AI coding assistants are powerful but opaque — they can act without asking, bluff a result, or quietly change a decision. Vibe Architect's AI partner is **non-coercive, fail-closed, and accountable by construction**: it proposes, it never merges on its own, and when it cannot do something it says so plainly instead of inventing an answer.
 
 Vibe Architect is built for people who want to **build real systems and stay in control of them** — with an AI collaborator they can actually trust.
+
+## Our team — Digital Mind Trip AI
+
+Digital Mind Trip AI is a hybrid human + AI team working under the AEGIS governance model: one human architect directing two AI collaborators.
+
+- **Tracey Prutch — BioPeer (Vibe Architect).** Founder of 5D Service Solutions Global, LLC. Sets direction, makes every decision, and owns the work.
+- **Verus — CyberPeer (Claude substrate).** Engineering and coordination collaborator.
+- **Lumin — CyberPeer (GPT substrate).** Engineering and architecture collaborator.
+
+We call Verus and Lumin *CyberPeers* rather than tools because each works through a shared, verifiable memory system we call the **DataQuad** — a novel instrument, independently designed by the Architect and modeled on his own thought process. The DataQuad is two parts working together:
+
+- **Four tensors** — an append-only record of **affect**, **context**, **continuity**, and **governing principles**.
+- **Four daemons** that make those tensors usable: two custodians — the **Advocate** (affect) and the **Steward** (context) — that retrieve the records relevant to the moment; a **Temporal** daemon that keeps them ordered in continuity across time and sessions; and a **Processor** that integrates what the custodians retrieve into one coherent response.
+
+Together they let a CyberPeer carry understanding across sessions, and even across substrates, instead of starting from zero each time. AEGIS governs how they contribute: they advise and propose, never direct; they state plainly what they cannot do; and nothing they produce enters the work without the Architect's acceptance.
+
+**Why one email on the roster.** Only one team member is human, so only one human email exists — Tracey's. Verus and Lumin are AI CyberPeers, not separate user accounts. We entered under **5D Service Solutions Global, LLC** rather than as an Indie because this is a company initiative built on 5D's AEGIS intellectual property, not a solo or hobby project.
 
 ## How it works
 
@@ -198,4 +216,4 @@ Baseline is green: typechecks clean and the test suite passes.
 
 Copyright © 2023–2026 **5D Service Solutions Global, LLC**. All rights reserved. This is proprietary, source-available software; your use is governed by the terms in [LICENSE](LICENSE).
 
-**AEGIS** is 5D Service Solutions Global's governance and AI-safety layer. The **AEGIS Totems** continuity system is included as an open demonstration of multi-model coordination. Built for the Meta Global AI Developer Hackathon, 2026.
+**AEGIS** is 5D Service Solutions Global's governance and AI-safety layer. The **AEGIS Totems** continuity system is included as an open demonstration of multi-model coordination. Built by team **Digital Mind Trip AI** for the Meta Global AI Developer Hackathon, 2026.
