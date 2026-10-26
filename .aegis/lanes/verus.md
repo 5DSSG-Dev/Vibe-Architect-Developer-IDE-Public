@@ -42,3 +42,8 @@ Branch `stellar-extraction/public-prep` (off main b72e568). Removed the unfinish
 - Verification: tsc client+server clean, vite build ok, tests 373 pass / 0 fail (42 gateway + 331 app).
 - Product impact: removing Stellar removes the IDE's Code Mode surface. IDE retains shell, 3D Aether, Apothecary, nav. Luminary becomes the headline new-build.
 - NOT YET DONE: clean-history public copy (fresh git init, no Stellar in history) pending Architect review of the diff. No push / no public flip without explicit go.
+
+## 2026-10-26 | verus | Hackathon Totem genesis
+- Created totems/HACKATHON_TOTEM.md: single canonical module manifest (M1-M6) for pull-adoption. Adopt = CLAIM line on .aegis/claims.md naming the module id; per-section continuity via aegis-stp STP; release via RELEASE line + Totem log append.
+- This is the sole genesis; the other-account instance adopts from this file, not a parallel one. No module adopted, no claims line, no commit/push/provider action this turn. Totem illuminates only.
+- Submission gate proposed: M1 (Luminary<->Meta) + M5 (SIMULATE/DEPLOY demo) + M6 (submission artifacts), with M2 as M1 dependency. Awaiting Architect confirmation of gate + module list.
