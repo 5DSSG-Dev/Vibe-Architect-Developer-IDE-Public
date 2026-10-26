@@ -12,8 +12,19 @@ It is an **AEGIS application**. AEGIS is the governance and AI-safety layer, and
 
 ---
 
+## What's new here
+
+Three original instruments make their public debut in this submission — each independently designed by the Architect and built on 5D's AEGIS work:
+
+- **The DataQuad** — the memory instrument that makes our AI collaborators *CyberPeers* rather than tools. An append-only store of **four tensors** (affect, context, continuity, governing principles) served by **four daemons**, it lets an AI carry understanding across sessions and even across substrates. It was independently designed by the Architect and modeled on his own thought process. See [Our team](#our-team--digital-mind-trip-ai).
+- **The AEGIS Totems** — an append-only continuity and coordination layer that lets multiple AI models work the same repository without colliding, leaving a durable, never-rewritten record of who did what and why. Included here as an open demonstration; see [`totems/`](#repository-map).
+- **The STP workflow (Situation → Target → Proposal)** — an evidence-grounded review method: describe the situation neutrally, state the ideal target, and let the illuminated gap shape the proposal. Published separately as an installable CLI / VS Code extension / MCP.
+
+---
+
 ## Table of contents
 
+- [What's new here](#whats-new-here)
 - [What it is](#what-it-is)
 - [Who it is for, and the problem it solves](#who-it-is-for-and-the-problem-it-solves)
 - [Our team — Digital Mind Trip AI](#our-team--digital-mind-trip-ai)
