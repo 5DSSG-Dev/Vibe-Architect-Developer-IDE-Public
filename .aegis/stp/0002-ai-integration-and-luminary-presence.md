@@ -914,3 +914,13 @@ Evidence: server/luminary-governance.ts; server/luminary-governance.test.ts
 Channel: cli
 
 P12 executed: added server/luminary-governance.ts (governReply: fail-closed, provider-agnostic — object+non-empty modelId+non-empty content within a UTF-8 byte ceiling, else a named Shortfall {empty_reply|malformed_reply|oversized_reply|missing_model_id}) and server/luminary-governance.test.ts (10 tests, all passing via tsx --test: pass/trim/exact-content, non-object, blank modelId, non-string content, empty, oversized, UTF-8 byte measure, boundary, default ceiling). Isolated/additive (imports only node Buffer); full gateway suite + project typecheck pending dep install in this fresh worktree. Awaiting Architect verification (aegis-stp verify P12).
+
+### 2026-10-26T23:49:29.490Z | verus | note N8
+Chain-Prev: a0e774c97d07e6853c9c8971739d05720b789d005b8bd68baffda5d5e38b5ddb
+Chain-Hash: 5a04d90251757d20b89513f0013a87eceaeb4ad5d8cffecf20f9f4d17c8d7fd6
+Stage: Execution
+Kind: note
+Evidence: server/luminary-governance.test.ts
+Channel: cli
+
+P12 verification evidence (full, deps now installed): server project typecheck clean (tsc -p tsconfig.server.json --noEmit); full gateway suite GREEN 52/52 (NODE_ENV=test npm run test:gateway), which includes the 10 new governance tests and all pre-existing gateway tests — no regression. Ready for Architect verification (aegis-stp verify P12).
