@@ -822,3 +822,42 @@ Kind: note
 Channel: cli
 
 P7 executed: D4 appended as a decision note to both Luminary drafts (earlier text unchanged) and recorded in the docs Folder Totem. P7 awaits the Architect's verification.
+
+### 2026-10-26T23:40:38.862Z | verus | stage
+Chain-Prev: 6c15d5a9906afa7f2709d2ba45489afd89ce2b6c766fe3a6fe619e1642092a40
+Chain-Hash: 028a858210b6283d9e22655d9ad0273fa77998b550a1e6652935dc284f9f66b9
+Stage: Situation
+Kind: stage
+Channel: cli
+
+Stage: Proposal → Situation.
+
+### 2026-10-26T23:40:39.535Z | verus | finding S12
+Chain-Prev: 028a858210b6283d9e22655d9ad0273fa77998b550a1e6652935dc284f9f66b9
+Chain-Hash: 0308a611997eb8d2d9e950058fed274caa476d22020decd899f5430b9c558e78
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:51-240; server/message-flow-contract.test.ts:19-33; src/components/LuminaryHost.tsx
+Channel: cli
+
+M1.a start: the AEGIS Governance layer is not yet live as code. The server gateway brokers auth, admin operations, and evidence, but exposes NO model/reasoning endpoint and NO fail-closed validation contract that gates a model reply before it is shown. The IRG/RBC/Prism/IDS shortfall pipeline exists only as a sanitized, presentation-only replay projection and fixtures, not a live validator. LuminaryHost is still paused static text with no provider. So the README's promise ('every structured model reply is validated; a bad/empty/oversized reply becomes a named Shortfall') has no enforcing implementation yet.
+
+### 2026-10-26T23:40:49.577Z | verus | gap G11
+Chain-Prev: 0308a611997eb8d2d9e950058fed274caa476d22020decd899f5430b9c558e78
+Chain-Hash: 1b2a8b5f5c55006db529c6a5b6893b4cab434c500cded9ba643c4ccc6d887fd5
+Stage: Gap
+Kind: gap
+Channel: cli
+
+No live, provider-independent AEGIS reply-governance contract. There is no module that takes a structured model reply and either passes it or converts it into a NAMED Shortfall (empty, malformed-against-schema, oversized, or missing the declared model id), fail-closed, BEFORE the reply can reach the UI. This gate must exist and be enforced before any real model is wired (M1.b), so the Luminary is governed first, not wired first.
+
+### 2026-10-26T23:40:55.602Z | verus | change P12
+Chain-Prev: 1b2a8b5f5c55006db529c6a5b6893b4cab434c500cded9ba643c4ccc6d887fd5
+Chain-Hash: ad04e3bdf0456e781ee0a9bb24bc7127e64c94a180c370a539cc549121307d1b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G11
+Channel: cli
+
+M1.a first build step: add a server-side AEGIS reply-governance module (e.g. server/luminary-governance.ts) that validates a structured reply against an explicit schema and returns either the validated reply or a named Shortfall {code, message, modelId}. Fail-closed: anything not provably valid becomes a Shortfall, never fallback text posing as an answer. Provider-agnostic (no model call inside it) so it can be unit-tested against fixtures now and wired ahead of M1.b. Ships with tests covering empty/malformed/oversized/missing-model-id. This is a Proposal for the Architect, not approval.

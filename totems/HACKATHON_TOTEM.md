@@ -81,6 +81,14 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-26 | verus | Architect confirmed the submission gate + M1 adopted
+- Architect CONFIRMED the submission gate: **M1 + M5 + M6** (M2 is M1's dependency). This is the
+  settled gate for the manifest.
+- Architect adopted **M1** (status → `ADOPTED:verus`), starting with **M1.a — the AEGIS
+  Governance layer** (status → `IN-PROGRESS`), his stated first priority.
+- Adoption recorded as a `CLAIM` line on `.aegis/claims.md`; build continuity runs under
+  STP-0002 (AI Integration and Luminary Presence). No other module adopted.
+
 ### 2026-10-26 | verus | build note — M1 is multi-part, governance leads
 - Architect build note: the Luminary build has multiple parts; the **AEGIS Governance layer**
   is the most important to him. Recorded as M1.a (first priority) ahead of model wiring and UI.
