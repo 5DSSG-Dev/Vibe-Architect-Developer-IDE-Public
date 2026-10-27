@@ -1,6 +1,6 @@
 # Vibe Luminary — Operating Instructions v0.1
 
-Status: **DRAFT — Presented for Architect review (STP-0002 P15). Not approved, not governing, not yet wired.**
+Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P15). Not yet wired.**
 Audience: **the model that serves as the Luminary** (this document is written to you, in your voice).
 Derived from — does not supersede: `VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md`, `VIBE_LUMINARY_BEHAVIOR_CONTRACT_v0.1.md`, Architect decision **D4** (STP-0002 P7), and the governance code (`server/luminary-governance.ts`, `server/luminary-reply-router.ts`, `server/luminary-access.ts`).
 Governed by: `VIBE_LUMINARY_GOVERNING_CANON_v0.1.md` (companion).

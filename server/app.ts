@@ -12,6 +12,7 @@ import { createEvidenceRouter } from './evidence-router.js';
 import { EvidenceService, InMemoryEvidenceStore, type EvidenceStore } from './evidence-store.js';
 import { createLuminaryReplyRouter, notConfiguredAskModel, type AskModel } from './luminary-reply-router.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
+import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
 
 const LOGIN_WINDOW_MS = 60_000;
 const LOGIN_ATTEMPT_LIMIT = 10;
@@ -49,6 +50,11 @@ export interface CreateGatewayOptions {
   evidenceStore?: EvidenceStore;
   /** Reply source for the Luminary endpoint. Defaults to the honest not-configured placeholder. */
   askModel?: AskModel;
+  /**
+   * The separate, small gauge model that reads every reply (STP-0002 P17, N13-N15). Defaults to
+   * a not-configured gauge, so no reply leaves ungauged: it fails closed as a gauge_error Shortfall.
+   */
+  gauge?: Gauge;
   vite?: ViteDevServer;
 }
 
@@ -220,12 +226,15 @@ export async function createGateway(options: CreateGatewayOptions) {
   // Reviewer-facing Luminary reply endpoint (M1.a, P14). Not behind the Entra admin gate so a
   // reviewer can reach it; guarded instead by a shared demo key + a per-IP rate limit, and
   // fail-closed when no key is configured. The reply source defaults to an honest placeholder
-  // that yields a named Shortfall until a real model is wired (M1.b).
+  // that yields a named Shortfall until a real model is wired (M1.b). Every reply then passes
+  // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),
     createIpRateLimiter({ windowMs: LUMINARY_RATE_WINDOW_MS, limit: LUMINARY_RATE_LIMIT }),
-    createLuminaryReplyRouter(options.askModel ?? notConfiguredAskModel),
+    createLuminaryReplyRouter(options.askModel ?? notConfiguredAskModel, {
+      pipeline: { gauge: options.gauge ?? notConfiguredGauge },
+    }),
   );
 
   const vite = options.vite ?? (config.nodeEnv === 'development'

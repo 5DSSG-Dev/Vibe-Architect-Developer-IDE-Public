@@ -15,6 +15,8 @@ import {
   type Shortfall,
   type ShortfallCode,
 } from './luminary-governance.js';
+import { composeRevisionPrompt } from './luminary-pipeline/ids.js';
+import { runReplyPipeline, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
 
 /**
  * Produces a candidate reply for a prompt. Its result is untrusted: it is handed straight
@@ -44,10 +46,15 @@ export interface LuminaryAskRequest {
 export interface LuminaryReplyRouterOptions {
   /** Forwarded to governReply() (e.g. the reply byte ceiling). */
   governance?: GovernanceOptions;
+  /**
+   * The live reply pipeline (STP-0002 P17). When set, every structurally valid reply is read
+   * by PIM -> IRG -> RBC before it can leave, and responses carry the pass lineage.
+   */
+  pipeline?: ReplyPipelineOptions;
 }
 
 /** An upstream failure is itself a named Shortfall, keeping the honest floor total. */
-export type ReplyShortfallCode = ShortfallCode | 'upstream_error';
+export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode;
 
 export interface ReplyShortfall extends Omit<Shortfall, 'code'> {
   code: ReplyShortfallCode;
@@ -60,6 +67,8 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   oversized_reply: 502,
   missing_model_id: 502,
   upstream_error: 502,
+  gauge_error: 502,
+  incoherent_after_ids: 502,
 };
 
 function readPrompt(body: unknown): string | null {
@@ -103,6 +112,21 @@ export function createLuminaryReplyRouter(
         modelId: null,
       };
       res.status(SHORTFALL_STATUS.upstream_error).json({ error: 'luminary_shortfall', shortfall });
+      return;
+    }
+
+    if (options.pipeline) {
+      const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
+      const result = await runReplyPipeline(
+        candidate,
+        (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
+        pipeline,
+      );
+      if (!result.ok) {
+        res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, lineage: result.lineage });
+        return;
+      }
+      res.status(200).json({ reply: result.reply, lineage: result.lineage });
       return;
     }
 

@@ -1,6 +1,6 @@
 # Vibe Luminary — Governing Canon (Operational Rendering) v0.1
 
-Status: **DRAFT — Presented for Architect review (STP-0002 P15). Not approved, not governing, not an amendment.**
+Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P15). Superseded by v0.2 (P16). Not an amendment.**
 Audience: **the model that serves as the Luminary**, and the Architect reviewing it.
 Companion to: `VIBE_LUMINARY_INSTRUCTIONS_v0.1.md`.
 Architect: Tracey Prutch · Drafted by: Verus (CyberPeer).
