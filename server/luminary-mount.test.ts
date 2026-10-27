@@ -1,0 +1,86 @@
+import assert from 'node:assert/strict';
+import { afterEach, test } from 'node:test';
+import type { AddressInfo } from 'node:net';
+import type { Server } from 'node:http';
+import { createGateway } from './app.js';
+import { REQUIRED_ADMIN_ROLE, type GatewayConfig } from './config.js';
+import type { EntraAuth } from './entra-auth.js';
+import { InMemorySessionStore, type AdminSession, type AuthenticatedPrincipal } from './session-store.js';
+import { DEMO_KEY_HEADER } from './luminary-access.js';
+import type { AskModel } from './luminary-reply-router.js';
+
+const servers: Server[] = [];
+afterEach(() => Promise.all(servers.splice(0).map((s) => new Promise<void>((r) => s.close(() => r())))));
+
+const DEMO_KEY = 'demo-key-for-reviewers';
+
+function baseConfig(overrides: Partial<GatewayConfig> = {}): GatewayConfig {
+  return {
+    nodeEnv: 'test', port: 0, origin: 'http://127.0.0.1', sessionTtlMs: 60_000,
+    cookieSecure: false, trustProxy: false,
+    entra: { tenantId: 't', clientId: 'c', clientSecret: 'test-only', redirectUri: 'http://127.0.0.1/auth/entra/callback' },
+    ...overrides,
+  };
+}
+
+class FakeEntra implements EntraAuth {
+  configured = true;
+  async createAuthorizationUrl(session: AdminSession) {
+    session.pendingAuthorization = { state: 's', nonce: 'n', codeVerifier: 'v', returnTo: '/', createdAt: Date.now() };
+    return 'https://login.example/authorize';
+  }
+  async completeAuthorization(): Promise<AuthenticatedPrincipal> {
+    return { subject: 'operator', tenantId: 't', roles: [REQUIRED_ADMIN_ROLE], csrfToken: 'csrf' };
+  }
+}
+
+async function listen(overrides: Partial<GatewayConfig> = {}, askModel?: AskModel) {
+  const app = await createGateway({ config: baseConfig(overrides), sessions: new InMemorySessionStore(), entra: new FakeEntra(), askModel });
+  const server = app.listen(0);
+  servers.push(server);
+  await new Promise<void>((resolve) => server.once('listening', () => resolve()));
+  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+}
+
+function ask(base: string, headers: Record<string, string>) {
+  return fetch(`${base}/api/luminary/ask`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', ...headers },
+    body: JSON.stringify({ prompt: 'Hello, Luminary.' }),
+  });
+}
+
+test('with no demo key configured, the mounted endpoint is disabled (503)', async () => {
+  const base = await listen(); // luminaryDemoKey unset
+  const res = await ask(base, { [DEMO_KEY_HEADER]: 'anything' });
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).error, 'luminary_not_configured');
+});
+
+test('a configured endpoint rejects a request with no demo key (401)', async () => {
+  const base = await listen({ luminaryDemoKey: DEMO_KEY });
+  assert.equal((await ask(base, {})).status, 401);
+});
+
+test('with the demo key and the default placeholder model, the governed path returns a named upstream_error Shortfall (502) — never fabricated prose', async () => {
+  const base = await listen({ luminaryDemoKey: DEMO_KEY });
+  const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
+  assert.equal(res.status, 502);
+  const body = await res.json();
+  assert.equal(body.error, 'luminary_shortfall');
+  assert.equal(body.shortfall.code, 'upstream_error');
+  assert.equal(body.reply, undefined);
+});
+
+test('with the demo key and a wired reply source, a governed reply is delivered (200)', async () => {
+  const askModel: AskModel = async () => ({ modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
+  const base = await listen({ luminaryDemoKey: DEMO_KEY }, askModel);
+  const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { reply: { modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' } });
+});
+
+test('the admin routes are untouched by the Luminary mount (still 401 unauthenticated)', async () => {
+  const base = await listen({ luminaryDemoKey: DEMO_KEY });
+  assert.equal((await fetch(`${base}/api/admin/session`)).status, 401);
+});

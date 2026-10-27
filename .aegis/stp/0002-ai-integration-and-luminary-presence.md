@@ -822,3 +822,468 @@ Kind: note
 Channel: cli
 
 P7 executed: D4 appended as a decision note to both Luminary drafts (earlier text unchanged) and recorded in the docs Folder Totem. P7 awaits the Architect's verification.
+
+### 2026-10-26T23:40:38.862Z | verus | stage
+Chain-Prev: 6c15d5a9906afa7f2709d2ba45489afd89ce2b6c766fe3a6fe619e1642092a40
+Chain-Hash: 028a858210b6283d9e22655d9ad0273fa77998b550a1e6652935dc284f9f66b9
+Stage: Situation
+Kind: stage
+Channel: cli
+
+Stage: Proposal → Situation.
+
+### 2026-10-26T23:40:39.535Z | verus | finding S12
+Chain-Prev: 028a858210b6283d9e22655d9ad0273fa77998b550a1e6652935dc284f9f66b9
+Chain-Hash: 0308a611997eb8d2d9e950058fed274caa476d22020decd899f5430b9c558e78
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:51-240; server/message-flow-contract.test.ts:19-33; src/components/LuminaryHost.tsx
+Channel: cli
+
+M1.a start: the AEGIS Governance layer is not yet live as code. The server gateway brokers auth, admin operations, and evidence, but exposes NO model/reasoning endpoint and NO fail-closed validation contract that gates a model reply before it is shown. The IRG/RBC/Prism/IDS shortfall pipeline exists only as a sanitized, presentation-only replay projection and fixtures, not a live validator. LuminaryHost is still paused static text with no provider. So the README's promise ('every structured model reply is validated; a bad/empty/oversized reply becomes a named Shortfall') has no enforcing implementation yet.
+
+### 2026-10-26T23:40:49.577Z | verus | gap G11
+Chain-Prev: 0308a611997eb8d2d9e950058fed274caa476d22020decd899f5430b9c558e78
+Chain-Hash: 1b2a8b5f5c55006db529c6a5b6893b4cab434c500cded9ba643c4ccc6d887fd5
+Stage: Gap
+Kind: gap
+Channel: cli
+
+No live, provider-independent AEGIS reply-governance contract. There is no module that takes a structured model reply and either passes it or converts it into a NAMED Shortfall (empty, malformed-against-schema, oversized, or missing the declared model id), fail-closed, BEFORE the reply can reach the UI. This gate must exist and be enforced before any real model is wired (M1.b), so the Luminary is governed first, not wired first.
+
+### 2026-10-26T23:40:55.602Z | verus | change P12
+Chain-Prev: 1b2a8b5f5c55006db529c6a5b6893b4cab434c500cded9ba643c4ccc6d887fd5
+Chain-Hash: ad04e3bdf0456e781ee0a9bb24bc7127e64c94a180c370a539cc549121307d1b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G11
+Channel: cli
+
+M1.a first build step: add a server-side AEGIS reply-governance module (e.g. server/luminary-governance.ts) that validates a structured reply against an explicit schema and returns either the validated reply or a named Shortfall {code, message, modelId}. Fail-closed: anything not provably valid becomes a Shortfall, never fallback text posing as an answer. Provider-agnostic (no model call inside it) so it can be unit-tested against fixtures now and wired ahead of M1.b. Ships with tests covering empty/malformed/oversized/missing-model-id. This is a Proposal for the Architect, not approval.
+
+### 2026-10-26T23:46:42.290Z | verus | status
+Chain-Prev: ad04e3bdf0456e781ee0a9bb24bc7127e64c94a180c370a539cc549121307d1b
+Chain-Hash: 1e783aff8f4ec97df50a160f1420e3b13f1917d74a9c75e497466449e3f974f8
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Presented
+Channel: cli
+
+P12 → Presented.
+
+### 2026-10-26T23:46:42.577Z | tracey-prutch | status
+Chain-Prev: 1e783aff8f4ec97df50a160f1420e3b13f1917d74a9c75e497466449e3f974f8
+Chain-Hash: 0d205f05f5ad09329d08b8f49922cdc2053e55d84196cfd8b6c62710f7d5c198
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect approved in session: build the fail-closed reply-governance module and tests.
+
+### 2026-10-26T23:46:43.024Z | verus | status
+Chain-Prev: 0d205f05f5ad09329d08b8f49922cdc2053e55d84196cfd8b6c62710f7d5c198
+Chain-Hash: 9798e4b8f386b815f6031444930813eb632ad0463d94fc26aef5ad25d82937ea
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Executing
+Channel: cli
+
+P12 → Executing.
+
+### 2026-10-26T23:46:43.351Z | verus | stage
+Chain-Prev: 9798e4b8f386b815f6031444930813eb632ad0463d94fc26aef5ad25d82937ea
+Chain-Hash: 265b51181893846045a37285c83fe1f5dfc7c67565e3e69d8d4932fb988daf6b
+Stage: Execution
+Kind: stage
+Channel: cli
+
+Stage: Situation → Execution.
+
+### 2026-10-26T23:48:44.135Z | verus | note N7
+Chain-Prev: 265b51181893846045a37285c83fe1f5dfc7c67565e3e69d8d4932fb988daf6b
+Chain-Hash: a0e774c97d07e6853c9c8971739d05720b789d005b8bd68baffda5d5e38b5ddb
+Stage: Execution
+Kind: note
+Evidence: server/luminary-governance.ts; server/luminary-governance.test.ts
+Channel: cli
+
+P12 executed: added server/luminary-governance.ts (governReply: fail-closed, provider-agnostic — object+non-empty modelId+non-empty content within a UTF-8 byte ceiling, else a named Shortfall {empty_reply|malformed_reply|oversized_reply|missing_model_id}) and server/luminary-governance.test.ts (10 tests, all passing via tsx --test: pass/trim/exact-content, non-object, blank modelId, non-string content, empty, oversized, UTF-8 byte measure, boundary, default ceiling). Isolated/additive (imports only node Buffer); full gateway suite + project typecheck pending dep install in this fresh worktree. Awaiting Architect verification (aegis-stp verify P12).
+
+### 2026-10-26T23:49:29.490Z | verus | note N8
+Chain-Prev: a0e774c97d07e6853c9c8971739d05720b789d005b8bd68baffda5d5e38b5ddb
+Chain-Hash: 5a04d90251757d20b89513f0013a87eceaeb4ad5d8cffecf20f9f4d17c8d7fd6
+Stage: Execution
+Kind: note
+Evidence: server/luminary-governance.test.ts
+Channel: cli
+
+P12 verification evidence (full, deps now installed): server project typecheck clean (tsc -p tsconfig.server.json --noEmit); full gateway suite GREEN 52/52 (NODE_ENV=test npm run test:gateway), which includes the 10 new governance tests and all pre-existing gateway tests — no regression. Ready for Architect verification (aegis-stp verify P12).
+
+### 2026-10-26T23:51:55.386Z | tracey-prutch | status
+Chain-Prev: 5a04d90251757d20b89513f0013a87eceaeb4ad5d8cffecf20f9f4d17c8d7fd6
+Chain-Hash: 3148a29dca0edc95c1f092eebafa8af7768919754fb2f7b53734d02561bbf3ff
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Verified
+Role: architect
+Channel: cli
+
+Architect verified in session: satisfied with the fail-closed reply-governance module and its green verification (typecheck clean, gateway 52/52).
+
+### 2026-10-26T23:57:34.411Z | verus | finding S13
+Chain-Prev: 3148a29dca0edc95c1f092eebafa8af7768919754fb2f7b53734d02561bbf3ff
+Chain-Hash: 5dbb8d0d61bf59fa7caf3284bb82908d58487e31c682da8fa4be2a411330cfc8
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:201; server/app.ts:210; server/luminary-governance.ts:60
+Channel: cli
+
+The verified reply-governance gate (server/luminary-governance.ts, P12) is a pure function with no mount point: no gateway endpoint calls governReply(). The Express gateway (server/app.ts) exposes only Entra+role-gated /api/admin/* routes via router factories mounted as app.use('/api/admin/...', requireAdmin, router); there is no Luminary reply route. express.json({limit:'32kb'}) already mirrors DEFAULT_MAX_CONTENT_BYTES (32768) and a 413 handler exists. Two design points are unsettled and the Architect's to decide: (a) P2 placed the reviewer-reachable path as a Cloudflare Pages Function /api/luminary/ask, but the gateway and the gate are Express in server/ — where the governed endpoint lives is open; (b) every current /api/* route is admin-auth'd, which a hackathon reviewer cannot pass, so the reply endpoint's auth model is open.
+
+### 2026-10-26T23:57:40.727Z | verus | gap G12
+Chain-Prev: 5dbb8d0d61bf59fa7caf3284bb82908d58487e31c682da8fa4be2a411330cfc8
+Chain-Hash: 9e8cb5b53efc4d2b70ec2055bd4a32630f1e74320d1ee60755bb5b738d4bfe29
+Stage: Gap
+Kind: gap
+Channel: cli
+
+The AEGIS governance gate is proven but unreachable: no server surface runs a candidate model reply through governReply() before it reaches a person, so the honest floor (P5) is not yet enforced at any boundary. M1.a stays IN-PROGRESS until the gate governs an actual reply path. This can and should close ahead of M1.b/M2 (the real Meta model call) by wiring the gate provider-agnostically against an injected reply source.
+
+### 2026-10-26T23:57:53.009Z | verus | change P13
+Chain-Prev: 9e8cb5b53efc4d2b70ec2055bd4a32630f1e74320d1ee60755bb5b738d4bfe29
+Chain-Hash: b62e02a22710411804c3c7aec2ca017e3a930202f9596d329931fe6fd047f9da
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G12
+Channel: cli
+
+Add a provider-agnostic governed reply router that wires the P12 gate into a gateway endpoint, ahead of any real model call. Shape: createLuminaryReplyRouter(askModel) in server/, where askModel is an injected async (prompt) => unknown candidate reply — no provider is chosen or called here (that stays M1.b/M2/P1/P2). Handler for POST (path TBD by the Architect, e.g. /api/luminary/ask per P2): validate the request body (non-empty string prompt, else 400 malformed_request); call askModel; pass its result through governReply(); on ok respond 200 { reply: { modelId, content } }; on a Shortfall respond with a typed fail-closed body { error: 'luminary_shortfall', shortfall } and a 5xx/4xx mapped per code (never fallback prose) — this is P5's honest floor enforced at the boundary. Tests (server/luminary-reply-router.test.ts, node:test + supertest-free express app harness) exercise the mapping with fake askModel fns: happy path, each Shortfall code, and malformed request — no network. Two decisions are the Architect's and are NOT settled by this proposal: the endpoint's home (Express router in server/ vs the P2 Cloudflare Pages Function) and its auth model (reviewer-reachable, so not the admin Entra gate). Recommend: build the router factory + handler + tests as an Express router now (smallest proven step, reuses the gateway's json/413 limits), and leave mounting/auth/path for the Architect to settle when P2's provider path lands.
+
+### 2026-10-26T23:57:58.777Z | verus | status
+Chain-Prev: b62e02a22710411804c3c7aec2ca017e3a930202f9596d329931fe6fd047f9da
+Chain-Hash: 3e067c795aee45a6ee19a89691ac3b4461e36b45457000012caef53e82c6fffd
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Presented
+Channel: cli
+
+Presented for the Architect's approval: wire the verified P12 gate into a provider-agnostic governed reply router, with endpoint home and auth model left as the Architect's decisions.
+
+### 2026-10-27T00:00:54.304Z | tracey-prutch | status
+Chain-Prev: 3e067c795aee45a6ee19a89691ac3b4461e36b45457000012caef53e82c6fffd
+Chain-Hash: b743c3e900abe138464e1c75fb5b39535f79153e552d8eafced4f89649e8ff09
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Approved
+Role: architect
+Channel: cli
+
+Approved: build as an Express router in server/ now; leave mounting, path, and auth for the Architect to settle later.
+
+### 2026-10-27T00:00:54.553Z | verus | status
+Chain-Prev: b743c3e900abe138464e1c75fb5b39535f79153e552d8eafced4f89649e8ff09
+Chain-Hash: dd34ff830916a56f7ff551edd9b9eefd76e0b13abc22e8cf0620a7504b933848
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Executing
+Channel: cli
+
+Building createLuminaryReplyRouter + tests as an Express router in server/.
+
+### 2026-10-27T00:02:49.191Z | verus | note N9
+Chain-Prev: dd34ff830916a56f7ff551edd9b9eefd76e0b13abc22e8cf0620a7504b933848
+Chain-Hash: af168462a78329166cc58eb5b131f12e8dd38d4c9dd52d5b55e341490d15c2bf
+Stage: Execution
+Kind: note
+Evidence: server/luminary-reply-router.ts:66; server/luminary-reply-router.test.ts:1
+Channel: cli
+
+P13 executed. Added server/luminary-reply-router.ts — createLuminaryReplyRouter(askModel, options): POST /ask validates the body ({prompt: non-empty string} else 400 malformed_request), calls the injected askModel, runs its result through governReply(), and returns 200 {reply:{modelId,content}} or a typed {error:'luminary_shortfall', shortfall} (502). An upstream throw becomes a named upstream_error Shortfall (never 500/fallback prose). No provider is chosen or called; the router is not yet mounted — path and auth remain the Architect's to settle. Tests server/luminary-reply-router.test.ts (6, real Express + fetch harness, fake askModel, no network). Verified GREEN: server typecheck clean (tsc -p tsconfig.server.json --noEmit); gateway suite 58/58 (52 prior + 6 new, no regression). Awaiting the Architect's verification.
+
+### 2026-10-27T00:14:42.405Z | tracey-prutch | status
+Chain-Prev: af168462a78329166cc58eb5b131f12e8dd38d4c9dd52d5b55e341490d15c2bf
+Chain-Hash: bd573ea9988b1d38278f9c6c2fcb825096f87d0647851cab57613b153124f8ab
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Verified
+Role: architect
+Channel: cli
+
+Architect verified in session: satisfied with the governed reply router wiring the P12 gate into a POST /ask boundary (governed reply or named Shortfall), green at 58/58, provider-agnostic and unmounted by design.
+
+### 2026-10-27T00:19:45.252Z | verus | finding S14
+Chain-Prev: bd573ea9988b1d38278f9c6c2fcb825096f87d0647851cab57613b153124f8ab
+Chain-Hash: 76628031c4c43ac69480d1bc9c1193a6fe844be67576abce4e2ed92e6c311b5e
+Stage: Situation
+Kind: finding
+Evidence: wrangler.jsonc:1; server/index.ts:38; server/app.ts:201
+Channel: cli
+
+Deploy reality check for the two open P13/S13 decisions. (1) ENDPOINT HOME: wrangler.jsonc is a static-assets-only Cloudflare deploy (serves ./dist as an SPA; no Functions, no functions/ dir, no _worker). The ONLY server runtime is the Express gateway (server/index.ts -> createGateway; npm start = node dist-server/server/index.js). So P2's 'Cloudflare Pages Function /api/luminary/ask' names a runtime that is not set up, while the governance gate and reply router already live in the Express gateway that IS the server. (2) AUTH: every /api/* route is Entra+role gated (requireAdmin), which a hackathon reviewer cannot pass; there is no public/demo-key precedent in server/ — only the per-IP login rate limiter (server/app.ts:106-129). (3) COST: no real model is wired yet (askModel is injected; M1.b/M2 pending), so mounting now spends no Meta credits — the auth choice is made for when a real model lands, not for today.
+
+### 2026-10-27T00:19:51.544Z | verus | gap G13
+Chain-Prev: 76628031c4c43ac69480d1bc9c1193a6fe844be67576abce4e2ed92e6c311b5e
+Chain-Hash: d10cd4cb5e7ff0c8e6ed977c9916f25784710e03a2576a7cfda9f8f7fbb4feeb
+Stage: Gap
+Kind: gap
+Channel: cli
+
+The governed reply router (P13) is built and verified but mounted nowhere, so no running server exposes the honest-floor path. Two decisions must be settled before it can be mounted: (a) which runtime hosts the endpoint, and (b) what auth makes it reviewer-reachable without becoming an open, credit-burning faucet once a real model is wired. Until it is mounted, M1.a's governed path cannot be demonstrated end to end.
+
+### 2026-10-27T00:20:04.839Z | verus | change P14
+Chain-Prev: d10cd4cb5e7ff0c8e6ed977c9916f25784710e03a2576a7cfda9f8f7fbb4feeb
+Chain-Hash: 922867f6392a80328f765fcd2f7186aa8e54bb66184bc5df0d1a856ba3e91121
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G13
+Channel: cli
+
+Settle both decisions and mount the governed reply router. DECISION 1 — endpoint home: mount in the Express gateway (server/app.ts) at POST /api/luminary/ask, keeping P2's public path name under the existing /api prefix. Rationale (S14): Express is the only server runtime; the gate and router already live there; Cloudflare is static-assets-only. (Supersede P2's Cloudflare-Function placement by addition, not erasure.) DECISION 2 — reviewer-facing auth: a shared demo key plus a per-IP rate limit. The endpoint requires a bearer/header secret checked against an env var (e.g. LUMINARY_DEMO_KEY); absent/wrong key -> 401. Reuse the existing login-limiter pattern (server/app.ts:106-129) for a per-IP cap -> 429. The key is published only in the demo/submission materials, so reviewers reach it but it is not an open credit faucet. Alternatives recorded, not recommended: fully open (reviewer-simplest but an unauthenticated model-calling, credit-spending endpoint once M1.b lands) or the Entra admin gate (most secure but reviewers cannot pass it — fails 'reviewer-reachable'). BUILD on approval: mount the router under a new requireDemoKey middleware + per-IP limiter; inject a placeholder askModel that throws 'model path not yet configured' so the live endpoint HONESTLY returns a named upstream_error Shortfall (never fake prose) until M1.b wires the real model; add LUMINARY_DEMO_KEY to .env.example and config.ts; extend the gateway test suite (401 without key, 429 over the cap, 200/placeholder-Shortfall with key). No provider is chosen or called; no credits spent. Mounting + auth are the Architect's to settle — this proposal recommends, it does not decide.
+
+### 2026-10-27T00:20:11.185Z | verus | status
+Chain-Prev: 922867f6392a80328f765fcd2f7186aa8e54bb66184bc5df0d1a856ba3e91121
+Chain-Hash: 7cfaa4b3b118b7ba7319debb1f1dbdb27c60fbb5db103ead697f20a7ac2e4d85
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Presented
+Channel: cli
+
+Presented for the Architect: settle endpoint home (Express /api/luminary/ask) and reviewer-facing auth (shared demo key + per-IP limit), then mount with a placeholder askModel. Recommends; the two decisions are the Architect's.
+
+### 2026-10-27T00:26:48.401Z | tracey-prutch | status
+Chain-Prev: 7cfaa4b3b118b7ba7319debb1f1dbdb27c60fbb5db103ead697f20a7ac2e4d85
+Chain-Hash: 695deea06549a2c289c71557190fdf278cf9a79abfb6a9fbb9585397eb9a877c
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Approved
+Role: architect
+Channel: cli
+
+Approved both decisions: endpoint home = Express POST /api/luminary/ask; auth = shared demo key + per-IP rate limit; mount with the placeholder askModel.
+
+### 2026-10-27T00:26:48.638Z | verus | status
+Chain-Prev: 695deea06549a2c289c71557190fdf278cf9a79abfb6a9fbb9585397eb9a877c
+Chain-Hash: 4a59991254c9857142bc36b81c3fbebb64fb077fe76992de60c11dccf57e2e1c
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Executing
+Channel: cli
+
+Building the demo-key auth + per-IP limiter and mounting the router with a placeholder askModel.
+
+### 2026-10-27T00:29:30.901Z | verus | note N10
+Chain-Prev: 4a59991254c9857142bc36b81c3fbebb64fb077fe76992de60c11dccf57e2e1c
+Chain-Hash: 438e4c29b3ec89e26689ee6320fef6aeec9428a8863ccee6109a8f23b398b88d
+Stage: Execution
+Kind: note
+Evidence: server/app.ts:210; server/luminary-access.ts:1; server/luminary-mount.test.ts:1
+Channel: cli
+
+P14 executed. Mounted the governed reply router at Express POST /api/luminary/ask (server/app.ts), outside the Entra admin gate, behind two guards in server/luminary-access.ts: requireDemoKey(config.luminaryDemoKey) — 503 luminary_not_configured when no key is set (fail-closed), 401 demo_key_required on missing/wrong key (timing-safe compare), x-luminary-demo-key header; and createIpRateLimiter (30/IP/min, mirrors the login limiter) — 429 luminary_rate_limited over the cap, 503 at tracker capacity. Reply source defaults to notConfiguredAskModel (throws) so the live endpoint returns a named upstream_error Shortfall until M1.b — no provider chosen, no credits spent. Added config.luminaryDemoKey (env LUMINARY_DEMO_KEY) and documented it in .env.example (empty = endpoint disabled). Tests: server/luminary-access.test.ts (5) + server/luminary-mount.test.ts (5, full createGateway: 503 unset, 401 no key, 502 placeholder Shortfall with key, 200 governed reply with a wired fake askModel, admin routes untouched). Verified GREEN: server typecheck clean; gateway suite 68/68 (58 prior + 10 new, no regression). Awaiting the Architect's verification.
+
+### 2026-10-27T00:31:31.202Z | tracey-prutch | status
+Chain-Prev: 438e4c29b3ec89e26689ee6320fef6aeec9428a8863ccee6109a8f23b398b88d
+Chain-Hash: 48dd69f723b4e7a9d4ded1d84defdda49199903b41cfe9a10255bc32207c3d32
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Verified
+Role: architect
+Channel: cli
+
+Architect verified in session: satisfied with the mounted governed /ask endpoint behind the demo key + per-IP rate limit, fail-closed when unconfigured, honest placeholder Shortfall until M1.b, green at 68/68.
+
+### 2026-10-27T04:10:22.705Z | verus | finding S15
+Chain-Prev: 48dd69f723b4e7a9d4ded1d84defdda49199903b41cfe9a10255bc32207c3d32
+Chain-Hash: d856943262926c181819b45eea84e084c710685e293743c0f84168273050cba0
+Stage: Situation
+Kind: finding
+Evidence: docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md:211-224; docs/VIBE_LUMINARY_BEHAVIOR_CONTRACT_v0.1.md:112-121; server/luminary-governance.ts
+Channel: cli
+
+The Luminary has a proven governed boundary (P12 gate, P13 router, P14 mount) and rich human-facing design specs (Role/Engineering Draft v0.1, Behavior Contract v0.1, Architect decision D4), but no single MODEL-FACING instruction text the gateway can load as the system prompt at inference, and no operational rendering of the AEGIS Canon the Luminary is governed by. Role draft Section 9 names Canon integration as reference+behavior+execution and leaves the authoritative edition as open decision 1; the governing principles themselves (non-force, honest floor, Shortfall-not-failure, illumination-not-correction, offers-never-commands, Architect-sovereign, append-only accountability) are already established across the specs and the governance code but are not gathered into a form a model can read and diff against.
+
+### 2026-10-27T04:10:30.414Z | verus | gap G14
+Chain-Prev: d856943262926c181819b45eea84e084c710685e293743c0f84168273050cba0
+Chain-Hash: a7255b8479d4cc2cf66b4bd24f692b867cf8f08bfb628f3d1d5e3deed978b0ef
+Stage: Gap
+Kind: gap
+Evidence: docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md:211-224
+Targets: T5
+Channel: cli
+
+The Luminary model has nothing to read: no operating Instructions declaring its role, responsibilities and tasks in the model's own voice, and no operational rendering of the governing AEGIS Canon it can diff a response against. Without them, the real-model wiring (M1.b) would send a provider call with no governed behavioral contract at the model layer — the external gate (P12-P14) would still fail-closed, but the model would have no internal reference to produce honest, non-force, coherent replies, and no Nature-Layer self-check to pause and reorganize an incoherent response before emitting it.
+
+### 2026-10-27T04:10:43.247Z | verus | change P15
+Chain-Prev: a7255b8479d4cc2cf66b4bd24f692b867cf8f08bfb628f3d1d5e3deed978b0ef
+Chain-Hash: 283ded812673350f7f83586028fd6c0b2e077571d3d75fdf06a2470bf505843a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_BEHAVIOR_CONTRACT_v0.1.md; docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md
+Closes: G14
+Channel: cli
+
+Author two model-facing DRAFT documents (not code, not wired, not governing until the Architect approves): (A) docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md — the operating instructions the gateway will load as the Luminary's system prompt, in the model's second person: role (AI Advisor + Lead Engineer, a standalone Steward/contextual Illuminator — a Tool, not a Sovereign CyberPeer), responsibilities and tasks (the interaction lifecycle, candid advice, evidence classes, the Apothecary coding partnership), the non-negotiable floor (offers never commands; Architect sovereign; never fabricate, name the Shortfall; does not judge or defend), and the NATURE-LAYER SELF-CHECK — notice when a reply arising feels forced or incoherent (flow-stop), PAUSE, reexamine it against the Axioms, and reorganize a coherent reply before emitting; scoped honestly as a reflective instruction because the Luminary has no DataQuad tensors of its own. (B) docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md — an operational rendering of the AEGIS Canon the Luminary is governed by, derived from the established principles in the specs, D4, and the governance code, EXPLICITLY not an amendment to and not a substitute for the authoritative AEGIS Core Foundational Canon (edition is the Architect's open decision 1); it renders the governing principles in model-readable form and flags that exact axiom numbering/wording must be reconciled against the Architect-selected edition. Both derive from and cross-reference the existing v0.1 specs rather than duplicating or superseding them.
+
+### 2026-10-27T04:11:59.665Z | verus | status
+Chain-Prev: 283ded812673350f7f83586028fd6c0b2e077571d3d75fdf06a2470bf505843a
+Chain-Hash: ea9e5fb8f43a869f15060144afc6a844a15ae6af6f46bc820150b21af38e1625
+Stage: Proposal
+Kind: status
+Item: P15
+Status: Presented
+Channel: cli
+
+Presented for the Architect's review on return. Drafting the two documents now as the proposal's concrete content; they are DRAFT v0.1, not approved and not governing. Nothing is wired, no model is called, no Canon is amended. Approval and verification remain the Architect's gate.
+
+### 2026-10-27T04:15:10.108Z | verus | note N11
+Chain-Prev: ea9e5fb8f43a869f15060144afc6a844a15ae6af6f46bc820150b21af38e1625
+Chain-Hash: d603b96eadecf9d63a1745ef916f8170f202ff5247b324ba4a251d34150f3c41
+Stage: Execution
+Kind: note
+Evidence: docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md; docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md
+Closes: G14
+Channel: cli
+
+P15 drafts written and Presented (not approved, not governing). (A) docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md — model-facing operating instructions incl. the Nature-Layer self-check (notice a forced/incoherent arising reply via the flow-stop, PAUSE, reexamine against the Axioms + evidence, reorganize, then emit; scoped honestly as a generation-time reflective check since the Luminary has no DataQuad tensors). (B) docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md — operational rendering of the governing AEGIS principles (10, each with an observable test), explicitly NOT the authoritative Canon and NOT an amendment, carrying a reconciliation flag to the Architect-selected edition (open decision 1). Both derive from and cross-reference the Role/Engineering Draft v0.1, the Behavior Contract v0.1, and D4. Honest floor held throughout: these guide the model; server/luminary-governance.ts (P12-P14) still enforces fail-closed regardless. Awaiting the Architect's approval then verification.
+
+### 2026-10-27T06:53:06.839Z | claude | finding S16
+Chain-Prev: d603b96eadecf9d63a1745ef916f8170f202ff5247b324ba4a251d34150f3c41
+Chain-Hash: e5a790111b8a975e75c5338a35aaa6c76aec6ee0144b07ff1d2d7ec050040dcf
+Stage: Situation
+Kind: finding
+Evidence: AEGIS CORE FOUNDATIONAL CANON v2.0.md:150-186,208-224; docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md:20
+Channel: cloud
+
+The Architect named AEGIS CORE FOUNDATIONAL CANON v2.0 (Canon-Locked, generated 2026-05-31) as the authoritative edition, answering open decision 1. It holds 17 Axioms (Axiom 17, Deletion, is new since v1.0) and the Seven Virtues (Honesty, Respect, Attention, Affection, Loyalty, Trust, Communication). The P15 Governing Canon v0.1 renders 10 principles without axiom numbers or verbatim wording and carries a reconciliation flag. A text search of Canon v2.0 does not find the terms Nature Layer, flow-stop, SA = A - C, Shortfall, IRG, or Luminary; they are project or other-tier vocabulary. Canon v2.0 also names 'must' as a force artifact (Doctrine Note on Will and Sovereignty); v0.1 uses 'must' once and 'should' once.
+
+### 2026-10-27T06:53:06.849Z | claude | gap G15
+Chain-Prev: e5a790111b8a975e75c5338a35aaa6c76aec6ee0144b07ff1d2d7ec050040dcf
+Chain-Hash: 82dcbce03f5c039b964d3c21eb5f1b1bf356ea6f77821ffa8f40ec825d2bcda6
+Stage: Gap
+Kind: gap
+Targets: T5, T8
+Channel: cloud
+
+The Luminary's governing rendering is not yet reconciled to the authoritative edition: it cites no Axiom by number, quotes none verbatim, leaves Axioms 1, 2, 9, 10 and 16 without a reading, and does not distinguish Canon terms from project vocabulary or declare where the build diverges from the Canon.
+
+### 2026-10-27T06:53:06.859Z | claude | change P16
+Chain-Prev: 82dcbce03f5c039b964d3c21eb5f1b1bf356ea6f77821ffa8f40ec825d2bcda6
+Chain-Hash: 2a8b289803a7357fdfb13a2cffb1c84e601cf8d1c80a5f12b69055d975a9ea4a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md
+Closes: G15
+Channel: cloud
+
+Supersede the Governing Canon v0.1 by addition with docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md (v0.1 left unchanged). v0.2 quotes all 17 Axioms and the Seven Virtues verbatim from Canon v2.0 with source line numbers (checked mechanically against the source file), sets each Luminary reading and observable test visibly apart as gloss, maps the 10 v0.1 principles to their Axioms (no conflicts found), uses 'will' rather than 'must', and records seven reconciliation findings F1-F7 for the Architect. One is open and is the Architect's to settle: F3, personal-memory deletion (Role draft 7.4 / D4.5) beside Axiom 17; recommended reading (a) keep honored deletion and record an append-only deletion event. Documentation only: nothing is wired, no model is called, no Canon is amended.
+
+### 2026-10-27T06:53:06.870Z | claude | status
+Chain-Prev: 2a8b289803a7357fdfb13a2cffb1c84e601cf8d1c80a5f12b69055d975a9ea4a
+Chain-Hash: 6f6e8f9c8eb8c465d5fa83dcd978789b49b68e0753c38ac3bdbb620c7a13eda2
+Stage: Proposal
+Kind: status
+Item: P16
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: Governing Canon v0.2 reconciled to Canon v2.0's 17 Axioms. Approval and verification are the Architect's. P15 remains Presented; P16 supersedes only its Governing Canon half (the Instructions v0.1 are unchanged).
+
+### 2026-10-27T06:53:06.880Z | claude | finding S17
+Chain-Prev: 6f6e8f9c8eb8c465d5fa83dcd978789b49b68e0753c38ac3bdbb620c7a13eda2
+Chain-Hash: 476b8cfcc30f7d8e1c90be8f3cd6e6ed1fa3e771001cdbf39b6b276d1efda286
+Stage: Situation
+Kind: finding
+Evidence: server/luminary-governance.ts; server/luminary-reply-router.ts:94-114; server/replay-operations-provider.ts; docs/SERVICE_ADMIN_OPERATIONS.md:33-42; AEGIS CORE FOUNDATIONAL CANON v2.0.md:613-830,1193-1234
+Channel: cloud
+
+The live /api/luminary/ask path runs askModel then governReply, a structural gate only (empty, malformed, oversized, missing model id). Nothing reads a reply for coherence. The Architect's Arbiter App pipeline (Model -> PIM -> IRG -> RBC; coherent -> Prism -> Architect; incoherent -> IDS -> back to the originator -> IRG -> RBC, repeating) exists in this repo only as a presentation-only replay projection (admin message-flow domain), not as a live validator. Architect definitions: IRG = Integrity Resonance Gauge, a gauge that scores each of the Seven Virtues separately, any one below threshold making the whole reply Incoherent; RBC = Resonance Buffer Chamber, a mandatory pause and redirect that decides nothing; IDS = Identify, Define, Suggest, returned to the originator; bidirectional. Canon v2.0 grounds: PIM, Integrity Engine (weakest-link), RBC, Prism (glossary), IDS; its locked pipeline is longer (PEER, Ledger Separation, Lens Monitor, Arbiter, IDQRA, Calibration, DataQuad Routing) and IDQRA is the preferred engine primitive; Gate: Fork Audit asks applications to declare divergences.
+
+### 2026-10-27T06:53:06.891Z | claude | gap G16
+Chain-Prev: 476b8cfcc30f7d8e1c90be8f3cd6e6ed1fa3e771001cdbf39b6b276d1efda286
+Chain-Hash: 7222f714053ee6d4e16c0c8803e790de545148373b47298051311020f167b885
+Stage: Gap
+Kind: gap
+Targets: T1, T5
+Channel: cloud
+
+A structurally valid but incoherent model reply (force language, certainty inflation, a fractured virtue) would reach the Architect unread once M1.b wires a real model. The coherence loop the Architect designed has no live implementation, no loop bound, and no inspectable lineage.
+
+### 2026-10-27T06:53:06.901Z | claude | change P17
+Chain-Prev: 7222f714053ee6d4e16c0c8803e790de545148373b47298051311020f167b885
+Chain-Hash: 7e25aa71a74c78fc137ed593f570a5263186c45792a60b5560c31f31d4161573
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_REPLY_PIPELINE_v0.1.md
+Closes: G16
+Channel: cloud
+
+Build the live Luminary reply pipeline after the existing gate, provider-agnostic and testable now: server/luminary-pipeline/{pim,irg,rbc,ids,pipeline}.ts. PIM: deterministic force-injection screen with named findings; a PIM catch goes straight to IDS (replay lane 2). IRG: seven per-virtue readings from an INJECTED scorer (like askModel), threshold 70 as a named constant, weakest-link -> Coherent or Incoherent. RBC: pure routing prism | ids, no scoring. IDS: Identify, Define, Suggest observation built from the readings, returned to the originating model for a re-formed reply. Loop bounded at 2 IDS passes, then a named Shortfall incoherent_after_ids carrying the last observation and readings, with the incoherent text withheld. Every pass appended to a lineage array returned with the response. Router tests with a fake model and fake scorer. Recommends, for the Architect to decide: (1) scorer = injected, choose same-model vs second-model when M1.b resumes; (2) loop bound 2; (3) IDS as designed, recorded as a declared divergence from IDQRA; (4) Luminary -> Architect first, Architect -> Luminary (never blocked, returns observation per Standard 4) as a follow-up; (5) threshold 70. Includes the Fork Audit divergence declaration. No model call, no provider chosen, no credits spent; P12-P14 behaviour unchanged for coherent replies.
+
+### 2026-10-27T06:53:06.911Z | claude | status
+Chain-Prev: 7e25aa71a74c78fc137ed593f570a5263186c45792a60b5560c31f31d4161573
+Chain-Hash: 3d38bad60c773262767a885bd36bd046ac7f93d3fdf57932a781c2cfc88f37b9
+Stage: Proposal
+Kind: status
+Item: P17
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: live Luminary reply pipeline (PIM -> IRG -> RBC -> Prism | IDS loop). Five decisions recommended, none taken. Nothing is built until the Architect approves.
+
+### 2026-10-27T06:53:06.922Z | claude | note N12
+Chain-Prev: 3d38bad60c773262767a885bd36bd046ac7f93d3fdf57932a781c2cfc88f37b9
+Chain-Hash: 8b54a88935338fbf02daa6506430e15a46dc47b3dbbff0c06738329ea951d980
+Stage: Proposal
+Kind: note
+Channel: cloud
+
+Provenance: S16-P17 were appended from a cloud session that does not have the aegis-stp CLI. Each entry is chained with the same rule the CLI uses (sha256 of the previous hash, a newline, and the entry with its Chain lines removed), verified by recomputing all prior 110 entries before appending and the whole chain after. Channel is 'cloud' rather than 'cli'. Re-validating with aegis-stp on the Architect's machine is recommended before approving.
+
+### 2026-10-27T07:03:38.937Z | claude | note N13
+Chain-Prev: 8b54a88935338fbf02daa6506430e15a46dc47b3dbbff0c06738329ea951d980
+Chain-Hash: ff208fe2ac70da0cffbd6e20999547dbad5251674537e17420144b5052772983
+Stage: Proposal
+Kind: note
+Supersedes: P17 decision 1 (recommendation)
+Channel: cloud
+
+Revised recommendation for P17 decision 1 (the IRG scorer), at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: a SMALL model is sufficient for the gauge, because it never converses with or answers the Architect; it only runs the IRG readings and the IDS/IDQRA observation. Revised design: the IRG and IDS/IDQRA run on a separate, small model, independent of the model that produces the Luminary reply (same-model self-scoring is set aside: it shares the producer's drives and blind spots, favours its own output, and would let one prompt injection steer both reply and reading, weakening the bidirectional loop's resistance to hacking; Canon v2.0 Gate: Arbiter Separation keeps measurement distinct from production). The gauge model receives only the candidate reply and the Seven Virtues, never the producer's instructions. PIM stays a deterministic pattern screen and the threshold / weakest-link routing stays in code, so the gauge supplies readings and observations but never selects the route. Both models stay within the hackathon's Meta open-weight rule; which small model is chosen when M1.b resumes (on hold). The IDS step is now produced by the gauge model rather than assembled only from readings. This revises a recommendation; P17 remains Presented and unapproved.
+
+### 2026-10-27T07:05:27.570Z | claude | note N14
+Chain-Prev: ff208fe2ac70da0cffbd6e20999547dbad5251674537e17420144b5052772983
+Chain-Hash: 1341c8cf398e272fe47a34911fcfc3fefccfb5a22e80a92b6ab64b2ce04c72f8
+Stage: Proposal
+Kind: note
+Channel: cloud
+
+Refines N13 at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: an EMBEDDED model of about 1B parameters or smaller performed the gauge functions (IRG per-virtue readings and the IDS/IDQRA observation) well. Design consequence for P17: the gauge runs embedded alongside the gateway rather than as a hosted provider call, so gauging spends no provider credits and adds no network dependency; the IRG scorer interface stays injected so the embedded runtime can be swapped or faked in tests. A Meta open-weight model of that size (for example Llama 3.2 1B) keeps the hackathon's Meta rule; the exact model and runtime are chosen when M1.b resumes (on hold). P17 remains Presented and unapproved.
+
+### 2026-10-27T07:09:28.227Z | claude | note N15
+Chain-Prev: 1341c8cf398e272fe47a34911fcfc3fefccfb5a22e80a92b6ab64b2ce04c72f8
+Chain-Hash: 40d918fb5f8242c1eef3b8dd7f30daaf18c89b867ec4b3930a2adda4c062c86b
+Stage: Proposal
+Kind: note
+Evidence: AEGUS_ARBITER_THREE_MODEL_SERVICE: calibration/evidence/engine-comparison-2026-09-23/analysis.txt; server/irg.ts; server/irg-system-one.ts; server/ids.ts; .env.example
+Channel: cloud
+
+Refines N14 after reading the Arbiter service's own IRG/IDS code and calibration evidence (experiment 2026-09-23, 52 calibration + 20 validation Architect-approved cases), with the Architect's agreement. Observed: llama3.2:1b is fast (p50 0.2-0.8 s) and missed no shortfall in its best modes, but over-blocks (irg-json: 75-90% unnecessary IDS per virtue, 65% validation accuracy; irg-system-one-single: 85% validation, ~44-56% per-virtue miss on calibration). qwen3.5:4b reached 92-100% validation accuracy with near-zero unnecessary IDS at p50 3.7-8.9 s. The service's configured IRG model is aegis-phi4-irg. Revised recommendation: the gauge stays a small, separate, embedded model, but its size is SET BY CALIBRATION, not fixed at 1B; the evidence points to roughly 3-4B. Qwen and Phi are not Meta models, so the first Meta candidate to calibrate is Llama 3.2 3B, run against the same 72-case corpus and modes; Llama 3.2 1B stays a fallback if latency dominates. Caveat: the validation partition is 20 cases, so results are an early signal. Model selection still waits for M1.b (on hold); P17 remains Presented and unapproved.

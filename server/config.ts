@@ -28,6 +28,8 @@ export interface GatewayConfig {
   cookieSecure: boolean;
   trustProxy: false | number | string[];
   redisUrl?: string;
+  /** Shared demo key for the reviewer-facing Luminary reply endpoint. Absent = endpoint disabled. */
+  luminaryDemoKey?: string;
   stellarCapabilities?: StellarCapabilityConfig;
   entra?: {
     tenantId: string;
@@ -65,6 +67,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
   const privateKey = env.ENTRA_CLIENT_CERT_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
   const trustProxy = parseTrustProxy(env.TRUST_PROXY);
   const redisUrl = env.REDIS_URL?.trim();
+  const luminaryDemoKey = env.LUMINARY_DEMO_KEY?.trim() || undefined;
   if (redisUrl && !['redis:', 'rediss:'].includes(new URL(redisUrl).protocol)) {
     throw new Error('REDIS_URL must use the redis: or rediss: scheme');
   }
@@ -139,6 +142,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
     cookieSecure: nodeEnv === 'production' || env.COOKIE_SECURE === 'true',
     trustProxy,
     redisUrl,
+    luminaryDemoKey,
     stellarCapabilities,
     entra,
   };
