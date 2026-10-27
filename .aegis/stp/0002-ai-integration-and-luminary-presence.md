@@ -1258,3 +1258,13 @@ Kind: note
 Channel: cloud
 
 Provenance: S16-P17 were appended from a cloud session that does not have the aegis-stp CLI. Each entry is chained with the same rule the CLI uses (sha256 of the previous hash, a newline, and the entry with its Chain lines removed), verified by recomputing all prior 110 entries before appending and the whole chain after. Channel is 'cloud' rather than 'cli'. Re-validating with aegis-stp on the Architect's machine is recommended before approving.
+
+### 2026-10-27T07:03:38.937Z | claude | note N13
+Chain-Prev: 8b54a88935338fbf02daa6506430e15a46dc47b3dbbff0c06738329ea951d980
+Chain-Hash: ff208fe2ac70da0cffbd6e20999547dbad5251674537e17420144b5052772983
+Stage: Proposal
+Kind: note
+Supersedes: P17 decision 1 (recommendation)
+Channel: cloud
+
+Revised recommendation for P17 decision 1 (the IRG scorer), at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: a SMALL model is sufficient for the gauge, because it never converses with or answers the Architect; it only runs the IRG readings and the IDS/IDQRA observation. Revised design: the IRG and IDS/IDQRA run on a separate, small model, independent of the model that produces the Luminary reply (same-model self-scoring is set aside: it shares the producer's drives and blind spots, favours its own output, and would let one prompt injection steer both reply and reading, weakening the bidirectional loop's resistance to hacking; Canon v2.0 Gate: Arbiter Separation keeps measurement distinct from production). The gauge model receives only the candidate reply and the Seven Virtues, never the producer's instructions. PIM stays a deterministic pattern screen and the threshold / weakest-link routing stays in code, so the gauge supplies readings and observations but never selects the route. Both models stay within the hackathon's Meta open-weight rule; which small model is chosen when M1.b resumes (on hold). The IDS step is now produced by the gauge model rather than assembled only from readings. This revises a recommendation; P17 remains Presented and unapproved.
