@@ -1096,3 +1096,15 @@ Evidence: server/app.ts:210; server/luminary-access.ts:1; server/luminary-mount.
 Channel: cli
 
 P14 executed. Mounted the governed reply router at Express POST /api/luminary/ask (server/app.ts), outside the Entra admin gate, behind two guards in server/luminary-access.ts: requireDemoKey(config.luminaryDemoKey) — 503 luminary_not_configured when no key is set (fail-closed), 401 demo_key_required on missing/wrong key (timing-safe compare), x-luminary-demo-key header; and createIpRateLimiter (30/IP/min, mirrors the login limiter) — 429 luminary_rate_limited over the cap, 503 at tracker capacity. Reply source defaults to notConfiguredAskModel (throws) so the live endpoint returns a named upstream_error Shortfall until M1.b — no provider chosen, no credits spent. Added config.luminaryDemoKey (env LUMINARY_DEMO_KEY) and documented it in .env.example (empty = endpoint disabled). Tests: server/luminary-access.test.ts (5) + server/luminary-mount.test.ts (5, full createGateway: 503 unset, 401 no key, 502 placeholder Shortfall with key, 200 governed reply with a wired fake askModel, admin routes untouched). Verified GREEN: server typecheck clean; gateway suite 68/68 (58 prior + 10 new, no regression). Awaiting the Architect's verification.
+
+### 2026-10-27T00:31:31.202Z | tracey-prutch | status
+Chain-Prev: 438e4c29b3ec89e26689ee6320fef6aeec9428a8863ccee6109a8f23b398b88d
+Chain-Hash: 48dd69f723b4e7a9d4ded1d84defdda49199903b41cfe9a10255bc32207c3d32
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Verified
+Role: architect
+Channel: cli
+
+Architect verified in session: satisfied with the mounted governed /ask endpoint behind the demo key + per-IP rate limit, fail-closed when unconfigured, honest placeholder Shortfall until M1.b, green at 68/68.
