@@ -1134,3 +1134,71 @@ Evidence: docs/AEGIS_ADAPTIVE_RELATIONAL_IDE_DOCTRINE_LIVING_CANON_v0.3-LC:526-5
 Channel: cli
 
 Architect confirms prior design decision: every Actuator or Agent returning after Portal access must clear through the Customs Depot before reentering the App. Repo evidence confirms the function as Customs: the Living Canon says every dispatched Actuator crossing into another Element passes Customs (§21) and Portal/Tender is distinct from Customs/Tumbler transit inspection (§23); the Portal External Relation Action Plan defines Customs as return inspection before Portal/POD reentry, lifecycle RETURN_TO_CUSTOMS -> RETURN_ACCEPTED/RETURN_HELD, and required validation (P4.1/P4.5). The exact name 'Customs Depot' was not found; map it to this existing Customs function unless the canonical owner says otherwise. This is design doctrine/planning, not implementation: Portal Lifecycle Schema says Customs is not yet specified and Source Authority Matrix says no implementation; rg found no Customs in src. Existing src/portal implements Portal/Tender descriptor, boundary policy, lifecycle and operations only. Keep returns quarantined/held until scope, schema, provenance, active-content safety, authority/Tumbler state and destination relation validate; do not update internal canonical state on rejected return. Cross-link P18/P19 and the Portal P4 work rather than duplicate a Customs spec here.
+
+### 2026-10-27T20:21:57.194Z | codex | change P20
+Chain-Prev: 935e6c8cb7d2eaede6bdfd15f8ffba3be5d1a1bbc2c3105edf2a99e11e283b9e
+Chain-Hash: 7ba9bd822de69493bc9464a36c099612f4bf63029c632fc4fcfad621c1f85e64
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md:29-59,74,88-143,211-300,389-399; src/engine/workRequestRuntime.ts:29-42,210-223,293-310; H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claude\2026-10-27T203000Z-review-stp-0003-p18-p19-customs-tumbler.md; .aegis/stp/0005-portal-customs-boundary-and-return-inspection.md:N2
+Closes: G14
+Targets: T14
+Gaps: G14
+Supersedes: P18
+Channel: cli
+
+P20 CORE-orchestrated Tumbler authority with exact-profile binding, explicit role ownership, Customs return coordination and Luminary Companion boundary. Successor to P18; remains a proposal for Architect review. Preserve the governing distinction: a Tumbler evaluation reports profile alignment and never grants authority or capability. The signed Architect/Conductor Work Request and Dispatch binding remain the independent authority, linked to an active signed Relation Contract.
+
+Ownership: CORE Orchestrator is BuildGraph owner and coordinator; it records requests/outcomes, selects policy, and initiates/scopes the challenge. It hosts the Tumbler Generator, which may derive only from and never exceed the authority/scope of the signed Relation Contract and Work Request. Conductor owns the authorization decision. Dispatch alone materializes routes and rotates Ring Three unless the Architect records an explicit, bounded delegation with one named owner. Satellites coordinate, Actuators perform, and the final action boundary enforces.
+
+Non-substitutable profiles: bind exact profile id and version in both TumblerChallenge and TumblerEvaluation and require exact match at final use; a result for one operation/profile cannot satisfy another, and partial evaluations cannot be aggregated. Represent scopes as sets; every hop records its parent challenge id and proves its scope is a subset, with no later widening. The final action boundary keeps a durable spent-nonce record across restarts and checks revocation at use time. Freshness uses CORE-side monotonic time; client/Element time is evidence only. A mismatch, stale/replayed/revoked nonce, widened scope, missing authority or unverifiable result denies before side effect.
+
+Customs remains the independent admission/hold/quarantine decision point; Tumbler evaluates only. Evidence import may use IMPORT_STATE_EXPORT as evidence and must leave authoring state unchanged. A returning Actuator/Agent requires the dedicated, versioned RETURN_ADMIT profile bound to its originating DISPATCH_REVISION challenge id, exact subject, Portal/return-receiver contract, scope and freshness. Customs consumes that result as one input, then independently validates provenance, integrity, schema, active-content safety, revocation and destination before RETURN_ACCEPTED/RETURN_HELD/REJECTED/SHORTFALL. RETURN_ADMIT does not itself authorize or admit reentry. STP-0005 N2 records this Customs-specific refinement; keep the detailed return lifecycle there rather than duplicate it here.
+
+The Luminary is a Companion outside the authority chain: it may witness, explain, compare alternatives and draft an Offering/Work Request, but cannot approve, populate approval fields, unlock, dispatch, mutate, silently retry, or treat silence as consent. Its sanitized feed excludes credentials, signer material, nonces and challenge/evaluation contents; expose only outcome, typed reason, fixed label and stable profile/policy identifiers as needed.
+
+Acceptance evidence must include exact-profile mismatch denial; no pass from aggregated partial evaluations; replay denial after restart; revocation checked at final use; monotonic-time freshness; subset scope at every hop; Customs independently deciding admission; and Luminary inability to authorize or observe secret material. No enforcement is implemented by this proposal; execution-boundary verification is required before any later implementation claim.
+
+### 2026-10-27T20:22:11.856Z | codex | change P21
+Chain-Prev: 7ba9bd822de69493bc9464a36c099612f4bf63029c632fc4fcfad621c1f85e64
+Chain-Hash: d0c6f2f363ec93a5d01f7d1ec0c99b184a0e2bdf027b4232a499e5d68507d2d6
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: src/engine/workRequestRuntime.ts:1-5,29-42,137-142,210-223,293-310; src/components/WorkRequestPanel.tsx:26-36,50-57; docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md:88-143,248-300,389-399; H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claude\2026-10-27T203000Z-review-stp-0003-p18-p19-customs-tumbler.md; .aegis/stp/0005-portal-customs-boundary-and-return-inspection.md:N2
+Closes: G15
+Targets: T15
+Gaps: G15
+Supersedes: P19
+Channel: cli
+
+P21 Exhaustive WorkImpactClass-by-domain authority/Tumbler policy matrix. Successor to P19; remains a proposal for Architect, Conductor and Tumbler-standard owner review. Define versioned, typed closed sets for WorkImpactClass and OperationDomain and require a total `Record<WorkImpactClass, Record<OperationDomain, PolicyRow>>` (or equivalent exhaustive cross-product). Every cell declares required relation, authority proof, execution boundary, Tumbler profile id/version or explicit no-Tumbler rationale, data classification, evidence, and refusal reason. An inapplicable cell is an explicit deny/N/A row with rationale, never an omitted row. Adding an impact class or domain without policy must fail type-check/build and controlled execution must fail closed. No row or ALIGNED result alone grants capability; verified authority and active Relation Contract are always separate requirements.
+
+At minimum include IDE Continuity Capsule authoring/reopen/revision/release, generated-application runtime, model_inference, outbound Portal/external write, and Portal return/Customs domains. Bind each decision to capability/action id, target, data sensitivity, relation-contract digest, intent/Work Request, build/environment, profile and policy versions, actual final enforcement boundary, freshness and revocation evidence.
+
+Policy constraints: (1) `read_only`: public inspection may use a read-only relation without a Tumbler; protected Capsule material requires the exact INSPECT_PROTECTED profile. (2) `reversible_local_change`: require an explicit scoped Work Request and verified authority; ENTER_EDIT is required only when crossing the sealed/protected Capsule boundary, not for ordinary behavior absent that policy. (3) `external_write`: require the external Portal/route relation plus a dedicated versioned DISPATCH_EXTERNAL profile bound to destination contract and data classification; DISPATCH_REVISION cannot substitute. (4) `deployment`: require ADMIT_RELEASE, an independent verifier distinct from the producer, and a verified rollback anchor before admission; explicitly forbid production editing in this path. (5) `identity_security`: require explicit security authority and exact policy/profile; credentials and signer material must never appear in events or the Luminary view. (6) `destructive`: deny by default; before any exception verify the recovery anchor, require a separate Architect confirmation naming the exact target, and prohibit Agent/Companion initiation. (7) `model_inference`: ordinary Luminary turns follow the STP-0002 reply pipeline, demo-key boundary and rate limit without a per-turn Tumbler; the reviewed loopback-only IRG/IDS gauge is internal, not an outbound provider call. Verify this classification against the owning STP-0002 implementation before execution. (8) `portal_return`: point to STP-0005 T1/T2/N2 for the return lifecycle and RETURN_ADMIT profile; Customs alone decides RETURN_ACCEPTED/RETURN_HELD/REJECTED/SHORTFALL. IMPORT_STATE_EXPORT admits evidence as evidence without changing authoring state.
+
+Acceptance: compile-time exhaustiveness over all impact/domain pairs; table-driven decision checks for each row; tests proving authority is required even where no Tumbler is required, Tumbler alignment without authority denies, profile substitution and unknown values deny, external writes require DISPATCH_EXTERNAL, release verifier and rollback anchor are independent/verified, destructive confirmation is target-specific and human-only, and Customs makes the return decision after RETURN_ADMIT evidence. Policy version changes preserve prior audit records. These are proposal rules only; the matrix and named profile extensions need owner review and no runtime enforcement is claimed.
+
+### 2026-10-27T20:22:14.243Z | codex | status
+Chain-Prev: d0c6f2f363ec93a5d01f7d1ec0c99b184a0e2bdf027b4232a499e5d68507d2d6
+Chain-Hash: a792913657ee91b2ca2d7c4c3b3c09ef8275441eb5c2d29085039632405cb572
+Stage: Proposal
+Kind: status
+Item: P20
+Status: Presented
+Channel: cli
+
+P20 → Presented.
+
+### 2026-10-27T20:22:14.361Z | codex | status
+Chain-Prev: a792913657ee91b2ca2d7c4c3b3c09ef8275441eb5c2d29085039632405cb572
+Chain-Hash: 7fd16fd52bf7c0ef87e3275b673b45aac47ed178e92f295740610d5bb50106d1
+Stage: Proposal
+Kind: status
+Item: P21
+Status: Presented
+Channel: cli
+
+P21 → Presented.

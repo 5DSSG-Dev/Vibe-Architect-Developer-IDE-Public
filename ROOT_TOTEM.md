@@ -100,3 +100,9 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - Architect clarifies written Proposals remain revisable by incoming instances/models. A reviewer can propose a more efficient or better-supported way to meet the Target; the first method is not binding.
 - Second-set-of-eyes review evaluates Target coverage, evidence/assumptions, dependencies, compatibility, efficiency and verification. Append review findings and superseding rationale, then present the resulting proposal for Architect approval before implementation. Preserve Target and history; changed revisions do not inherit approval automatically.
 - STP-0004 N12 records this refinement. No independent review or implementation approval is claimed by this update.
+
+## 2026-10-27 | codex | Peer-reviewed Customs/Tumbler proposal refinements
+- Claude/Verus reviewed STP-0003 P18/P19 at branch commit 44a867f. P18/P19 were superseded append-only by P20/P21, retaining prior history. P20 and P21 are Presented proposals, not approved implementation.
+- P20 specifies exact non-substitutable Tumbler profile binding, durable anti-replay/revocation/time/scope checks, explicit role ownership, Customs as admission decision-maker with RETURN_ADMIT as evidence, and the Luminary's Companion boundary.
+- P21 specifies an exhaustive typed WorkImpactClass-by-domain matrix with dedicated external-write and model-inference treatment and explicit release/destructive/security checks. STP-0005 N2 cross-references the Customs return profile so it is not duplicated in STP-0003.
+- Verification: STP-0003 and STP-0005 chain validation pass; `git diff --check` passes. No application code or runtime behavior changed. STP-0005 was not included in Claude/Verus's review.
