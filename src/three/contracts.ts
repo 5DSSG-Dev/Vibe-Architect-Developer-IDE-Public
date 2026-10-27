@@ -1,4 +1,5 @@
 import type * as THREE from 'three';
+import type { SceneElementKind } from '../contracts/elementSchema';
 
 export type SceneWriteDomain =
   | 'topology'
@@ -31,7 +32,7 @@ export interface SceneSystem {
   dispose(): void;
 }
 
-export type SceneEntityKind = 'core' | 'orb' | 'satellite' | 'umbilical' | 'portal';
+export type SceneEntityKind = SceneElementKind;
 export type OperationalStatus =
   | 'nominal'
   | 'queued'

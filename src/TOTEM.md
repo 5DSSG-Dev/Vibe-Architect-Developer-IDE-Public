@@ -51,3 +51,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Architect clarifies CORE=main/root application, not CyberPeer Formless Center; no CyberPeer Initiative build option. CoreMatrixModal:35-56,139-150; relationEngine:312-328; three/elementTotem:209-219 and auditEngine:87-96 contain contrary concepts requiring coordinated correction.
 - Catalog descriptions are duplicated between relationEngine DEFAULT_APOTHECARY_CATALOG and modelCatalog MODEL_DESCRIPTORS. Update function-first copy consistently; preserve stable ids and user-authored content. New-build app-type/crystal mapping remains planned; current ThreeCanvas crystalVariant selects visual styles in local component state.
 - STP-0004 S17-S18/N9/T8-T9/G8-G9/P7-P8 hold evidence and proposals. No code/schema migration or UI change executed.
+
+## 2026-10-27 | codex | STP-0003 P1 Element schema
+- Added `src/contracts/elementSchema.ts` as the source for Element kinds, connection-kind vocabulary, Apothecary grouping names, scene kinds, and admin component kinds. Existing aliases now derive from this file; no connection behavior or catalog entries changed.
+- No `TotemKind` source declaration existed in the current checkout; the canonical schema exports `TotemKind` for future Totem consumers. Only one `SceneEntityKind` declaration exists despite the older proposal describing three.
+- Change is on `codex/stp-0003-p1-element-schema`; claim commit `58423c1` was pushed before edits. Source implementation is not committed. Tests/build were not run.

@@ -1,16 +1,9 @@
+import type { ElementCatalogCategory } from '../contracts/elementSchema';
+
 export type GeometryType = 'sphere' | 'octahedron' | 'cube' | 'cylinder' | 'dodecahedron' | 'tetrahedron';
 export type SatelliteClass = 'I/O' | 'Compute' | 'Storage' | 'Validation' | 'Security';
 export type ElementCodeLanguage = 'TypeScript' | 'Python' | 'Rust' | 'JSON' | 'Stellar';
-export type CategoryType =
-  | 'Ingredients'
-  | 'Formulas'
-  | 'Satellites'
-  | 'Actuators'
-  | 'Constellations'
-  | 'Portals'
-  | 'Orbs'
-  | 'Cores'
-  | 'Umbilicals';
+export type CategoryType = ElementCatalogCategory;
 export type TrustBadgeType = 'Canonical' | 'Validated' | 'Formulated' | 'Experimental' | 'Draft';
 export type SocketState = 'Vacant' | 'Active' | 'Degraded' | 'Severed';
 

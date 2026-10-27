@@ -3,6 +3,7 @@ import type {
   OperationEvent,
   PodTopologySnapshot,
 } from './contracts.ts';
+import { ADMIN_COMPONENT_KINDS } from '../../contracts/elementSchema.ts';
 import { isSanitizedMessageFlowProjection } from './messageFlow.ts';
 
 export const SUPPORTED_ADMIN_SCHEMA_VERSION = '1.0.0';
@@ -10,7 +11,7 @@ export const MAX_OPERATION_SEQUENCE = 10_000_000;
 export const MAX_SEQUENCE_JUMP = 10_000;
 
 const GLOBAL_ID = /^(?:[A-Za-z][A-Za-z0-9_.-]*:)?[A-Za-z0-9][A-Za-z0-9_.:/-]{2,127}$/;
-const COMPONENT_KINDS = new Set<ComponentKind>(['pod', 'orb', 'satellite', 'umbilical', 'portal']);
+const COMPONENT_KINDS = new Set<ComponentKind>(ADMIN_COMPONENT_KINDS);
 const PHASES = new Set<OperationEvent['phase']>(['observed', 'queued', 'running', 'completed', 'fell_short']);
 const EVENT_STATUSES = new Set<OperationEvent['status']>(['nominal', 'degraded', 'contained', 'rejected', 'rolled_back']);
 const SOURCE_BOUNDARIES = new Set(['replay_fixture', 'live']);
