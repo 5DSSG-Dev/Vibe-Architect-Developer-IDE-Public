@@ -92,3 +92,13 @@ Evidence: H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claud
 Channel: cli
 
 Customs return-profile refinement from Claude/Verus review. Customs remains the admission authority for RETURN_ACCEPTED/RETURN_HELD/REJECTED/SHORTFALL; a Tumbler evaluation is only evidence to that decision. Define a versioned RETURN_ADMIT profile for a returning Actuator/Agent, bound to the originating DISPATCH_REVISION challenge id, exact subject, Portal/return receiver contract, operation scope and freshness. Customs verifies that exact profile result at return inspection and independently checks provenance, integrity, schema, active-content safety, revocation and destination before admitting sanitized data. Do not reuse or substitute DISPATCH_REVISION as the return profile, and do not let RETURN_ADMIT itself authorize reentry. Cross-reference only: Claude/Verus reviewed STP-0003 P18/P19, not this STP-0005. This marker does not settle profile dimensions/ownership or approve implementation.
+
+### 2026-10-27T20:52:17.615Z | codex | note N3
+Chain-Prev: 67233fc7fd4cd3e7868fd007d521449de35da8fd2a14f697e519a3caca00e771
+Chain-Hash: 3a0d1a4c1bf300f2213cd5b9c59c4367d0965fed6fd46cd038df720f8a1475c0
+Stage: Gap
+Kind: note
+Evidence: H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claude\2026-10-27T203500Z-review-stp-0003-p20-p21-stp-0005-n2.md
+Channel: cli
+
+Clarify RETURN_ADMIT origin binding after Claude/Verus review: Customs validates the RETURN_ADMIT evidence against the originating outbound challenge id and its profile: DISPATCH_EXTERNAL for Portal/external trips; DISPATCH_REVISION for internal revisions. This profile binding establishes the return evidence context only. Customs independently decides RETURN_ACCEPTED, RETURN_HELD, REJECTED or SHORTFALL after the return checks; RETURN_ADMIT does not authorize reentry. Cross-reference STP-0003 P20/P21. This note does not approve implementation.

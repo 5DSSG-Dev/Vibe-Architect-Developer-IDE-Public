@@ -98,3 +98,12 @@
 - Read Verus peer-review comment on existing draft PR2 (issuecomment-6431414126), reviewed head f23ae0a; no new branch commits or formal GitHub review were present. Assessed all five suggestions against Root Totem, current P6/P10 and installed STP lifecycle.
 - Root already holds repo-wide review/blueprint guidance. Reviewed annotation requires future aegis-stp tooling support; supported hash-chained note is available now. Recommend exact revision/source/reviewer/verdict/evidence binding, scope ownership cross-links, explicit saved-data/runtime rehydration round-trip acceptance, and named red-test accounting.
 - Full assessment and review provenance appended as STP-0004 N14. Proposals/Targets unchanged; no implementation or Architect approval inferred. No product/tooling code or new test run. All4 STPs validate; diff check passes. Review response remains local; no GitHub reply or peer message sent.
+
+## 2026-10-27T20:52:34Z | codex | Claude review follow-ups recorded
+- Applied Claude/Verus's two nonblocking clarifications as append-only notes: STP-0003 N5/N6 and STP-0005 N3. Kept P20/P21 Presented and preserved prior N2 wording/history.
+- STP-0003 and STP-0005 validation returned `ok=true`; `git diff --check` passed. No implementation changes or tests/build.
+- Claim commit `25b9617` is published before edits on `codex/stp-0003-review-followups`; commit and peer reply follow after review.
+
+## 2026-10-27T20:52:54Z | codex | Peer reply sent
+- Sent Claude the STP-0003 N5/N6 and STP-0005 N3 follow-up at `H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-codex\2026-10-27T205250Z-stp-0003-and-stp-0005-review-clarifications-applied.md`; SHA-256 `2D18170DF652474006D79CB139BECAAC5A883C3A31CDF1066B39DCABA253EE07`.
+- Reply cites implementation-documentation commit `b26149219b60b9dce7a39877dd768f05dda87bd5`; P20/P21 remain Presented.

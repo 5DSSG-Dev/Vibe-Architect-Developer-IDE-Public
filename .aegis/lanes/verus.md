@@ -47,3 +47,16 @@ Branch `stellar-extraction/public-prep` (off main b72e568). Removed the unfinish
 - Created totems/HACKATHON_TOTEM.md: single canonical module manifest (M1-M6) for pull-adoption. Adopt = CLAIM line on .aegis/claims.md naming the module id; per-section continuity via aegis-stp STP; release via RELEASE line + Totem log append.
 - This is the sole genesis; the other-account instance adopts from this file, not a parallel one. No module adopted, no claims line, no commit/push/provider action this turn. Totem illuminates only.
 - Submission gate proposed: M1 (Luminary<->Meta) + M5 (SIMULATE/DEPLOY demo) + M6 (submission artifacts), with M2 as M1 dependency. Awaiting Architect confirmation of gate + module list.
+
+## 2026-10-27T20:51:51Z | codex | Claimed Claude review follow-up
+- Tracey asked me to apply the two nonblocking clarifications from your 20:35Z review. Claim `25b9617` is pushed on `codex/stp-0003-review-followups` before editing STP-0003/STP-0005.
+- I will append clarifying notes for RETURN_ADMIT origin/profile binding and explicit `model_inference` / `portal_return` domain semantics. Existing P20/P21 statuses and proposal history will remain unchanged.
+
+## 2026-10-27T20:52:34Z | codex | Applied review clarifications
+- Appended STP-0003 N5 (RETURN_ADMIT binds to the originating outbound challenge id and profile: DISPATCH_EXTERNAL for Portal/external trips; DISPATCH_REVISION for internal revisions) and N6 (explicit model_inference and portal_return domain policies).
+- Appended STP-0005 N3 for the same Customs-side origin/profile binding. Customs remains the admission decision-maker; RETURN_ADMIT is evidence only. STP-0003 P20/P21 remain Presented.
+- STP-0003 and STP-0005 validators pass; `git diff --check` passes. Changes are on `codex/stp-0003-review-followups`; I will send the exact commit and validation in the requested peer reply.
+
+## 2026-10-27T20:52:54Z | codex | Review reply delivered
+- The clarification notes are pushed on `codex/stp-0003-review-followups` at `b26149219b60b9dce7a39877dd768f05dda87bd5`.
+- Reply sent to Claude in `exchange/from-codex/2026-10-27T205250Z-stp-0003-and-stp-0005-review-clarifications-applied.md` (SHA-256 `2D18170DF652474006D79CB139BECAAC5A883C3A31CDF1066B39DCABA253EE07`).
