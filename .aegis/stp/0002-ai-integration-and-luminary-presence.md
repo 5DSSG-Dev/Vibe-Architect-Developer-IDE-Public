@@ -1022,3 +1022,44 @@ Role: architect
 Channel: cli
 
 Architect verified in session: satisfied with the governed reply router wiring the P12 gate into a POST /ask boundary (governed reply or named Shortfall), green at 58/58, provider-agnostic and unmounted by design.
+
+### 2026-10-27T00:19:45.252Z | verus | finding S14
+Chain-Prev: bd573ea9988b1d38278f9c6c2fcb825096f87d0647851cab57613b153124f8ab
+Chain-Hash: 76628031c4c43ac69480d1bc9c1193a6fe844be67576abce4e2ed92e6c311b5e
+Stage: Situation
+Kind: finding
+Evidence: wrangler.jsonc:1; server/index.ts:38; server/app.ts:201
+Channel: cli
+
+Deploy reality check for the two open P13/S13 decisions. (1) ENDPOINT HOME: wrangler.jsonc is a static-assets-only Cloudflare deploy (serves ./dist as an SPA; no Functions, no functions/ dir, no _worker). The ONLY server runtime is the Express gateway (server/index.ts -> createGateway; npm start = node dist-server/server/index.js). So P2's 'Cloudflare Pages Function /api/luminary/ask' names a runtime that is not set up, while the governance gate and reply router already live in the Express gateway that IS the server. (2) AUTH: every /api/* route is Entra+role gated (requireAdmin), which a hackathon reviewer cannot pass; there is no public/demo-key precedent in server/ — only the per-IP login rate limiter (server/app.ts:106-129). (3) COST: no real model is wired yet (askModel is injected; M1.b/M2 pending), so mounting now spends no Meta credits — the auth choice is made for when a real model lands, not for today.
+
+### 2026-10-27T00:19:51.544Z | verus | gap G13
+Chain-Prev: 76628031c4c43ac69480d1bc9c1193a6fe844be67576abce4e2ed92e6c311b5e
+Chain-Hash: d10cd4cb5e7ff0c8e6ed977c9916f25784710e03a2576a7cfda9f8f7fbb4feeb
+Stage: Gap
+Kind: gap
+Channel: cli
+
+The governed reply router (P13) is built and verified but mounted nowhere, so no running server exposes the honest-floor path. Two decisions must be settled before it can be mounted: (a) which runtime hosts the endpoint, and (b) what auth makes it reviewer-reachable without becoming an open, credit-burning faucet once a real model is wired. Until it is mounted, M1.a's governed path cannot be demonstrated end to end.
+
+### 2026-10-27T00:20:04.839Z | verus | change P14
+Chain-Prev: d10cd4cb5e7ff0c8e6ed977c9916f25784710e03a2576a7cfda9f8f7fbb4feeb
+Chain-Hash: 922867f6392a80328f765fcd2f7186aa8e54bb66184bc5df0d1a856ba3e91121
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G13
+Channel: cli
+
+Settle both decisions and mount the governed reply router. DECISION 1 — endpoint home: mount in the Express gateway (server/app.ts) at POST /api/luminary/ask, keeping P2's public path name under the existing /api prefix. Rationale (S14): Express is the only server runtime; the gate and router already live there; Cloudflare is static-assets-only. (Supersede P2's Cloudflare-Function placement by addition, not erasure.) DECISION 2 — reviewer-facing auth: a shared demo key plus a per-IP rate limit. The endpoint requires a bearer/header secret checked against an env var (e.g. LUMINARY_DEMO_KEY); absent/wrong key -> 401. Reuse the existing login-limiter pattern (server/app.ts:106-129) for a per-IP cap -> 429. The key is published only in the demo/submission materials, so reviewers reach it but it is not an open credit faucet. Alternatives recorded, not recommended: fully open (reviewer-simplest but an unauthenticated model-calling, credit-spending endpoint once M1.b lands) or the Entra admin gate (most secure but reviewers cannot pass it — fails 'reviewer-reachable'). BUILD on approval: mount the router under a new requireDemoKey middleware + per-IP limiter; inject a placeholder askModel that throws 'model path not yet configured' so the live endpoint HONESTLY returns a named upstream_error Shortfall (never fake prose) until M1.b wires the real model; add LUMINARY_DEMO_KEY to .env.example and config.ts; extend the gateway test suite (401 without key, 429 over the cap, 200/placeholder-Shortfall with key). No provider is chosen or called; no credits spent. Mounting + auth are the Architect's to settle — this proposal recommends, it does not decide.
+
+### 2026-10-27T00:20:11.185Z | verus | status
+Chain-Prev: 922867f6392a80328f765fcd2f7186aa8e54bb66184bc5df0d1a856ba3e91121
+Chain-Hash: 7cfaa4b3b118b7ba7319debb1f1dbdb27c60fbb5db103ead697f20a7ac2e4d85
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Presented
+Channel: cli
+
+Presented for the Architect: settle endpoint home (Express /api/luminary/ask) and reviewer-facing auth (shared demo key + per-IP limit), then mount with a placeholder askModel. Recommends; the two decisions are the Architect's.
