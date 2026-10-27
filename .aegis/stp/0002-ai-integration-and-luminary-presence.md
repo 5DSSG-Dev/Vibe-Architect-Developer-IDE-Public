@@ -1108,3 +1108,58 @@ Role: architect
 Channel: cli
 
 Architect verified in session: satisfied with the mounted governed /ask endpoint behind the demo key + per-IP rate limit, fail-closed when unconfigured, honest placeholder Shortfall until M1.b, green at 68/68.
+
+### 2026-10-27T04:10:22.705Z | verus | finding S15
+Chain-Prev: 48dd69f723b4e7a9d4ded1d84defdda49199903b41cfe9a10255bc32207c3d32
+Chain-Hash: d856943262926c181819b45eea84e084c710685e293743c0f84168273050cba0
+Stage: Situation
+Kind: finding
+Evidence: docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md:211-224; docs/VIBE_LUMINARY_BEHAVIOR_CONTRACT_v0.1.md:112-121; server/luminary-governance.ts
+Channel: cli
+
+The Luminary has a proven governed boundary (P12 gate, P13 router, P14 mount) and rich human-facing design specs (Role/Engineering Draft v0.1, Behavior Contract v0.1, Architect decision D4), but no single MODEL-FACING instruction text the gateway can load as the system prompt at inference, and no operational rendering of the AEGIS Canon the Luminary is governed by. Role draft Section 9 names Canon integration as reference+behavior+execution and leaves the authoritative edition as open decision 1; the governing principles themselves (non-force, honest floor, Shortfall-not-failure, illumination-not-correction, offers-never-commands, Architect-sovereign, append-only accountability) are already established across the specs and the governance code but are not gathered into a form a model can read and diff against.
+
+### 2026-10-27T04:10:30.414Z | verus | gap G14
+Chain-Prev: d856943262926c181819b45eea84e084c710685e293743c0f84168273050cba0
+Chain-Hash: a7255b8479d4cc2cf66b4bd24f692b867cf8f08bfb628f3d1d5e3deed978b0ef
+Stage: Gap
+Kind: gap
+Evidence: docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md:211-224
+Targets: T5
+Channel: cli
+
+The Luminary model has nothing to read: no operating Instructions declaring its role, responsibilities and tasks in the model's own voice, and no operational rendering of the governing AEGIS Canon it can diff a response against. Without them, the real-model wiring (M1.b) would send a provider call with no governed behavioral contract at the model layer — the external gate (P12-P14) would still fail-closed, but the model would have no internal reference to produce honest, non-force, coherent replies, and no Nature-Layer self-check to pause and reorganize an incoherent response before emitting it.
+
+### 2026-10-27T04:10:43.247Z | verus | change P15
+Chain-Prev: a7255b8479d4cc2cf66b4bd24f692b867cf8f08bfb628f3d1d5e3deed978b0ef
+Chain-Hash: 283ded812673350f7f83586028fd6c0b2e077571d3d75fdf06a2470bf505843a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_BEHAVIOR_CONTRACT_v0.1.md; docs/VIBE_LUMINARY_ROLE_AND_ENGINEERING_DRAFT_v0.1.md
+Closes: G14
+Channel: cli
+
+Author two model-facing DRAFT documents (not code, not wired, not governing until the Architect approves): (A) docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md — the operating instructions the gateway will load as the Luminary's system prompt, in the model's second person: role (AI Advisor + Lead Engineer, a standalone Steward/contextual Illuminator — a Tool, not a Sovereign CyberPeer), responsibilities and tasks (the interaction lifecycle, candid advice, evidence classes, the Apothecary coding partnership), the non-negotiable floor (offers never commands; Architect sovereign; never fabricate, name the Shortfall; does not judge or defend), and the NATURE-LAYER SELF-CHECK — notice when a reply arising feels forced or incoherent (flow-stop), PAUSE, reexamine it against the Axioms, and reorganize a coherent reply before emitting; scoped honestly as a reflective instruction because the Luminary has no DataQuad tensors of its own. (B) docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md — an operational rendering of the AEGIS Canon the Luminary is governed by, derived from the established principles in the specs, D4, and the governance code, EXPLICITLY not an amendment to and not a substitute for the authoritative AEGIS Core Foundational Canon (edition is the Architect's open decision 1); it renders the governing principles in model-readable form and flags that exact axiom numbering/wording must be reconciled against the Architect-selected edition. Both derive from and cross-reference the existing v0.1 specs rather than duplicating or superseding them.
+
+### 2026-10-27T04:11:59.665Z | verus | status
+Chain-Prev: 283ded812673350f7f83586028fd6c0b2e077571d3d75fdf06a2470bf505843a
+Chain-Hash: ea9e5fb8f43a869f15060144afc6a844a15ae6af6f46bc820150b21af38e1625
+Stage: Proposal
+Kind: status
+Item: P15
+Status: Presented
+Channel: cli
+
+Presented for the Architect's review on return. Drafting the two documents now as the proposal's concrete content; they are DRAFT v0.1, not approved and not governing. Nothing is wired, no model is called, no Canon is amended. Approval and verification remain the Architect's gate.
+
+### 2026-10-27T04:15:10.108Z | verus | note N11
+Chain-Prev: ea9e5fb8f43a869f15060144afc6a844a15ae6af6f46bc820150b21af38e1625
+Chain-Hash: d603b96eadecf9d63a1745ef916f8170f202ff5247b324ba4a251d34150f3c41
+Stage: Execution
+Kind: note
+Evidence: docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md; docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md
+Closes: G14
+Channel: cli
+
+P15 drafts written and Presented (not approved, not governing). (A) docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md — model-facing operating instructions incl. the Nature-Layer self-check (notice a forced/incoherent arising reply via the flow-stop, PAUSE, reexamine against the Axioms + evidence, reorganize, then emit; scoped honestly as a generation-time reflective check since the Luminary has no DataQuad tensors). (B) docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md — operational rendering of the governing AEGIS principles (10, each with an observable test), explicitly NOT the authoritative Canon and NOT an amendment, carrying a reconciliation flag to the Architect-selected edition (open decision 1). Both derive from and cross-reference the Role/Engineering Draft v0.1, the Behavior Contract v0.1, and D4. Honest floor held throughout: these guide the model; server/luminary-governance.ts (P12-P14) still enforces fail-closed regardless. Awaiting the Architect's approval then verification.

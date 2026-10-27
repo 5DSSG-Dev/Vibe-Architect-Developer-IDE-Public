@@ -81,6 +81,21 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | verus | M1.a — Luminary Instructions + Governing-Canon drafts PRESENTED (P15)
+- At the Architect's direction (while he rests), drafted the two model-facing artifacts the
+  Luminary was missing: `docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md` (the operating instructions the
+  gateway will load as the system prompt — role, floor, Steward's voice, the Nature-Layer
+  self-check pause→reexamine→reorganize, responsibilities, lifecycle, authority/safety) and
+  `docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md` (an operational rendering of the AEGIS principles
+  the Luminary diffs against — explicitly NOT the authoritative Canon, not an amendment, with a
+  reconciliation flag to the Architect-selected edition).
+- Both DERIVE FROM and cross-reference the existing v0.1 specs (Role/Engineering Draft, Behavior
+  Contract) and D4 rather than duplicating or superseding them; both are DRAFT v0.1, Presented for
+  review, **not approved and not governing**. Nothing wired, no model called, no Canon amended.
+- Recorded as STP-0002 S15 → G14 → P15 (Presented) + note N11. Honest floor held: the Instructions
+  guide the model; the external gate (P12-P14) still enforces fail-closed regardless. Awaiting the
+  Architect's approval/verification on return. M1.a stays IN-PROGRESS.
+
 ### 2026-10-26 | verus | M1.a first step VERIFIED — reply-governance gate
 - The fail-closed reply-governance gate (`server/luminary-governance.ts` + tests) is built,
   green (server typecheck clean; gateway suite 52/52), and **Architect-VERIFIED** as STP-0002
