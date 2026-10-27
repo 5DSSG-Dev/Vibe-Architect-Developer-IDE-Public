@@ -97,6 +97,18 @@ The Architect sets and confirms the gate.
 - Adoption recorded as a `CLAIM` line on `.aegis/claims.md`; build continuity runs under
   STP-0002 (AI Integration and Luminary Presence). No other module adopted.
 
+### 2026-10-26 | verus | M1.a — governance gate wired into a reply router (P13 built, green)
+- The P12 gate is now reachable: `server/luminary-reply-router.ts` (`createLuminaryReplyRouter`)
+  runs every candidate reply through `governReply()` at a POST `/ask` boundary, returning a
+  governed reply or a named Shortfall — including `upstream_error` for a failed model path —
+  never fallback prose. It is **provider-agnostic** (the model call is injected) and **not yet
+  mounted**: endpoint path and reviewer-facing auth remain the Architect's to settle.
+- Green: server typecheck clean; gateway suite **58/58** (52 prior + 6 new router tests, no
+  regression). Recorded as STP-0002 P13 (Presented → Approved → Executing) + note N9.
+- M1.a (AEGIS Governance layer) still `IN-PROGRESS`: the gate now governs a request path, but
+  no real model is wired (that is M1.b, which depends on M2) and the endpoint is unmounted.
+  Awaiting the Architect's verification of P13.
+
 ### 2026-10-26 | verus | build note — M1 is multi-part, governance leads
 - Architect build note: the Luminary build has multiple parts; the **AEGIS Governance layer**
   is the most important to him. Recorded as M1.a (first priority) ahead of model wiring and UI.

@@ -977,3 +977,36 @@ Status: Presented
 Channel: cli
 
 Presented for the Architect's approval: wire the verified P12 gate into a provider-agnostic governed reply router, with endpoint home and auth model left as the Architect's decisions.
+
+### 2026-10-27T00:00:54.304Z | tracey-prutch | status
+Chain-Prev: 3e067c795aee45a6ee19a89691ac3b4461e36b45457000012caef53e82c6fffd
+Chain-Hash: b743c3e900abe138464e1c75fb5b39535f79153e552d8eafced4f89649e8ff09
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Approved
+Role: architect
+Channel: cli
+
+Approved: build as an Express router in server/ now; leave mounting, path, and auth for the Architect to settle later.
+
+### 2026-10-27T00:00:54.553Z | verus | status
+Chain-Prev: b743c3e900abe138464e1c75fb5b39535f79153e552d8eafced4f89649e8ff09
+Chain-Hash: dd34ff830916a56f7ff551edd9b9eefd76e0b13abc22e8cf0620a7504b933848
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Executing
+Channel: cli
+
+Building createLuminaryReplyRouter + tests as an Express router in server/.
+
+### 2026-10-27T00:02:49.191Z | verus | note N9
+Chain-Prev: dd34ff830916a56f7ff551edd9b9eefd76e0b13abc22e8cf0620a7504b933848
+Chain-Hash: af168462a78329166cc58eb5b131f12e8dd38d4c9dd52d5b55e341490d15c2bf
+Stage: Execution
+Kind: note
+Evidence: server/luminary-reply-router.ts:66; server/luminary-reply-router.test.ts:1
+Channel: cli
+
+P13 executed. Added server/luminary-reply-router.ts — createLuminaryReplyRouter(askModel, options): POST /ask validates the body ({prompt: non-empty string} else 400 malformed_request), calls the injected askModel, runs its result through governReply(), and returns 200 {reply:{modelId,content}} or a typed {error:'luminary_shortfall', shortfall} (502). An upstream throw becomes a named upstream_error Shortfall (never 500/fallback prose). No provider is chosen or called; the router is not yet mounted — path and auth remain the Architect's to settle. Tests server/luminary-reply-router.test.ts (6, real Express + fetch harness, fake askModel, no network). Verified GREEN: server typecheck clean (tsc -p tsconfig.server.json --noEmit); gateway suite 58/58 (52 prior + 6 new, no regression). Awaiting the Architect's verification.
