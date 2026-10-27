@@ -1277,3 +1277,13 @@ Kind: note
 Channel: cloud
 
 Refines N13 at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: an EMBEDDED model of about 1B parameters or smaller performed the gauge functions (IRG per-virtue readings and the IDS/IDQRA observation) well. Design consequence for P17: the gauge runs embedded alongside the gateway rather than as a hosted provider call, so gauging spends no provider credits and adds no network dependency; the IRG scorer interface stays injected so the embedded runtime can be swapped or faked in tests. A Meta open-weight model of that size (for example Llama 3.2 1B) keeps the hackathon's Meta rule; the exact model and runtime are chosen when M1.b resumes (on hold). P17 remains Presented and unapproved.
+
+### 2026-10-27T07:09:28.227Z | claude | note N15
+Chain-Prev: 1341c8cf398e272fe47a34911fcfc3fefccfb5a22e80a92b6ab64b2ce04c72f8
+Chain-Hash: 40d918fb5f8242c1eef3b8dd7f30daaf18c89b867ec4b3930a2adda4c062c86b
+Stage: Proposal
+Kind: note
+Evidence: AEGUS_ARBITER_THREE_MODEL_SERVICE: calibration/evidence/engine-comparison-2026-09-23/analysis.txt; server/irg.ts; server/irg-system-one.ts; server/ids.ts; .env.example
+Channel: cloud
+
+Refines N14 after reading the Arbiter service's own IRG/IDS code and calibration evidence (experiment 2026-09-23, 52 calibration + 20 validation Architect-approved cases), with the Architect's agreement. Observed: llama3.2:1b is fast (p50 0.2-0.8 s) and missed no shortfall in its best modes, but over-blocks (irg-json: 75-90% unnecessary IDS per virtue, 65% validation accuracy; irg-system-one-single: 85% validation, ~44-56% per-virtue miss on calibration). qwen3.5:4b reached 92-100% validation accuracy with near-zero unnecessary IDS at p50 3.7-8.9 s. The service's configured IRG model is aegis-phi4-irg. Revised recommendation: the gauge stays a small, separate, embedded model, but its size is SET BY CALIBRATION, not fixed at 1B; the evidence points to roughly 3-4B. Qwen and Phi are not Meta models, so the first Meta candidate to calibrate is Llama 3.2 3B, run against the same 72-case corpus and modes; Llama 3.2 1B stays a fallback if latency dominates. Caveat: the validation partition is 20 cases, so results are an early signal. Model selection still waits for M1.b (on hold); P17 remains Presented and unapproved.
