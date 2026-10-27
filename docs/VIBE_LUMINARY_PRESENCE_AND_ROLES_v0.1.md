@@ -1,0 +1,76 @@
+# Vibe Luminary — Presence and Roles v0.1
+
+Status: **PROPOSED (STP-0002 P19, Presented). Nothing is built until the Architect approves.**
+Architect: Tracey Prutch · Drafted by: Claude (cloud thread), for Lumin to review at code level.
+Builds on, does not replace: Behavior Contract v0.1, Operating Instructions v0.1 (P15), decision D4,
+the Companion row of the Tumbler Continuity Interface Standard v0.1 §2.5, and proposals P3, P4, P5 and P6
+(approved 2026-10-24, not yet built).
+
+---
+
+## 1. Why now, before the Meta model
+
+The Meta model plugs into one place in the gateway (the reply source). Everything the Architect and the
+judges actually see, the Luminary's panel, how it talks, what it offers, what it refuses, does not depend on
+which model answers. So the Luminary's presence and roles are built and tested now with a stand-in, and the
+Meta model is a swap at the end. A one- or two-reply Meta smoke test can be run earlier, only with the
+Architect's go-ahead, to surface integration surprises.
+
+## 2. One Luminary, five ways of helping
+
+The Luminary is one role (D4.4). It is a Companion: it may witness, suggest, compare, explain, and form an
+Offering. It may not unlock, dispatch, change anything, admit anything, or treat silence as a yes.
+
+| Way of helping | What the Architect sees | What it never does |
+|---|---|---|
+| **At rest** | The golden core in the corner. It never raises itself. | Observe or send anything (D4.2). |
+| **Explainer** | Answers questions about what is on screen, in the current mode (Design, Code, Simulate, Deploy). | Judge the Architect. |
+| **Coding partner** | Writes code with the Architect when asked, explained plainly, with a Copy button. | Put code into the project by itself. |
+| **Offering** | A proposal card ("I can draft this Orb design note") with Accept and Decline. On Accept, the IDE's existing Work Request makes it and shows a receipt. | Run the work itself. If the card is left alone, it is a no. |
+| **Guide** | One guided session (later; can wait). | Act with authority. |
+
+Assigned coding tasks run by an executor (P9) and durable learning (P11) stay where they are and can wait.
+
+## 3. Presence in the IDE (the Full Form)
+
+The existing corner icon and panel (`src/components/LuminaryHost.tsx`) grow into the conversation P3 described:
+
+- **Header:** the name, which model is answering ("Rehearsal stand-in" now, the Meta model later), and Pause.
+- **Status line:** resting, thinking, answering, stopped, unavailable.
+- **Conversation:** the Architect's messages and the Luminary's replies. Each reply that passed the gauge
+  shows a small "checked" mark; a reply that was revised after an IDS pass says so.
+- **Context chips (P4):** only what the Architect adds (the selected element, a pasted snippet). Before
+  sending, the panel shows exactly what will go and its size. Nothing is attached automatically.
+- **Stop:** ends an answer mid-way.
+- **Shortfall cards (P5):** when something fails (no model, gauge unavailable, too long, withheld after IDS),
+  the panel says so in plain words. No fallback text ever poses as an answer.
+- **Offering cards (P6):** Accept or Decline, then the Work Request receipt.
+
+## 4. The stand-in
+
+A **rehearsal reply source** in the gateway, switched on by one setting. It returns short, scripted replies
+that exercise each role (an explanation, a code snippet, an Offering, a Shortfall). Every reply is labelled
+with the model id `rehearsal-stand-in`, and the panel shows a "Rehearsal" badge, so it can never be mistaken
+for a real model. It passes through the same governance gate and reply pipeline as the real model will.
+
+The gauge is not faked. On the Architect's PC the real embedded gauge reads every stand-in reply. Where no
+gauge is running (the cloud), each reply is withheld as "gauge unavailable", which is itself a useful test of
+the Shortfall card.
+
+## 5. Build order (each step tested before the next)
+
+1. Gateway: the rehearsal reply source, and a reply shape that can carry an Offering.
+2. Panel: conversation, status line, Stop, Shortfall cards.
+3. Context chips.
+4. Offering cards wired to the existing Work Request and its receipt.
+5. End-to-end check: typecheck, all tests, build, and the IDE run in a browser with screenshots, with no errors.
+
+## 6. What this does not do
+
+- It does not call a Meta model or spend credits.
+- It does not change the governance gate, the reply pipeline, or the gauge.
+- It gives the Luminary no way to change the project on its own.
+
+---
+
+*DRAFT v0.1 for Architect review. The Architect holds the words.*

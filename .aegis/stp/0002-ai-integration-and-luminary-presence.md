@@ -1474,3 +1474,46 @@ Role: architect
 Channel: cloud
 
 Architect threshold selection for the embedded gauge (llama3.2:3b, system-one, 0-100 readings): the calibrated per-virtue values from N18, Honesty 13.8, Respect 29.3, Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7. Offered as "I'll use the calibrated values and record them as your choice. Once that's set, the gauge is ready to switch on." Verbatim answer, 2026-10-27T21:19:04Z: "yes". Rationale given by the Architect, 2026-10-27T21:01:01Z: "The reason we had to add a threshold is because of the nuances of human language. Every response was failing because it was not possible to score 100% on every virtue because of these nuances." Caveat carried from N20: Honesty can move by up to about 5 points with runtime cache state. Recorded from the cloud thread by claude.
+
+### 2026-10-27T21:45:00.000Z | claude | finding S19
+Chain-Prev: a2accb978a1306f19f97e0cb9d28469b21f3a89b04a94c64e2f2924620fec931
+Chain-Hash: ca002502b62d6146a8cea987c63dce5dacae8c67a0488574ded13518b0047bdd
+Stage: Situation
+Kind: finding
+Evidence: src/components/LuminaryHost.tsx:1; .aegis/stp/0002 P3, P4, P5, P6 (Approved 2026-10-24, no Executing entry); docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md:57; server/luminary-reply-router.ts:37
+Channel: cloud
+
+The Luminary's presence in the IDE is still the paused corner icon and a Full Form that says no reasoning provider is connected. The conversation panel (P3), context tray (P4), honest-floor Shortfalls (P5) and governed artifact flow (P6) were approved on 2026-10-24 and never built. The gateway reply source defaults to notConfiguredAskModel, so the panel has nothing to show until a model is wired. The Companion row of the Tumbler standard (witness, suggest, compare, explain, form an Offering; never unlock, dispatch, mutate, admit or treat silence as consent) and D4.1 (collaborator, with Architect-accepted work) are not yet reconciled into one list of roles the UI can show. The Architect asked (2026-10-27T21:29Z) to get the whole IDE running without error before the Meta model is connected, starting with the Luminary's UI presence and roles.
+
+### 2026-10-27T21:45:00.010Z | claude | gap G18
+Chain-Prev: ca002502b62d6146a8cea987c63dce5dacae8c67a0488574ded13518b0047bdd
+Chain-Hash: a98e6dd4d90222e3d88a1b28f3792934e26a949ddf10d43ea2483f7e9fa22d2e
+Stage: Gap
+Kind: gap
+Evidence: S19
+Channel: cloud
+
+No defined set of running roles for the Luminary, no conversation surface, and no reply source that lets the UI be built and tested end to end before the Meta model is connected, without any stand-in reply posing as a model answer.
+
+### 2026-10-27T21:45:00.020Z | claude | change P19
+Chain-Prev: a98e6dd4d90222e3d88a1b28f3792934e26a949ddf10d43ea2483f7e9fa22d2e
+Chain-Hash: 3643e0aaa51346dd2d967bcd206d675f641513b0f91aafdcb950f07ae0e6d6b1
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S19; D4; P3; P4; P5; P6
+Closes: G18
+Channel: cloud
+
+Luminary presence and roles, built against a labelled stand-in (docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md). Roles: one Luminary acting as a Companion in five ways: At rest (never raises itself, observes nothing), Explainer (mode-aware Q&A), Coding partner (snippets with Copy, never written into the project by the Luminary), Offering (Accept/Decline card; on Accept the existing Work Request runs it and returns a receipt; an untouched card is a no), and Guide (deferred). Presence: LuminaryHost's Full Form becomes the P3 conversation (header naming the answering model, status line, transcript with a gauge-checked mark and IDS-revised note, Stop), with P4 context chips, P5 Shortfall cards and P6 Offering cards. Stand-in: a rehearsal reply source in the gateway, enabled by one setting, returning scripted replies that exercise each role, every reply labelled model id rehearsal-stand-in and badged Rehearsal in the panel, passing through the unchanged governance gate and reply pipeline. Build order: gateway stand-in and Offering reply shape; panel; context chips; Offering cards to Work Request; end-to-end check (typecheck, tests, build, browser run with screenshots, no errors). No Meta model call, no credits, no change to the gate, pipeline or gauge. P9, P10 and P11 stay deferred. Code-level review by Lumin. Nothing is built until P19 is approved.
+
+### 2026-10-27T21:45:00.030Z | claude | status
+Chain-Prev: 3643e0aaa51346dd2d967bcd206d675f641513b0f91aafdcb950f07ae0e6d6b1
+Chain-Hash: d4828fcb7b96ea2d863059dc483d6a40464c2a7b85aea26b7c395027d9ae56b9
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Presented to the Architect in plain words. Presenting is not approval.
