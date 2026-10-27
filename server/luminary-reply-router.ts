@@ -24,6 +24,18 @@ import {
  */
 export type AskModel = (prompt: string) => Promise<unknown>;
 
+/** The error a not-yet-wired model path throws; the router turns it into upstream_error. */
+export const MODEL_NOT_CONFIGURED_MESSAGE = 'Luminary model path is not yet configured.';
+
+/**
+ * The honest placeholder reply source used until a real model is wired (M1.b, depends on M2).
+ * It never fabricates a reply: it throws, so the governed endpoint returns a named
+ * upstream_error Shortfall. Mounting it spends no provider credits.
+ */
+export const notConfiguredAskModel: AskModel = async () => {
+  throw new Error(MODEL_NOT_CONFIGURED_MESSAGE);
+};
+
 /** The request body the endpoint accepts. */
 export interface LuminaryAskRequest {
   prompt: string;

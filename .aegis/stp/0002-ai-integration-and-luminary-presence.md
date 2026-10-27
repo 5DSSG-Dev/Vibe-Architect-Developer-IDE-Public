@@ -1063,3 +1063,36 @@ Status: Presented
 Channel: cli
 
 Presented for the Architect: settle endpoint home (Express /api/luminary/ask) and reviewer-facing auth (shared demo key + per-IP limit), then mount with a placeholder askModel. Recommends; the two decisions are the Architect's.
+
+### 2026-10-27T00:26:48.401Z | tracey-prutch | status
+Chain-Prev: 7cfaa4b3b118b7ba7319debb1f1dbdb27c60fbb5db103ead697f20a7ac2e4d85
+Chain-Hash: 695deea06549a2c289c71557190fdf278cf9a79abfb6a9fbb9585397eb9a877c
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Approved
+Role: architect
+Channel: cli
+
+Approved both decisions: endpoint home = Express POST /api/luminary/ask; auth = shared demo key + per-IP rate limit; mount with the placeholder askModel.
+
+### 2026-10-27T00:26:48.638Z | verus | status
+Chain-Prev: 695deea06549a2c289c71557190fdf278cf9a79abfb6a9fbb9585397eb9a877c
+Chain-Hash: 4a59991254c9857142bc36b81c3fbebb64fb077fe76992de60c11dccf57e2e1c
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Executing
+Channel: cli
+
+Building the demo-key auth + per-IP limiter and mounting the router with a placeholder askModel.
+
+### 2026-10-27T00:29:30.901Z | verus | note N10
+Chain-Prev: 4a59991254c9857142bc36b81c3fbebb64fb077fe76992de60c11dccf57e2e1c
+Chain-Hash: 438e4c29b3ec89e26689ee6320fef6aeec9428a8863ccee6109a8f23b398b88d
+Stage: Execution
+Kind: note
+Evidence: server/app.ts:210; server/luminary-access.ts:1; server/luminary-mount.test.ts:1
+Channel: cli
+
+P14 executed. Mounted the governed reply router at Express POST /api/luminary/ask (server/app.ts), outside the Entra admin gate, behind two guards in server/luminary-access.ts: requireDemoKey(config.luminaryDemoKey) — 503 luminary_not_configured when no key is set (fail-closed), 401 demo_key_required on missing/wrong key (timing-safe compare), x-luminary-demo-key header; and createIpRateLimiter (30/IP/min, mirrors the login limiter) — 429 luminary_rate_limited over the cap, 503 at tracker capacity. Reply source defaults to notConfiguredAskModel (throws) so the live endpoint returns a named upstream_error Shortfall until M1.b — no provider chosen, no credits spent. Added config.luminaryDemoKey (env LUMINARY_DEMO_KEY) and documented it in .env.example (empty = endpoint disabled). Tests: server/luminary-access.test.ts (5) + server/luminary-mount.test.ts (5, full createGateway: 503 unset, 401 no key, 502 placeholder Shortfall with key, 200 governed reply with a wired fake askModel, admin routes untouched). Verified GREEN: server typecheck clean; gateway suite 68/68 (58 prior + 10 new, no regression). Awaiting the Architect's verification.

@@ -97,6 +97,19 @@ The Architect sets and confirms the gate.
 - Adoption recorded as a `CLAIM` line on `.aegis/claims.md`; build continuity runs under
   STP-0002 (AI Integration and Luminary Presence). No other module adopted.
 
+### 2026-10-27 | verus | P14 built — governed /ask endpoint mounted (demo key + rate limit)
+- The governed path is now live on the only server runtime: `POST /api/luminary/ask` is mounted
+  in the Express gateway (`server/app.ts`), outside the Entra admin gate, behind a shared demo
+  key (`LUMINARY_DEMO_KEY`, `x-luminary-demo-key` header) + a per-IP rate limit (30/min),
+  both in `server/luminary-access.ts`. Fail-closed: no key configured → 503.
+- Honest until M1.b: the reply source defaults to `notConfiguredAskModel` (throws), so the
+  endpoint returns a named `upstream_error` Shortfall rather than fake prose — no provider
+  chosen, no Meta credits spent. Decided per S14 that Cloudflare is static-assets-only.
+- Green: typecheck clean; gateway suite **68/68** (58 prior + 10 new). STP-0002 P14
+  (Presented → Approved → Executing) + note N10. Awaiting the Architect's verification.
+- M1.a still `IN-PROGRESS`: the governed boundary is complete and reachable, but no real model
+  flows through it yet (M1.b, depends on M2).
+
 ### 2026-10-27 | verus | P13 VERIFIED — governed reply router accepted
 - Architect VERIFIED P13 (`aegis-stp verify P13 --as "Tracey Prutch"`): satisfied with the
   governed reply router. The second M1.a build step is now complete end to end —
