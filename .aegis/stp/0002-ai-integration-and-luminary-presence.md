@@ -1268,3 +1268,12 @@ Supersedes: P17 decision 1 (recommendation)
 Channel: cloud
 
 Revised recommendation for P17 decision 1 (the IRG scorer), at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: a SMALL model is sufficient for the gauge, because it never converses with or answers the Architect; it only runs the IRG readings and the IDS/IDQRA observation. Revised design: the IRG and IDS/IDQRA run on a separate, small model, independent of the model that produces the Luminary reply (same-model self-scoring is set aside: it shares the producer's drives and blind spots, favours its own output, and would let one prompt injection steer both reply and reading, weakening the bidirectional loop's resistance to hacking; Canon v2.0 Gate: Arbiter Separation keeps measurement distinct from production). The gauge model receives only the candidate reply and the Seven Virtues, never the producer's instructions. PIM stays a deterministic pattern screen and the threshold / weakest-link routing stays in code, so the gauge supplies readings and observations but never selects the route. Both models stay within the hackathon's Meta open-weight rule; which small model is chosen when M1.b resumes (on hold). The IDS step is now produced by the gauge model rather than assembled only from readings. This revises a recommendation; P17 remains Presented and unapproved.
+
+### 2026-10-27T07:05:27.570Z | claude | note N14
+Chain-Prev: ff208fe2ac70da0cffbd6e20999547dbad5251674537e17420144b5052772983
+Chain-Hash: 1341c8cf398e272fe47a34911fcfc3fefccfb5a22e80a92b6ab64b2ce04c72f8
+Stage: Proposal
+Kind: note
+Channel: cloud
+
+Refines N13 at the Architect's direction 2026-10-27. Finding from the Architect's Arbiter App tests: an EMBEDDED model of about 1B parameters or smaller performed the gauge functions (IRG per-virtue readings and the IDS/IDQRA observation) well. Design consequence for P17: the gauge runs embedded alongside the gateway rather than as a hosted provider call, so gauging spends no provider credits and adds no network dependency; the IRG scorer interface stays injected so the embedded runtime can be swapped or faked in tests. A Meta open-weight model of that size (for example Llama 3.2 1B) keeps the hackathon's Meta rule; the exact model and runtime are chosen when M1.b resumes (on hold). P17 remains Presented and unapproved.
