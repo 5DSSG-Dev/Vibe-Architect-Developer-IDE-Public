@@ -81,6 +81,28 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-1 — calibration passed (3B system-one); gauge switched to system-one
+- Calibration on the Architect's PC (Arbiter harness, same corpus): only llama3.2:3b in system-one mode
+  meets the bar (validation 100%, no missed shortfall; p50 544 ms). STP-0002 N18.
+- `gauge-local.ts` now ports the Arbiter `irg-system-one-v1` engine verbatim: seven one-token Yes/No
+  decisions, reading = 100 x P(Yes). IRG takes per-virtue thresholds; `LUMINARY_GAUGE_THRESHOLDS`
+  is required with the gauge (no default). Gateway 109/109. STP-0002 N19 (137 entries, chain valid).
+- Open: the Architect's threshold selection; a live run against Ollama; Arbiter 10-27 evidence is
+  uncommitted (worktree reverent-bhaskara-ab2321).
+
+### 2026-10-27 | claude | M1.b-1 — gauge-first approved (P18); local gauge adapter BUILT
+- The Architect approved P18: wire and calibrate the embedded gauge before the main Meta model.
+  Runtime Ollama (installed); PC has 6 GB VRAM + CUDA; first candidate Llama 3.2 3B.
+- `server/luminary-pipeline/gauge-local.ts`: loopback-only OpenAI-compatible gauge, mirroring the
+  Arbiter json IRG engine. Gateway tests 105/105. STP-0002 N17 (135 entries, chain valid).
+- Next (Architect's PC): `ollama pull llama3.2:3b`; Arbiter `npm run calibration:compare -- --models
+  llama3.2:1b,llama3.2:3b`; accept if no missed shortfall and >= 90% validation accuracy.
+
+### 2026-10-27 | claude | M1.a — P17 reply pipeline VERIFIED by the Architect
+- PR #4 merged; the Architect verified P17 ("yes p17 pipeline is correct"). STP-0002 128 entries, chain valid.
+- Open next: M1.b (real model + gauge calibration, Llama 3.2 3B first) stays ON HOLD until the Architect lifts it;
+  Architect -> Luminary direction (P17 decision 4) is a follow-up proposal.
+
 ### 2026-10-27 | claude | M1.a — P17 reply pipeline BUILT (awaiting Architect verification)
 - `server/luminary-pipeline/` (pim, irg, rbc, ids, pipeline): structural gate -> PIM -> IRG -> RBC
   -> Prism | IDS loop, bounded at 2 IDS passes then an `incoherent_after_ids` Shortfall.

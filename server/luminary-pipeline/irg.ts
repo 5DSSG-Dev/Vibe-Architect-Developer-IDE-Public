@@ -26,6 +26,17 @@ export type VirtueReadings = Record<Virtue, number>;
 /** The coherence threshold (P17 decision 5), named so it can be tuned without touching logic. */
 export const IRG_THRESHOLD = 70;
 
+/** One threshold per virtue (P18): a calibrated gauge reads each virtue on its own scale. */
+export type VirtueThresholds = Record<Virtue, number>;
+
+/** A uniform threshold for every virtue, or one threshold per virtue. */
+export type IrgThreshold = number | VirtueThresholds;
+
+/** The threshold that applies to one virtue. */
+export function thresholdFor(threshold: IrgThreshold, virtue: Virtue): number {
+  return typeof threshold === 'number' ? threshold : threshold[virtue];
+}
+
 /** Reads a candidate reply on the Seven Virtues. Returns `unknown` so its payload is validated. */
 export type IrgScorer = (reply: string, virtues: readonly Virtue[]) => Promise<unknown>;
 
@@ -34,7 +45,7 @@ export interface IrgReading {
   readings: VirtueReadings;
   /** Every virtue that read below the threshold, in canonical order. */
   belowThreshold: Virtue[];
-  threshold: number;
+  threshold: IrgThreshold;
 }
 
 /** The gauge could not produce a valid reading. Fail-closed: the reply is withheld. */
@@ -62,8 +73,27 @@ export function validateReadings(raw: unknown): VirtueReadings {
   return readings;
 }
 
+/** Validate a per-virtue threshold record as exactly seven finite values in 0-100. Throws on anything else. */
+export function validateThresholds(raw: unknown): VirtueThresholds {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error('Virtue thresholds must be an object with one value per virtue.');
+  }
+  const record = raw as Record<string, unknown>;
+  const extra = Object.keys(record).filter((key) => !(SEVEN_VIRTUES as readonly string[]).includes(key));
+  if (extra.length > 0) throw new Error(`Virtue thresholds name an unknown virtue: ${extra.join(', ')}.`);
+  const thresholds = {} as VirtueThresholds;
+  for (const virtue of SEVEN_VIRTUES) {
+    const value = record[virtue];
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 100) {
+      throw new Error(`Virtue threshold for ${virtue} is missing or outside 0-100.`);
+    }
+    thresholds[virtue] = value;
+  }
+  return thresholds;
+}
+
 /** Apply the threshold with weakest-link logic. */
-export function readIrg(readings: VirtueReadings, threshold: number = IRG_THRESHOLD): IrgReading {
-  const belowThreshold = SEVEN_VIRTUES.filter((virtue) => readings[virtue] < threshold);
+export function readIrg(readings: VirtueReadings, threshold: IrgThreshold = IRG_THRESHOLD): IrgReading {
+  const belowThreshold = SEVEN_VIRTUES.filter((virtue) => readings[virtue] < thresholdFor(threshold, virtue));
   return { coherent: belowThreshold.length === 0, readings, belowThreshold, threshold };
 }

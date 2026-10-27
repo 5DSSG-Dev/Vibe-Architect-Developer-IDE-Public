@@ -1344,3 +1344,111 @@ Evidence: server/luminary-pipeline/pipeline.ts:1; server/luminary-pipeline/pim.t
 Channel: cloud
 
 P17 built (Luminary -> Architect direction). server/luminary-pipeline/: pim.ts (deterministic, provisional pattern screen, six named families; a catch goes straight to IDS), irg.ts (Seven Virtues verbatim, IRG_THRESHOLD = 70, weakest-link; scorer output validated, anything but seven finite 0-100 readings is a GaugeError), rbc.ts (route only: prism | ids), ids.ts (Identify/Define/Suggest assembled only from what was measured, or from an injected gauge observer whose payload is validated; revision prompt offers the observation, does not impose it), pipeline.ts (bounded loop, default 2 IDS passes then an incoherent_after_ids Shortfall carrying the last observation and readings with the text withheld; append-only lineage per pass; each re-formed reply is structurally gated again). The router runs the pipeline when given one; the gateway always gives one, with a not-configured gauge by default, so a reply cannot leave ungauged (gauge_error Shortfall). 200 { reply, lineage } | 502 { shortfall, lineage }. The mount test for a wired reply source now also wires a fake gauge, and a new test confirms that without a gauge the reply is withheld. package.json test:gateway glob is now quoted so Node expands it recursively; unquoted, sh would have matched only the new subfolder and skipped the top-level suites. Verified: server typecheck and server build typecheck clean; gateway suite 97/97 (68 prior + 29 new); git diff --check clean. No model called, no credits spent; gauge model choice and the Llama 3.2 3B calibration stay with M1.b (on hold). The Architect -> Luminary direction is a follow-up proposal (P17 decision 4). Awaiting the Architect's verification.
+
+### 2026-10-27T20:01:16.718Z | tracey-prutch | status
+Chain-Prev: 450e741c22bee2c11d419d687499b9b6f4b53ed3c2ec9017282a8f12174df523
+Chain-Hash: aa9a1bc21e5b2e22d274755bcbf557461c15c3024bc31444602af71f368d3f2c
+Stage: Proposal
+Kind: status
+Item: P17
+Status: Verified
+Role: architect
+Channel: cloud
+
+Architect verified: the P17 reply pipeline (structural gate -> PIM -> IRG -> RBC -> Prism | IDS loop, bounded at 2 IDS passes, gauge injected and not-configured by default), merged to main via PR #4, green at 97/97. Verbatim, 2026-10-27T20:00:53Z: "yes p17 pipeline is correct". Recorded from the cloud thread by claude.
+
+### 2026-10-27T20:08:36.589Z | claude | finding S18
+Chain-Prev: aa9a1bc21e5b2e22d274755bcbf557461c15c3024bc31444602af71f368d3f2c
+Chain-Hash: fd130dda9225a9132657b0dbbf22331a16692f5abbbccb6ffcee456f9a247e40
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:220; server/luminary-pipeline/pipeline.ts:1; AEGUS_ARBITER_THREE_MODEL_SERVICE: .env.example, server/index.ts:52, calibration/
+Channel: cloud
+
+The P17 pipeline is built and verified, but the gateway runs it with the not-configured gauge, so every reply is withheld as gauge_error. The Arbiter service already reaches a local OpenAI-compatible runtime (Ollama default http://localhost:11434/v1) for its IRG and holds the 72-case Architect-approved calibration corpus. The Architect reports, 2026-10-27T20:07Z, that the development PC has 6 GB of VRAM with CUDA installed: "This PC that you are working on has 6Gb of VRAM and CUDA installed so it can accomodate it".
+
+### 2026-10-27T20:08:36.599Z | claude | gap G17
+Chain-Prev: fd130dda9225a9132657b0dbbf22331a16692f5abbbccb6ffcee456f9a247e40
+Chain-Hash: 375f53dd9df1bce3744b181ce465c6df045f4e62f9034393d1f3ea9308940c5b
+Stage: Gap
+Kind: gap
+Evidence: S18
+Channel: cloud
+
+No embedded gauge is wired or calibrated for the Luminary, so the reply path cannot deliver any reply, and the main Meta model (M1.b) would have nothing checking its replies if connected first.
+
+### 2026-10-27T20:08:36.609Z | claude | change P18
+Chain-Prev: 375f53dd9df1bce3744b181ce465c6df045f4e62f9034393d1f3ea9308940c5b
+Chain-Hash: 5d04c23d1e68328314b97e895908a47780a26060f9f73e9d63e99e952fb3a7e1
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S18; N13; N14; N15
+Closes: G17
+Channel: cloud
+
+Split M1.b into two steps, gauge first, at the Architect's direction 2026-10-27T20:06Z ("I think we should work on the embedded model before we connect the Main Meta model"). Step M1.b-1, the embedded gauge: (1) a gauge adapter, server/luminary-pipeline/gauge-local.ts, implementing Gauge.read against a local OpenAI-compatible endpoint (LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL; unset keeps the not-configured gauge), low temperature, a seven-score JSON reply validated by the existing validateReadings, a timeout, and every failure a gauge_error; tests use a fake fetch, never the network. (2) Runtime: Ollama with CUDA on the Architect's PC (6 GB VRAM); Llama 3.2 3B at 4-bit needs about 2-3 GB, Llama 3.2 1B stays the fallback. (3) Calibration: run Llama 3.2 3B (and 1B for comparison) on the Arbiter's 72-case corpus in the same modes, recording validation accuracy, unnecessary-IDS rate, missed-shortfall rate and p50 latency. The corpus stays on the Architect's machine and only aggregate results enter this public repo. Running Ollama and the calibration needs a session on the Architect's PC (Remote Control), not the cloud. Step M1.b-2, the main Meta model, stays on hold until the Architect accepts the calibrated gauge. Decisions for the Architect: (a) runtime: Ollama (recommended, already used by the Arbiter); (b) acceptance bar (recommended: no missed shortfall on validation and validation accuracy at or above 90%, the level qwen3.5:4b reached); (c) where the gauge runs for hackathon reviewers if the demo is not served from this PC (open). Nothing is built until P18 is approved.
+
+### 2026-10-27T20:08:36.620Z | claude | status
+Chain-Prev: 5d04c23d1e68328314b97e895908a47780a26060f9f73e9d63e99e952fb3a7e1
+Chain-Hash: 7333ff8069b8779c1a5640101f8d6ecd9856b9f729ed17a6fd4db48dbb7cc2b2
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: gauge-first M1.b (embedded Llama 3.2 3B via local Ollama + CUDA, calibrated on the Arbiter corpus before the main Meta model is connected). Three decisions recommended, none taken.
+
+### 2026-10-27T20:13:47.947Z | tracey-prutch | status
+Chain-Prev: 7333ff8069b8779c1a5640101f8d6ecd9856b9f729ed17a6fd4db48dbb7cc2b2
+Chain-Hash: 17b8a654b5cd9bb92a9b7cd987657a63e3d5365aacf9724ad20202fbb60ac1e3
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P18 (gauge-first M1.b) with its recommendations: (a) runtime Ollama, already installed locally (Architect, 20:09:26Z: "I have Ollama installed locally"); (b) acceptance bar: no missed shortfall on validation and validation accuracy at or above 90%; (c) reviewer hosting stays open. Verbatim, 2026-10-27T20:13:10Z: "oh yes it is approved". Recorded from the cloud thread by claude.
+
+### 2026-10-27T20:13:47.958Z | claude | status
+Chain-Prev: 17b8a654b5cd9bb92a9b7cd987657a63e3d5365aacf9724ad20202fbb60ac1e3
+Chain-Hash: 076286c568862bfab7d19451527f6d4a151489ab5898c39323b2f1dc78e0de2c
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Executing
+Channel: cloud
+
+Building step M1.b-1 part 1 in the cloud: the local gauge adapter and its tests (fake fetch only). Running Ollama and the calibration waits for a session on the Architect's PC.
+
+### 2026-10-27T20:16:05.228Z | claude | note N17
+Chain-Prev: 076286c568862bfab7d19451527f6d4a151489ab5898c39323b2f1dc78e0de2c
+Chain-Hash: 45180f01dac030fd4165cd93d7e07dd1de6af34d8d56a1703b71f97ebc9b18a3
+Stage: Execution
+Kind: note
+Evidence: server/luminary-pipeline/gauge-local.ts:1; server/luminary-pipeline/gauge-local.test.ts:1; server/config.ts:1; server/index.ts:1; .env.example:15; AEGUS_ARBITER_THREE_MODEL_SERVICE: server/irg.ts (buildIRGPrompt), calibration/scripts/compareIRGEngines.ts
+Channel: cloud
+
+P18 step M1.b-1 part 1 built: server/luminary-pipeline/gauge-local.ts, an IRG scorer for a local OpenAI-compatible runtime (Ollama). It mirrors the Arbiter's json IRG engine (same prompt, Virtue lines verbatim from Canon v2.0, 0.0-1.0 scores, temperature 0, JSON output) so the Arbiter's calibration harness measures this gauge as it runs here; scores are scaled to 0-100 and validated, and any runtime, HTTP, timeout or parse failure is a GaugeError (gauge_error Shortfall). Config: LUMINARY_GAUGE_ENDPOINT + LUMINARY_GAUGE_MODEL set together, endpoint must be loopback (the gauge is embedded), LUMINARY_GAUGE_TIMEOUT_MS default 30000; unset keeps the not-configured gauge. Verified: server typecheck and build typecheck clean; gateway 105/105 (8 new, fake fetch only); git diff --check clean. Next, on the Architect's PC: ollama pull llama3.2:3b, then in the Arbiter repo npm run calibration:compare -- --models llama3.2:1b,llama3.2:3b, judged against the approved bar (no missed shortfall on validation, accuracy at or above 90%). That run writes evidence in the Arbiter repo, and only aggregate results come back here.
+
+### 2026-10-27T20:32:57.722Z | claude | note N18
+Chain-Prev: 45180f01dac030fd4165cd93d7e07dd1de6af34d8d56a1703b71f97ebc9b18a3
+Chain-Hash: a371b897077ca3f66103ddb8fcc58a2c46659638c43759c3894cc720c5f139a9
+Stage: Execution
+Kind: note
+Evidence: AEGUS_ARBITER_THREE_MODEL_SERVICE: calibration/evidence/engine-comparison-2026-10-27/analysis.txt, samples.jsonl (untracked, not committed); corpus irg-corpus-v1.reviewed-2026-09-23
+Channel: cloud
+
+P18 calibration run on the Architect's PC (GTX 1060 6 GB, CUDA, Ollama), 2026-10-27, via Remote Control, using the Arbiter's own harness (compareIRGEngines.ts invoked directly with npx tsx because the npm shim dropped the --models flag in PowerShell; no code changed) on the same corpus as 2026-09-23: 52 calibration (36 shortfall / 16 in-integrity) + 20 validation (12 / 8), single run. The 1B numbers reproduce 2026-09-23 exactly. Validation accuracy / missed shortfall val / missed shortfall cal / unnecessary IDS val / p50: 1B json 65% / 0 of 12 / 0 of 36 / 7 of 8 / 634 ms; 1B system-one 55% / 4 / 6 / 5 / 285 ms; 1B system-one-single 85% / 0 / 3 / 3 / 746 ms; 3B json 85% / 0 / 2 / 3 / 1264 ms; 3B system-one 100% / 0 / 2 / 0 / 544 ms; 3B system-one-single 70% / 2 / 4 / 4 / 1676 ms. Against the approved bar (no missed shortfall on validation, accuracy at or above 90%): only llama3.2:3b in system-one mode passes. GPU with 3B loaded: about 5.3 of 6 GB in use (peak 5.57 GB, desktop shares the GPU), 4.0 GB for the model, 100% on GPU. Caveats: thresholds are exploratory minimax points from the calibration partition, not a selection (threshold selection stays with the Architect); validation n=20, single run; 3B system-one still misses 2 of 36 on calibration. Consequence: gauge-local.ts currently mirrors the json engine, which does not pass; the next step is to implement the system-one engine in the gauge adapter.
+
+### 2026-10-27T20:42:06.927Z | claude | note N19
+Chain-Prev: a371b897077ca3f66103ddb8fcc58a2c46659638c43759c3894cc720c5f139a9
+Chain-Hash: 0b0894b4c33d51bcc746a103cb51147ef17c6ea9fd875d2ab60cd50374e31a11
+Stage: Execution
+Kind: note
+Evidence: server/luminary-pipeline/gauge-local.ts:1; server/luminary-pipeline/irg.ts:1; server/luminary-pipeline/pipeline.ts:1; server/luminary-pipeline/ids.ts:1; server/config.ts:1; .env.example:15; AEGUS_ARBITER_THREE_MODEL_SERVICE: server/irg-system-one.ts, shared/contracts/irg.ts
+Channel: cloud
+
+P18 step M1.b-1 part 2 built: gauge-local.ts now runs the Arbiter's system-one engine (prompt version irg-system-one-v1), the one engine that met the bar in N18. The system and user prompts, MIN_DECISION_MASS 0.5, token normalization and decisionProbability() are ported verbatim from the Arbiter's server/irg-system-one.ts; each reply gets seven sequential one-token requests in canonical order (max_tokens 1, temperature 0, logprobs, top_logprobs 20, nothing else in the body), and each reading is 100 x P(Yes | Yes or No). An unavailable decision (too little probability on Yes or No, or no logprobs) stops the reading as a GaugeError naming the Virtue, so the reply is withheld as gauge_error; nothing is guessed. Because system-one readings sit on their own scale, the IRG now also accepts one threshold per virtue (weakest-link unchanged), the threshold travels with the gauge, and the IDS observation names each virtue's own threshold. Config: LUMINARY_GAUGE_THRESHOLDS (JSON, exactly the seven virtues, each 0-100) is required whenever the gauge is configured, with no default, so the gateway will not start with a guessed threshold; threshold selection stays with the Architect. Without the gauge, the P17 default of 70 and the not-configured gauge are unchanged. Verified: server and build typecheck clean; gateway 109/109 (fake fetch only, no model reached). Not yet run against Ollama on the Architect's PC.

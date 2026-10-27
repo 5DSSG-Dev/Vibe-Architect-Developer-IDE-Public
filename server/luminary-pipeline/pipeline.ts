@@ -15,7 +15,7 @@
 
 import { governReply, type GovernanceOptions, type GovernedReply, type ShortfallCode } from '../luminary-governance.js';
 import { buildIdsObservation, validateObservation, type IdsInput, type IdsObservation, type IdsObserver } from './ids.js';
-import { IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type IrgReading, type IrgScorer, type Virtue, type VirtueReadings } from './irg.js';
+import { IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type IrgReading, type IrgScorer, type IrgThreshold, type Virtue, type VirtueReadings, type VirtueThresholds } from './irg.js';
 import { screenPim, type PimFinding } from './pim.js';
 import { routeRbc, type RbcRoute } from './rbc.js';
 
@@ -24,6 +24,8 @@ export interface Gauge {
   read: IrgScorer;
   /** Produces the IDS observation. When absent, it is assembled from the readings. */
   observe?: IdsObserver;
+  /** Per-virtue thresholds selected for this gauge's scale (P18). When absent, IRG_THRESHOLD applies. */
+  thresholds?: VirtueThresholds;
 }
 
 /** A gauge that is not wired yet. Fail-closed: every reply becomes a gauge_error Shortfall. */
@@ -42,7 +44,8 @@ export const DEFAULT_MAX_IDS_PASSES = 2;
 
 export interface ReplyPipelineOptions {
   gauge: Gauge;
-  threshold?: number;
+  /** Overrides the gauge's own thresholds. */
+  threshold?: IrgThreshold;
   maxIdsPasses?: number;
   governance?: GovernanceOptions;
 }
@@ -50,7 +53,7 @@ export interface ReplyPipelineOptions {
 export type LineageEntry =
   | { pass: number; stage: 'structural'; ok: boolean; code?: ShortfallCode }
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
-  | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: number }
+  | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
   | { pass: number; stage: 'ids'; observation: IdsObservation }
   | { pass: number; stage: 'prism' };
@@ -75,7 +78,7 @@ function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
-async function gaugeReading(gauge: Gauge, content: string, threshold: number): Promise<IrgReading> {
+async function gaugeReading(gauge: Gauge, content: string, threshold: IrgThreshold): Promise<IrgReading> {
   // Any scorer failure (not configured, thrown, or an invalid payload) is a gauge failure.
   const raw = await gauge.read(content, SEVEN_VIRTUES);
   return readIrg(validateReadings(raw), threshold);
@@ -97,7 +100,7 @@ export async function runReplyPipeline(
   reform: Reform,
   options: ReplyPipelineOptions,
 ): Promise<PipelineResult> {
-  const threshold = options.threshold ?? IRG_THRESHOLD;
+  const threshold = options.threshold ?? options.gauge.thresholds ?? IRG_THRESHOLD;
   const maxIdsPasses = options.maxIdsPasses ?? DEFAULT_MAX_IDS_PASSES;
   const lineage: LineageEntry[] = [];
 

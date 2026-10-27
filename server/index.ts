@@ -5,6 +5,7 @@ import { MsalEntraAuth } from './entra-auth.js';
 import { InMemorySessionStore, RedisSessionStore } from './session-store.js';
 import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
+import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
 
 const config = loadConfig();
 const evidenceStore = config.redisUrl
@@ -28,6 +29,7 @@ try {
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
+    gauge: config.luminaryGauge ? createLocalGauge(config.luminaryGauge) : undefined,
   });
 } catch (error) {
   await Promise.allSettled([sessions.close?.(), evidenceStore.close?.()]);
