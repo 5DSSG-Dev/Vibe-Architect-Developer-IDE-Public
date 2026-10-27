@@ -81,6 +81,11 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-1 — live parity confirmed (IDE gauge = Arbiter system-one)
+- PR #5 merged. Lumin ran both engines live on the Architect's PC (llama3.2:3b, 4 made-up messages):
+  six virtues match exactly; Honesty (asked first) varies up to ~5 points from runtime prompt caching.
+  STP-0002 N20. Open: the Architect's threshold selection.
+
 ### 2026-10-27 | claude | M1.b-1 — calibration passed (3B system-one); gauge switched to system-one
 - Calibration on the Architect's PC (Arbiter harness, same corpus): only llama3.2:3b in system-one mode
   meets the bar (validation 100%, no missed shortfall; p50 544 ms). STP-0002 N18.
