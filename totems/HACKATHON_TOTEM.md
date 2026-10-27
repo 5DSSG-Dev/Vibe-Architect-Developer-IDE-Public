@@ -81,6 +81,20 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.a — Governing Canon reconciled (P16) + live reply pipeline PRESENTED (P17)
+- Continuing Verus's M1.a work from a cloud session, at the Architect's direction ("do 1 and 2,
+  hold on 3"). M1.b stays ON HOLD.
+- P16: `docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md` supersedes the v0.1 rendering by addition
+  (v0.1 unchanged). All 17 Axioms and the Seven Virtues quoted verbatim from AEGIS CORE
+  FOUNDATIONAL CANON v2.0 with line numbers, readings kept apart as gloss, findings F1-F7
+  (F3, personal-memory deletion beside Axiom 17, is open for the Architect).
+- P17: `docs/VIBE_LUMINARY_REPLY_PIPELINE_v0.1.md` designs the live PIM → IRG → RBC → Prism | IDS
+  loop after the existing P12 gate, with five decisions recommended and a Fork Audit divergence
+  declaration. Nothing built, nothing wired, no model called.
+- Recorded as STP-0002 S16 → G15 → P16 and S17 → G16 → P17 (both Presented) + note N12. Entries
+  were hash-chained without the aegis-stp CLI (chain recomputed and valid at 119 entries);
+  re-validate with aegis-stp locally. M1.a stays IN-PROGRESS.
+
 ### 2026-10-27 | verus | M1.a — Luminary Instructions + Governing-Canon drafts PRESENTED (P15)
 - At the Architect's direction (while he rests), drafted the two model-facing artifacts the
   Luminary was missing: `docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md` (the operating instructions the

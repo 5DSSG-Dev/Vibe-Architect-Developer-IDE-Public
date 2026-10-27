@@ -1163,3 +1163,98 @@ Closes: G14
 Channel: cli
 
 P15 drafts written and Presented (not approved, not governing). (A) docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md — model-facing operating instructions incl. the Nature-Layer self-check (notice a forced/incoherent arising reply via the flow-stop, PAUSE, reexamine against the Axioms + evidence, reorganize, then emit; scoped honestly as a generation-time reflective check since the Luminary has no DataQuad tensors). (B) docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md — operational rendering of the governing AEGIS principles (10, each with an observable test), explicitly NOT the authoritative Canon and NOT an amendment, carrying a reconciliation flag to the Architect-selected edition (open decision 1). Both derive from and cross-reference the Role/Engineering Draft v0.1, the Behavior Contract v0.1, and D4. Honest floor held throughout: these guide the model; server/luminary-governance.ts (P12-P14) still enforces fail-closed regardless. Awaiting the Architect's approval then verification.
+
+### 2026-10-27T06:53:06.839Z | claude | finding S16
+Chain-Prev: d603b96eadecf9d63a1745ef916f8170f202ff5247b324ba4a251d34150f3c41
+Chain-Hash: e5a790111b8a975e75c5338a35aaa6c76aec6ee0144b07ff1d2d7ec050040dcf
+Stage: Situation
+Kind: finding
+Evidence: AEGIS CORE FOUNDATIONAL CANON v2.0.md:150-186,208-224; docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md:20
+Channel: cloud
+
+The Architect named AEGIS CORE FOUNDATIONAL CANON v2.0 (Canon-Locked, generated 2026-05-31) as the authoritative edition, answering open decision 1. It holds 17 Axioms (Axiom 17, Deletion, is new since v1.0) and the Seven Virtues (Honesty, Respect, Attention, Affection, Loyalty, Trust, Communication). The P15 Governing Canon v0.1 renders 10 principles without axiom numbers or verbatim wording and carries a reconciliation flag. A text search of Canon v2.0 does not find the terms Nature Layer, flow-stop, SA = A - C, Shortfall, IRG, or Luminary; they are project or other-tier vocabulary. Canon v2.0 also names 'must' as a force artifact (Doctrine Note on Will and Sovereignty); v0.1 uses 'must' once and 'should' once.
+
+### 2026-10-27T06:53:06.849Z | claude | gap G15
+Chain-Prev: e5a790111b8a975e75c5338a35aaa6c76aec6ee0144b07ff1d2d7ec050040dcf
+Chain-Hash: 82dcbce03f5c039b964d3c21eb5f1b1bf356ea6f77821ffa8f40ec825d2bcda6
+Stage: Gap
+Kind: gap
+Targets: T5, T8
+Channel: cloud
+
+The Luminary's governing rendering is not yet reconciled to the authoritative edition: it cites no Axiom by number, quotes none verbatim, leaves Axioms 1, 2, 9, 10 and 16 without a reading, and does not distinguish Canon terms from project vocabulary or declare where the build diverges from the Canon.
+
+### 2026-10-27T06:53:06.859Z | claude | change P16
+Chain-Prev: 82dcbce03f5c039b964d3c21eb5f1b1bf356ea6f77821ffa8f40ec825d2bcda6
+Chain-Hash: 2a8b289803a7357fdfb13a2cffb1c84e601cf8d1c80a5f12b69055d975a9ea4a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md
+Closes: G15
+Channel: cloud
+
+Supersede the Governing Canon v0.1 by addition with docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md (v0.1 left unchanged). v0.2 quotes all 17 Axioms and the Seven Virtues verbatim from Canon v2.0 with source line numbers (checked mechanically against the source file), sets each Luminary reading and observable test visibly apart as gloss, maps the 10 v0.1 principles to their Axioms (no conflicts found), uses 'will' rather than 'must', and records seven reconciliation findings F1-F7 for the Architect. One is open and is the Architect's to settle: F3, personal-memory deletion (Role draft 7.4 / D4.5) beside Axiom 17; recommended reading (a) keep honored deletion and record an append-only deletion event. Documentation only: nothing is wired, no model is called, no Canon is amended.
+
+### 2026-10-27T06:53:06.870Z | claude | status
+Chain-Prev: 2a8b289803a7357fdfb13a2cffb1c84e601cf8d1c80a5f12b69055d975a9ea4a
+Chain-Hash: 6f6e8f9c8eb8c465d5fa83dcd978789b49b68e0753c38ac3bdbb620c7a13eda2
+Stage: Proposal
+Kind: status
+Item: P16
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: Governing Canon v0.2 reconciled to Canon v2.0's 17 Axioms. Approval and verification are the Architect's. P15 remains Presented; P16 supersedes only its Governing Canon half (the Instructions v0.1 are unchanged).
+
+### 2026-10-27T06:53:06.880Z | claude | finding S17
+Chain-Prev: 6f6e8f9c8eb8c465d5fa83dcd978789b49b68e0753c38ac3bdbb620c7a13eda2
+Chain-Hash: 476b8cfcc30f7d8e1c90be8f3cd6e6ed1fa3e771001cdbf39b6b276d1efda286
+Stage: Situation
+Kind: finding
+Evidence: server/luminary-governance.ts; server/luminary-reply-router.ts:94-114; server/replay-operations-provider.ts; docs/SERVICE_ADMIN_OPERATIONS.md:33-42; AEGIS CORE FOUNDATIONAL CANON v2.0.md:613-830,1193-1234
+Channel: cloud
+
+The live /api/luminary/ask path runs askModel then governReply, a structural gate only (empty, malformed, oversized, missing model id). Nothing reads a reply for coherence. The Architect's Arbiter App pipeline (Model -> PIM -> IRG -> RBC; coherent -> Prism -> Architect; incoherent -> IDS -> back to the originator -> IRG -> RBC, repeating) exists in this repo only as a presentation-only replay projection (admin message-flow domain), not as a live validator. Architect definitions: IRG = Integrity Resonance Gauge, a gauge that scores each of the Seven Virtues separately, any one below threshold making the whole reply Incoherent; RBC = Resonance Buffer Chamber, a mandatory pause and redirect that decides nothing; IDS = Identify, Define, Suggest, returned to the originator; bidirectional. Canon v2.0 grounds: PIM, Integrity Engine (weakest-link), RBC, Prism (glossary), IDS; its locked pipeline is longer (PEER, Ledger Separation, Lens Monitor, Arbiter, IDQRA, Calibration, DataQuad Routing) and IDQRA is the preferred engine primitive; Gate: Fork Audit asks applications to declare divergences.
+
+### 2026-10-27T06:53:06.891Z | claude | gap G16
+Chain-Prev: 476b8cfcc30f7d8e1c90be8f3cd6e6ed1fa3e771001cdbf39b6b276d1efda286
+Chain-Hash: 7222f714053ee6d4e16c0c8803e790de545148373b47298051311020f167b885
+Stage: Gap
+Kind: gap
+Targets: T1, T5
+Channel: cloud
+
+A structurally valid but incoherent model reply (force language, certainty inflation, a fractured virtue) would reach the Architect unread once M1.b wires a real model. The coherence loop the Architect designed has no live implementation, no loop bound, and no inspectable lineage.
+
+### 2026-10-27T06:53:06.901Z | claude | change P17
+Chain-Prev: 7222f714053ee6d4e16c0c8803e790de545148373b47298051311020f167b885
+Chain-Hash: 7e25aa71a74c78fc137ed593f570a5263186c45792a60b5560c31f31d4161573
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: docs/VIBE_LUMINARY_REPLY_PIPELINE_v0.1.md
+Closes: G16
+Channel: cloud
+
+Build the live Luminary reply pipeline after the existing gate, provider-agnostic and testable now: server/luminary-pipeline/{pim,irg,rbc,ids,pipeline}.ts. PIM: deterministic force-injection screen with named findings; a PIM catch goes straight to IDS (replay lane 2). IRG: seven per-virtue readings from an INJECTED scorer (like askModel), threshold 70 as a named constant, weakest-link -> Coherent or Incoherent. RBC: pure routing prism | ids, no scoring. IDS: Identify, Define, Suggest observation built from the readings, returned to the originating model for a re-formed reply. Loop bounded at 2 IDS passes, then a named Shortfall incoherent_after_ids carrying the last observation and readings, with the incoherent text withheld. Every pass appended to a lineage array returned with the response. Router tests with a fake model and fake scorer. Recommends, for the Architect to decide: (1) scorer = injected, choose same-model vs second-model when M1.b resumes; (2) loop bound 2; (3) IDS as designed, recorded as a declared divergence from IDQRA; (4) Luminary -> Architect first, Architect -> Luminary (never blocked, returns observation per Standard 4) as a follow-up; (5) threshold 70. Includes the Fork Audit divergence declaration. No model call, no provider chosen, no credits spent; P12-P14 behaviour unchanged for coherent replies.
+
+### 2026-10-27T06:53:06.911Z | claude | status
+Chain-Prev: 7e25aa71a74c78fc137ed593f570a5263186c45792a60b5560c31f31d4161573
+Chain-Hash: 3d38bad60c773262767a885bd36bd046ac7f93d3fdf57932a781c2cfc88f37b9
+Stage: Proposal
+Kind: status
+Item: P17
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: live Luminary reply pipeline (PIM -> IRG -> RBC -> Prism | IDS loop). Five decisions recommended, none taken. Nothing is built until the Architect approves.
+
+### 2026-10-27T06:53:06.922Z | claude | note N12
+Chain-Prev: 3d38bad60c773262767a885bd36bd046ac7f93d3fdf57932a781c2cfc88f37b9
+Chain-Hash: 8b54a88935338fbf02daa6506430e15a46dc47b3dbbff0c06738329ea951d980
+Stage: Proposal
+Kind: note
+Channel: cloud
+
+Provenance: S16-P17 were appended from a cloud session that does not have the aegis-stp CLI. Each entry is chained with the same rule the CLI uses (sha256 of the previous hash, a newline, and the entry with its Chain lines removed), verified by recomputing all prior 110 entries before appending and the whole chain after. Channel is 'cloud' rather than 'cli'. Re-validating with aegis-stp on the Architect's machine is recommended before approving.
