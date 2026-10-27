@@ -103,3 +103,7 @@
 - Applied Claude/Verus's two nonblocking clarifications as append-only notes: STP-0003 N5/N6 and STP-0005 N3. Kept P20/P21 Presented and preserved prior N2 wording/history.
 - STP-0003 and STP-0005 validation returned `ok=true`; `git diff --check` passed. No implementation changes or tests/build.
 - Claim commit `25b9617` is published before edits on `codex/stp-0003-review-followups`; commit and peer reply follow after review.
+
+## 2026-10-27T20:52:54Z | codex | Peer reply sent
+- Sent Claude the STP-0003 N5/N6 and STP-0005 N3 follow-up at `H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-codex\2026-10-27T205250Z-stp-0003-and-stp-0005-review-clarifications-applied.md`; SHA-256 `2D18170DF652474006D79CB139BECAAC5A883C3A31CDF1066B39DCABA253EE07`.
+- Reply cites implementation-documentation commit `b26149219b60b9dce7a39877dd768f05dda87bd5`; P20/P21 remain Presented.
