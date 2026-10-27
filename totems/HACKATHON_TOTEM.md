@@ -81,6 +81,13 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-1 — gauge thresholds selected by the Architect; M1.b-1 complete
+- The Architect selected the calibrated per-virtue thresholds for llama3.2:3b (Honesty 13.8, Respect 29.3,
+  Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7), recorded in STP-0002 and
+  `.env.example`. The gauge can now be switched on with the LUMINARY_GAUGE_* settings.
+- Arbiter 10-27 calibration evidence committed in the Arbiter repo: 303838f on claude/reverent-bhaskara-ab2321 (local, not pushed).
+- Next, when the Architect lifts the hold: M1.b-2, the main Meta model.
+
 ### 2026-10-27 | claude | M1.b-1 — live parity confirmed (IDE gauge = Arbiter system-one)
 - PR #5 merged. Lumin ran both engines live on the Architect's PC (llama3.2:3b, 4 made-up messages):
   six virtues match exactly; Honesty (asked first) varies up to ~5 points from runtime prompt caching.
