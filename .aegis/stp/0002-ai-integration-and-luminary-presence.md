@@ -1474,3 +1474,69 @@ Role: architect
 Channel: cloud
 
 Architect threshold selection for the embedded gauge (llama3.2:3b, system-one, 0-100 readings): the calibrated per-virtue values from N18, Honesty 13.8, Respect 29.3, Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7. Offered as "I'll use the calibrated values and record them as your choice. Once that's set, the gauge is ready to switch on." Verbatim answer, 2026-10-27T21:19:04Z: "yes". Rationale given by the Architect, 2026-10-27T21:01:01Z: "The reason we had to add a threshold is because of the nuances of human language. Every response was failing because it was not possible to score 100% on every virtue because of these nuances." Caveat carried from N20: Honesty can move by up to about 5 points with runtime cache state. Recorded from the cloud thread by claude.
+
+### 2026-10-27T21:34:00.000Z | claude | gap G18
+Chain-Prev: a2accb978a1306f19f97e0cb9d28469b21f3a89b04a94c64e2f2924620fec931
+Chain-Hash: f696889e740355fcd529241df31e39342039a54b5d15e9fea433814cf15f9a3d
+Stage: Gap
+Kind: gap
+Evidence: server/luminary-reply-router.ts:37; server/app.ts:235
+Channel: cloud
+
+The Luminary has never answered through the main Meta model. Until one real reply has gone through the governed pipeline with the embedded gauge reading it, any mismatch between Meta's Model API and the pipeline (reply shape, declared model id, reasoning-token use, latency, real cost) stays unknown. The Architect's $150 in Meta credits has to last through the demo video, so this has to be learned at a cost of cents, with no path that can run away.
+
+### 2026-10-27T21:34:00.010Z | claude | change P19
+Chain-Prev: f696889e740355fcd529241df31e39342039a54b5d15e9fea433814cf15f9a3d
+Chain-Hash: 7e96db78bc4e10345bc64faebd3d9c5fd69a131aca144e5c47eceeef3f8e968d
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G18; D3; N18; N20
+Closes: G18
+Channel: cloud
+
+M1.b-2 smoke test before full integration. Build a Meta Model API reply source, server/luminary-meta.ts: OpenAI-compatible chat completions at https://api.meta.ai/v1 (provider per D3), model muse-spark-1.3 (published standard rate $1.25 in / $4.25 out per million tokens; the -contributor variant, which lets Meta train on prompts, is refused), the P15 Instructions as the system message, and the key read only from LUMINARY_META_API_KEY in the git-ignored .env, placed there by the Architect and never pasted into chat or the repo. Hard spend cap: a file-backed ledger checked before every call refuses the call once 2 calls are used or once its worst-case cost would pass $0.25 in total; the worst case is charged up front and only lowered to reported usage, and an unreadable ledger refuses everything. Automated tests use fakes only. A one-question smoke script, run on the Architect's PC, sends the question through the real reply path (gate, PIM, IRG gauge on local Ollama, RBC, Prism or IDS) and checks the gauge is answering before anything is sent. The gateway itself is not wired to Meta in this step, and no UI changes. Presented to the Architect as: at most 2 real replies, stop for good at 25 cents, expected cost a few cents.
+
+### 2026-10-27T21:34:00.020Z | claude | status
+Chain-Prev: 7e96db78bc4e10345bc64faebd3d9c5fd69a131aca144e5c47eceeef3f8e968d
+Chain-Hash: 71ffa9f33515499d32510ff93183f90588da02101ff886e41b117619363c63c6
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: a small smoke test of the main Meta model with a 2-reply and 25-cent hard cap, every reply read by the embedded gauge.
+
+### 2026-10-27T21:35:01.000Z | tracey-prutch | status
+Chain-Prev: 71ffa9f33515499d32510ff93183f90588da02101ff886e41b117619363c63c6
+Chain-Hash: a9f5c93ff17c18edc07e8b8963046ac607f54196aba8807cd1c527d3d7ed4769
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P19 as presented. Architect's direction, 2026-10-27T21:30:35Z: "I agree that a preliminary test to see how things are meshing now is a good idea". Decision card "Approve this small test of Meta's model?", option chosen 2026-10-27T21:35:01Z: "Yes, run it as planned". Recorded from the cloud thread by claude.
+
+### 2026-10-27T21:36:00.000Z | claude | status
+Chain-Prev: a9f5c93ff17c18edc07e8b8963046ac607f54196aba8807cd1c527d3d7ed4769
+Chain-Hash: 3fc137e8ceb5c770c6f9ac7181198109ba70b43d941abb4b6c814de692a4fa90
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Executing
+Channel: cloud
+
+Building the Meta reply source, the spend ledger and the smoke script in the cloud, with fake fetch only. The real call waits for the Architect's key in .env and a run on the Architect's PC.
+
+### 2026-10-27T21:50:00.000Z | claude | note N21
+Chain-Prev: 3fc137e8ceb5c770c6f9ac7181198109ba70b43d941abb4b6c814de692a4fa90
+Chain-Hash: b90da0920040107f64f33853008be3a13f50e492b61a3bd49b9cce3c68abbe3e
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts:1; server/luminary-meta.test.ts:1; scripts/luminary-meta-smoke.ts:1; server/config.ts:64; .env.example; .gitignore
+Channel: cloud
+
+P19 built. server/luminary-meta.ts: createMetaAskModel (bearer key, system message, max_tokens 2000, 60 s timeout; returns an untrusted { modelId, content } that the gate governs) and SpendLedger (.luminary/meta-spend.json, git-ignored; caps counted from disk, so they hold across restarts). Each call reserves a worst case of input estimated at 2 characters per token plus the full 2000-token output allowance, about $0.017 with the Instructions; reported usage then settles the charge; a failed or usage-less call keeps the worst case. parseLuminaryGauge is now exported from config.ts so the smoke script uses the same gauge parsing; with no gauge set in .env it uses the Architect's selected gauge (llama3.2:3b at localhost:11434, the recorded thresholds). scripts/luminary-meta-smoke.ts mounts the real reply router with the pipeline on a loopback port, wakes the gauge first, sends one question, and prints the reply or Shortfall, the per-pass gauge readings and the budget. Verified: 9 new tests (fake fetch only), gateway 118/118, server and build typecheck clean, and a dry run of the script against a local fake model and fake gauge (one call, $0.0046 charged from fake usage). Meta's API has not been reached; base URL, model id and rates are from published third-party guides and are checked by the live run. Note: an IDS revision is a second model call, so with the 2-call cap a reply needing two revisions ends as an upstream_error Shortfall rather than spending more.

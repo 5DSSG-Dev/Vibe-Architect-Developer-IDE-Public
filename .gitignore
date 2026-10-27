@@ -45,3 +45,6 @@ build/
 *.pid
 # Compiler build output
 *.obj
+
+# Luminary Meta model spend ledger (local only, never committed)
+/.luminary/
