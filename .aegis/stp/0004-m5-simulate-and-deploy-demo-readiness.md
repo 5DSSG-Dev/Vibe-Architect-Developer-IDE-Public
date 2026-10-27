@@ -767,3 +767,116 @@ Codex assessment of Verus peer review2026-10-26. Evidence: https://github.com/5D
 4. Round-trip: P10 already states data retention, so the finding is an acceptance-specificity improvement. Recommend a named save -> migrate -> reload -> edit/save -> reload test preserving ids, child relationships, model key, code frames, supported custom fields and user edits, plus verifying contract/resource/capability runtime rehydration consistency. Use pre-migration fixtures and expected allowed changes; absent runtime ledgers should not be mistaken for preserved functioning connections.
 5. Known red test: agree P6 needs explicit baseline accounting. identity.test.ts deterministic rebuild at line443 still reads a Date.now-derived continuityId from kernel.ts; no new suite was run this review turn. Require fresh full-suite reporting at verification. No blanket all-green claim while a test remains failing; any accepted exception must be named, justified and recorded by Architect.
 Assessment: recommendations strengthen reviewability and implementation readiness; no new product bug is introduced by this docs-only PR. These are reviewed suggestions, not authorized product/tooling implementation. Independent Verus review evidence now exists for the specified head; this note is Codex's assessment and does not imply Verus reviewed these later additions.
+
+### 2026-10-27T08:17:29.560Z | tracey | note N15
+Chain-Prev: b47a583695da288bdc42617cee993eadf65983666af70e77433e2e1648b8623e
+Chain-Hash: ad9e6ba7844e19cc11e890cd1ddd76928bd8816a1be57eb21de7f8585ee59cb4
+Stage: Proposal
+Kind: note
+Evidence: src/components/LeftDrawer.tsx:456-576; src/engine/relationEngine.ts:406-714; src/components/RightPanel.tsx:83-150; .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:596-627
+Channel: cli
+
+Architect scope clarification, 2026-10-27: the required repair is the whole Element and Apothecary experience, including its visual presentation and layperson-facing descriptions. The current outcome is unsatisfactory to the Architect, and descriptions aimed at engineers do not serve the intended audience. Treat this as a broader M3/M4 design priority: review and repair the full Element system/catalog and Apothecary flow, not just Orb-to-Umbilical profile contracts or copy edits. Keep accurate technical names/depth accessible beneath purpose-first plain language, and preserve the Architect's intentional color/motion rationale. This clarification sets scope and records dissatisfaction; it does not by itself approve implementation or replace existing Elements.
+
+### 2026-10-27T08:21:16.040Z | tracey | note N16
+Chain-Prev: ad9e6ba7844e19cc11e890cd1ddd76928bd8816a1be57eb21de7f8585ee59cb4
+Chain-Hash: 652b45ea0395d9d0b3cb9bb8e00cf37a7dbc04934838d7beadd72b71fa0fc87d
+Stage: Proposal
+Kind: note
+Evidence: docs/IDE_ORIENTATION.md:10-15; .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:N4-N6
+Channel: cli
+
+Architect design clarification, 2026-10-27: the intended Vibe is a beautiful environment that is also approachable, understandable and not overwhelming. Architect believes an attainable sweet spot can preserve beauty and depth while the Luminary helps flatten the learning curve for the Architect. Use this as a design principle for the whole Element/Apothecary repair and Luminary support: reveal the next understandable step and deeper explanation at the point of need without front-loading every technical detail. This is design intent, not usability validation or approval of a specific interface. Relates to the approachable-first IDE description in docs/IDE_ORIENTATION.md §1, learning purpose N4, audience N5 and visual rationale N6.
+
+### 2026-10-27T08:23:22.185Z | tracey | note N17
+Chain-Prev: 652b45ea0395d9d0b3cb9bb8e00cf37a7dbc04934838d7beadd72b71fa0fc87d
+Chain-Hash: d1a47358f09d2c314ce4db0bf08e6a6c43fe43c80a26f801af6a698651a71383
+Stage: Proposal
+Kind: note
+Evidence: src/components/LuminaryHost.tsx:9-16,73-83; src/components/LeftDrawer.tsx:456-576; .aegis/stp/0002-ai-integration-and-luminary-presence.md:150,373
+Channel: cli
+
+Architect direction, 2026-10-27: the Apothecary should be Luminary Guided by default because the Architect finds the current Apothecary overwhelming, with an easy option to put the Luminary in a holding position when guidance is not needed. Design the entry as a clear, context-specific guided state that can be set aside and resumed; keep the user's agency and the Apothecary content visible/manageable. Coordinate this with STP-0002 Luminary ownership: existing LuminaryHost starts globally paused and opens only on Architect click, so define Apothecary entry as an explicit contextual invitation or otherwise reconcile the pause contract before implementation. No background observation or autonomous pop-up is implied. Persistence scope (one visit/session/workspace) remains open. This is design direction, not implementation approval.
+
+### 2026-10-27T08:28:07.739Z | tracey | note N18
+Chain-Prev: d1a47358f09d2c314ce4db0bf08e6a6c43fe43c80a26f801af6a698651a71383
+Chain-Hash: 31e7ee849f2b43ecdfebce28d9180c350060e788f283f53bcecf9f1b0a052803
+Stage: Proposal
+Kind: note
+Evidence: src/components/ThreeCanvas.tsx:2658-2671; src/App.tsx:378-397,458-478; .aegis/stp/0002-ai-integration-and-luminary-presence.md:722,747; .aegis/stp/0003-pod-contracts-and-umbilical-standards.md:P15
+Channel: cli
+
+Architect direction, 2026-10-27: code writing is a major Luminary role. In the Luminary-Guided Apothecary, the Architect describes the needed function; Luminary identifies the appropriate Element and produces its code. After the proposed Element is reviewed and saved to the Apothecary, the Architect places it by drag/drop. Dropping a Satellite onto an Orb initiates a host-bound handshake and contract negotiation; successful negotiation attaches it, while refusal explains why and leaves it unattached. This makes the authored Element an understandable, inspectable building block before placement. Cross-links: STP-0002 D4/P3/P9 for Luminary code writing and bounded execution; STP-0003 P15 for Satellite-to-Orb Tether handshake. Current implementation differs: direct Satellite append in App bypasses handshake (STP-0003 S13). Luminary output/save acceptance and execution boundaries must be reconciled with Verus. No auto-execution of generated code or silent activation is implied.
+
+### 2026-10-27T08:32:04.936Z | tracey | note N19
+Chain-Prev: 31e7ee849f2b43ecdfebce28d9180c350060e788f283f53bcecf9f1b0a052803
+Chain-Hash: dd9476672fb84bac8ff500c60a7fdaefa00173f08bfd224c07e61c6065b4070a
+Stage: Proposal
+Kind: note
+Evidence: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md:S14,T13,G13,P16; src/engine/relationEngine.ts:319-327; docs/IDE_ORIENTATION.md:17-24
+Channel: cli
+
+Architect architecture clarification, 2026-10-27: yes—the CORE Orchestrator needs a complete, current map of every connected Element pair and what each relationship enables so it can coordinate the application's flow. This is the intended Build model, distinct from claiming the current app has a complete execution orchestrator. STP-0003 P16 proposes the authoritative contract-backed BuildGraph and event flow; P13 provides the related Luminary observation surface. Only negotiated active relations become active graph edges; failed attempts remain explainable history. This is design intent/proposal, not approval or runtime verification.
+
+### 2026-10-27T20:27:52.434Z | codex | target T10
+Chain-Prev: dd9476672fb84bac8ff500c60a7fdaefa00173f08bfd224c07e61c6065b4070a
+Chain-Hash: e603fe5416f1307ef39bc39920ecf05e3940048293fe58310be51fb8146911ad
+Stage: Target
+Kind: target
+Evidence: docs/IDE_ORIENTATION.md:10-24; .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:771-811
+Channel: cli
+
+The whole Element and Apothecary experience is beautiful, understandable and approachable without overwhelming the Architect. Element choices lead with everyday purpose and a concrete example; technical identity, capabilities, contract/profile, resource requirements, permissions and details remain inspectable through progressive disclosure. Apothecary entry offers Luminary guidance by default with an obvious user-controlled hold/resume path. The Architect can describe a need; the Luminary recommends the appropriate Element, explains why, and may draft its code and manifest. The Architect inspects and accepts the saved Element before placement. Dragging a Satellite onto an Orb initiates the host-bound Tether contract negotiation; failed or pending negotiation does not attach or execute code. Preserve the intentional visual, color and movement rationale. Ownership seam: M4 owns presentation/navigation/interaction, M1/M2 owns Luminary guidance and code proposal, M3 owns connection contracts and resource negotiation.
+
+### 2026-10-27T20:27:56.203Z | codex | gap G10
+Chain-Prev: e603fe5416f1307ef39bc39920ecf05e3940048293fe58310be51fb8146911ad
+Chain-Hash: 2cd8890b8c03825733b776b8fadcda3cad10c4f387dcd6d90931bfe9a2f6baca
+Stage: Gap
+Kind: gap
+Evidence: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:349-360,771-811
+Targets: T10
+Channel: cli
+
+The whole Element/Apothecary repair and Luminary-guided author/save/place journey lack one cohesive M4-facing blueprint and acceptance contract. Existing STP-0004 P5 covers general navigation, P9 the new-build opening and P10 copy/application CORE semantics, while Architect N15-N18 add the broader visual/approachability, default Apothecary guidance, code-authorship and Satellite drop requirements. Those elements need an integrated sequence and explicit M1/M2/M3/M4 ownership seam; otherwise partial UI work can preserve the overwhelming catalog, bypass review/save boundaries or imply attachment without Tether negotiation. This is a planning/acceptance gap, not a claim that all current UI behavior was freshly retested in this turn.
+
+### 2026-10-27T20:28:06.179Z | codex | change P11
+Chain-Prev: 2cd8890b8c03825733b776b8fadcda3cad10c4f387dcd6d90931bfe9a2f6baca
+Chain-Hash: 86aef97a644cac7dbd93a8d428db1317d0c11c99166aff9983a8408281ed148d
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:349-360,771-811; .aegis/stp/0002-ai-integration-and-luminary-presence.md:150,373,722,747; .aegis/stp/0003-pod-contracts-and-umbilical-standards.md:P15
+Closes: G10
+Targets: T10
+Channel: cli
+
+P11 Whole Element and Apothecary experience: approachable discovery, Luminary guidance and reviewed author/save/place flow. This proposal closes G10 and targets T10; it integrates, rather than duplicates, P5, P9 and P10. Preserve existing Elements and authored visual intent while making the whole experience understandable to a layperson and navigable without front-loading every technical detail.
+
+Ordered work: (1) map the existing Apothecary/catalog entry, categories, Element details, inspectors and drag/drop; retain IDs, saved artifacts and authored visuals. (2) At Apothecary entry, provide a contextual Luminary-Guided state by default, with a clearly visible hold/resume control that leaves catalog access available and restores the prior task without loss; no background monitoring or autonomous action. Coordinate this invitation/state transition with STP-0002's Luminary pause contract. (3) Present Elements as purpose-first choices: what it helps the app do, a concrete example and when it fits; provide progressive access to exact technical name, capabilities, dependencies, required permissions, memory/bandwidth, connection profile and compatibility. Keep readiness/availability separate from promised function. (4) When the Architect describes a need, Luminary proposes an Element type and explains its fit and tradeoffs. If code is required, present an inspectable draft with purpose, code, manifest, capabilities, resource envelope, provenance and limitations. The Architect reviews, edits or declines, then explicitly saves an accepted artifact to the Apothecary. No save/drop step silently executes generated code. (5) Placement preserves the contract seam: dropping a Satellite on an Orb invokes STP-0003 P15's host-bound Tether negotiation; Orb-to-CORE Umbilical negotiation remains distinct. Pending/refused results are legible, leave no active attachment and offer a clear recovery path; only a successful contract commits attachment. (6) Apply consistent visual hierarchy, plain-language labels, keyboard/focus behavior, narrow/desktop layouts and clear return points across catalog, selection, detail, code review and refusal states. Preserve intentional color/motion meanings and make technical depth available on demand.
+
+Ownership: M4 owns shell, catalog hierarchy, explanations, responsive/accessible interaction and saved navigation state. M1/M2 owns Luminary guidance, model-generated code and response governance. M3 owns Element manifests, profile/resource resolution and Tether/Umbilical contract outcomes. Integration must consume those declared contracts; do not invent local success or duplicate negotiation.
+
+Acceptance: an Architect can find and explain the purpose of an Element without engineering vocabulary, then inspect its exact capabilities/resources; entering Apothecary offers guidance but hold/resume is user-controlled and state-preserving; describing a need yields a reasoned Element/code draft with inspectable manifest; save occurs only after Architect acceptance; saved placement does not execute code; Satellite-on-Orb starts Tether negotiation and only an accepted result attaches; refusal leaves it unattached and recoverable; the journey remains usable by keyboard and narrow layout without obscuring the scene. Verify with user-journey/accessibility checks, persistence/reopen checks and contract-boundary tests when execution is approved. Keep the Architect's qualitative Vibe as design intent until evaluated with intended users.
+
+Dependencies: STP-0002 Luminary pause, generation and governance contracts; STP-0003 P15 Tether and related Orb/CORE profiles/resources; P9/P10 app type, CORE schema and copy; saved-workspace compatibility. Recheck exact source revision and peer claims at execution. This is an implementation blueprint only; no product change or execution approval is implied.
+
+### 2026-10-27T20:28:08.978Z | codex | status
+Chain-Prev: 86aef97a644cac7dbd93a8d428db1317d0c11c99166aff9983a8408281ed148d
+Chain-Hash: 31ea388412cac16c000597d3ca6fe7dd6d863aea45fe24fccc27b27d2b6fd374
+Stage: Proposal
+Kind: status
+Item: P11
+Status: Presented
+Channel: cli
+
+Presented as a complete blueprint proposal for Architect review; dependencies and acceptance checks are explicit, but M1/M2/M3 integration and M5 testing remain pending.
+
+### 2026-10-27T20:28:18.358Z | codex | note N20
+Chain-Prev: 31ea388412cac16c000597d3ca6fe7dd6d863aea45fe24fccc27b27d2b6fd374
+Chain-Hash: d4cf4783cea2542fa18aba5282d7f71fa877c80524be7c260c2538471422b920
+Stage: Proposal
+Kind: note
+Evidence: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:360; .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md:756-768; assumption
+Channel: cli
+
+STP-0004 documentation closeout snapshot, 2026-10-27. The plan remains at Proposal stage. P1-P6 and P9-P11 are Presented; P7/P8 are preserved as Revised by successors P10/P9. P11 was added to close the whole Element/Apothecary/Luminary-guided experience gap (T10/G10), with explicit M1/M2/M3/M4 ownership and testable acceptance. `aegis-stp status` reports no structurally uncovered gaps and no validation issues; that means each recorded gap is linked to a proposal, not that product work or M5 acceptance is complete. P6 still requires fresh end-to-end evidence against exact revisions and Architect acceptance. The Architect reports Claude/Verus is currently testing; this update does not claim or incorporate a new test result. At handoff, review exact test commands, revisions, failures/known baseline (including the identity determinism shortfall recorded in N14), tamper/provider/refusal scenarios, and independently reproducible evidence. Keep unsigned export, unresolved signing custody, app-type/crystal mapping and M1/M2 integration visible until evidenced and decided. No move to Execution/Complete or implementation approval is recorded by this note.

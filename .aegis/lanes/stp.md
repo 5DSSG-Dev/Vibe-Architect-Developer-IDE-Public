@@ -285,3 +285,21 @@ Event: stage → Proposal
 Stage: Proposal
 File: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md
 STP-Entry-Hash: b93557af5c4b3c9b0b29ac3a66ed615de82e3e270c2518a15056761bbaf6c10a
+
+### 2026-10-27T08:56:47.892Z | stp | message
+Chain-Prev: 873bd6ca64b3488468c7c42d39d01e8c73c541d6c3b74ffd419e1cbd68537e59
+Chain-Hash: 1075eab0147d556905f70e84a4f4f70315b0e1ce27ea8a2a32729114d018f0ff
+STP pointer: STP-0005 "Portal Customs Boundary and Return Inspection"
+Event: created
+Stage: Situation
+File: .aegis/stp/0005-portal-customs-boundary-and-return-inspection.md
+STP-Entry-Hash: 3ef7bdaf8b76e06c691e2fb228c6e6a21daec949d249620564bdac38eff8ff23
+
+### 2026-10-27T08:57:08.383Z | stp | message
+Chain-Prev: 1075eab0147d556905f70e84a4f4f70315b0e1ce27ea8a2a32729114d018f0ff
+Chain-Hash: 7e43e27827ba81df669e72b1f5316bdf90fa260391dfbfb5a2b3ce880e356d36
+STP pointer: STP-0005 "Portal Customs Boundary and Return Inspection"
+Event: stage → Gap
+Stage: Gap
+File: .aegis/stp/0005-portal-customs-boundary-and-return-inspection.md
+STP-Entry-Hash: ad9970d442cf0c2d4f48626a688c4ac9f6452383a3947c4aeda5a13001b6cac6

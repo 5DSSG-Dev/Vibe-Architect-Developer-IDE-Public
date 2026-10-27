@@ -106,3 +106,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - P20 specifies exact non-substitutable Tumbler profile binding, durable anti-replay/revocation/time/scope checks, explicit role ownership, Customs as admission decision-maker with RETURN_ADMIT as evidence, and the Luminary's Companion boundary.
 - P21 specifies an exhaustive typed WorkImpactClass-by-domain matrix with dedicated external-write and model-inference treatment and explicit release/destructive/security checks. STP-0005 N2 cross-references the Customs return profile so it is not duplicated in STP-0003.
 - Verification: STP-0003 and STP-0005 chain validation pass; `git diff --check` passes. No application code or runtime behavior changed. STP-0005 was not included in Claude/Verus's review.
+## 2026-10-27 | codex | STP-0004 blueprint closeout snapshot
+- Added STP-0004 T10/G10/P11 to cover the full Element/Apothecary and Luminary-guided author/save/place experience with explicit M1/M2/M3/M4 boundaries; P11 is Presented, not approved.
+- Added N20 clarifying that structurally covered proposals are not M5 completion. P6 requires exact-revision integration evidence and Architect acceptance; Claude/Verus testing is reported by the Architect but not yet incorporated here.
+- STP-0004 validates with no structural uncovered gaps. It remains at Proposal; P1-P6, P9-P11 await Architect decisions. No product changes, tests, build, or completion claim.
