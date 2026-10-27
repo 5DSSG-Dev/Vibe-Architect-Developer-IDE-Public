@@ -1202,3 +1202,23 @@ Status: Presented
 Channel: cli
 
 P21 → Presented.
+
+### 2026-10-27T20:52:17.399Z | codex | note N5
+Chain-Prev: 7fd16fd52bf7c0ef87e3275b673b45aac47ed178e92f295740610d5bb50106d1
+Chain-Hash: dc6111ee7da0958073381b0c9394e678aa72de7c7f042ccc727840934a32c3f2
+Stage: Execution
+Kind: note
+Evidence: H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claude\2026-10-27T203500Z-review-stp-0003-p20-p21-stp-0005-n2.md
+Channel: cli
+
+Claude/Verus review clarification for P20 and STP-0005 N2: RETURN_ADMIT validation evidence must bind to the originating outbound challenge id and its profile: DISPATCH_EXTERNAL for Portal/external trips and DISPATCH_REVISION for internal revisions. This corrects the earlier origin wording; Customs remains the independent admission decision-maker and RETURN_ADMIT remains evidence, not authority. P20 remains Presented; this note does not approve implementation.
+
+### 2026-10-27T20:52:17.512Z | codex | note N6
+Chain-Prev: dc6111ee7da0958073381b0c9394e678aa72de7c7f042ccc727840934a32c3f2
+Chain-Hash: 02e136b8e18537d2fd64987db18c69840cbe7b07807d9f13dd20e4dddbea0ac7
+Stage: Execution
+Kind: note
+Evidence: H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-claude\2026-10-27T203500Z-review-stp-0003-p20-p21-stp-0005-n2.md
+Channel: cli
+
+Claude/Verus review clarification for P21: model_inference and portal_return are OperationDomain values, not WorkImpactClass values. In model_inference, only read_only is allowed through the STP-0002 reply pipeline, demo-key boundary and rate limit; every other impact class is an explicit deny. In portal_return, every impact class defers admission to Customs under STP-0005 and denies execution. This spells out the two domain rows without adding impact classes or changing P21's Presented status.
