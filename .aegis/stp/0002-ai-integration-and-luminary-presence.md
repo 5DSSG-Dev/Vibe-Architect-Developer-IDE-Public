@@ -1462,3 +1462,15 @@ Evidence: exchange/from-codex/2026-10-27T211312Z-live-gauge-parity-results-llama
 Channel: cloud
 
 Live parity check of the system-one gauge (N19) against the Arbiter engine, run by Codex (Lumin) on the Architect's PC at the Claude/Verus request the Architect directed: Ollama 0.40.5, llama3.2:3b, IDE main 4c9ef8b (contains the N19 gauge), Arbiter 5e14d7e, four made-up messages (no corpus), one warm-up per engine, call order alternated. Result: Respect, Attention, Affection, Loyalty, Trust and Communication matched exactly on all four messages (to 10 decimal places), which shows the requests and the probability arithmetic are identical. Honesty differed on every message, by 4.99, 1.61, 0.11 and 0.13 points (max 4.99 on message 1, readings about 47 vs 52). No errors and no unavailable decisions; about 0.5 s per reply for seven decisions on each engine. Reading of the Honesty-only difference (Claude, inference, not measured): Honesty is the first decision and its full prompt is byte-identical across the two engines, so the engine run second hits a fully cached prompt while the first evaluates it fresh; the later six decisions follow the same cached-prefix path on both engines and so match. It is a runtime caching effect, not a port difference. Consequence for threshold selection: the first-asked virtue (Honesty) can move by up to about 5 points with runtime cache state, so a threshold margin should allow for that. Port fidelity is confirmed live; threshold selection remains with the Architect.
+
+### 2026-10-27T21:19:50.685Z | tracey-prutch | status
+Chain-Prev: 859a96213d0be262e1086a000b45cf25c66c12b3c7913f544278a6ac3acd0e40
+Chain-Hash: a2accb978a1306f19f97e0cb9d28469b21f3a89b04a94c64e2f2924620fec931
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Approved
+Role: architect
+Channel: cloud
+
+Architect threshold selection for the embedded gauge (llama3.2:3b, system-one, 0-100 readings): the calibrated per-virtue values from N18, Honesty 13.8, Respect 29.3, Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7. Offered as "I'll use the calibrated values and record them as your choice. Once that's set, the gauge is ready to switch on." Verbatim answer, 2026-10-27T21:19:04Z: "yes". Rationale given by the Architect, 2026-10-27T21:01:01Z: "The reason we had to add a threshold is because of the nuances of human language. Every response was failing because it was not possible to score 100% on every virtue because of these nuances." Caveat carried from N20: Honesty can move by up to about 5 points with runtime cache state. Recorded from the cloud thread by claude.
