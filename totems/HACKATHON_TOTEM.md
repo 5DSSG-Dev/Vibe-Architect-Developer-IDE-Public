@@ -81,6 +81,13 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.a — P17 reply pipeline BUILT (awaiting Architect verification)
+- `server/luminary-pipeline/` (pim, irg, rbc, ids, pipeline): structural gate -> PIM -> IRG -> RBC
+  -> Prism | IDS loop, bounded at 2 IDS passes then an `incoherent_after_ids` Shortfall.
+- Gateway always runs it; the gauge defaults to not-configured, so nothing leaves ungauged.
+- Gateway tests 97/97 (29 new). No model called. Gauge model choice stays with M1.b (ON HOLD).
+- STP-0002 P17 Executing + N16 (127 entries, chain valid).
+
 ### 2026-10-27 | claude | M1.a — P15, P16, P17 APPROVED by the Architect
 - PR #3 (P12-P17) merged into main by the Architect.
 - The Architect approved P15, P16 and P17 ("yes on all 3"), recorded append-only in STP-0002

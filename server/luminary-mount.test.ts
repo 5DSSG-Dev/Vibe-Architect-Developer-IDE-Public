@@ -8,6 +8,12 @@ import type { EntraAuth } from './entra-auth.js';
 import { InMemorySessionStore, type AdminSession, type AuthenticatedPrincipal } from './session-store.js';
 import { DEMO_KEY_HEADER } from './luminary-access.js';
 import type { AskModel } from './luminary-reply-router.js';
+import type { Gauge } from './luminary-pipeline/pipeline.js';
+
+// A fake gauge reading every virtue at 90 (no model is called).
+const coherentGauge: Gauge = {
+  read: async () => ({ Honesty: 90, Respect: 90, Attention: 90, Affection: 90, Loyalty: 90, Trust: 90, Communication: 90 }),
+};
 
 const servers: Server[] = [];
 afterEach(() => Promise.all(servers.splice(0).map((s) => new Promise<void>((r) => s.close(() => r())))));
@@ -34,8 +40,8 @@ class FakeEntra implements EntraAuth {
   }
 }
 
-async function listen(overrides: Partial<GatewayConfig> = {}, askModel?: AskModel) {
-  const app = await createGateway({ config: baseConfig(overrides), sessions: new InMemorySessionStore(), entra: new FakeEntra(), askModel });
+async function listen(overrides: Partial<GatewayConfig> = {}, askModel?: AskModel, gauge?: Gauge) {
+  const app = await createGateway({ config: baseConfig(overrides), sessions: new InMemorySessionStore(), entra: new FakeEntra(), askModel, gauge });
   const server = app.listen(0);
   servers.push(server);
   await new Promise<void>((resolve) => server.once('listening', () => resolve()));
@@ -72,12 +78,24 @@ test('with the demo key and the default placeholder model, the governed path ret
   assert.equal(body.reply, undefined);
 });
 
-test('with the demo key and a wired reply source, a governed reply is delivered (200)', async () => {
+test('with the demo key, a wired reply source and a wired gauge, a coherent reply is delivered (200) with its lineage', async () => {
+  const askModel: AskModel = async () => ({ modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
+  const base = await listen({ luminaryDemoKey: DEMO_KEY }, askModel, coherentGauge);
+  const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.deepEqual(body.reply, { modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
+  assert.deepEqual(body.lineage.map((entry: { stage: string }) => entry.stage), ['structural', 'pim', 'irg', 'rbc', 'prism']);
+});
+
+test('with a wired reply source but the default gauge, the reply is withheld as a gauge_error Shortfall (502) — never delivered ungauged', async () => {
   const askModel: AskModel = async () => ({ modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
   const base = await listen({ luminaryDemoKey: DEMO_KEY }, askModel);
   const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
-  assert.equal(res.status, 200);
-  assert.deepEqual(await res.json(), { reply: { modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' } });
+  assert.equal(res.status, 502);
+  const body = await res.json();
+  assert.equal(body.shortfall.code, 'gauge_error');
+  assert.equal(body.reply, undefined);
 });
 
 test('the admin routes are untouched by the Luminary mount (still 401 unauthenticated)', async () => {

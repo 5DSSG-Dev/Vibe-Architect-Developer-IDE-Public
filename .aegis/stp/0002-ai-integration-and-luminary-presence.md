@@ -1323,3 +1323,24 @@ Role: architect
 Channel: cloud
 
 Approved P17: docs/VIBE_LUMINARY_REPLY_PIPELINE_v0.1.md, with its five recommended decisions as revised by N13-N15 (separate small embedded gauge model, size set by calibration; at most 2 IDS passes then an incoherent_after_ids Shortfall; IDS as designed, a declared divergence from IDQRA; Luminary->Architect direction first; threshold 70). Model selection stays with M1.b, which remains on hold; the pipeline logic can be built with an injected scorer and test fakes. Verbatim, 2026-10-27T09:23:51Z: "Oh I already looked at those documents and I asked the questions I needed to ask and that is how we ened up with the V2.0 canon and Axiom 17 so yes on all 3". Recorded from the cloud thread by claude.
+
+### 2026-10-27T09:29:13.092Z | claude | status
+Chain-Prev: 228d18039419e65cad452311a046ade9123a007b0df79756b78f60bd0ce61531
+Chain-Hash: 89c373ad4233ec5f0ef11bbe9535d7d043cc5b72acbbd37992b0c9224e5bda8f
+Stage: Proposal
+Kind: status
+Item: P17
+Status: Executing
+Channel: cloud
+
+Building the P17 pipeline logic in server/luminary-pipeline/ (pim, irg, rbc, ids, pipeline) with the IRG/IDS gauge injected and exercised only by test fakes; no model is called and no credits are spent. The gateway defaults to a not-configured gauge, so a reply that has not been gauged fails closed as a named gauge_error Shortfall. Started at the Architect's direction, 2026-10-27T09:26Z: "yes. I am goiong to rest for now. Is there anything that you can automate while I rest".
+
+### 2026-10-27T09:32:37.904Z | claude | note N16
+Chain-Prev: 89c373ad4233ec5f0ef11bbe9535d7d043cc5b72acbbd37992b0c9224e5bda8f
+Chain-Hash: 450e741c22bee2c11d419d687499b9b6f4b53ed3c2ec9017282a8f12174df523
+Stage: Execution
+Kind: note
+Evidence: server/luminary-pipeline/pipeline.ts:1; server/luminary-pipeline/pim.ts:1; server/luminary-pipeline/irg.ts:1; server/luminary-pipeline/rbc.ts:1; server/luminary-pipeline/ids.ts:1; server/luminary-reply-router.ts:1; server/app.ts:220; server/luminary-pipeline/pipeline.test.ts:1; server/luminary-pipeline/stages.test.ts:1
+Channel: cloud
+
+P17 built (Luminary -> Architect direction). server/luminary-pipeline/: pim.ts (deterministic, provisional pattern screen, six named families; a catch goes straight to IDS), irg.ts (Seven Virtues verbatim, IRG_THRESHOLD = 70, weakest-link; scorer output validated, anything but seven finite 0-100 readings is a GaugeError), rbc.ts (route only: prism | ids), ids.ts (Identify/Define/Suggest assembled only from what was measured, or from an injected gauge observer whose payload is validated; revision prompt offers the observation, does not impose it), pipeline.ts (bounded loop, default 2 IDS passes then an incoherent_after_ids Shortfall carrying the last observation and readings with the text withheld; append-only lineage per pass; each re-formed reply is structurally gated again). The router runs the pipeline when given one; the gateway always gives one, with a not-configured gauge by default, so a reply cannot leave ungauged (gauge_error Shortfall). 200 { reply, lineage } | 502 { shortfall, lineage }. The mount test for a wired reply source now also wires a fake gauge, and a new test confirms that without a gauge the reply is withheld. package.json test:gateway glob is now quoted so Node expands it recursively; unquoted, sh would have matched only the new subfolder and skipped the top-level suites. Verified: server typecheck and server build typecheck clean; gateway suite 97/97 (68 prior + 29 new); git diff --check clean. No model called, no credits spent; gauge model choice and the Llama 3.2 3B calibration stay with M1.b (on hold). The Architect -> Luminary direction is a follow-up proposal (P17 decision 4). Awaiting the Architect's verification.
