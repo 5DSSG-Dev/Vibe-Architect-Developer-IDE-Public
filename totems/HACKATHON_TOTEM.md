@@ -81,6 +81,14 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-1 — gauge-first approved (P18); local gauge adapter BUILT
+- The Architect approved P18: wire and calibrate the embedded gauge before the main Meta model.
+  Runtime Ollama (installed); PC has 6 GB VRAM + CUDA; first candidate Llama 3.2 3B.
+- `server/luminary-pipeline/gauge-local.ts`: loopback-only OpenAI-compatible gauge, mirroring the
+  Arbiter json IRG engine. Gateway tests 105/105. STP-0002 N17 (135 entries, chain valid).
+- Next (Architect's PC): `ollama pull llama3.2:3b`; Arbiter `npm run calibration:compare -- --models
+  llama3.2:1b,llama3.2:3b`; accept if no missed shortfall and >= 90% validation accuracy.
+
 ### 2026-10-27 | claude | M1.a — P17 reply pipeline VERIFIED by the Architect
 - PR #4 merged; the Architect verified P17 ("yes p17 pipeline is correct"). STP-0002 128 entries, chain valid.
 - Open next: M1.b (real model + gauge calibration, Llama 3.2 3B first) stays ON HOLD until the Architect lifts it;

@@ -1399,3 +1399,36 @@ Status: Presented
 Channel: cloud
 
 Presented for the Architect: gauge-first M1.b (embedded Llama 3.2 3B via local Ollama + CUDA, calibrated on the Arbiter corpus before the main Meta model is connected). Three decisions recommended, none taken.
+
+### 2026-10-27T20:13:47.947Z | tracey-prutch | status
+Chain-Prev: 7333ff8069b8779c1a5640101f8d6ecd9856b9f729ed17a6fd4db48dbb7cc2b2
+Chain-Hash: 17b8a654b5cd9bb92a9b7cd987657a63e3d5365aacf9724ad20202fbb60ac1e3
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P18 (gauge-first M1.b) with its recommendations: (a) runtime Ollama, already installed locally (Architect, 20:09:26Z: "I have Ollama installed locally"); (b) acceptance bar: no missed shortfall on validation and validation accuracy at or above 90%; (c) reviewer hosting stays open. Verbatim, 2026-10-27T20:13:10Z: "oh yes it is approved". Recorded from the cloud thread by claude.
+
+### 2026-10-27T20:13:47.958Z | claude | status
+Chain-Prev: 17b8a654b5cd9bb92a9b7cd987657a63e3d5365aacf9724ad20202fbb60ac1e3
+Chain-Hash: 076286c568862bfab7d19451527f6d4a151489ab5898c39323b2f1dc78e0de2c
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Executing
+Channel: cloud
+
+Building step M1.b-1 part 1 in the cloud: the local gauge adapter and its tests (fake fetch only). Running Ollama and the calibration waits for a session on the Architect's PC.
+
+### 2026-10-27T20:16:05.228Z | claude | note N17
+Chain-Prev: 076286c568862bfab7d19451527f6d4a151489ab5898c39323b2f1dc78e0de2c
+Chain-Hash: 45180f01dac030fd4165cd93d7e07dd1de6af34d8d56a1703b71f97ebc9b18a3
+Stage: Execution
+Kind: note
+Evidence: server/luminary-pipeline/gauge-local.ts:1; server/luminary-pipeline/gauge-local.test.ts:1; server/config.ts:1; server/index.ts:1; .env.example:15; AEGUS_ARBITER_THREE_MODEL_SERVICE: server/irg.ts (buildIRGPrompt), calibration/scripts/compareIRGEngines.ts
+Channel: cloud
+
+P18 step M1.b-1 part 1 built: server/luminary-pipeline/gauge-local.ts, an IRG scorer for a local OpenAI-compatible runtime (Ollama). It mirrors the Arbiter's json IRG engine (same prompt, Virtue lines verbatim from Canon v2.0, 0.0-1.0 scores, temperature 0, JSON output) so the Arbiter's calibration harness measures this gauge as it runs here; scores are scaled to 0-100 and validated, and any runtime, HTTP, timeout or parse failure is a GaugeError (gauge_error Shortfall). Config: LUMINARY_GAUGE_ENDPOINT + LUMINARY_GAUGE_MODEL set together, endpoint must be loopback (the gauge is embedded), LUMINARY_GAUGE_TIMEOUT_MS default 30000; unset keeps the not-configured gauge. Verified: server typecheck and build typecheck clean; gateway 105/105 (8 new, fake fetch only); git diff --check clean. Next, on the Architect's PC: ollama pull llama3.2:3b, then in the Arbiter repo npm run calibration:compare -- --models llama3.2:1b,llama3.2:3b, judged against the approved bar (no missed shortfall on validation, accuracy at or above 90%). That run writes evidence in the Arbiter repo, and only aggregate results come back here.
