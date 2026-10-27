@@ -81,6 +81,13 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.a — P15, P16, P17 APPROVED by the Architect
+- PR #3 (P12-P17) merged into main by the Architect.
+- The Architect approved P15, P16 and P17 ("yes on all 3"), recorded append-only in STP-0002
+  (125 entries, chain valid). F3 resolved: honored deletion is kept and a deletion event recorded.
+- Next: build the P17 pipeline logic (PIM, IRG, RBC, IDS) with an injected scorer and test fakes.
+  Gauge model choice and calibration of Llama 3.2 3B stay with M1.b (ON HOLD).
+
 ### 2026-10-27 | claude | M1.a — Governing Canon reconciled (P16) + live reply pipeline PRESENTED (P17)
 - Continuing Verus's M1.a work from a cloud session, at the Architect's direction ("do 1 and 2,
   hold on 3"). M1.b stays ON HOLD.

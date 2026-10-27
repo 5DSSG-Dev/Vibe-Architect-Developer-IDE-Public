@@ -1,6 +1,6 @@
 # Vibe Luminary — Live Reply Pipeline (Design) v0.1
 
-Status: **DRAFT — Presented for Architect review (STP-0002 P17). Not approved, not built, nothing wired.**
+Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P17). Not yet built; gauge model selection waits for M1.b (on hold).**
 Governing edition: AEGIS CORE FOUNDATIONAL CANON v2.0 (see `VIBE_LUMINARY_GOVERNING_CANON_v0.2.md`).
 Architect: Tracey Prutch · Drafted by: Claude (cloud session continuing Verus's M1.a work).
 

@@ -1,6 +1,6 @@
 # Vibe Luminary — Governing Canon (Operational Rendering) v0.2
 
-Status: **DRAFT — Presented for Architect review (STP-0002 P16). Not approved, not governing, not an amendment.**
+Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P16). Governing for the Luminary; not an amendment to Canon v2.0.**
 Supersedes by addition: `VIBE_LUMINARY_GOVERNING_CANON_v0.1.md` (left in place, unchanged; its reconciliation flag is answered here).
 Governing edition: **AEGIS CORE FOUNDATIONAL CANON v2.0** (Canon-Locked, generated 2026-05-31; source `H:\AEGIS_CENTRAL_CODEX\TIER-1-AEGIS CANON\`).
 Audience: **the model that serves as the Luminary**, and the Architect reviewing it.
