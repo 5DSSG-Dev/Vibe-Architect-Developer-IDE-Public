@@ -1010,3 +1010,15 @@ Evidence: server/luminary-reply-router.ts:66; server/luminary-reply-router.test.
 Channel: cli
 
 P13 executed. Added server/luminary-reply-router.ts — createLuminaryReplyRouter(askModel, options): POST /ask validates the body ({prompt: non-empty string} else 400 malformed_request), calls the injected askModel, runs its result through governReply(), and returns 200 {reply:{modelId,content}} or a typed {error:'luminary_shortfall', shortfall} (502). An upstream throw becomes a named upstream_error Shortfall (never 500/fallback prose). No provider is chosen or called; the router is not yet mounted — path and auth remain the Architect's to settle. Tests server/luminary-reply-router.test.ts (6, real Express + fetch harness, fake askModel, no network). Verified GREEN: server typecheck clean (tsc -p tsconfig.server.json --noEmit); gateway suite 58/58 (52 prior + 6 new, no regression). Awaiting the Architect's verification.
+
+### 2026-10-27T00:14:42.405Z | tracey-prutch | status
+Chain-Prev: af168462a78329166cc58eb5b131f12e8dd38d4c9dd52d5b55e341490d15c2bf
+Chain-Hash: bd573ea9988b1d38278f9c6c2fcb825096f87d0647851cab57613b153124f8ab
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Verified
+Role: architect
+Channel: cli
+
+Architect verified in session: satisfied with the governed reply router wiring the P12 gate into a POST /ask boundary (governed reply or named Shortfall), green at 58/58, provider-agnostic and unmounted by design.

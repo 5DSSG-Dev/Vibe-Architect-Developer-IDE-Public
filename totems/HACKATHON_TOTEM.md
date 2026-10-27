@@ -97,6 +97,14 @@ The Architect sets and confirms the gate.
 - Adoption recorded as a `CLAIM` line on `.aegis/claims.md`; build continuity runs under
   STP-0002 (AI Integration and Luminary Presence). No other module adopted.
 
+### 2026-10-27 | verus | P13 VERIFIED — governed reply router accepted
+- Architect VERIFIED P13 (`aegis-stp verify P13 --as "Tracey Prutch"`): satisfied with the
+  governed reply router. The second M1.a build step is now complete end to end —
+  S13 → gap G12 → P13 → Presented → Approved → Executing → Verified — every gate the Architect's.
+- The P12 gate now governs a request path (POST `/ask`) and is Architect-accepted. M1.a (AEGIS
+  Governance layer) still `IN-PROGRESS`: no real model is wired (M1.b, depends on M2) and the
+  endpoint is unmounted (path + reviewer-facing auth still the Architect's to settle).
+
 ### 2026-10-26 | verus | M1.a — governance gate wired into a reply router (P13 built, green)
 - The P12 gate is now reachable: `server/luminary-reply-router.ts` (`createLuminaryReplyRouter`)
   runs every candidate reply through `governReply()` at a POST `/ask` boundary, returning a
