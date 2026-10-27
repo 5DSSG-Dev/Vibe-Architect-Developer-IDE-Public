@@ -1356,3 +1356,46 @@ Role: architect
 Channel: cloud
 
 Architect verified: the P17 reply pipeline (structural gate -> PIM -> IRG -> RBC -> Prism | IDS loop, bounded at 2 IDS passes, gauge injected and not-configured by default), merged to main via PR #4, green at 97/97. Verbatim, 2026-10-27T20:00:53Z: "yes p17 pipeline is correct". Recorded from the cloud thread by claude.
+
+### 2026-10-27T20:08:36.589Z | claude | finding S18
+Chain-Prev: aa9a1bc21e5b2e22d274755bcbf557461c15c3024bc31444602af71f368d3f2c
+Chain-Hash: fd130dda9225a9132657b0dbbf22331a16692f5abbbccb6ffcee456f9a247e40
+Stage: Situation
+Kind: finding
+Evidence: server/app.ts:220; server/luminary-pipeline/pipeline.ts:1; AEGUS_ARBITER_THREE_MODEL_SERVICE: .env.example, server/index.ts:52, calibration/
+Channel: cloud
+
+The P17 pipeline is built and verified, but the gateway runs it with the not-configured gauge, so every reply is withheld as gauge_error. The Arbiter service already reaches a local OpenAI-compatible runtime (Ollama default http://localhost:11434/v1) for its IRG and holds the 72-case Architect-approved calibration corpus. The Architect reports, 2026-10-27T20:07Z, that the development PC has 6 GB of VRAM with CUDA installed: "This PC that you are working on has 6Gb of VRAM and CUDA installed so it can accomodate it".
+
+### 2026-10-27T20:08:36.599Z | claude | gap G17
+Chain-Prev: fd130dda9225a9132657b0dbbf22331a16692f5abbbccb6ffcee456f9a247e40
+Chain-Hash: 375f53dd9df1bce3744b181ce465c6df045f4e62f9034393d1f3ea9308940c5b
+Stage: Gap
+Kind: gap
+Evidence: S18
+Channel: cloud
+
+No embedded gauge is wired or calibrated for the Luminary, so the reply path cannot deliver any reply, and the main Meta model (M1.b) would have nothing checking its replies if connected first.
+
+### 2026-10-27T20:08:36.609Z | claude | change P18
+Chain-Prev: 375f53dd9df1bce3744b181ce465c6df045f4e62f9034393d1f3ea9308940c5b
+Chain-Hash: 5d04c23d1e68328314b97e895908a47780a26060f9f73e9d63e99e952fb3a7e1
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S18; N13; N14; N15
+Closes: G17
+Channel: cloud
+
+Split M1.b into two steps, gauge first, at the Architect's direction 2026-10-27T20:06Z ("I think we should work on the embedded model before we connect the Main Meta model"). Step M1.b-1, the embedded gauge: (1) a gauge adapter, server/luminary-pipeline/gauge-local.ts, implementing Gauge.read against a local OpenAI-compatible endpoint (LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL; unset keeps the not-configured gauge), low temperature, a seven-score JSON reply validated by the existing validateReadings, a timeout, and every failure a gauge_error; tests use a fake fetch, never the network. (2) Runtime: Ollama with CUDA on the Architect's PC (6 GB VRAM); Llama 3.2 3B at 4-bit needs about 2-3 GB, Llama 3.2 1B stays the fallback. (3) Calibration: run Llama 3.2 3B (and 1B for comparison) on the Arbiter's 72-case corpus in the same modes, recording validation accuracy, unnecessary-IDS rate, missed-shortfall rate and p50 latency. The corpus stays on the Architect's machine and only aggregate results enter this public repo. Running Ollama and the calibration needs a session on the Architect's PC (Remote Control), not the cloud. Step M1.b-2, the main Meta model, stays on hold until the Architect accepts the calibrated gauge. Decisions for the Architect: (a) runtime: Ollama (recommended, already used by the Arbiter); (b) acceptance bar (recommended: no missed shortfall on validation and validation accuracy at or above 90%, the level qwen3.5:4b reached); (c) where the gauge runs for hackathon reviewers if the demo is not served from this PC (open). Nothing is built until P18 is approved.
+
+### 2026-10-27T20:08:36.620Z | claude | status
+Chain-Prev: 5d04c23d1e68328314b97e895908a47780a26060f9f73e9d63e99e952fb3a7e1
+Chain-Hash: 7333ff8069b8779c1a5640101f8d6ecd9856b9f729ed17a6fd4db48dbb7cc2b2
+Stage: Proposal
+Kind: status
+Item: P18
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: gauge-first M1.b (embedded Llama 3.2 3B via local Ollama + CUDA, calibrated on the Arbiter corpus before the main Meta model is connected). Three decisions recommended, none taken.
