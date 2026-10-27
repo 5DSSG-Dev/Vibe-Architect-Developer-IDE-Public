@@ -1,4 +1,5 @@
 import { DEFAULT_GAUGE_TIMEOUT_MS, assertLoopbackEndpoint } from './luminary-pipeline/gauge-local.js';
+import { validateThresholds, type VirtueThresholds } from './luminary-pipeline/irg.js';
 
 export const REQUIRED_ADMIN_ROLE = 'service.operations.read';
 export const STELLAR_STEWARD_ROLE = 'service.stellar.contract.issue';
@@ -33,7 +34,7 @@ export interface GatewayConfig {
   /** Shared demo key for the reviewer-facing Luminary reply endpoint. Absent = endpoint disabled. */
   luminaryDemoKey?: string;
   /** The embedded gauge model for the Luminary reply pipeline (STP-0002 P18). Absent = not configured. */
-  luminaryGauge?: { endpoint: string; model: string; timeoutMs: number };
+  luminaryGauge?: { endpoint: string; model: string; timeoutMs: number; thresholds: VirtueThresholds };
   stellarCapabilities?: StellarCapabilityConfig;
   entra?: {
     tenantId: string;
@@ -55,7 +56,11 @@ function parseTrustProxy(value: string | undefined): GatewayConfig['trustProxy']
   return entries;
 }
 
-/** Both LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL, or neither. The endpoint must be loopback. */
+/**
+ * Both LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL, or neither. The endpoint must be loopback.
+ * A configured gauge also needs LUMINARY_GAUGE_THRESHOLDS, the Architect's per-virtue selection on
+ * the 0-100 reading scale; without it the gateway refuses to start rather than guess a threshold.
+ */
 function parseLuminaryGauge(env: NodeJS.ProcessEnv): GatewayConfig['luminaryGauge'] {
   const endpoint = env.LUMINARY_GAUGE_ENDPOINT?.trim();
   const model = env.LUMINARY_GAUGE_MODEL?.trim();
@@ -64,7 +69,21 @@ function parseLuminaryGauge(env: NodeJS.ProcessEnv): GatewayConfig['luminaryGaug
   assertLoopbackEndpoint(endpoint);
   const timeoutMs = Number(env.LUMINARY_GAUGE_TIMEOUT_MS ?? DEFAULT_GAUGE_TIMEOUT_MS);
   if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) throw new Error('LUMINARY_GAUGE_TIMEOUT_MS must be a positive integer');
-  return { endpoint, model, timeoutMs };
+  const rawThresholds = env.LUMINARY_GAUGE_THRESHOLDS?.trim();
+  if (!rawThresholds) throw new Error('LUMINARY_GAUGE_THRESHOLDS must be set when the gauge is configured');
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawThresholds);
+  } catch {
+    throw new Error('LUMINARY_GAUGE_THRESHOLDS must be a JSON object');
+  }
+  let thresholds: VirtueThresholds;
+  try {
+    thresholds = validateThresholds(parsed);
+  } catch (error) {
+    throw new Error(`LUMINARY_GAUGE_THRESHOLDS: ${(error as Error).message}`);
+  }
+  return { endpoint, model, timeoutMs, thresholds };
 }
 
 function normalizedNodeEnv(value: string | undefined): GatewayConfig['nodeEnv'] {

@@ -81,6 +81,15 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-1 — calibration passed (3B system-one); gauge switched to system-one
+- Calibration on the Architect's PC (Arbiter harness, same corpus): only llama3.2:3b in system-one mode
+  meets the bar (validation 100%, no missed shortfall; p50 544 ms). STP-0002 N18.
+- `gauge-local.ts` now ports the Arbiter `irg-system-one-v1` engine verbatim: seven one-token Yes/No
+  decisions, reading = 100 x P(Yes). IRG takes per-virtue thresholds; `LUMINARY_GAUGE_THRESHOLDS`
+  is required with the gauge (no default). Gateway 109/109. STP-0002 N19 (137 entries, chain valid).
+- Open: the Architect's threshold selection; a live run against Ollama; Arbiter 10-27 evidence is
+  uncommitted (worktree reverent-bhaskara-ab2321).
+
 ### 2026-10-27 | claude | M1.b-1 — gauge-first approved (P18); local gauge adapter BUILT
 - The Architect approved P18: wire and calibrate the embedded gauge before the main Meta model.
   Runtime Ollama (installed); PC has 6 GB VRAM + CUDA; first candidate Llama 3.2 3B.

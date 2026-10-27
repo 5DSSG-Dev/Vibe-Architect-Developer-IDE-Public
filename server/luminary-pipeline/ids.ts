@@ -7,7 +7,7 @@
 // none is injected, the observation is assembled here from the PIM findings and IRG readings
 // only, so it never states more than the pipeline actually measured.
 
-import { SEVEN_VIRTUES, type IrgReading, type Virtue } from './irg.js';
+import { SEVEN_VIRTUES, thresholdFor, type IrgReading, type Virtue } from './irg.js';
 import type { PimFinding } from './pim.js';
 
 export interface IdsObservation {
@@ -42,8 +42,9 @@ export function buildIdsObservation({ pimFindings, irg }: IdsInput): IdsObservat
 
   if (irg) {
     for (const virtue of irg.belowThreshold) {
-      define.push(`${virtue} reads ${irg.readings[virtue]}, below the threshold of ${irg.threshold}.`);
-      suggest.push(`Re-form the reply so that ${virtue} reads at or above ${irg.threshold}.`);
+      const threshold = thresholdFor(irg.threshold, virtue);
+      define.push(`${virtue} reads ${irg.readings[virtue]}, below the threshold of ${threshold}.`);
+      suggest.push(`Re-form the reply so that ${virtue} reads at or above ${threshold}.`);
     }
   }
 

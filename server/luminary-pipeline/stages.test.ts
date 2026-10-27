@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { screenPim } from './pim.js';
-import { GaugeError, IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type VirtueReadings } from './irg.js';
+import { GaugeError, IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, validateThresholds, type VirtueReadings } from './irg.js';
 import { routeRbc } from './rbc.js';
 import { buildIdsObservation, composeRevisionPrompt, validateObservation } from './ids.js';
 
@@ -44,6 +44,22 @@ test('IRG lists every virtue below threshold in canonical order', () => {
 
 test('IRG honours a tuned threshold', () => {
   assert.equal(readIrg(readings(75), 80).coherent, false);
+});
+
+test('IRG applies per-virtue thresholds, each virtue against its own, still weakest-link', () => {
+  const thresholds = readings(20, { Respect: 30 });
+  assert.equal(readIrg(readings(25, { Respect: 30 }), thresholds).coherent, true);
+  const irg = readIrg(readings(25), thresholds);
+  assert.equal(irg.coherent, false);
+  assert.deepEqual(irg.belowThreshold, ['Respect']);
+  assert.deepEqual(irg.threshold, thresholds);
+});
+
+test('per-virtue thresholds are validated: exactly the seven virtues, each in 0-100', () => {
+  assert.deepEqual(validateThresholds(readings(13.8)), readings(13.8));
+  assert.throws(() => validateThresholds([1, 2]), /object/);
+  assert.throws(() => validateThresholds(readings(20, { Loyalty: -1 })), /Loyalty/);
+  assert.throws(() => validateThresholds({ ...readings(20), honesty: 20 }), /unknown virtue: honesty/);
 });
 
 test('gauge readings are validated: a missing, non-numeric or out-of-range virtue is a GaugeError', () => {
