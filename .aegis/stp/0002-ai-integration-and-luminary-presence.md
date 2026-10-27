@@ -1344,3 +1344,15 @@ Evidence: server/luminary-pipeline/pipeline.ts:1; server/luminary-pipeline/pim.t
 Channel: cloud
 
 P17 built (Luminary -> Architect direction). server/luminary-pipeline/: pim.ts (deterministic, provisional pattern screen, six named families; a catch goes straight to IDS), irg.ts (Seven Virtues verbatim, IRG_THRESHOLD = 70, weakest-link; scorer output validated, anything but seven finite 0-100 readings is a GaugeError), rbc.ts (route only: prism | ids), ids.ts (Identify/Define/Suggest assembled only from what was measured, or from an injected gauge observer whose payload is validated; revision prompt offers the observation, does not impose it), pipeline.ts (bounded loop, default 2 IDS passes then an incoherent_after_ids Shortfall carrying the last observation and readings with the text withheld; append-only lineage per pass; each re-formed reply is structurally gated again). The router runs the pipeline when given one; the gateway always gives one, with a not-configured gauge by default, so a reply cannot leave ungauged (gauge_error Shortfall). 200 { reply, lineage } | 502 { shortfall, lineage }. The mount test for a wired reply source now also wires a fake gauge, and a new test confirms that without a gauge the reply is withheld. package.json test:gateway glob is now quoted so Node expands it recursively; unquoted, sh would have matched only the new subfolder and skipped the top-level suites. Verified: server typecheck and server build typecheck clean; gateway suite 97/97 (68 prior + 29 new); git diff --check clean. No model called, no credits spent; gauge model choice and the Llama 3.2 3B calibration stay with M1.b (on hold). The Architect -> Luminary direction is a follow-up proposal (P17 decision 4). Awaiting the Architect's verification.
+
+### 2026-10-27T20:01:16.718Z | tracey-prutch | status
+Chain-Prev: 450e741c22bee2c11d419d687499b9b6f4b53ed3c2ec9017282a8f12174df523
+Chain-Hash: aa9a1bc21e5b2e22d274755bcbf557461c15c3024bc31444602af71f368d3f2c
+Stage: Proposal
+Kind: status
+Item: P17
+Status: Verified
+Role: architect
+Channel: cloud
+
+Architect verified: the P17 reply pipeline (structural gate -> PIM -> IRG -> RBC -> Prism | IDS loop, bounded at 2 IDS passes, gauge injected and not-configured by default), merged to main via PR #4, green at 97/97. Verbatim, 2026-10-27T20:00:53Z: "yes p17 pipeline is correct". Recorded from the cloud thread by claude.
