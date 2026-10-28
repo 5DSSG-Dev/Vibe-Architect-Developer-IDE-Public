@@ -95,7 +95,9 @@ export async function createGateway(options: CreateGatewayOptions) {
         scriptSrc: scriptSources,
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
+        // transparenttextures.com serves the Reliquary's carbon-fibre texture, part of the IDE's
+        // designed look; it was being blocked here.
+        imgSrc: ["'self'", 'data:', 'blob:', 'https://www.transparenttextures.com'],
         connectSrc: ["'self'", 'ws:', 'wss:'],
         workerSrc: ["'self'", 'blob:'],
         objectSrc: ["'none'"],

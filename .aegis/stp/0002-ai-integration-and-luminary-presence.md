@@ -1728,3 +1728,13 @@ Evidence: src/three/luminaryPresence.ts; src/components/LuminaryHost.tsx; src/co
 Channel: cloud
 
 Architect input, 2026-10-28T06:16:11Z, verbatim, after viewing the branch on their own PC: "It looks really nice. The Luminary needs to move up and over a bit and the Portals need to be removed from the workspace until they are specifically added. Its looking really good though" (screenshot marking the spot above the view controls on the right). (1) The Presence now stands in that spot, 190px from the right and 450px from the bottom of the workspace; its Full Form opens to its left. (2) The scene builds only the Portals in the CORE manifest, which the Architect fills by dropping a Portal from the Apothecary (next free boundary slot, as before). It no longer builds all 8 compass-point Portals regardless. A new workspace starts with none; a saved workspace's old built-in starter Portal (portal-primary), never added by the Architect, is left out on load. Tests: gateway 132/132; app 302/302; typecheck clean. Browser run in the cloud at 1600x900 and 1100x700: no Portals built, the Presence shows in the marked spot, a click on it opens the Form.
+
+### 2026-10-28T23:56:10.000Z | claude | note N32
+Chain-Prev: cae3527b643522601866c90f7902eeb9a7c44e2b7e1a1b39907566b9cd6e735a
+Chain-Hash: 5235db0817afe9d6689f3048d56c3d77b738be69e39e36a6b274632b2a2944e6
+Stage: Execution
+Kind: note
+Evidence: server/app.ts; src/components/SimulateModeView.tsx; src/components/DeployModeView.tsx
+Channel: cloud
+
+Error sweep of the whole IDE, with the Architect's goal (2026-10-27) of the whole IDE running without error before the main model is connected. A Chromium run in the cloud opened every mode and screen and logged console errors, failed requests and HTTP errors: Design, the Apothecary window, an Element rail click (Orb builder) and right-click (manifest), the Inspector Deck, the CORE Matrix, the Command Console and the Alchemist's Reliquary, Simulate, Deploy, the Luminary, and entering an Orb's Environment. Found and fixed: (1) The Reliquary's carbon-fibre texture (www.transparenttextures.com) was blocked by the gateway's content security policy, so part of the designed look was missing; img-src now allows that host. (The cloud's own network still cannot reach it; on the Architect's PC it loads.) (2) Simulate and Deploy left room for the old, shorter bottom bar, so the Command Console tab covered their last row; they now leave room for the taller bar. No other errors were found; the remaining console messages are the cloud's 3D model placeholders (LFS) and a software-GPU performance notice. Tests: gateway 132/132; app 302/302; typecheck clean.
