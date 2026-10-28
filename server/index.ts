@@ -6,6 +6,8 @@ import { InMemorySessionStore, RedisSessionStore } from './session-store.js';
 import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
+import { rehearsalAskModel } from './luminary-rehearsal.js';
+import { LuminaryExecutor } from './luminary-executor.js';
 
 const config = loadConfig();
 const evidenceStore = config.redisUrl
@@ -30,6 +32,9 @@ try {
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
     gauge: config.luminaryGauge ? createLocalGauge(config.luminaryGauge) : undefined,
+    askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : undefined,
+    replySource: config.luminaryReplySource,
+    executor: config.luminaryExecutor ? new LuminaryExecutor({ repoRoot: process.cwd() }) : undefined,
   });
 } catch (error) {
   await Promise.allSettled([sessions.close?.(), evidenceStore.close?.()]);
