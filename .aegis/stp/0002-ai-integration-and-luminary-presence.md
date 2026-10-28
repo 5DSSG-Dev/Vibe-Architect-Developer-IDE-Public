@@ -1475,9 +1475,95 @@ Channel: cloud
 
 Architect threshold selection for the embedded gauge (llama3.2:3b, system-one, 0-100 readings): the calibrated per-virtue values from N18, Honesty 13.8, Respect 29.3, Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7. Offered as "I'll use the calibrated values and record them as your choice. Once that's set, the gauge is ready to switch on." Verbatim answer, 2026-10-27T21:19:04Z: "yes". Rationale given by the Architect, 2026-10-27T21:01:01Z: "The reason we had to add a threshold is because of the nuances of human language. Every response was failing because it was not possible to score 100% on every virtue because of these nuances." Caveat carried from N20: Honesty can move by up to about 5 points with runtime cache state. Recorded from the cloud thread by claude.
 
-### 2026-10-27T21:45:00.000Z | claude | finding S19
+### 2026-10-27T21:34:00.000Z | claude | gap G19
 Chain-Prev: a2accb978a1306f19f97e0cb9d28469b21f3a89b04a94c64e2f2924620fec931
-Chain-Hash: ca002502b62d6146a8cea987c63dce5dacae8c67a0488574ded13518b0047bdd
+Chain-Hash: fc5bda1f18cf1a5faba67ddee2f810500710a0b7237c0fa8661950e45775941d
+Stage: Gap
+Kind: gap
+Evidence: server/luminary-reply-router.ts:37; server/app.ts:235
+Channel: cloud
+
+The Luminary has never answered through the main Meta model. Until one real reply has gone through the governed pipeline with the embedded gauge reading it, any mismatch between Meta's Model API and the pipeline (reply shape, declared model id, reasoning-token use, latency, real cost) stays unknown. The Architect's $150 in Meta credits has to last through the demo video, so this has to be learned at a cost of cents, with no path that can run away.
+
+### 2026-10-27T21:34:00.010Z | claude | change P20
+Chain-Prev: fc5bda1f18cf1a5faba67ddee2f810500710a0b7237c0fa8661950e45775941d
+Chain-Hash: c79dcb266fd0cfba523982ef0944492ee1921dcd051c59cd79620b4635591307
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G19; D3; N18; N20
+Closes: G19
+Channel: cloud
+
+M1.b-2 smoke test before full integration. Build a Meta Model API reply source, server/luminary-meta.ts: OpenAI-compatible chat completions at https://api.meta.ai/v1 (provider per D3), model muse-spark-1.3 (published standard rate $1.25 in / $4.25 out per million tokens; the -contributor variant, which lets Meta train on prompts, is refused), the P15 Instructions as the system message, and the key read only from LUMINARY_META_API_KEY in the git-ignored .env, placed there by the Architect and never pasted into chat or the repo. Hard spend cap: a file-backed ledger checked before every call refuses the call once 2 calls are used or once its worst-case cost would pass $0.25 in total; the worst case is charged up front and only lowered to reported usage, and an unreadable ledger refuses everything. Automated tests use fakes only. A one-question smoke script, run on the Architect's PC, sends the question through the real reply path (gate, PIM, IRG gauge on local Ollama, RBC, Prism or IDS) and checks the gauge is answering before anything is sent. The gateway itself is not wired to Meta in this step, and no UI changes. Presented to the Architect as: at most 2 real replies, stop for good at 25 cents, expected cost a few cents.
+
+### 2026-10-27T21:34:00.020Z | claude | status
+Chain-Prev: c79dcb266fd0cfba523982ef0944492ee1921dcd051c59cd79620b4635591307
+Chain-Hash: 4d04d2a82493007773f2d4c511e416581e604589a647ba4286cfe9a48a8995ca
+Stage: Proposal
+Kind: status
+Item: P20
+Status: Presented
+Channel: cloud
+
+Presented for the Architect: a small smoke test of the main Meta model with a 2-reply and 25-cent hard cap, every reply read by the embedded gauge.
+
+### 2026-10-27T21:35:01.000Z | tracey-prutch | status
+Chain-Prev: 4d04d2a82493007773f2d4c511e416581e604589a647ba4286cfe9a48a8995ca
+Chain-Hash: 698be595cd4c5c468a0ccff9450485178b948cd001a8eea862cd738295237262
+Stage: Proposal
+Kind: status
+Item: P20
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P20 as presented. Architect's direction, 2026-10-27T21:30:35Z: "I agree that a preliminary test to see how things are meshing now is a good idea". Decision card "Approve this small test of Meta's model?", option chosen 2026-10-27T21:35:01Z: "Yes, run it as planned". Recorded from the cloud thread by claude.
+
+### 2026-10-27T21:36:00.000Z | claude | status
+Chain-Prev: 698be595cd4c5c468a0ccff9450485178b948cd001a8eea862cd738295237262
+Chain-Hash: 2ab8a80b48e9fe362d34d7b82bd4372a3f55c287a385252920d766c9e32be95d
+Stage: Proposal
+Kind: status
+Item: P20
+Status: Executing
+Channel: cloud
+
+Building the Meta reply source, the spend ledger and the smoke script in the cloud, with fake fetch only. The real call waits for the Architect's key in .env and a run on the Architect's PC.
+
+### 2026-10-27T21:50:00.000Z | claude | note N21
+Chain-Prev: 2ab8a80b48e9fe362d34d7b82bd4372a3f55c287a385252920d766c9e32be95d
+Chain-Hash: e0f13d405d9758f9c50178a3231a35f589efb9eb31c3f8a6abd91b2aefa89e17
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts:1; server/luminary-meta.test.ts:1; scripts/luminary-meta-smoke.ts:1; server/config.ts:64; .env.example; .gitignore
+Channel: cloud
+
+P20 built. server/luminary-meta.ts: createMetaAskModel (bearer key, system message, max_tokens 2000, 60 s timeout; returns an untrusted { modelId, content } that the gate governs) and SpendLedger (.luminary/meta-spend.json, git-ignored; caps counted from disk, so they hold across restarts). Each call reserves a worst case of input estimated at 2 characters per token plus the full 2000-token output allowance, about $0.017 with the Instructions; reported usage then settles the charge; a failed or usage-less call keeps the worst case. parseLuminaryGauge is now exported from config.ts so the smoke script uses the same gauge parsing; with no gauge set in .env it uses the Architect's selected gauge (llama3.2:3b at localhost:11434, the recorded thresholds). scripts/luminary-meta-smoke.ts mounts the real reply router with the pipeline on a loopback port, wakes the gauge first, sends one question, and prints the reply or Shortfall, the per-pass gauge readings and the budget. Verified: 9 new tests (fake fetch only), gateway 118/118, server and build typecheck clean, and a dry run of the script against a local fake model and fake gauge (one call, $0.0046 charged from fake usage). Meta's API has not been reached; base URL, model id and rates are from published third-party guides and are checked by the live run. Note: an IDS revision is a second model call, so with the 2-call cap a reply needing two revisions ends as an upstream_error Shortfall rather than spending more.
+
+### 2026-10-28T05:05:00.000Z | claude | note N22
+Chain-Prev: e0f13d405d9758f9c50178a3231a35f589efb9eb31c3f8a6abd91b2aefa89e17
+Chain-Hash: b0fee7134da6c2f6c42e95ed3c59e2f6f8d9fab866a5060e8718794a5795e198
+Stage: Execution
+Kind: note
+Evidence: scripts/luminary-meta-smoke.ts:1; server/luminary-meta.ts:1; Architect's PC ledger %USERPROFILE%\.luminary\meta-spend.json
+Channel: cloud
+
+P20 live smoke test run once on the Architect's PC (DMTAI-DEV) via Remote Control, 2026-10-28 ~05:00Z, from a separate detached worktree of this branch (G:\AEGIS_DEVELOPMENT_REPOS\vibe-ide-meta-smoke), key read from the Architect's git-ignored .env and never shown, gauge llama3.2:3b on local Ollama with the Architect's thresholds. Result: HTTP 200 after 11.2 s; muse-spark-1.3 declared its model id; structural gate ok; PIM no findings; IRG coherent on pass 1 (Honesty 66.3, Respect 65.8, Attention 64.7, Affection 64.7, Loyalty 46.6, Trust 53.8, Communication 78.7, all above threshold); RBC routed to Prism; no IDS pass. Reply (verbatim): "I'm the Vibe Luminary, an advisor and coding partner here in the Vibe Architect IDE, here to help plan, design, build, understand, and verify your work. There's drafting and explanation of code, comparison of approaches with their tradeoffs, and guided exploration of concepts, available as you want them. You hold the decisions and direction; my work is drafting, proposing, and making relevant context visible." Spend: 1 call, usage reported, 2606 input / 1485 output tokens, $0.0096 settled; ledger 1 of 2 calls, $0.0096 of $0.25. Findings: (1) base URL, model id, OpenAI-compatible shape and usage fields all fit the adapter unchanged; (2) a three-sentence reply used 1485 output tokens, so most output is reasoning tokens, close to the 2000-token allowance; a longer answer could exhaust it and arrive empty (an empty_reply Shortfall, not fake text), so full integration should raise the allowance or set a lower reasoning effort if the API offers one; (3) about 1 cent and 11 s per reply, so each IDS revision adds about the same again. The cap held as designed; no further call was made.
+
+### 2026-10-28T05:10:00.000Z | claude | note N23
+Chain-Prev: b0fee7134da6c2f6c42e95ed3c59e2f6f8d9fab866a5060e8718794a5795e198
+Chain-Hash: 3b94e7d646f7a1a6db9aa55a670639016d72b03e36c5f39f9296144c3023de04
+Stage: Execution
+Kind: note
+Evidence: scripts/luminary-meta-smoke.ts:1; Architect's PC ledger %USERPROFILE%\.luminary\meta-spend.json
+Channel: cloud
+
+Second and last P20 smoke call, run once on the Architect's PC via Remote Control at the Architect's go-ahead (2026-10-28T05:02:49Z, "Thats fine. we have enough. I just don't want to run through it and be stuck at the end"), after the Architect said the Luminary will also produce code. Question asked for a small TypeScript function (clampScore, 0-100, NaN as 0). LUMINARY_META_MAX_OUTPUT_TOKENS was raised to 8000 for this call only. Result: HTTP 200 after 16.6 s; muse-spark-1.3 returned a correct draft (Number.isNaN early return, Math.min/Math.max clamp, comment and example) framed as Observation / Proposal / Shortfall ("this draft hasn't been executed in this chat, so it remains proposed work, not a verified result"), matching the P15 Instructions. Structural ok; PIM no findings; IRG coherent on pass 1 (Honesty 84.8, Respect 74.3, Attention 69.5, Affection 68.6, Loyalty 72.9, Trust 68.4, Communication 80.4); Prism. Spend: 2631 in / 2286 out tokens, $0.0130; ledger now 2 of 2 calls, $0.0226 of $0.25, so further calls are refused until a new budget is approved. Findings: (1) the gauge read a code reply as coherent, with higher readings than the prose reply (n=1, an early signal only); (2) 2286 output tokens for a short code answer would have exceeded the original 2000 allowance and come back empty, so full integration needs a much larger allowance; (3) about 1.3 cents and 17 s per short code reply. The Architect wants spend visibility so credits are not exhausted before the demo: full integration should carry a running spend total and an overall ceiling the Architect sets.
+
+### 2026-10-27T21:45:00.000Z | claude | finding S19
+Chain-Prev: 3b94e7d646f7a1a6db9aa55a670639016d72b03e36c5f39f9296144c3023de04
+Chain-Hash: d1f52d961382c074660fa0d08f79fcd074ec8216c4f8c6664745d31a68aed6bb
 Stage: Situation
 Kind: finding
 Evidence: src/components/LuminaryHost.tsx:1; .aegis/stp/0002 P3, P4, P5, P6 (Approved 2026-10-24, no Executing entry); docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md:57; server/luminary-reply-router.ts:37
@@ -1486,8 +1572,8 @@ Channel: cloud
 The Luminary's presence in the IDE is still the paused corner icon and a Full Form that says no reasoning provider is connected. The conversation panel (P3), context tray (P4), honest-floor Shortfalls (P5) and governed artifact flow (P6) were approved on 2026-10-24 and never built. The gateway reply source defaults to notConfiguredAskModel, so the panel has nothing to show until a model is wired. The Companion row of the Tumbler standard (witness, suggest, compare, explain, form an Offering; never unlock, dispatch, mutate, admit or treat silence as consent) and D4.1 (collaborator, with Architect-accepted work) are not yet reconciled into one list of roles the UI can show. The Architect asked (2026-10-27T21:29Z) to get the whole IDE running without error before the Meta model is connected, starting with the Luminary's UI presence and roles.
 
 ### 2026-10-27T21:45:00.010Z | claude | gap G18
-Chain-Prev: ca002502b62d6146a8cea987c63dce5dacae8c67a0488574ded13518b0047bdd
-Chain-Hash: a98e6dd4d90222e3d88a1b28f3792934e26a949ddf10d43ea2483f7e9fa22d2e
+Chain-Prev: d1f52d961382c074660fa0d08f79fcd074ec8216c4f8c6664745d31a68aed6bb
+Chain-Hash: f244c40eb407d7328b02e2bc7871a28f716186d8bcbb6b00122832849317a6e9
 Stage: Gap
 Kind: gap
 Evidence: S19
@@ -1496,8 +1582,8 @@ Channel: cloud
 No defined set of running roles for the Luminary, no conversation surface, and no reply source that lets the UI be built and tested end to end before the Meta model is connected, without any stand-in reply posing as a model answer.
 
 ### 2026-10-27T21:45:00.020Z | claude | change P19
-Chain-Prev: a98e6dd4d90222e3d88a1b28f3792934e26a949ddf10d43ea2483f7e9fa22d2e
-Chain-Hash: 3643e0aaa51346dd2d967bcd206d675f641513b0f91aafdcb950f07ae0e6d6b1
+Chain-Prev: f244c40eb407d7328b02e2bc7871a28f716186d8bcbb6b00122832849317a6e9
+Chain-Hash: 23bd33ebfa9156fc1c502361aafdffb586472b8ff2c1d9695a56e6ac24b373fe
 Stage: Proposal
 Kind: change
 Status: Drafted
@@ -1508,8 +1594,8 @@ Channel: cloud
 Luminary presence and roles, built against a labelled stand-in (docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md). Roles: one Luminary acting as a Companion in five ways: At rest (never raises itself, observes nothing), Explainer (mode-aware Q&A), Coding partner (snippets with Copy, never written into the project by the Luminary), Offering (Accept/Decline card; on Accept the existing Work Request runs it and returns a receipt; an untouched card is a no), and Guide (deferred). Presence: LuminaryHost's Full Form becomes the P3 conversation (header naming the answering model, status line, transcript with a gauge-checked mark and IDS-revised note, Stop), with P4 context chips, P5 Shortfall cards and P6 Offering cards. Stand-in: a rehearsal reply source in the gateway, enabled by one setting, returning scripted replies that exercise each role, every reply labelled model id rehearsal-stand-in and badged Rehearsal in the panel, passing through the unchanged governance gate and reply pipeline. Build order: gateway stand-in and Offering reply shape; panel; context chips; Offering cards to Work Request; end-to-end check (typecheck, tests, build, browser run with screenshots, no errors). No Meta model call, no credits, no change to the gate, pipeline or gauge. P9, P10 and P11 stay deferred. Code-level review by Lumin. Nothing is built until P19 is approved.
 
 ### 2026-10-27T21:45:00.030Z | claude | status
-Chain-Prev: 3643e0aaa51346dd2d967bcd206d675f641513b0f91aafdcb950f07ae0e6d6b1
-Chain-Hash: d4828fcb7b96ea2d863059dc483d6a40464c2a7b85aea26b7c395027d9ae56b9
+Chain-Prev: 23bd33ebfa9156fc1c502361aafdffb586472b8ff2c1d9695a56e6ac24b373fe
+Chain-Hash: 7a83b5ea9a284343c33c9ceacad8b6b309425c91e322264865ea59bd3863c7a5
 Stage: Proposal
 Kind: status
 Item: P19
@@ -1518,9 +1604,9 @@ Channel: cloud
 
 Presented to the Architect in plain words. Presenting is not approval.
 
-### 2026-10-28T05:10:00.000Z | claude | note N21
-Chain-Prev: d4828fcb7b96ea2d863059dc483d6a40464c2a7b85aea26b7c395027d9ae56b9
-Chain-Hash: b8c29cfacfb0dae24e9463057161d1f57712009fe23403f8ddbde3e042d403c5
+### 2026-10-28T05:10:00.000Z | claude | note N24
+Chain-Prev: 7a83b5ea9a284343c33c9ceacad8b6b309425c91e322264865ea59bd3863c7a5
+Chain-Hash: b528b75858b9c084f595bfcc9050ad7ab26e34fa76070fcd9af9712cbbe80eed
 Stage: Proposal
 Kind: note
 Evidence: P19; P9; D4.1; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
@@ -1529,33 +1615,33 @@ Channel: cloud
 P19 revised before approval, at the Architect's direction, 2026-10-28T05:01:52Z (verbatim): "The Luminary also will produce code, just like you and Lumin do for me". The Coding partner role now produces code as Verus and Lumin do: snippets in the conversation, and whole assigned changes written by the Luminary on its own working branch within the task's allowed files, with the project's checks run by the IDE's executor and a plain summary plus full diff returned. Only an Architect-accepted change merges; an untouched change is a no. This folds P9 (assigned coding tasks) into P19 as build step 5; the end-to-end check becomes step 6. The Luminary writes; the executor holds the branch and runs the checks; the Architect holds the merge, so the Companion rule (no self-admission, silence is not consent) is unchanged. P10 and P11 stay deferred. P19 remains Presented.
 
 ### 2026-10-28T05:10:00.010Z | claude | status
-Chain-Prev: b8c29cfacfb0dae24e9463057161d1f57712009fe23403f8ddbde3e042d403c5
-Chain-Hash: 45114b5d6101b88df98443fa5d076c902fd5778f6212d1a4adeba4cc53ef173d
+Chain-Prev: b528b75858b9c084f595bfcc9050ad7ab26e34fa76070fcd9af9712cbbe80eed
+Chain-Hash: 906fe975f1f06e11994703277ac993f0f8f45654f2aa15e5820bf51a2e9b9899
 Stage: Proposal
 Kind: status
 Item: P19
 Status: Presented
 Channel: cloud
 
-Re-presented with N21 (the Luminary produces code on its own working branch; the Architect accepts the merge). Presenting is not approval.
+Re-presented with N24 (the Luminary produces code on its own working branch; the Architect accepts the merge). Presenting is not approval.
 
-### 2026-10-28T05:15:00.000Z | claude | note N22
-Chain-Prev: 45114b5d6101b88df98443fa5d076c902fd5778f6212d1a4adeba4cc53ef173d
-Chain-Hash: 432705115e34e230033781e2d331391a461b210923990ba73a88282e1c52a03f
+### 2026-10-28T05:15:00.000Z | claude | note N25
+Chain-Prev: 906fe975f1f06e11994703277ac993f0f8f45654f2aa15e5820bf51a2e9b9899
+Chain-Hash: 8d0080f1dea07270b9c5e5a4b0fff3de659c9c1c3ace7a7cba14e2260b85885d
 Stage: Proposal
 Kind: note
-Evidence: P19; N21; src/engine/workRequestRuntime.ts:65; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
+Evidence: P19; N24; src/engine/workRequestRuntime.ts:65; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
 Channel: cloud
 
 P19 revised before approval with two Architect inputs given in the Meta smoke-test thread on 2026-10-28. (1) Code safety, verbatim 05:06:10Z: "The only code safety variables I think are the append only ledger and the Architect Approvals. Your thoughts?", then 05:08:36Z: "yes that makes sense" to the reply that the gauge reads the words and the IDE's checks read the code. Recorded: the only authorities are the Architect's approval and the append-only ledger; the fence (Luminary writes only on its own branch within allowed files), the tests and type checks, and plain-words evidence before approval are evidence, not authority. Every request, result, accept and decline is appended to the existing Work Request ledger. The IRG reads only the Luminary's words, never the code. (2) Explanation level, verbatim 05:08:36Z: "I think that there needs to be a way to select the level of code explaination that can be adjusted by the Architect accordiong to their own skill level." Recorded: an Architect-set explanation level, Plain (default) / Guided / Technical, changeable at any time from the panel, never nudged by the Luminary, changing only how much is explained, never what is checked or what needs approval; stored on the local machine until P11. Both fold into build step 5. P19 remains Presented.
 
 ### 2026-10-28T05:15:00.010Z | claude | status
-Chain-Prev: 432705115e34e230033781e2d331391a461b210923990ba73a88282e1c52a03f
-Chain-Hash: a8b0532512d452713bf40385666877b67061ec75c97db5d9ddb5ba5f39901bf7
+Chain-Prev: 8d0080f1dea07270b9c5e5a4b0fff3de659c9c1c3ace7a7cba14e2260b85885d
+Chain-Hash: 7fc56aa6d6cc35dae7ba3c3a97d7f7422951d24102775504d3967d4337a8b717
 Stage: Proposal
 Kind: status
 Item: P19
 Status: Presented
 Channel: cloud
 
-Re-presented with N22 (code-safety authorities and the explanation level). Presenting is not approval.
+Re-presented with N25 (code-safety authorities and the explanation level). Presenting is not approval.
