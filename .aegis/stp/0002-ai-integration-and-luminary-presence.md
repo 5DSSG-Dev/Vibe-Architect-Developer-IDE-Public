@@ -1645,3 +1645,26 @@ Status: Presented
 Channel: cloud
 
 Re-presented with N25 (code-safety authorities and the explanation level). Presenting is not approval.
+
+### 2026-10-28T05:16:00.000Z | tracey-prutch | status
+Chain-Prev: 7fc56aa6d6cc35dae7ba3c3a97d7f7422951d24102775504d3967d4337a8b717
+Chain-Hash: 32053babf00aaf773905f74c12bed21c84c8cdeb9f86a72ffd76ea16fea5f65a
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P19 (Luminary presence and roles, with the revisions in N24 and N25) on the thread's decision card "Approve the Luminary presence and roles plan so building can start?", option chosen 2026-10-28T05:12:25Z: "Yes, build it". The thread told the Architect the card covered the revised plan. Recorded from the cloud thread by claude.
+
+### 2026-10-28T05:16:00.010Z | claude | status
+Chain-Prev: 32053babf00aaf773905f74c12bed21c84c8cdeb9f86a72ffd76ea16fea5f65a
+Chain-Hash: 3b31e6d6fd1c11549039705463304885dcef6894cc1083f9007d0a14888fae9a
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Executing
+Channel: cloud
+
+Starting the build in plan order: (1) gateway rehearsal stand-in and Offering reply shape; (2) panel; (3) context chips; (4) Offering cards to the Work Request; (5) code production on a working branch with checks, summary, explanation level and ledger; (6) end-to-end check. Code-level review by Lumin.
