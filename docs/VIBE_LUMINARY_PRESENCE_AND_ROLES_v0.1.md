@@ -43,6 +43,29 @@ you and Lumin do for me"). This brings the assigned-coding-task proposal (P9) in
 The Luminary does the writing. The IDE's executor holds the branch and runs the checks, and the Architect
 holds the merge, so the Luminary still never admits its own work. Durable learning (P11) can wait.
 
+**What keeps code safe** (agreed by the Architect, 2026-10-28). Only two things carry authority: the
+**Architect's approval** and the **append-only ledger** that records it. Everything else is evidence that
+helps the Architect decide:
+
+- **The fence.** The Luminary writes only on its own working branch, inside the task's allowed files.
+- **The checks.** The IDE's tests and type checks read the code. The gauge reads only the Luminary's words
+  (explanations and summaries), never the code itself.
+- **Plain-words evidence.** Before approving, the Architect sees what changed and what the checks found,
+  in plain words.
+- **The record.** Every request, result, accept and decline is appended to the ledger, using the IDE's
+  existing Work Request ledger. Nothing in it is rewritten.
+
+**Explanation level** (asked for by the Architect, 2026-10-28). The Architect chooses how much the
+Luminary explains its code, to match their own skill level, and can change it at any time from the panel:
+
+- **Plain:** what the change does and why, in everyday words, with no code shown unless asked.
+- **Guided:** the plain account plus the key parts of the code, each explained.
+- **Technical:** the full code and diff, with engineering detail.
+
+It starts at Plain. The Luminary never nudges the setting up or down, and the setting changes only how
+much is explained, never what is checked or what needs approval. Until durable learning (P11) arrives,
+the setting is remembered on this computer only.
+
 ## 3. Presence in the IDE (the Full Form)
 
 The existing corner icon and panel (`src/components/LuminaryHost.tsx`) grow into the conversation P3 described:
@@ -75,7 +98,8 @@ the Shortfall card.
 2. Panel: conversation, status line, Stop, Shortfall cards.
 3. Context chips.
 4. Offering cards wired to the existing Work Request and its receipt.
-5. Code production: the working-branch executor, checks, the summary and diff view, Accept and Decline.
+5. Code production: the working-branch executor, checks, the summary and diff view, the explanation
+   level setting, Accept and Decline, each recorded in the ledger.
 6. End-to-end check: typecheck, all tests, build, and the IDE run in a browser with screenshots, with no errors.
 
 ## 6. What this does not do

@@ -1538,3 +1538,24 @@ Status: Presented
 Channel: cloud
 
 Re-presented with N21 (the Luminary produces code on its own working branch; the Architect accepts the merge). Presenting is not approval.
+
+### 2026-10-28T05:15:00.000Z | claude | note N22
+Chain-Prev: 45114b5d6101b88df98443fa5d076c902fd5778f6212d1a4adeba4cc53ef173d
+Chain-Hash: 432705115e34e230033781e2d331391a461b210923990ba73a88282e1c52a03f
+Stage: Proposal
+Kind: note
+Evidence: P19; N21; src/engine/workRequestRuntime.ts:65; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
+Channel: cloud
+
+P19 revised before approval with two Architect inputs given in the Meta smoke-test thread on 2026-10-28. (1) Code safety, verbatim 05:06:10Z: "The only code safety variables I think are the append only ledger and the Architect Approvals. Your thoughts?", then 05:08:36Z: "yes that makes sense" to the reply that the gauge reads the words and the IDE's checks read the code. Recorded: the only authorities are the Architect's approval and the append-only ledger; the fence (Luminary writes only on its own branch within allowed files), the tests and type checks, and plain-words evidence before approval are evidence, not authority. Every request, result, accept and decline is appended to the existing Work Request ledger. The IRG reads only the Luminary's words, never the code. (2) Explanation level, verbatim 05:08:36Z: "I think that there needs to be a way to select the level of code explaination that can be adjusted by the Architect accordiong to their own skill level." Recorded: an Architect-set explanation level, Plain (default) / Guided / Technical, changeable at any time from the panel, never nudged by the Luminary, changing only how much is explained, never what is checked or what needs approval; stored on the local machine until P11. Both fold into build step 5. P19 remains Presented.
+
+### 2026-10-28T05:15:00.010Z | claude | status
+Chain-Prev: 432705115e34e230033781e2d331391a461b210923990ba73a88282e1c52a03f
+Chain-Hash: a8b0532512d452713bf40385666877b67061ec75c97db5d9ddb5ba5f39901bf7
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Re-presented with N22 (code-safety authorities and the explanation level). Presenting is not approval.
