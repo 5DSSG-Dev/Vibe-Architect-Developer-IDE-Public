@@ -215,10 +215,14 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     void send(`Explain more about your last reply:\n${entry.reply.content.slice(0, 2_000)}`, deeper, false);
   };
 
-  const core = (size: string) => (
-    <span
+  // The Architect's Codeglass emblem: the Paused Icon is the emblem small, the Full Form shows it whole.
+  const core = (size: string, src = '/assets/luminary/luminary-codeglass-96.webp') => (
+    <img
+      src={src}
+      alt=""
       aria-hidden="true"
-      className={`${size} rounded-full bg-[radial-gradient(circle_at_40%_35%,#fff7d6_0%,#fcd34d_35%,#b45309_75%,transparent_100%)] shadow-[0_0_18px_rgba(252,211,77,0.55)]`}
+      draggable={false}
+      className={`${size} object-contain drop-shadow-[0_0_10px_rgba(252,211,77,0.45)]`}
     />
   );
 
@@ -242,7 +246,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
         >
           <header className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              {core('w-6 h-6')}
+              {core('w-10 h-10', '/assets/luminary/luminary-codeglass-384.webp')}
               <div className="min-w-0">
                 <h2 className="font-orbitron text-xs font-bold tracking-wider text-amber-200 uppercase">Vibe Luminary</h2>
                 <p className="text-[9px] text-slate-400 truncate">
@@ -429,9 +433,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
           aria-label="Engage the Vibe Luminary"
           aria-expanded={false}
           title="Vibe Luminary (paused)"
-          className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-950/80 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+          className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-950/80 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
-          {core('w-4 h-4')}
+          {core('w-7 h-7')}
         </button>
       )}
     </div>
