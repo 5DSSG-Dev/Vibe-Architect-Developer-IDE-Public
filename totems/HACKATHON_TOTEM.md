@@ -81,7 +81,7 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
-### 2026-10-27 | claude | M1.b-2 — Meta model smoke test approved and built (P19)
+### 2026-10-27 | claude | M1.b-2 — Meta model smoke test approved and built (P20)
 - The Architect approved a small smoke test of the main Meta model: at most 2 real replies, a hard stop at $0.25,
   every reply read by the embedded gauge. Built `server/luminary-meta.ts` (Muse Spark via Meta's Model API, spend
   ledger checked before every call) and `scripts/luminary-meta-smoke.ts`. Tests use fakes only (gateway 118/118).
