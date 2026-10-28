@@ -47,7 +47,9 @@ holds the merge, so the Luminary still never admits its own work. Durable learni
 **Architect's approval** and the **append-only ledger** that records it. Everything else is evidence that
 helps the Architect decide:
 
-- **The fence.** The Luminary writes only on its own working branch, inside the task's allowed files.
+- **The fence.** The Luminary writes only on its own working branch, inside the task's allowed files. It
+  cannot touch the main project, settings files or keys, and it cannot run anything on the Architect's
+  computer by itself.
 - **The checks.** The IDE's tests and type checks read the code. The gauge reads only the Luminary's words
   (explanations and summaries), never the code itself.
 - **Plain-words evidence.** Before approving, the Architect sees what changed and what the checks found,
@@ -62,7 +64,8 @@ Luminary explains its code, to match their own skill level, and can change it at
 - **Guided:** the plain account plus the key parts of the code, each explained.
 - **Technical:** the full code and diff, with engineering detail.
 
-It starts at Plain. The Luminary never nudges the setting up or down, and the setting changes only how
+Any single change also has an **Explain more** button for a deeper look without changing the setting.
+The setting is a personal preference the Architect can view, change or clear. It starts at Plain. The Luminary never nudges the setting up or down, and the setting changes only how
 much is explained, never what is checked or what needs approval. Until durable learning (P11) arrives,
 the setting is remembered on this computer only.
 
