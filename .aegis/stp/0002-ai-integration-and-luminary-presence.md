@@ -1517,3 +1517,24 @@ Status: Presented
 Channel: cloud
 
 Presented to the Architect in plain words. Presenting is not approval.
+
+### 2026-10-28T05:10:00.000Z | claude | note N21
+Chain-Prev: d4828fcb7b96ea2d863059dc483d6a40464c2a7b85aea26b7c395027d9ae56b9
+Chain-Hash: b8c29cfacfb0dae24e9463057161d1f57712009fe23403f8ddbde3e042d403c5
+Stage: Proposal
+Kind: note
+Evidence: P19; P9; D4.1; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
+Channel: cloud
+
+P19 revised before approval, at the Architect's direction, 2026-10-28T05:01:52Z (verbatim): "The Luminary also will produce code, just like you and Lumin do for me". The Coding partner role now produces code as Verus and Lumin do: snippets in the conversation, and whole assigned changes written by the Luminary on its own working branch within the task's allowed files, with the project's checks run by the IDE's executor and a plain summary plus full diff returned. Only an Architect-accepted change merges; an untouched change is a no. This folds P9 (assigned coding tasks) into P19 as build step 5; the end-to-end check becomes step 6. The Luminary writes; the executor holds the branch and runs the checks; the Architect holds the merge, so the Companion rule (no self-admission, silence is not consent) is unchanged. P10 and P11 stay deferred. P19 remains Presented.
+
+### 2026-10-28T05:10:00.010Z | claude | status
+Chain-Prev: b8c29cfacfb0dae24e9463057161d1f57712009fe23403f8ddbde3e042d403c5
+Chain-Hash: 45114b5d6101b88df98443fa5d076c902fd5778f6212d1a4adeba4cc53ef173d
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Re-presented with N21 (the Luminary produces code on its own working branch; the Architect accepts the merge). Presenting is not approval.

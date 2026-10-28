@@ -25,11 +25,23 @@ Offering. It may not unlock, dispatch, change anything, admit anything, or treat
 |---|---|---|
 | **At rest** | The golden core in the corner. It never raises itself. | Observe or send anything (D4.2). |
 | **Explainer** | Answers questions about what is on screen, in the current mode (Design, Code, Simulate, Deploy). | Judge the Architect. |
-| **Coding partner** | Writes code with the Architect when asked, explained plainly, with a Copy button. | Put code into the project by itself. |
+| **Coding partner** | Produces code for the Architect, the way Verus and Lumin do: small snippets in the conversation, and whole assigned changes made on its own working branch, with the checks run and a plain summary of what changed. | Merge its own work. The Architect reviews and accepts before anything joins the project. |
 | **Offering** | A proposal card ("I can draft this Orb design note") with Accept and Decline. On Accept, the IDE's existing Work Request makes it and shows a receipt. | Run the work itself. If the card is left alone, it is a no. |
 | **Guide** | One guided session (later; can wait). | Act with authority. |
 
-Assigned coding tasks run by an executor (P9) and durable learning (P11) stay where they are and can wait.
+How the Luminary produces code (the Architect, 2026-10-28: "The Luminary also will produce code, just like
+you and Lumin do for me"). This brings the assigned-coding-task proposal (P9) into this plan:
+
+1. The Architect asks for a change, in plain words.
+2. The Luminary writes the code on its own working branch, inside the files the task allows, never on the
+   main project.
+3. The IDE runs the project's checks on that branch.
+4. The Architect sees a plain summary, what changed and whether the checks passed, with the full diff
+   available.
+5. The Architect accepts or declines. Only an accepted change joins the project. A change left alone is a no.
+
+The Luminary does the writing. The IDE's executor holds the branch and runs the checks, and the Architect
+holds the merge, so the Luminary still never admits its own work. Durable learning (P11) can wait.
 
 ## 3. Presence in the IDE (the Full Form)
 
@@ -63,13 +75,14 @@ the Shortfall card.
 2. Panel: conversation, status line, Stop, Shortfall cards.
 3. Context chips.
 4. Offering cards wired to the existing Work Request and its receipt.
-5. End-to-end check: typecheck, all tests, build, and the IDE run in a browser with screenshots, with no errors.
+5. Code production: the working-branch executor, checks, the summary and diff view, Accept and Decline.
+6. End-to-end check: typecheck, all tests, build, and the IDE run in a browser with screenshots, with no errors.
 
 ## 6. What this does not do
 
 - It does not call a Meta model or spend credits.
 - It does not change the governance gate, the reply pipeline, or the gauge.
-- It gives the Luminary no way to change the project on its own.
+- It gives the Luminary no way to merge into the project on its own.
 
 ---
 
