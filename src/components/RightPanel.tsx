@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { useRetractWhenDone } from './useRetractWhenDone';
 import { Search, Sparkles, ShieldCheck, ChevronRight, ChevronLeft, ArrowRight, Activity, CheckCircle2, Terminal } from 'lucide-react';
 import { ApothecaryItem, CoreManifest } from '../engine/relationEngine';
 import { SimulationTelemetry } from '../engine/simulationEngine';
@@ -33,7 +34,11 @@ export const RightPanel: React.FC<RightPanelProps> = ({
   directionalAngle = 0.9,
   onUpdateAether
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  // Tucked away by default; opens when picked and tucks back when done (useRetractWhenDone).
+  const [isOpen, setIsOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const retract = useCallback(() => setIsOpen(false), []);
+  useRetractWhenDone(drawerRef, isOpen, retract);
   const [prompt, setPrompt] = useState('');
   // Catalog search is a plain keyword match over names and descriptions. It is
   // not AI and must not be presented as Luminary activity.
@@ -82,8 +87,9 @@ export const RightPanel: React.FC<RightPanelProps> = ({
 
   return (
     <div
-      className={`fixed right-4 top-20 ${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} z-10 transition-all duration-300 flex ${
-        isOpen ? 'w-80 sm:w-96' : 'w-12'
+      ref={drawerRef}
+      className={`fixed right-4 top-20 z-10 transition-all duration-300 flex ${
+        isOpen ? `${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} w-80 sm:w-96` : 'h-12 w-12'
       }`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl legible-glass">

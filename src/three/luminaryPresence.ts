@@ -3,14 +3,19 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
 
 /**
  * The Vibe Luminary as a Presence in the Aether workspace (STP-0002 P19, N28): the Architect's
- * Codeglass model, floating beside the CORE outside the turntable, so it stays put while the
- * mechanism turns. It rests dim and brightens when the Architect engages it; clicking it engages
+ * Codeglass model, standing in the lower right of the workspace as the Architect drew it. It
+ * is held to that spot on screen, so it stays put while the mechanism turns or the view orbits. It rests dim and brightens when the Architect engages it; clicking it engages
  * or pauses it, exactly as the corner icon does. It never moves toward the Architect on its own.
  */
 
-/** Where the Presence floats: up and to the left of the CORE, clear of the side drawers. */
-const PRESENCE_POSITION = new THREE.Vector3(-4, 6, -3);
-const PRESENCE_HEIGHT = 3.2;
+/**
+ * Where the Presence stands, as its centre's distance in pixels from the workspace's right and
+ * bottom edges: left of the view controls, above the footer. The Full Form opens beside it
+ * (LuminaryHost). It sits this far from the camera, in front of the mechanism.
+ */
+export const PRESENCE_SCREEN_OFFSET = { right: 400, bottom: 210 };
+const PRESENCE_DISTANCE = 10;
+const PRESENCE_HEIGHT = 2.6;
 const REST_GLOW = 0.45;
 const ENGAGED_GLOW = 0.95;
 
@@ -20,7 +25,8 @@ export interface LuminaryPresence {
   pickProxy: THREE.Mesh;
   /** Swap the placeholder for the Codeglass model once it is cached. */
   applyModel(): void;
-  update(elapsedTime: number, dt: number, motionEnabled: boolean, engaged: boolean): void;
+  /** Holds the Presence at its spot on screen and eases its glow. */
+  update(elapsedTime: number, dt: number, motionEnabled: boolean, engaged: boolean, camera: THREE.PerspectiveCamera, width: number, height: number): void;
   dispose(): void;
 }
 
@@ -35,7 +41,7 @@ function fitToHeight(object: THREE.Object3D, height: number) {
 export function createLuminaryPresence(): LuminaryPresence {
   const root = new THREE.Group();
   root.name = 'luminary-presence';
-  root.position.copy(PRESENCE_POSITION);
+  const ndc = new THREE.Vector3();
 
   const body = new THREE.Group();
   root.add(body);
@@ -92,7 +98,11 @@ export function createLuminaryPresence(): LuminaryPresence {
       fitToHeight(model, PRESENCE_HEIGHT);
       body.add(model);
     },
-    update(elapsedTime, dt, motionEnabled, engaged) {
+    update(elapsedTime, dt, motionEnabled, engaged, camera, width, height) {
+      if (width > 0 && height > 0) {
+        ndc.set(1 - (2 * PRESENCE_SCREEN_OFFSET.right) / width, -1 + (2 * PRESENCE_SCREEN_OFFSET.bottom) / height, 0.5).unproject(camera);
+        root.position.copy(camera.position).addScaledVector(ndc.sub(camera.position).normalize(), PRESENCE_DISTANCE);
+      }
       const target = engaged ? ENGAGED_GLOW : REST_GLOW;
       glow += (target - glow) * Math.min(1, dt * 4);
       for (const material of materials) material.emissiveIntensity = glow;

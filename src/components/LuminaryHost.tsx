@@ -232,7 +232,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const codingTasksOn = status?.codingTasks === 'on';
 
   return (
-    // The Paused Icon sits in the status bar's left corner; the Full Form opens above it.
+    // The Paused Icon sits in the status bar's left corner. The Full Form opens beside the
+    // Presence in the lower right of the workspace (src/three/luminaryPresence.ts), as the
+    // Architect drew it, and falls back toward the left edge on a narrow screen.
     <div className="fixed left-3 bottom-1 z-30 font-mono">
       {isEngaged ? (
         <section
@@ -245,7 +247,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               setIsEngaged(false);
             }
           }}
-          className="absolute left-0 bottom-10 w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-5rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
+          className="fixed bottom-12 right-[max(0.75rem,min(500px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-5rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
         >
           <header className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">

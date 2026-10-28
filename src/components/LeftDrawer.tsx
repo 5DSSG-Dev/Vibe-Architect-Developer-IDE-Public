@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useRetractWhenDone } from './useRetractWhenDone';
 import { Search, ChevronLeft, ChevronRight, ChevronDown, Layers, Move, ShieldCheck, Cpu, HardDrive, Zap, Lock } from 'lucide-react';
 import {
   ApothecaryItem,
@@ -452,7 +453,11 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
   onOpenOrbBuilder,
   isFooterExpanded = true
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  // Tucked away by default; opens when picked and tucks back when done (useRetractWhenDone).
+  const [isOpen, setIsOpen] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const retract = useCallback(() => setIsOpen(false), []);
+  useRetractWhenDone(drawerRef, isOpen, retract);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'ALL'>('ALL');
   const [selectedTrustFilter, setSelectedTrustFilter] = useState<TrustBadgeType | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -482,8 +487,9 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
 
   return (
     <div
-      className={`fixed left-4 top-20 ${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} z-10 transition-all duration-300 flex ${
-        isOpen ? 'w-80 sm:w-96' : 'w-12'
+      ref={drawerRef}
+      className={`fixed left-4 top-20 z-10 transition-all duration-300 flex ${
+        isOpen ? `${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} w-80 sm:w-96` : 'h-12 w-12'
       }`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl">

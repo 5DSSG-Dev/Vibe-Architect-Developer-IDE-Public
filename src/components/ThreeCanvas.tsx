@@ -1498,7 +1498,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const aetherPoints = new THREE.Points(aetherGeo, aetherMat);
     scene.add(aetherPoints);
 
-    // The Vibe Luminary's Presence floats beside the mechanism, outside the turntable.
+    // The Vibe Luminary's Presence stands in the lower right, outside the turntable.
     const luminaryPresence = createLuminaryPresence();
     scene.add(luminaryPresence.root);
 
@@ -2224,7 +2224,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const dt = Math.min(0.05, elapsedTime - lastFrameTime);
       lastFrameTime = elapsedTime;
 
-      luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged());
+      luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged(), camera, renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
       // Decorative motion is gated on the reduced-motion control. When motion is
       // off the scene holds a still frame but stays fully interactive — orbit,
