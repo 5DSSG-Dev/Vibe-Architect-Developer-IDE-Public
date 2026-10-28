@@ -158,7 +158,13 @@ export function App() {
     () => restoredWorkspace?.activeMode ?? 'DESIGN'
   );
   const [coreManifest, setCoreManifest] = useState<CoreManifest>(
-    () => restoredWorkspace?.coreManifest ?? ensureManifestCodeFrames(createInitialCoreManifest())
+    () => {
+      if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
+      // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
+      // Architect never added. Portals now appear only once added, so that one is left out.
+      const restored = restoredWorkspace.coreManifest;
+      return { ...restored, portals: restored.portals.filter((portal) => portal.id !== 'portal-primary') };
+    }
   );
   const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);

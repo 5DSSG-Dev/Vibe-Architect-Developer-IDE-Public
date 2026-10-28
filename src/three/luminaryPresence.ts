@@ -10,10 +10,11 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
 
 /**
  * Where the Presence stands, as its centre's distance in pixels from the workspace's right and
- * bottom edges: left of the view controls, above the footer. The Full Form opens beside it
- * (LuminaryHost). It sits this far from the camera, in front of the mechanism.
+ * bottom edges: in the right-hand side of the workspace, above the view controls (the spot the
+ * Architect marked). The Full Form opens beside it (LuminaryHost). It sits this far from the
+ * camera, in front of the mechanism.
  */
-export const PRESENCE_SCREEN_OFFSET = { right: 400, bottom: 250 };
+export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;
 const REST_GLOW = 0.45;

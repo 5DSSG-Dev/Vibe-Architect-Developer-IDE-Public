@@ -112,20 +112,6 @@ type ModelKey = (typeof ALL_MODEL_KEYS)[number];
 // Crystal; the umbilical conduit and drag-snap targets follow this value.
 const ORB_DOCK_Z = 8.0;
 
-// The 8 CORE boundary compass points (cardinal + intercardinal). Portals are
-// anchored to these fixed world directions; they spin in place but never move
-// off their point and are not draggable.
-const PORTAL_COMPASS_POINTS: Array<{ angleDeg: number; dir: string }> = [
-  { angleDeg: 0, dir: 'N' },
-  { angleDeg: 45, dir: 'NE' },
-  { angleDeg: 90, dir: 'E' },
-  { angleDeg: 135, dir: 'SE' },
-  { angleDeg: 180, dir: 'S' },
-  { angleDeg: 225, dir: 'SW' },
-  { angleDeg: 270, dir: 'W' },
-  { angleDeg: 315, dir: 'NW' },
-];
-
 // One glowing colour per umbilical socket ring, cycled by arm index.
 const UMBILICAL_RING_COLORS = [
   0x00f3ff, // cyan
@@ -1686,18 +1672,13 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const buildPortalAssembly = () => {
       clearRebuildableGroup(portalsRoot);
       portalIrises.length = 0;
-      // Portals are anchored to the 8 fixed compass points (cardinal +
-      // intercardinal). They are world-fixed and non-draggable — they spin in
-      // place but never move off their point — so the ring is derived from the
-      // compass constant rather than the mutable manifest portal list.
-      for (const point of PORTAL_COMPASS_POINTS) {
-        portalsRoot.add(buildOnePortal({
-          id: `portal-compass-${point.dir}`,
-          name: `Prismatic Iris Portal (${point.dir})`,
-          angleDeg: point.angleDeg,
-        }));
+      // Only the Portals the Architect has added appear (the manifest's list, filled by dropping
+      // a Portal from the Apothecary). The workspace starts with none. Each stays fixed at its
+      // boundary slot and is not draggable; it spins in place but never moves off its point.
+      for (const placement of portalsRef.current) {
+        portalsRoot.add(buildOnePortal(placement));
       }
-      console.log(`[PORTAL] ${PORTAL_COMPASS_POINTS.length} anchored boundary gateway(s) built`);
+      console.log(`[PORTAL] ${portalsRef.current.length} boundary gateway(s) built`);
     };
 
     buildPortalAssemblyRef.current = buildPortalAssembly;

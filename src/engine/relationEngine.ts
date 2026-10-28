@@ -798,7 +798,8 @@ export function createInitialCoreManifest(): CoreManifest {
       conductor: true
     },
     sockets: INITIAL_SOCKET_BINDINGS,
-    portals: [{ id: 'portal-primary', name: 'Prismatic Iris Portal', angleDeg: 67.5 }],
+    // No Portals until the Architect adds one from the Apothecary.
+    portals: [],
     contracts: initialContracts
   };
 }

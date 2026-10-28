@@ -247,7 +247,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               setIsEngaged(false);
             }
           }}
-          className="fixed bottom-32 right-[max(0.75rem,min(500px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
+          className="fixed bottom-32 right-[max(0.75rem,min(310px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
         >
           <header className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
