@@ -80,6 +80,8 @@ import {
 import { FreeBodyState, LayoutPresets, getNearestVacantSocket } from '../engine/antigravity';
 import { createDynamicUmbilical, createDynamicTether } from '../utils/splineBuilder';
 import { createElementTotem, createPortalTotem, createCoreTotem } from '../three/elementTotem';
+import { createLuminaryPresence } from '../three/luminaryPresence';
+import { isLuminaryEngaged, setLuminaryEngaged } from '../luminary/presence';
 import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract, type SceneRegistryEntry } from '../three';
 
 interface ThreeCanvasProps {
@@ -1496,6 +1498,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const aetherPoints = new THREE.Points(aetherGeo, aetherMat);
     scene.add(aetherPoints);
 
+    // The Vibe Luminary's Presence floats beside the mechanism, outside the turntable.
+    const luminaryPresence = createLuminaryPresence();
+    scene.add(luminaryPresence.root);
+
     // Turntable pivot: the CORE crystal and the umbilical socket arms (with their
     // docked orbs) are parented here so a drag can rotate the whole mechanism in
     // place around Y. The boundary Portals, starfield, aether, lights, and the
@@ -2078,6 +2084,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       buildPortalAssembly();
       updateSocketGeometries(true);
       rebuildDragTargets();
+      luminaryPresence.applyModel();
       setIsModelsLoaded(true);
     };
     applyLoadedModelsRef.current = applyLoadedModels;
@@ -2118,6 +2125,11 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
+      // Clicking the Luminary engages or pauses it, as its corner icon does.
+      if (raycaster.intersectObject(luminaryPresence.pickProxy, false).length > 0) {
+        setLuminaryEngaged(!isLuminaryEngaged());
+        return;
+      }
       // Selection raycasts the dedicated invisible pick proxies only — a flat set
       // of coarse spheres — not the detailed GLB subtree. The nearest proxy hit
       // resolves selection directly from its userData.pick, with natural depth
@@ -2212,6 +2224,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const dt = Math.min(0.05, elapsedTime - lastFrameTime);
       lastFrameTime = elapsedTime;
 
+      luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged());
+
       // Decorative motion is gated on the reduced-motion control. When motion is
       // off the scene holds a still frame but stays fully interactive — orbit,
       // drag, selection, and rendering all continue.
@@ -2290,6 +2304,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     return () => {
       // Stop the async preload continuation from touching a torn-down scene.
       disposed = true;
+      luminaryPresence.dispose();
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       renderer.domElement.removeEventListener('pointermove', handlePointerMove);

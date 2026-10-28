@@ -247,7 +247,9 @@ function conditionAegisMaterial(root: THREE.Object3D) {
 }
 
 const PRESERVE_AUTHORED_MATERIAL_KEYS = new Set<keyof typeof AEGIS_MODEL_URLS>([
-  'aegisShield'
+  'aegisShield',
+  // The Luminary Presence clones and lights its own materials (src/three/luminaryPresence.ts).
+  'luminary'
 ]);
 
 function loadOne(key: keyof typeof AEGIS_MODEL_URLS): Promise<void> {

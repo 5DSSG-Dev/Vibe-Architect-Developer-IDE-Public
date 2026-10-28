@@ -1,6 +1,8 @@
 // Explicit Vite Static URL Resolution for AEGIS 3D Models
 export const AEGIS_MODEL_URLS = {
   aegisShield: new URL('/assets/models/prismatic-aegis-emblem.glb', import.meta.url).href,
+  // The Vibe Luminary's Presence in the Aether workspace (the Architect's Codeglass model).
+  luminary: new URL('/assets/models/LUMINARY.glb', import.meta.url).href,
   coreCrystal: new URL('/assets/models/AEGIS_POD_CRYSTAL.glb', import.meta.url).href,
   orb: new URL('/assets/models/ORB.glb', import.meta.url).href,
   portal: new URL('/assets/models/PORTAL.glb', import.meta.url).href,
@@ -44,6 +46,7 @@ export const ALT_AEGIS_MODEL_URLS = {
   // Repeating its canonical path here disables the legacy-root retry without
   // inventing a renamed copy of the supplied asset.
   aegisShield: new URL('/assets/models/prismatic-aegis-emblem.glb', import.meta.url).href,
+  luminary: new URL('/assets/models/LUMINARY.glb', import.meta.url).href,
   coreCrystal: new URL('/assets/models/AEGIS_POD_CRYSTAL.glb', import.meta.url).href,
   orb: new URL('/assets/models/ORB.glb', import.meta.url).href,
   portal: new URL('/assets/models/PORTAL.glb', import.meta.url).href,

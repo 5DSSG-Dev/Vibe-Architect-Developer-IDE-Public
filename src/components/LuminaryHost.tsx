@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ClipboardPaste, Code2, KeyRound, Minimize2, Paperclip, Send, Square, X } from 'lucide-react';
 import { composePrompt, EXPLANATION_LABELS, EXPLANATION_LEVELS, type ExplanationLevel } from '../luminary/blocks';
 import {
@@ -15,6 +15,7 @@ import {
   type LuminaryStatus,
 } from '../luminary/client';
 import { ReplyView, TaskCard } from './LuminaryCards';
+import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
 
 /**
  * App-level presence host for the Vibe Luminary, mounted outside the mode views so it is present
@@ -73,7 +74,9 @@ function modelLabel(status: LuminaryStatus | null): string {
 }
 
 export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelection }> = ({ mode, selection }) => {
-  const [isEngaged, setIsEngaged] = useState(false);
+  // Shared with the Presence in the Aether workspace, so clicking either one engages the Luminary.
+  const isEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
+  const setIsEngaged = setLuminaryEngaged;
   const iconRef = useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
