@@ -58,7 +58,8 @@ helps the Architect decide:
   existing Work Request ledger. Nothing in it is rewritten.
 
 **Explanation level** (asked for by the Architect, 2026-10-28). The Architect chooses how much the
-Luminary explains its code, to match their own skill level, and can change it at any time from the panel:
+Luminary explains its code, to match their own skill level, and can change it at any time from the panel (the Architect's principle, 2026-10-28: "I want anyone with any level of experience to utilize the IDE
+and receive the level of assistance that they need and want"):
 
 - **Plain:** what the change does and why, in everyday words, with no code shown unless asked.
 - **Guided:** the plain account plus the key parts of the code, each explained.
