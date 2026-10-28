@@ -217,6 +217,15 @@ export function App() {
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
   const [inspectingSocket, setInspectingSocket] = useState<SocketBinding | null>(null);
 
+  // What the Architect may add to the Luminary as context with one click. Offered, never sent on its own.
+  const selectedForLuminary = inspectingItem ?? currentEnvironment ?? attachingItem ?? undefined;
+  const luminarySelection = selectedForLuminary
+    ? {
+        label: `Selected: ${selectedForLuminary.name}`,
+        text: `${selectedForLuminary.name} (${selectedForLuminary.category}, v${selectedForLuminary.version})\n${selectedForLuminary.description}\nCapabilities: ${selectedForLuminary.capabilities.join(', ') || 'none'}\nRequirements: ${selectedForLuminary.requirements.join(', ') || 'none'}`,
+      }
+    : undefined;
+
   const [saveStatus, setSaveStatus] = useState<WorkspaceSaveStatus>({ state: 'pending' });
 
   // Persist the architectural workspace, not transient modal/selection state.
@@ -642,7 +651,7 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
-      <LuminaryHost />
+      <LuminaryHost mode={activeMode} selection={luminarySelection} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
