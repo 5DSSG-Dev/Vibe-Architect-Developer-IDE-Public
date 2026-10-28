@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow } from 'lucide-react';
+import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical } from 'lucide-react';
 import { SimulationTelemetry } from '../engine/simulationEngine';
 import { CoreManifest } from '../engine/relationEngine';
 
@@ -23,6 +23,9 @@ interface FooterProps {
   onToggleTelemetryDeck?: () => void;
   onOpenReliquary?: () => void;
   onOpenBrowser?: () => void;
+  /** The Apothecary Cabinet window, opened and closed from the bar's Apothecary button. */
+  isApothecaryOpen?: boolean;
+  onToggleApothecary?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -36,7 +39,9 @@ export const Footer: React.FC<FooterProps> = ({
   showTelemetryDeck: propShowTelemetryDeck,
   onToggleTelemetryDeck,
   onOpenReliquary,
-  onOpenBrowser
+  onOpenBrowser,
+  isApothecaryOpen = false,
+  onToggleApothecary
 }) => {
   const [localShowDeck, setLocalShowDeck] = useState(true);
   const showTelemetryDeck = propShowTelemetryDeck !== undefined ? propShowTelemetryDeck : localShowDeck;
@@ -96,11 +101,27 @@ export const Footer: React.FC<FooterProps> = ({
         </button>
       </div>
 
-      {/* Bottom Status Bar */}
-      <div className="h-10 panel-glass-header px-4 flex items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
+      {/* Bottom Status Bar: tall enough to hold the Apothecary button and the Luminary icon. */}
+      <div className="h-20 panel-glass-header px-4 flex items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
         {/* Left: Wayfinder. The header holds the only mode switch. */}
-        <div className="flex-1 min-w-0 max-w-[calc(50vw-140px)] pl-8">
-          {wayfinder}
+        <div className="flex-1 min-w-0 max-w-[calc(50vw-140px)] pl-12 flex items-center gap-4">
+          {onToggleApothecary && (
+            <button
+              type="button"
+              onClick={onToggleApothecary}
+              aria-pressed={isApothecaryOpen}
+              title={isApothecaryOpen ? 'Close the Apothecary Cabinet' : 'Open the Apothecary Cabinet'}
+              className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors ${
+                isApothecaryOpen
+                  ? 'bg-cyan-500/20 border-cyan-400/70 text-cyan-200'
+                  : 'bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200'
+              }`}
+            >
+              <FlaskConical className="w-4 h-4 text-cyan-300" />
+              <span>Apothecary</span>
+            </button>
+          )}
+          <div className="min-w-0">{wayfinder}</div>
         </div>
 
         {/* Right: Version, Auto Save & Export CORE Button */}

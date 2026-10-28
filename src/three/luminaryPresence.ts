@@ -13,7 +13,7 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
  * bottom edges: left of the view controls, above the footer. The Full Form opens beside it
  * (LuminaryHost). It sits this far from the camera, in front of the mechanism.
  */
-export const PRESENCE_SCREEN_OFFSET = { right: 400, bottom: 210 };
+export const PRESENCE_SCREEN_OFFSET = { right: 400, bottom: 250 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;
 const REST_GLOW = 0.45;

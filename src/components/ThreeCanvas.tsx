@@ -1165,7 +1165,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
         ))}
       </div>
 
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
+      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
         <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
         {selectedEntityId && (
           <span className="text-[9px] font-mono font-bold text-emerald-300/90 tracking-widest px-1.5">
@@ -2795,7 +2795,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       {/* View quality / motion / bloom controls (display-only). Lifted clear of
           the bottom command bar so both rows stay visible. */}
-      <div className="absolute bottom-20 right-4 z-20 flex flex-col items-end space-y-1.5">
+      <div className="absolute bottom-24 right-4 z-20 flex flex-col items-end space-y-1.5">
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
           <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">QUALITY</span>
           {QUALITY_PRESET_ORDER.map((p) => (

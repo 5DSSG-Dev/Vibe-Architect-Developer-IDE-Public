@@ -89,7 +89,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
     <div
       ref={drawerRef}
       className={`fixed right-4 top-20 z-10 transition-all duration-300 flex ${
-        isOpen ? `${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} w-80 sm:w-96` : 'h-12 w-12'
+        isOpen ? `${isFooterExpanded ? 'bottom-[268px]' : 'bottom-24'} w-80 sm:w-96` : 'h-12 w-12'
       }`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl legible-glass">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
 import { LeftDrawer } from './components/LeftDrawer';
+import { ElementRail } from './components/ElementRail';
 import { RightPanel } from './components/RightPanel';
 import { Footer, WorkspaceSaveStatus } from './components/Footer';
 import { HandshakeModal } from './components/HandshakeModal';
@@ -161,6 +162,8 @@ export function App() {
   );
   const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
+  // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
+  const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
   // user-created items so a refresh never erases the working cabinet.
@@ -521,8 +524,23 @@ export function App() {
       {/* Mode View overlays or side drawers */}
       {activeMode === 'DESIGN' && environmentStack.length === 0 && (
         <>
+          <ElementRail
+            catalog={apothecaryCatalog}
+            onSelectItem={(item) => {
+              setOrbBuilderTargetItem(item);
+              openOverlay('ORB_BUILDER');
+            }}
+            onRightClickItem={(item) => {
+              setInspectingItem(item);
+              setInspectingSocket(null);
+              openOverlay('INSPECT_MANIFEST');
+            }}
+          />
+
           <LeftDrawer
             catalog={apothecaryCatalog}
+            isOpen={isApothecaryOpen}
+            onClose={() => setIsApothecaryOpen(false)}
             isFooterExpanded={isFooterExpanded}
             onSelectAttachItem={(item) => {
               setOrbBuilderTargetItem(item);
@@ -612,6 +630,12 @@ export function App() {
         onValidateCore={() => runComprehensiveCoreAudit(coreManifest)}
         showTelemetryDeck={isFooterExpanded}
         onToggleTelemetryDeck={() => setIsFooterExpanded(!isFooterExpanded)}
+        isApothecaryOpen={isApothecaryOpen && activeMode === 'DESIGN' && environmentStack.length === 0}
+        onToggleApothecary={() => {
+          if (activeMode !== 'DESIGN') setActiveMode('DESIGN');
+          if (environmentStack.length > 0) popEnvironmentTo(0);
+          setIsApothecaryOpen((open) => !(open && activeMode === 'DESIGN' && environmentStack.length === 0));
+        }}
         onOpenReliquary={() => openOverlay('RELIQUARY')}
         onOpenBrowser={() => {
           openOverlay('BROWSER');
