@@ -61,7 +61,7 @@ function parseTrustProxy(value: string | undefined): GatewayConfig['trustProxy']
  * A configured gauge also needs LUMINARY_GAUGE_THRESHOLDS, the Architect's per-virtue selection on
  * the 0-100 reading scale; without it the gateway refuses to start rather than guess a threshold.
  */
-function parseLuminaryGauge(env: NodeJS.ProcessEnv): GatewayConfig['luminaryGauge'] {
+export function parseLuminaryGauge(env: NodeJS.ProcessEnv): GatewayConfig['luminaryGauge'] {
   const endpoint = env.LUMINARY_GAUGE_ENDPOINT?.trim();
   const model = env.LUMINARY_GAUGE_MODEL?.trim();
   if (!endpoint && !model) return undefined;
