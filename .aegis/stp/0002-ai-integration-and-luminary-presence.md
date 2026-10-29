@@ -1916,3 +1916,13 @@ Evidence: N38; Architect input 2026-10-29T08:38:14Z (Baseten hackathon email); f
 Channel: cloud
 
 Cause of the N38 refusal found. The Architect shared the Baseten hackathon email: "Use exactly meta-models/muse-spark-open-1026. Your key only works with this hackathon model." P22 had used meta-models/muse-spark-open. A free model-list call (no model run, no cost) confirmed the key is accepted and both names are listed. BASETEN_MODEL now defaults to meta-models/muse-spark-open-1026, priced at the same list rate ($1.25 / $4.25 per million tokens) so its spend stays capped; LUMINARY_BASETEN_MODEL still overrides it. Tests: gateway 144/144, app 303/303; typecheck clean. Next, with the Architect's go: the one live question again.
+
+### 2026-10-29T08:42:00.000Z | claude | note N40
+Chain-Prev: e57cbf0f05d37ed8d5e7c3fe2d4283da2a2b399635040eae6bb8e3ef4b9f5b3e
+Chain-Hash: 9188dd71b6e814e99c935f09830e46f02174aa6c27ec191763eb0a669d622f2d
+Stage: Verification
+Kind: note
+Evidence: N38; N39; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (entry 2026-10-29T08:40:08Z); worktree at f1af069
+Channel: cloud
+
+P22 live check PASSED, on the retry the Architect approved on the decision card 2026-10-29T08:39:36Z ("Yes, ask again"). From the worktree at f1af069, status before: 'Muse Spark Open · Baseten', gauge configured, $0.0412 of $75 over 1 call (the refused N38 entry). Exactly one POST /ask, same prompt: HTTP 200 in 10.7 s, modelId meta-models/muse-spark-open-1026. Reply: "In the Vibe Architect IDE, an Orb is one of the POD building blocks you craft in the Apothecary — alongside Satellites, Actuators, Modules, Circuits, and Arrays. It's a discrete, inspectable unit of code and behavior that we draft together, and as with all Apothecary work, nothing commits until you accept it." Lineage: structural ok, PIM no findings, IRG coherent, RBC to Prism, Prism. Gauge (threshold in brackets): Honesty 85.1 (13.8), Respect 81.2 (29.3), Attention 74.8 (23.9), Affection 64.4 (16.3), Loyalty 69.7 (10.7), Trust 78.0 (11.9), Communication 84.4 (34.7). Cost: 2,741 input and 1,948 output tokens, $0.0117 (reserved $0.0412, settled to actual). Status after: $0.0529 of $75 over 2 calls; real Baseten spend is $0.0117, the rest is the N38 entry written before the refusal fix. Gateway stopped, worktree .env deleted. The Architect's main .env is unchanged until that folder has this code.
