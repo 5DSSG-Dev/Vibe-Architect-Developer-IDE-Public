@@ -1,3 +1,6 @@
+import { DEFAULT_GAUGE_TIMEOUT_MS, assertLoopbackEndpoint } from './luminary-pipeline/gauge-local.js';
+import { validateThresholds, type VirtueThresholds } from './luminary-pipeline/irg.js';
+
 export const REQUIRED_ADMIN_ROLE = 'service.operations.read';
 export const STELLAR_STEWARD_ROLE = 'service.stellar.contract.issue';
 export const STELLAR_EXECUTION_ROLE = 'service.stellar.execute';
@@ -28,6 +31,10 @@ export interface GatewayConfig {
   cookieSecure: boolean;
   trustProxy: false | number | string[];
   redisUrl?: string;
+  /** Shared demo key for the reviewer-facing Luminary reply endpoint. Absent = endpoint disabled. */
+  luminaryDemoKey?: string;
+  /** The embedded gauge model for the Luminary reply pipeline (STP-0002 P18). Absent = not configured. */
+  luminaryGauge?: { endpoint: string; model: string; timeoutMs: number; thresholds: VirtueThresholds };
   stellarCapabilities?: StellarCapabilityConfig;
   entra?: {
     tenantId: string;
@@ -49,6 +56,36 @@ function parseTrustProxy(value: string | undefined): GatewayConfig['trustProxy']
   return entries;
 }
 
+/**
+ * Both LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL, or neither. The endpoint must be loopback.
+ * A configured gauge also needs LUMINARY_GAUGE_THRESHOLDS, the Architect's per-virtue selection on
+ * the 0-100 reading scale; without it the gateway refuses to start rather than guess a threshold.
+ */
+export function parseLuminaryGauge(env: NodeJS.ProcessEnv): GatewayConfig['luminaryGauge'] {
+  const endpoint = env.LUMINARY_GAUGE_ENDPOINT?.trim();
+  const model = env.LUMINARY_GAUGE_MODEL?.trim();
+  if (!endpoint && !model) return undefined;
+  if (!endpoint || !model) throw new Error('LUMINARY_GAUGE_ENDPOINT and LUMINARY_GAUGE_MODEL must be set together');
+  assertLoopbackEndpoint(endpoint);
+  const timeoutMs = Number(env.LUMINARY_GAUGE_TIMEOUT_MS ?? DEFAULT_GAUGE_TIMEOUT_MS);
+  if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) throw new Error('LUMINARY_GAUGE_TIMEOUT_MS must be a positive integer');
+  const rawThresholds = env.LUMINARY_GAUGE_THRESHOLDS?.trim();
+  if (!rawThresholds) throw new Error('LUMINARY_GAUGE_THRESHOLDS must be set when the gauge is configured');
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(rawThresholds);
+  } catch {
+    throw new Error('LUMINARY_GAUGE_THRESHOLDS must be a JSON object');
+  }
+  let thresholds: VirtueThresholds;
+  try {
+    thresholds = validateThresholds(parsed);
+  } catch (error) {
+    throw new Error(`LUMINARY_GAUGE_THRESHOLDS: ${(error as Error).message}`);
+  }
+  return { endpoint, model, timeoutMs, thresholds };
+}
+
 function normalizedNodeEnv(value: string | undefined): GatewayConfig['nodeEnv'] {
   if (value === 'production' || value === 'test') return value;
   return 'development';
@@ -65,6 +102,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
   const privateKey = env.ENTRA_CLIENT_CERT_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
   const trustProxy = parseTrustProxy(env.TRUST_PROXY);
   const redisUrl = env.REDIS_URL?.trim();
+  const luminaryDemoKey = env.LUMINARY_DEMO_KEY?.trim() || undefined;
+  const luminaryGauge = parseLuminaryGauge(env);
   if (redisUrl && !['redis:', 'rediss:'].includes(new URL(redisUrl).protocol)) {
     throw new Error('REDIS_URL must use the redis: or rediss: scheme');
   }
@@ -139,6 +178,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
     cookieSecure: nodeEnv === 'production' || env.COOKIE_SECURE === 'true',
     trustProxy,
     redisUrl,
+    luminaryDemoKey,
+    luminaryGauge,
     stellarCapabilities,
     entra,
   };

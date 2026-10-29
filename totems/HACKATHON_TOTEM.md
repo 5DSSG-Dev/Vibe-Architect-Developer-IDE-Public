@@ -81,6 +81,148 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-27 | claude | M1.b-2 — Meta model smoke test approved and built (P20)
+- The Architect approved a small smoke test of the main Meta model: at most 2 real replies, a hard stop at $0.25,
+  every reply read by the embedded gauge. Built `server/luminary-meta.ts` (Muse Spark via Meta's Model API, spend
+  ledger checked before every call) and `scripts/luminary-meta-smoke.ts`. Tests use fakes only (gateway 118/118).
+- The key lives only in the Architect's git-ignored `.env` as LUMINARY_META_API_KEY. The gateway is not wired to
+  Meta yet; full integration follows the smoke result.
+
+### 2026-10-27 | claude | M1.b-1 — gauge thresholds selected by the Architect; M1.b-1 complete
+- The Architect selected the calibrated per-virtue thresholds for llama3.2:3b (Honesty 13.8, Respect 29.3,
+  Attention 23.9, Affection 16.3, Loyalty 10.7, Trust 11.9, Communication 34.7), recorded in STP-0002 and
+  `.env.example`. The gauge can now be switched on with the LUMINARY_GAUGE_* settings.
+- Arbiter 10-27 calibration evidence committed in the Arbiter repo: 303838f on claude/reverent-bhaskara-ab2321 (local, not pushed).
+- Next, when the Architect lifts the hold: M1.b-2, the main Meta model.
+
+### 2026-10-27 | claude | M1.b-1 — live parity confirmed (IDE gauge = Arbiter system-one)
+- PR #5 merged. Lumin ran both engines live on the Architect's PC (llama3.2:3b, 4 made-up messages):
+  six virtues match exactly; Honesty (asked first) varies up to ~5 points from runtime prompt caching.
+  STP-0002 N20. Open: the Architect's threshold selection.
+
+### 2026-10-27 | claude | M1.b-1 — calibration passed (3B system-one); gauge switched to system-one
+- Calibration on the Architect's PC (Arbiter harness, same corpus): only llama3.2:3b in system-one mode
+  meets the bar (validation 100%, no missed shortfall; p50 544 ms). STP-0002 N18.
+- `gauge-local.ts` now ports the Arbiter `irg-system-one-v1` engine verbatim: seven one-token Yes/No
+  decisions, reading = 100 x P(Yes). IRG takes per-virtue thresholds; `LUMINARY_GAUGE_THRESHOLDS`
+  is required with the gauge (no default). Gateway 109/109. STP-0002 N19 (137 entries, chain valid).
+- Open: the Architect's threshold selection; a live run against Ollama; Arbiter 10-27 evidence is
+  uncommitted (worktree reverent-bhaskara-ab2321).
+
+### 2026-10-27 | claude | M1.b-1 — gauge-first approved (P18); local gauge adapter BUILT
+- The Architect approved P18: wire and calibrate the embedded gauge before the main Meta model.
+  Runtime Ollama (installed); PC has 6 GB VRAM + CUDA; first candidate Llama 3.2 3B.
+- `server/luminary-pipeline/gauge-local.ts`: loopback-only OpenAI-compatible gauge, mirroring the
+  Arbiter json IRG engine. Gateway tests 105/105. STP-0002 N17 (135 entries, chain valid).
+- Next (Architect's PC): `ollama pull llama3.2:3b`; Arbiter `npm run calibration:compare -- --models
+  llama3.2:1b,llama3.2:3b`; accept if no missed shortfall and >= 90% validation accuracy.
+
+### 2026-10-27 | claude | M1.a — P17 reply pipeline VERIFIED by the Architect
+- PR #4 merged; the Architect verified P17 ("yes p17 pipeline is correct"). STP-0002 128 entries, chain valid.
+- Open next: M1.b (real model + gauge calibration, Llama 3.2 3B first) stays ON HOLD until the Architect lifts it;
+  Architect -> Luminary direction (P17 decision 4) is a follow-up proposal.
+
+### 2026-10-27 | claude | M1.a — P17 reply pipeline BUILT (awaiting Architect verification)
+- `server/luminary-pipeline/` (pim, irg, rbc, ids, pipeline): structural gate -> PIM -> IRG -> RBC
+  -> Prism | IDS loop, bounded at 2 IDS passes then an `incoherent_after_ids` Shortfall.
+- Gateway always runs it; the gauge defaults to not-configured, so nothing leaves ungauged.
+- Gateway tests 97/97 (29 new). No model called. Gauge model choice stays with M1.b (ON HOLD).
+- STP-0002 P17 Executing + N16 (127 entries, chain valid).
+
+### 2026-10-27 | claude | M1.a — P15, P16, P17 APPROVED by the Architect
+- PR #3 (P12-P17) merged into main by the Architect.
+- The Architect approved P15, P16 and P17 ("yes on all 3"), recorded append-only in STP-0002
+  (125 entries, chain valid). F3 resolved: honored deletion is kept and a deletion event recorded.
+- Next: build the P17 pipeline logic (PIM, IRG, RBC, IDS) with an injected scorer and test fakes.
+  Gauge model choice and calibration of Llama 3.2 3B stay with M1.b (ON HOLD).
+
+### 2026-10-27 | claude | M1.a — Governing Canon reconciled (P16) + live reply pipeline PRESENTED (P17)
+- Continuing Verus's M1.a work from a cloud session, at the Architect's direction ("do 1 and 2,
+  hold on 3"). M1.b stays ON HOLD.
+- P16: `docs/VIBE_LUMINARY_GOVERNING_CANON_v0.2.md` supersedes the v0.1 rendering by addition
+  (v0.1 unchanged). All 17 Axioms and the Seven Virtues quoted verbatim from AEGIS CORE
+  FOUNDATIONAL CANON v2.0 with line numbers, readings kept apart as gloss, findings F1-F7
+  (F3, personal-memory deletion beside Axiom 17, is open for the Architect).
+- P17: `docs/VIBE_LUMINARY_REPLY_PIPELINE_v0.1.md` designs the live PIM → IRG → RBC → Prism | IDS
+  loop after the existing P12 gate, with five decisions recommended and a Fork Audit divergence
+  declaration. Nothing built, nothing wired, no model called.
+- Recorded as STP-0002 S16 → G15 → P16 and S17 → G16 → P17 (both Presented) + note N12. Entries
+  were hash-chained without the aegis-stp CLI (chain recomputed and valid at 119 entries);
+  re-validate with aegis-stp locally. M1.a stays IN-PROGRESS.
+
+### 2026-10-27 | verus | M1.a — Luminary Instructions + Governing-Canon drafts PRESENTED (P15)
+- At the Architect's direction (while he rests), drafted the two model-facing artifacts the
+  Luminary was missing: `docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md` (the operating instructions the
+  gateway will load as the system prompt — role, floor, Steward's voice, the Nature-Layer
+  self-check pause→reexamine→reorganize, responsibilities, lifecycle, authority/safety) and
+  `docs/VIBE_LUMINARY_GOVERNING_CANON_v0.1.md` (an operational rendering of the AEGIS principles
+  the Luminary diffs against — explicitly NOT the authoritative Canon, not an amendment, with a
+  reconciliation flag to the Architect-selected edition).
+- Both DERIVE FROM and cross-reference the existing v0.1 specs (Role/Engineering Draft, Behavior
+  Contract) and D4 rather than duplicating or superseding them; both are DRAFT v0.1, Presented for
+  review, **not approved and not governing**. Nothing wired, no model called, no Canon amended.
+- Recorded as STP-0002 S15 → G14 → P15 (Presented) + note N11. Honest floor held: the Instructions
+  guide the model; the external gate (P12-P14) still enforces fail-closed regardless. Awaiting the
+  Architect's approval/verification on return. M1.a stays IN-PROGRESS.
+
+### 2026-10-26 | verus | M1.a first step VERIFIED — reply-governance gate
+- The fail-closed reply-governance gate (`server/luminary-governance.ts` + tests) is built,
+  green (server typecheck clean; gateway suite 52/52), and **Architect-VERIFIED** as STP-0002
+  P12. This is the first executable piece of M1.a.
+- M1.a (AEGIS Governance layer) remains `IN-PROGRESS`: the gate exists and is proven, but is
+  **not yet wired** into a gateway reply endpoint or the Luminary reply path — that wiring is
+  the next step, ahead of M1.b (Meta model) which depends on M2.
+
+### 2026-10-26 | verus | Architect confirmed the submission gate + M1 adopted
+- Architect CONFIRMED the submission gate: **M1 + M5 + M6** (M2 is M1's dependency). This is the
+  settled gate for the manifest.
+- Architect adopted **M1** (status → `ADOPTED:verus`), starting with **M1.a — the AEGIS
+  Governance layer** (status → `IN-PROGRESS`), his stated first priority.
+- Adoption recorded as a `CLAIM` line on `.aegis/claims.md`; build continuity runs under
+  STP-0002 (AI Integration and Luminary Presence). No other module adopted.
+
+### 2026-10-27 | verus | P14 VERIFIED — governed /ask endpoint accepted
+- Architect VERIFIED P14 (`aegis-stp verify P14 --as "Tracey Prutch"`): satisfied with the
+  mounted endpoint. Third M1.a step complete end to end — S14 → G13 → P14 →
+  Presented → Approved → Executing → Verified — every gate the Architect's.
+- M1.a now has a complete, reachable, Architect-accepted governed boundary (gate P12 → router
+  P13 → mount P14). It stays `IN-PROGRESS` only for M1.b: a real Meta model call through the
+  /ask path, which depends on M2 (gateway Meta-provider integration). The next natural step is
+  P1 — confirm the hackathon's current provider/model rules — then M2.
+
+### 2026-10-27 | verus | P14 built — governed /ask endpoint mounted (demo key + rate limit)
+- The governed path is now live on the only server runtime: `POST /api/luminary/ask` is mounted
+  in the Express gateway (`server/app.ts`), outside the Entra admin gate, behind a shared demo
+  key (`LUMINARY_DEMO_KEY`, `x-luminary-demo-key` header) + a per-IP rate limit (30/min),
+  both in `server/luminary-access.ts`. Fail-closed: no key configured → 503.
+- Honest until M1.b: the reply source defaults to `notConfiguredAskModel` (throws), so the
+  endpoint returns a named `upstream_error` Shortfall rather than fake prose — no provider
+  chosen, no Meta credits spent. Decided per S14 that Cloudflare is static-assets-only.
+- Green: typecheck clean; gateway suite **68/68** (58 prior + 10 new). STP-0002 P14
+  (Presented → Approved → Executing) + note N10. Awaiting the Architect's verification.
+- M1.a still `IN-PROGRESS`: the governed boundary is complete and reachable, but no real model
+  flows through it yet (M1.b, depends on M2).
+
+### 2026-10-27 | verus | P13 VERIFIED — governed reply router accepted
+- Architect VERIFIED P13 (`aegis-stp verify P13 --as "Tracey Prutch"`): satisfied with the
+  governed reply router. The second M1.a build step is now complete end to end —
+  S13 → gap G12 → P13 → Presented → Approved → Executing → Verified — every gate the Architect's.
+- The P12 gate now governs a request path (POST `/ask`) and is Architect-accepted. M1.a (AEGIS
+  Governance layer) still `IN-PROGRESS`: no real model is wired (M1.b, depends on M2) and the
+  endpoint is unmounted (path + reviewer-facing auth still the Architect's to settle).
+
+### 2026-10-26 | verus | M1.a — governance gate wired into a reply router (P13 built, green)
+- The P12 gate is now reachable: `server/luminary-reply-router.ts` (`createLuminaryReplyRouter`)
+  runs every candidate reply through `governReply()` at a POST `/ask` boundary, returning a
+  governed reply or a named Shortfall — including `upstream_error` for a failed model path —
+  never fallback prose. It is **provider-agnostic** (the model call is injected) and **not yet
+  mounted**: endpoint path and reviewer-facing auth remain the Architect's to settle.
+- Green: server typecheck clean; gateway suite **58/58** (52 prior + 6 new router tests, no
+  regression). Recorded as STP-0002 P13 (Presented → Approved → Executing) + note N9.
+- M1.a (AEGIS Governance layer) still `IN-PROGRESS`: the gate now governs a request path, but
+  no real model is wired (that is M1.b, which depends on M2) and the endpoint is unmounted.
+  Awaiting the Architect's verification of P13.
+
 ### 2026-10-26 | verus | build note — M1 is multi-part, governance leads
 - Architect build note: the Luminary build has multiple parts; the **AEGIS Governance layer**
   is the most important to him. Recorded as M1.a (first priority) ahead of model wiring and UI.

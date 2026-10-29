@@ -10,7 +10,7 @@
     "build": "tsc && tsc -p tsconfig.server.json && tsc -p tsconfig.server.build.json && vite build",
     "start": "node dist-server/server/index.js",
     "test": "npm run test:gateway && npm run test:app",
-    "test:gateway": "tsx --test server/**/*.test.ts",
+    "test:gateway": "tsx --test \"server/**/*.test.ts\"",
     "test:app": "tsx --test src/**/*.test.ts",
     "preview": "vite preview"
   },
