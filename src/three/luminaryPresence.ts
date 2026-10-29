@@ -4,8 +4,10 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
 /**
  * The Vibe Luminary as a Presence in the Aether workspace (STP-0002 P19, N28): the Architect's
  * Codeglass model, standing in the lower right of the workspace as the Architect drew it. It
- * is held to that spot on screen, so it stays put while the mechanism turns or the view orbits. It rests dim and brightens when the Architect engages it; clicking it engages
- * or pauses it, exactly as the corner icon does. It never moves toward the Architect on its own.
+ * is held to that spot on screen and turned to face the Architect, so it stays put while the
+ * mechanism turns or the view orbits. It does not spin; it pulses gently, as the Architect asked
+ * (N33). It rests soft and brightens when the Architect engages it; clicking it engages or pauses
+ * it, exactly as the corner icon does. It never moves toward the Architect on its own.
  */
 
 /**
@@ -17,8 +19,11 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
 export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;
-const REST_GLOW = 0.45;
-const ENGAGED_GLOW = 0.95;
+const REST_GLOW = 0.3;
+const ENGAGED_GLOW = 0.7;
+/** The gentle pulse: how much it grows and how fast it breathes (about one breath every 3.5 s). */
+const PULSE_SCALE = 0.035;
+const PULSE_RATE = 1.8;
 
 export interface LuminaryPresence {
   root: THREE.Group;
@@ -50,6 +55,11 @@ export function createLuminaryPresence(): LuminaryPresence {
   const light = new THREE.PointLight(0xfcd34d, 0.6, 9, 2);
   light.position.set(0, 0.4, 0.8);
   root.add(light);
+  // A soft white light from the Architect's side, so the model's own colours and shading show
+  // rather than being washed flat by its glow.
+  const fill = new THREE.PointLight(0xffffff, 1.4, 12, 2);
+  fill.position.set(0.6, 0.8, 3);
+  root.add(fill);
 
   const owned: Array<{ dispose(): void }> = [];
   let materials: THREE.MeshStandardMaterial[] = [];
@@ -89,6 +99,8 @@ export function createLuminaryPresence(): LuminaryPresence {
         // shared geometry, which the cache keeps for any later clone.
         if (!mesh.geometry.getAttribute('normal')) mesh.geometry.computeVertexNormals();
         const own = (mesh.material as THREE.MeshStandardMaterial).clone();
+        // Lit as a surface, not as metal: with no environment map a metallic finish renders dark.
+        own.metalness = 0;
         own.emissiveMap = own.map ?? own.emissiveMap;
         own.emissive = new THREE.Color(0xffffff);
         own.emissiveIntensity = glow;
@@ -103,15 +115,15 @@ export function createLuminaryPresence(): LuminaryPresence {
       if (width > 0 && height > 0) {
         ndc.set(1 - (2 * PRESENCE_SCREEN_OFFSET.right) / width, -1 + (2 * PRESENCE_SCREEN_OFFSET.bottom) / height, 0.5).unproject(camera);
         root.position.copy(camera.position).addScaledVector(ndc.sub(camera.position).normalize(), PRESENCE_DISTANCE);
+        root.quaternion.copy(camera.quaternion);
       }
       const target = engaged ? ENGAGED_GLOW : REST_GLOW;
       glow += (target - glow) * Math.min(1, dt * 4);
-      for (const material of materials) material.emissiveIntensity = glow;
-      light.intensity = 0.4 + glow * 1.2;
-      if (motionEnabled) {
-        body.rotation.y = elapsedTime * 0.25;
-        body.position.y = Math.sin(elapsedTime * 0.8) * 0.18;
-      }
+      // A slow breath in size and light; held still when Motion is off.
+      const breath = motionEnabled ? Math.sin(elapsedTime * PULSE_RATE) : 0;
+      body.scale.setScalar(1 + breath * PULSE_SCALE);
+      for (const material of materials) material.emissiveIntensity = glow * (1 + breath * 0.12);
+      light.intensity = 0.4 + glow * 1.2 * (1 + breath * 0.12);
     },
     dispose() {
       for (const item of owned) item.dispose();

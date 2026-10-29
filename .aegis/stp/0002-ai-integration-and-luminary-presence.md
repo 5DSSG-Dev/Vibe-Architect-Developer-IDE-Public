@@ -1738,3 +1738,13 @@ Evidence: server/app.ts; src/components/SimulateModeView.tsx; src/components/Dep
 Channel: cloud
 
 Error sweep of the whole IDE, with the Architect's goal (2026-10-27) of the whole IDE running without error before the main model is connected. A Chromium run in the cloud opened every mode and screen and logged console errors, failed requests and HTTP errors: Design, the Apothecary window, an Element rail click (Orb builder) and right-click (manifest), the Inspector Deck, the CORE Matrix, the Command Console and the Alchemist's Reliquary, Simulate, Deploy, the Luminary, and entering an Orb's Environment. Found and fixed: (1) The Reliquary's carbon-fibre texture (www.transparenttextures.com) was blocked by the gateway's content security policy, so part of the designed look was missing; img-src now allows that host. (The cloud's own network still cannot reach it; on the Architect's PC it loads.) (2) Simulate and Deploy left room for the old, shorter bottom bar, so the Command Console tab covered their last row; they now leave room for the taller bar. No other errors were found; the remaining console messages are the cloud's 3D model placeholders (LFS) and a software-GPU performance notice. Tests: gateway 132/132; app 302/302; typecheck clean.
+
+### 2026-10-29T00:00:42.000Z | claude | note N33
+Chain-Prev: 5235db0817afe9d6689f3048d56c3d77b738be69e39e36a6b274632b2a2944e6
+Chain-Hash: 8323336bc2beed637f411549bae84b3f14fd6d0acbc0edaf3c2c9b3967b4472c
+Stage: Execution
+Kind: note
+Evidence: src/three/luminaryPresence.ts; public/assets/models/LUMINARY.glb (sha256 82fa59791a8cb6c41122f0242f2c2345f1a2f53c2ee1c4734ce17f49c4242f97, not committed: Git LFS upload is refused from the cloud)
+Channel: cloud
+
+Architect input, 2026-10-28T23:59:13Z, verbatim: "Here is the new Luminary. I don't want it to spin but instead have it pulse slightly" (file NEW_LUMINARY.glb, made with Lumin; 1 mesh, about 16.5 thousand vertices, one texture, no normals). It replaces the earlier LUMINARY.glb at the same path. The Presence no longer spins or floats: it faces the Architect and breathes, growing about 3.5% and brightening a little, once every 3.5 seconds or so, and holds still when Motion is off. Its glow is lowered (0.3 at rest, 0.7 engaged) and a soft white light from the Architect's side is added, and its finish is drawn non-metallic, so the model's own colours and shading show instead of being washed flat. Tests: gateway 132/132; app 302/302; typecheck clean. Browser run in the cloud with the new model: it shows in the marked spot with its colours, and a click on it opens the Full Form.
