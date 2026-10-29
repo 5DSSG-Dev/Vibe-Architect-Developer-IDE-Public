@@ -17,8 +17,44 @@ export interface ResourceCapacity {
   gpuAccess: boolean;
 }
 
+export interface CommittedResourceReservation extends ResourceRequest {
+  readonly contractId: string;
+}
+
 const coreBudget = { memoryMB: 4096, threads: 16, bandwidthCredits: 256, gpuAccess: true };
 const allocations = new Map<string, ResourceAllocation>();
+
+/** Replace allocator state from the authoritative CORE manifest snapshot. */
+export function synchronizeCoreResourceState(
+  budget: ResourceCapacity,
+  committed: readonly CommittedResourceReservation[]
+): void {
+  if (!Number.isFinite(budget.memoryMB) || budget.memoryMB < 0 || !Number.isFinite(budget.threads) || budget.threads < 0 ||
+    !Number.isFinite(budget.bandwidthCredits) || budget.bandwidthCredits < 0) {
+    throw new Error('CORE resource budget values must be finite and non-negative.');
+  }
+  const next = new Map<string, ResourceAllocation>();
+  for (const reservation of committed) {
+    const { contractId, ...request } = reservation;
+    if (!contractId || next.has(contractId) || !isValidRequest(request)) {
+      throw new Error('CORE resource reservations must have unique contract IDs and valid non-negative resource values.');
+    }
+    next.set(contractId, { ...request, containmentLevel: 'Sandboxed' });
+  }
+  coreBudget.memoryMB = budget.memoryMB;
+  coreBudget.threads = budget.threads;
+  coreBudget.bandwidthCredits = budget.bandwidthCredits;
+  coreBudget.gpuAccess = budget.gpuAccess;
+  allocations.clear();
+  for (const [contractId, allocation] of next) allocations.set(contractId, allocation);
+}
+
+function isValidRequest(request: ResourceRequest): boolean {
+  return Number.isFinite(request.memoryMB) && request.memoryMB >= 0 &&
+    Number.isFinite(request.threads) && request.threads >= 0 &&
+    Number.isFinite(request.bandwidthNormalCredits) && request.bandwidthNormalCredits >= 0 &&
+    Number.isFinite(request.bandwidthPeakCredits) && request.bandwidthPeakCredits >= 0;
+}
 
 export function configureCoreResourceBudget(budget: ResourceCapacity): void {
   if (!Number.isFinite(budget.memoryMB) || budget.memoryMB < 0 || !Number.isFinite(budget.threads) || budget.threads < 0 ||
@@ -49,9 +85,9 @@ export function getAvailableBudget(): ResourceCapacity {
     usedBandwidth += alloc.bandwidthPeakCredits;
   }
   return {
-    memoryMB: coreBudget.memoryMB - usedMem,
-    threads: coreBudget.threads - usedThreads,
-    bandwidthCredits: coreBudget.bandwidthCredits - usedBandwidth,
+    memoryMB: Math.max(0, coreBudget.memoryMB - usedMem),
+    threads: Math.max(0, coreBudget.threads - usedThreads),
+    bandwidthCredits: Math.max(0, coreBudget.bandwidthCredits - usedBandwidth),
     gpuAccess: coreBudget.gpuAccess
   };
 }
