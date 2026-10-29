@@ -1,6 +1,6 @@
 # Vibe Luminary — Presence and Roles v0.1
 
-Status: **PROPOSED (STP-0002 P19, Presented). Nothing is built until the Architect approves.**
+Status: **APPROVED and BUILT (STP-0002 P19).** The Architect approved it on 2026-10-28 (STP-0002 status entry), and it was built on PR #9. The STP-0002 notes from N26 on record the build and its evidence; Lumin's code review of 2026-10-29 and the follow-up fixes are in N34. The Architect's verification is still to come. The original proposal text below is kept as written.
 Architect: Tracey Prutch · Drafted by: Claude (cloud thread), for Lumin to review at code level.
 Builds on, does not replace: Behavior Contract v0.1, Operating Instructions v0.1 (P15), decision D4,
 the Companion row of the Tumbler Continuity Interface Standard v0.1 §2.5, and proposals P3, P4, P5 and P6
@@ -71,6 +71,8 @@ much is explained, never what is checked or what needs approval. Until durable l
 the setting is remembered on this computer only.
 
 ## 3. Presence in the IDE (the Full Form)
+
+> As built: the 3D Presence is drawn by the main workspace renderer. The experimental renderer behind the `threeRuntimeP0` test flag does not draw it; there the Luminary is still reachable through its icon and the Full Form.
 
 The existing corner icon and panel (`src/components/LuminaryHost.tsx`) grow into the conversation P3 described:
 

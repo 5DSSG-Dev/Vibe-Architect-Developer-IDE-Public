@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ExecutorShortfall, LuminaryExecutor, checkFencePath, type ExecutorCheck } from './luminary-executor.js';
+import { ExecutorShortfall, LuminaryExecutor, MAX_REVIEW_DIFF_CHARS, checkFencePath, type ExecutorCheck } from './luminary-executor.js';
 
 const dirs: string[] = [];
 afterEach(() => dirs.splice(0).forEach((dir) => rmSync(dir, { recursive: true, force: true })));
@@ -55,7 +55,8 @@ test('accept merges the branch; the ledger records proposed then accepted and it
   assert.equal(readFileSync(join(dir, 'docs/note.md'), 'utf8'), 'hello\n');
   const ledger = executor.readLedger();
   assert.equal(ledger.valid, true);
-  assert.deepEqual(ledger.entries.map((entry) => entry.event), ['proposed', 'accepted']);
+  assert.deepEqual(ledger.entries.map((entry) => entry.event), ['proposed', 'approved', 'accepted']);
+  assert.equal(ledger.entries[1].detail.commit, task.commit, 'the approval names the exact commit reviewed');
   await assert.rejects(executor.accept(task.id), (error: unknown) => error instanceof ExecutorShortfall && error.code === 'not_open');
 });
 
@@ -93,4 +94,73 @@ test('a tampered ledger reads as invalid', async () => {
   await executor.propose({ goal: 'x', allowedFiles: ['docs/note.md'], modelId: 'm', change: change('docs/note.md') });
   writeFileSync(executor.ledgerPath, readFileSync(executor.ledgerPath, 'utf8').replace('"proposed"', '"accepted"'));
   assert.equal(executor.readLedger().valid, false);
+});
+
+test('a write through a linked folder is refused, nothing lands outside, and the branch is discarded', async () => {
+  const dir = repo();
+  const outside = mkdtempSync(join(tmpdir(), 'luminary-outside-'));
+  dirs.push(outside);
+  symlinkSync(outside, join(dir, 'linked'), 'dir');
+  git(dir, 'add', 'linked');
+  git(dir, 'commit', '-q', '-m', 'a committed link');
+  const executor = new LuminaryExecutor({ repoRoot: dir, checks: passing });
+  await assert.rejects(
+    executor.propose({ goal: 'x', allowedFiles: ['linked/escape.txt'], modelId: 'm', change: change('linked/escape.txt') }),
+    (error: unknown) => error instanceof ExecutorShortfall && error.code === 'fence' && /link/.test(error.message),
+  );
+  assert.equal(existsSync(join(outside, 'escape.txt')), false, 'nothing was written outside the project');
+  assert.equal(git(dir, 'branch', '--list', 'luminary/*').trim(), '');
+  assert.deepEqual(executor.readLedger().entries.map((entry) => entry.event), ['refused']);
+});
+
+test('a link as the file itself is refused too', async () => {
+  const dir = repo();
+  const outside = mkdtempSync(join(tmpdir(), 'luminary-outside-'));
+  dirs.push(outside);
+  writeFileSync(join(outside, 'target.txt'), 'untouched\n');
+  mkdirSync(join(dir, 'docs'));
+  symlinkSync(join(outside, 'target.txt'), join(dir, 'docs', 'note.md'));
+  git(dir, 'add', 'docs');
+  git(dir, 'commit', '-q', '-m', 'a committed file link');
+  const executor = new LuminaryExecutor({ repoRoot: dir, checks: passing });
+  await assert.rejects(executor.propose({ goal: 'x', allowedFiles: ['docs/note.md'], modelId: 'm', change: change('docs/note.md') }), ExecutorShortfall);
+  assert.equal(readFileSync(join(outside, 'target.txt'), 'utf8'), 'untouched\n');
+});
+
+test('a broken ledger stops accept before anything is merged', async () => {
+  const dir = repo();
+  const executor = new LuminaryExecutor({ repoRoot: dir, checks: passing });
+  const task = await executor.propose({ goal: 'x', allowedFiles: ['docs/note.md'], modelId: 'm', change: change('docs/note.md') });
+  writeFileSync(executor.ledgerPath, readFileSync(executor.ledgerPath, 'utf8').replace('"proposed"', '"accepted"'));
+  await assert.rejects(executor.accept(task.id), (error: unknown) => error instanceof ExecutorShortfall && error.code === 'ledger_invalid');
+  assert.equal(existsSync(join(dir, 'docs/note.md')), false, 'no merge without a durable approval record');
+  assert.equal(task.status, 'proposed');
+});
+
+test('an unreadable ledger reads as invalid and blocks new proposals', async () => {
+  const dir = repo();
+  const executor = new LuminaryExecutor({ repoRoot: dir, checks: passing });
+  mkdirSync(join(dir, '.luminary'), { recursive: true });
+  writeFileSync(executor.ledgerPath, '{not json\n');
+  assert.equal(executor.readLedger().valid, false);
+  await assert.rejects(
+    executor.propose({ goal: 'x', allowedFiles: ['docs/note.md'], modelId: 'm', change: change('docs/note.md') }),
+    (error: unknown) => error instanceof ExecutorShortfall && error.code === 'ledger_invalid',
+  );
+});
+
+test('the whole diff is kept for review, and a change too large to show whole cannot be accepted', async () => {
+  const dir = repo();
+  const executor = new LuminaryExecutor({ repoRoot: dir, checks: passing });
+  const content = Array.from({ length: 2_000 }, (_, i) => `line ${i}`).join('\n');
+  const task = await executor.propose({ goal: 'x', allowedFiles: ['docs/note.md'], modelId: 'm', change: change('docs/note.md', content) });
+  assert.equal(task.diffComplete, true);
+  assert.match(task.diff, /\+line 0\n/, 'the start of the change is shown');
+  assert.match(task.diff, /\+line 1999/, 'and the end');
+
+  const huge = 'x'.repeat(MAX_REVIEW_DIFF_CHARS + 10);
+  const big = await executor.propose({ goal: 'y', allowedFiles: ['docs/big.md'], modelId: 'm', change: change('docs/big.md', huge) });
+  assert.equal(big.diffComplete, false);
+  await assert.rejects(executor.accept(big.id), (error: unknown) => error instanceof ExecutorShortfall && error.code === 'review_incomplete');
+  assert.equal(existsSync(join(dir, 'docs/big.md')), false);
 });

@@ -16,6 +16,8 @@ import {
 } from '../luminary/client';
 import { ReplyView, TaskCard } from './LuminaryCards';
 import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
+import { recordExchange, textEvidence } from '../luminary/record';
+import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
 /**
  * App-level presence host for the Vibe Luminary, mounted outside the mode views so it is present
@@ -112,6 +114,19 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
 
   const push = (entry: Entry) => setEntries((current) => [...current, entry]);
 
+  // Every request, result, accept and decline goes into the IDE's evidence record (P19). If a write
+  // fails, the conversation says so rather than implying a record exists.
+  const keep = async (event: LuminaryExchangeEvent, detail: LuminaryExchange['detail']) => {
+    const reason = await recordExchange(event, detail);
+    if (reason) push({ id: newId(), kind: 'note', text: `This was not written to the evidence record: ${reason}` });
+  };
+  const keepReply = async (reply: GovernedReply, lineage: LineageEntry[] | undefined, extra: LuminaryExchange['detail'] = {}) => {
+    const content = await textEvidence(reply.content);
+    await keep('replied', { modelId: reply.modelId, excerpt: content.excerpt, sha256: content.sha256, chars: content.chars, checked: lineage?.some((entry) => entry.stage === 'prism') ?? false, ...extra });
+  };
+  const keepFailure = (result: Extract<CallResult<unknown>, { ok: false }>, extra: LuminaryExchange['detail'] = {}) =>
+    keep('shortfall', { kind: result.kind, code: result.shortfall.code, ...extra });
+
   const handleFailure = useCallback((result: Extract<CallResult<unknown>, { ok: false }>) => {
     if (result.kind === 'key_required') setNeedsKey(true);
     setActivity(result.kind === 'shortfall' ? 'resting' : 'unavailable');
@@ -165,21 +180,32 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     abortRef.current = controller;
     const sentChips = chips;
     push({ id: newId(), kind: 'architect', text: trimmed, chips: sentChips.map((chip) => `${chip.label} · ${bytes(chip.text)} B`) });
-    if (!asTask) setChips([]);
+    setChips([]);
     setMessage('');
     setActivity('thinking');
+    const files = asTask ? allowedFiles.split(',').map((file) => file.trim()).filter(Boolean) : [];
+    const asked = await textEvidence(trimmed);
+    await keep(asTask ? 'task_assigned' : 'asked', {
+      excerpt: asked.excerpt, sha256: asked.sha256, chars: asked.chars, mode, level: askLevel,
+      context: sentChips.map((chip) => `${chip.label} · ${bytes(chip.text)} B`),
+      ...(asTask ? { allowedFiles: files } : {}),
+    });
     try {
       if (asTask) {
-        const files = allowedFiles.split(',').map((file) => file.trim()).filter(Boolean);
-        const result = await luminaryApi.assign(demoKey, { goal: trimmed, allowedFiles: files, level: askLevel, mode }, controller.signal);
+        const result = await luminaryApi.assign(demoKey, { goal: trimmed, allowedFiles: files, level: askLevel, mode, context: sentChips.map(({ label, text: body }) => ({ label, text: body })) }, controller.signal);
         setActivity('answering');
         if (result.ok) {
+          const { task } = result.value;
           push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel, forTask: true });
-          push({ id: newId(), kind: 'task', task: result.value.task, level: askLevel });
+          push({ id: newId(), kind: 'task', task, level: askLevel });
           setActivity('resting');
+          await keepReply(result.value.reply, result.value.lineage, { taskId: task.id });
+          await keep('task_proposed', { taskId: task.id, branch: task.branch, commit: task.commit, files: task.files, checksPassed: task.checks.every((check) => check.ok), diffComplete: task.diffComplete });
         } else {
           if (result.reply) push({ id: newId(), kind: 'reply', reply: result.reply, lineage: result.lineage, level: askLevel });
           handleFailure(result);
+          if (result.reply) await keepReply(result.reply, result.lineage);
+          await keep(result.reply ? 'task_refused' : 'shortfall', { kind: result.kind, code: result.shortfall.code });
         }
         return;
       }
@@ -189,16 +215,20 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
       if (result.ok) {
         push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel });
         setActivity('resting');
+        await keepReply(result.value.reply, result.value.lineage);
       } else {
         handleFailure(result);
+        await keepFailure(result);
       }
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
         setActivity('stopped');
         push({ id: newId(), kind: 'note', text: 'Stopped. Nothing from this request is shown.' });
+        await keep('stopped', {});
       } else {
         setActivity('unavailable');
         push({ id: newId(), kind: 'shortfall', text: 'The request failed before any reply arrived.' });
+        await keep('shortfall', { kind: 'unreachable', code: 'request_failed' });
       }
     } finally {
       abortRef.current = null;
@@ -207,8 +237,12 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
 
   const decideTask = async (id: string, decision: 'accept' | 'decline'): Promise<string | null> => {
     const result = decision === 'accept' ? await luminaryApi.accept(demoKey, id) : await luminaryApi.decline(demoKey, id);
-    if (!result.ok) return describeShortfall(result.shortfall);
+    if (!result.ok) {
+      await keep('task_decision_failed', { taskId: id, decision, code: result.shortfall.code });
+      return describeShortfall(result.shortfall);
+    }
     setEntries((current) => current.map((entry) => (entry.kind === 'task' && entry.task.id === id ? { ...entry, task: result.value.task } : entry)));
+    await keep(decision === 'accept' ? 'task_accepted' : 'task_declined', { taskId: id, branch: result.value.task.branch, commit: result.value.task.commit });
     return null;
   };
 

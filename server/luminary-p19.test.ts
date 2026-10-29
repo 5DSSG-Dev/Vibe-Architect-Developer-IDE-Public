@@ -1,3 +1,4 @@
+import { request as httpRequest } from 'node:http';
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 import type { AddressInfo } from 'node:net';
@@ -113,7 +114,7 @@ test('a coding task goes through the gauge, lands on the Luminary branch, and jo
   assert.equal(existsSync(join(dir, 'docs/note.md')), true);
   const ledger = await (await fetch(`${base}/api/luminary/tasks/ledger`, { headers: { [DEMO_KEY_HEADER]: KEY } })).json();
   assert.equal(ledger.valid, true);
-  assert.deepEqual(ledger.entries.map((entry: { event: string }) => entry.event), ['proposed', 'accepted']);
+  assert.deepEqual(ledger.entries.map((entry: { event: string }) => entry.event), ['proposed', 'approved', 'accepted']);
 });
 
 test('a coding task naming a fenced file is refused before any model call', async () => {
@@ -122,4 +123,31 @@ test('a coding task naming a fenced file is refused before any model call', asyn
   const res = await post(`${base}/api/luminary/tasks`, { goal: 'Change settings', allowedFiles: ['.env'] });
   assert.equal(res.status, 422);
   assert.equal((await res.json()).shortfall.code, 'fence');
+});
+
+test('a request relayed by a proxy or tunnel on this computer cannot reach the executor', async () => {
+  const dir = gitRepo();
+  const base = await listen({ gauge: coherentGauge, executor: new LuminaryExecutor({ repoRoot: dir }) });
+  const relayed: Record<string, string>[] = [{ 'x-forwarded-for': '203.0.113.9' }, { forwarded: 'for=203.0.113.9' }, { via: '1.1 tunnel' }, { origin: 'https://demo.example.com' }];
+  for (const header of relayed) {
+    const res = await fetch(`${base}/api/luminary/tasks/ledger`, { headers: { [DEMO_KEY_HEADER]: KEY, ...header } });
+    assert.equal(res.status, 403, JSON.stringify(header));
+    assert.equal((await res.json()).error, 'executor_local_only');
+  }
+  const port = new URL(base).port;
+  const status = await new Promise<number>((resolve, reject) => {
+    const req = httpRequest({ host: '127.0.0.1', port, path: '/api/luminary/tasks/ledger', headers: { host: 'demo.example.com', [DEMO_KEY_HEADER]: KEY } }, (res) => { res.resume(); resolve(res.statusCode ?? 0); });
+    req.on('error', reject);
+    req.end();
+  });
+  assert.equal(status, 403, 'a public Host name, as a tunnel carries, is refused');
+  const local = await fetch(`${base}/api/luminary/tasks/ledger`, { headers: { [DEMO_KEY_HEADER]: KEY } });
+  assert.equal(local.status, 200);
+});
+
+test('context sent with a coding task must be labelled notes within the limit', async () => {
+  const dir = gitRepo();
+  const base = await listen({ gauge: coherentGauge, executor: new LuminaryExecutor({ repoRoot: dir }) });
+  const res = await post(`${base}/api/luminary/tasks`, { goal: 'x', allowedFiles: ['docs/note.md'], context: [{ label: 'big', text: 'x'.repeat(25_000) }] });
+  assert.equal(res.status, 400);
 });

@@ -4,6 +4,7 @@ import { parseReply, type ExplanationLevel, type OfferingBlock } from '../lumina
 import type { CodingTask, LineageEntry } from '../luminary/client';
 import { createWorkRequest, executeWorkRequest, verifyWorkLedger, type WorkExecutionResult } from '../engine/workRequestRuntime';
 import { appendWorkRequestEvidence } from '../engine/evidenceArchive';
+import { recordExchange } from '../luminary/record';
 
 /**
  * The parts of the Luminary's Full Form that show what it said and offered (STP-0002 P19):
@@ -71,6 +72,8 @@ const OfferingCard: React.FC<{ offering: OfferingBlock }> = ({ offering }) => {
       const persisted = await appendWorkRequestEvidence(execution);
       setReceipt({ ledgerVerified, evidenceHash: persisted.record.recordHash });
       setState('done');
+      const unrecorded = await recordExchange('offering_accepted', { title: offering.title, workRequestId: execution.workRequest.workRequestId, receiptHash: persisted.record.recordHash });
+      if (unrecorded) setError(`The receipt is kept, but the accept was not written to the evidence record: ${unrecorded}`);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'The Work Request did not complete.');
       setState('failed');
@@ -97,7 +100,7 @@ const OfferingCard: React.FC<{ offering: OfferingBlock }> = ({ offering }) => {
       {state === 'open' && (
         <div className="flex gap-1.5">
           <button type="button" onClick={accept} className="px-2 py-1 rounded-md text-[10px] bg-violet-900/70 border border-violet-400/50 text-violet-100 hover:bg-violet-800/70">Accept</button>
-          <button type="button" onClick={() => setState('declined')} className="px-2 py-1 rounded-md text-[10px] border border-slate-600 text-slate-300 hover:text-slate-100">Decline</button>
+          <button type="button" onClick={async () => { setState('declined'); const unrecorded = await recordExchange('offering_declined', { title: offering.title }); if (unrecorded) setError(`The decline was not written to the evidence record: ${unrecorded}`); }} className="px-2 py-1 rounded-md text-[10px] border border-slate-600 text-slate-300 hover:text-slate-100">Decline</button>
         </div>
       )}
       {state === 'running' && <p className="flex items-center gap-1 text-[10px] text-violet-200"><Loader2 className="w-3 h-3 animate-spin" />Running the Work Request…</p>}
@@ -125,6 +128,9 @@ export const TaskCard: React.FC<{
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const allPassed = task.checks.every((check) => check.ok);
+  // Accept is offered only once the whole change has been shown, and never for one too large to show whole.
+  const [seenWhole, setSeenWhole] = useState(level === 'technical');
+  const canAccept = task.diffComplete && seenWhole;
 
   const decide = async (decision: 'accept' | 'decline') => {
     setBusy(true);
@@ -145,15 +151,17 @@ export const TaskCard: React.FC<{
         ))}
       </ul>
       {!allPassed && level === 'plain' && <p className="text-[9px] text-rose-200">A check did not pass. The change can still be declined, or reviewed in Technical.</p>}
-      <button type="button" onClick={() => setShowDiff((value) => !value)} className="text-[9px] text-cyan-300 hover:text-cyan-100" aria-expanded={showDiff}>
+      <button type="button" onClick={() => { setShowDiff((value) => !value); setSeenWhole(true); }} className="text-[9px] text-cyan-300 hover:text-cyan-100" aria-expanded={showDiff}>
         {showDiff ? 'Hide the full changes' : 'Show the full changes'}
       </button>
+      {!task.diffComplete && <p className="text-[9px] text-rose-200" role="alert">This change is too large to show whole, so it cannot be accepted. Decline it and ask for it in smaller parts.</p>}
       {showDiff && (
-        <pre className="max-h-40 overflow-auto rounded border border-slate-800 bg-slate-950 p-1.5 text-[9px] leading-snug text-slate-300">{task.diff}{level === 'technical' ? task.checks.filter((check) => !check.ok).map((check) => `\n\n${check.name}\n${check.output}`).join('') : ''}</pre>
+        <pre className="max-h-80 overflow-auto rounded border border-slate-800 bg-slate-950 p-1.5 text-[9px] leading-snug text-slate-300" aria-label="The full changes">{task.diff}{task.diffComplete ? '' : '\n\n[The rest of this change is not shown.]'}{level === 'technical' ? task.checks.filter((check) => !check.ok).map((check) => `\n\n${check.name}\n${check.output}`).join('') : ''}</pre>
       )}
+      {task.status === 'proposed' && task.diffComplete && !seenWhole && <p className="text-[9px] text-slate-400">Open the full changes to review them before accepting.</p>}
       {task.status === 'proposed' ? (
         <div className="flex gap-1.5">
-          <button type="button" disabled={busy} onClick={() => decide('accept')} className="px-2 py-1 rounded-md text-[10px] bg-cyan-900/70 border border-cyan-400/50 text-cyan-100 hover:bg-cyan-800/70 disabled:opacity-50">Accept into the project</button>
+          <button type="button" disabled={busy || !canAccept} onClick={() => decide('accept')} className="px-2 py-1 rounded-md text-[10px] bg-cyan-900/70 border border-cyan-400/50 text-cyan-100 hover:bg-cyan-800/70 disabled:opacity-50">Accept into the project</button>
           <button type="button" disabled={busy} onClick={() => decide('decline')} className="px-2 py-1 rounded-md text-[10px] border border-slate-600 text-slate-300 hover:text-slate-100 disabled:opacity-50">Decline</button>
         </div>
       ) : (

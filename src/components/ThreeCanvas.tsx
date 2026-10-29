@@ -2925,6 +2925,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 };
 
 export const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
+  // The experimental P0 renderer does not draw the 3D Luminary Presence (STP-0002 P19 is built on the
+  // legacy renderer); the Luminary stays reachable through LuminaryHost's icon and Full Form.
   if (isThreeRuntimeMainViewP0Enabled()) {
     return (
       <ThreeRuntimeMainViewP0

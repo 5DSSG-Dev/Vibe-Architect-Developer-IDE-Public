@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  appendLuminaryExchangeEvidence,
   appendRelationContractEvidence,
   appendWorkRequestEvidence,
   exportVerifiedEvidenceArchive,
@@ -93,4 +94,19 @@ test('refuses unsigned or mutated Relation Contract evidence', async () => {
   contract.sourceItemName = 'Tampered';
   await assert.rejects(() => appendRelationContractEvidence(contract, storage), /invalid Relation Contract/i);
   severConnection(contract.contractId, 'test cleanup', { fault: true });
+});
+
+test('Luminary exchanges join the same hash-chained record as Work Request receipts', async () => {
+  const storage = new MemoryStorage();
+  const receipt = await appendWorkRequestEvidence(await completedWorkRequest(), storage);
+  const asked = await appendLuminaryExchangeEvidence({ exchangeId: 'x1', event: 'asked', conversationId: 'c1', detail: { excerpt: 'What is an Orb?', sha256: 'abc', chars: 15, mode: 'DESIGN', level: 'plain', context: [] } }, storage);
+  const declined = await appendLuminaryExchangeEvidence({ exchangeId: 'x2', event: 'offering_declined', conversationId: 'c1', detail: { title: 'Orb note' } }, storage);
+  assert.equal(asked.record.kind, 'LUMINARY_EXCHANGE');
+  assert.equal(asked.record.previousRecordHash, receipt.record.recordHash);
+  assert.equal(declined.record.previousRecordHash, asked.record.recordHash);
+  const records = await readEvidenceArchive(storage);
+  assert.equal(records.length, 3);
+  assert.equal(await verifyEvidenceArchive(records), true);
+  await assert.rejects(appendLuminaryExchangeEvidence({ exchangeId: 'x1', event: 'replied', conversationId: 'c1', detail: {} }, storage), /Conflicting append-only evidence/);
+  await assert.rejects(appendLuminaryExchangeEvidence({ exchangeId: '', event: 'asked', conversationId: 'c1', detail: {} }, storage), /incomplete/);
 });

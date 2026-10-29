@@ -36,9 +36,12 @@ export interface CodingTask {
   allowedFiles: string[];
   modelId: string;
   branch: string;
+  commit: string;
   summary: string;
   files: string[];
+  /** The whole change; diffComplete is false only when it was too large to show whole. */
   diff: string;
+  diffComplete: boolean;
   checks: CheckResult[];
   status: 'proposed' | 'accepted' | 'declined';
 }
@@ -122,7 +125,7 @@ export const luminaryApi = {
   status: (key: string) => call<LuminaryStatus>('/api/luminary/status', key),
   ask: (key: string, prompt: string, signal?: AbortSignal) =>
     call<{ reply: GovernedReply; lineage?: LineageEntry[] }>('/api/luminary/ask', key, { method: 'POST', body: { prompt }, signal }),
-  assign: (key: string, task: { goal: string; allowedFiles: string[]; level: ExplanationLevel; mode: string }, signal?: AbortSignal) =>
+  assign: (key: string, task: { goal: string; allowedFiles: string[]; level: ExplanationLevel; mode: string; context: { label: string; text: string }[] }, signal?: AbortSignal) =>
     call<{ reply: GovernedReply; lineage?: LineageEntry[]; task: CodingTask }>('/api/luminary/tasks', key, { method: 'POST', body: task, signal }),
   accept: (key: string, id: string) => call<{ task: CodingTask }>(`/api/luminary/tasks/${encodeURIComponent(id)}/accept`, key, { method: 'POST', body: {} }),
   decline: (key: string, id: string) => call<{ task: CodingTask }>(`/api/luminary/tasks/${encodeURIComponent(id)}/decline`, key, { method: 'POST', body: {} }),
