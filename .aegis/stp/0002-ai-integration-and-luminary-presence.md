@@ -2000,3 +2000,36 @@ Evidence: P23; N41; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (3
 Channel: cloud
 
 P23 live check PASSED, with the Architect's go (decision card 2026-10-29T09:03:19Z, "Yes, ask all three"). Worktree at b1adb02; status before: 'Muse Spark Open · Baseten', gauge configured, $0.0529 of $75 over 2 calls, knowledge v0.1 sha256 7bcdecf9bea125381f77e66a85b7cb72cad980e72e8323f901235fe20bbdc16c, 31,308 bytes. Exactly one /ask each, no retries; all HTTP 200 from meta-models/muse-spark-open-1026, lineage structural, PIM, IRG coherent, RBC, Prism; no gauge reading below threshold. (a) 'What is an Orb, and which Orbs are in the Apothecary today?' (8.3 s): named the Element model as source (only Element that docks to the CORE, through an Umbilical handshake) and listed the six Apothecary Orbs correctly. Gauge Honesty 71.9, Respect 62.2, Attention 57.0, Affection 55.9, Loyalty 54.5, Trust 60.5, Communication 72.8. 10,183 in, 1,027 out, $0.0171. (b) 'What does a Validation-class Satellite do? Give an example from the Apothecary.' (6.2 s): cited Part 1 and Part 2, gave Request Validator with its capabilities, requirement and Actuator, and noted the Catalog lists six Validation Satellites of which only this one is in the Apothecary. Gauge 80.3, 81.2, 78.3, 57.7, 72.4, 82.7, 75.1. 10,178 in, 1,175 out, $0.0177. (c) 'What is a Circuit in the Vibe Architect IDE?' (9.2 s): said Circuit is named in the Instructions but described in none of the sources, stated it as a Shortfall citing Part 3, invented nothing, and offered to draft a definition with the Architect. Gauge 85.2, 74.0, 69.5, 64.0, 71.9, 73.4, 78.2. 10,171 in, 2,164 out, $0.0219. After: $0.1097 of $75 over 5 calls; this check cost $0.0568. About 10,200 input tokens and about 2 cents per question with the pack. Gateway stopped, worktree .env deleted, main folder untouched.
+
+### 2026-10-29T13:35:00.010Z | claude | gap G23
+Chain-Prev: ff2bdf7ab4d5cae0425685ddb78c5ba990af8b24a4ff1040cc26f56f4957a63d
+Chain-Hash: efb8cd29488bc3af9edcaa8327e3e71ba42fdd65333ceb818c5f5d5dc50f3bab
+Stage: Proposal
+Kind: gap
+Evidence: src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts; STP-0003 N9; exchange/from-codex/2026-10-29T130610Z-m3-follow-up-verification-and-gateway-ownership-coordination.md (sha256 E92966865E7A3C09FB086BE00943107E00394092428BA8010ADA79C86578D3ED)
+Channel: cloud
+
+The IDE records each Umbilical connection moment (subscribeConnectionEvents / getConnectionEvents), but nothing tells the Architect what happened in plain words. A refused or weakened handshake shows only as the 3D model and an Inspector line, so the Architect has to read reason codes to learn why. The Luminary does not see these moments at all.
+
+### 2026-10-29T13:35:00.020Z | claude | change P24
+Chain-Prev: efb8cd29488bc3af9edcaa8327e3e71ba42fdd65333ceb818c5f5d5dc50f3bab
+Chain-Hash: c239e47e667034e96660f6c1f88df07f4eea376d72bdbed1f8290d29ef58ed35
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G23; P19; P23; STP-0003 N9; Codex recommendations of 2026-10-29T13:06:10Z
+Closes: G23
+Channel: cloud
+
+The Luminary tells the Architect when an Umbilical connection changes (M1.d, second part). (1) Which moments: the eight that the runtime reliably produces today: attempt-started, contract-resolved, resources-committed, refused, active (including recovery), degraded, severed and resources-released. Each becomes one plain sentence naming the Orb, the port and what happened, for example 'Your Auth & Session Service was refused: its contract did not match the CORE.' A refusal for resources also says what was asked, what was free, and any profile the CORE offered instead. (2) The sentence is made inside the IDE from a fixed wording table, not by the model, so it costs nothing, works offline and cannot invent. Routine steps (attempt-started, contract-resolved, resources-committed, resources-released) are grouped into one line per handshake; refused, degraded, severed and active-after-recovery are shown on their own. (3) Where: a quiet notice by the Luminary Presence (a gentle pulse, never a spin) and a line in the Luminary record. The Architect can open the record to see the moments in order. (4) An 'Ask why' chip adds that one moment, in its plain form, to a question for the Luminary, so the model explains only what the Architect asks about. (5) Never shown, and never sent to the model: credentials or keys, prompts or replies, Tumbler proof material, raw error text (the event's message field), and any value not on a fixed allow-list. The allow-list is: moment kind, time, Orb name and id, port id, contract name and version, Umbilical profile and version, reason code (as plain words), and resource numbers. (6) Not in this step: 'suspended' (no producer yet; Codex suggests it mean CORE-paused, not routable, identity kept, with whether resources stay reserved stated in the event; this needs the Architect's definition), Tether and Mesh moments (not covered by the runtime yet), and any Luminary action on a connection (it explains and does not act). Verification: tests (each of the eight kinds gives the expected sentence; grouping; the allow-list strips every other field, including message; the 'Ask why' chip carries only allowed fields; no model call is made for a notice), typecheck and build; then the Architect docks, refuses and severs an Orb on their PC and reads the notices. No live model call is needed unless the Architect taps 'Ask why'.
+
+### 2026-10-29T13:35:00.030Z | claude | status
+Chain-Prev: c239e47e667034e96660f6c1f88df07f4eea376d72bdbed1f8290d29ef58ed35
+Chain-Hash: f76f396822c83bf69991c34fb40cd32cc8e6cccad061791499c2fa503c4adbcf
+Stage: Proposal
+Kind: status
+Item: P24
+Status: Presented
+Channel: cloud
+
+P24 → Presented.
