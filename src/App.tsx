@@ -37,10 +37,11 @@ import { getAvailableCoreResources, getCoreRuntimeCapabilities } from './engine/
 import { MODEL_CATALOG } from './engine/modelCatalog';
 import { globalSimulationEngine, SimulationTelemetry } from './engine/simulationEngine';
 import { runComprehensiveCoreAudit } from './engine/auditEngine';
-import { appendRelationContractEvidence, readEvidenceArchive } from './engine/evidenceArchive';
+import { appendConnectionEventEvidence, appendRelationContractEvidence, readEvidenceArchive } from './engine/evidenceArchive';
 import { describeCurrentTask } from './utils/wayfinder';
 import { NavigationPosition, readNavigationPosition, resolveEnvironmentStack } from './utils/navigationSnapshot';
 import { getRegisteredOrbManifest, registerCustomOrbManifest, registerOrbManifest } from './contracts/orbManifest';
+import { restoreConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from './contracts/connectionEvents';
 
 // The key keeps its original name so version 1 workspaces are still found;
 // the `version` field inside the snapshot drives migration.
@@ -270,15 +271,26 @@ export function App() {
     }
   }, [activeMode, coreManifest, apothecaryCatalog, environmentStack, resumeStack, selectedSocketId]);
 
-  // Verify the append-only local evidence archive on every workspace load.
-  // Evidence is not treated as live runtime state; lifecycle replay remains a
-  // separate gate until severance and heartbeat events are durably recorded.
+  // Persist sanitized connection events to the append-only evidence archive and
+  // restore their read-only history after the archive has been verified on load.
   useEffect(() => {
     let active = true;
+    const unsubscribe = subscribeConnectionEvents((event) => {
+      void appendConnectionEventEvidence(event).catch((error) => {
+        globalSimulationEngine.addLog('ERROR', `[CONNECTION EVENT SHORTFALL] ${error instanceof Error ? error.message : 'Event could not be archived'}`);
+      });
+    });
     readEvidenceArchive()
       .then((records) => {
+        if (active) {
+          const events = records
+            .filter((record) => record.kind === 'CONNECTION_EVENT')
+            .map((record) => record.payload as ConnectionEvent);
+          restoreConnectionEvents(events);
+        }
         if (active && records.length > 0) {
-          globalSimulationEngine.addLog('SUCCESS', `[EVIDENCE REPLAY VERIFIED] ${records.length} append-only record(s)`);
+          const eventCount = records.filter((record) => record.kind === 'CONNECTION_EVENT').length;
+          globalSimulationEngine.addLog('SUCCESS', `[EVIDENCE REPLAY VERIFIED] ${records.length} record(s), ${eventCount} connection event(s)`);
         }
       })
       .catch((error) => {
@@ -286,7 +298,7 @@ export function App() {
           globalSimulationEngine.addLog('ERROR', `[EVIDENCE INTEGRITY SHORTFALL] ${error instanceof Error ? error.message : 'Archive verification failed'}`);
         }
       });
-    return () => { active = false; };
+    return () => { active = false; unsubscribe(); };
   }, []);
 
   // Subscribe to simulation tick clock & telemetry updates

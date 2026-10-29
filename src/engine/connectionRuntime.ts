@@ -443,7 +443,7 @@ export function heartbeatCycle(contractOrId: RelationContract | string, health: 
     reason: healthy ? undefined : 'Heartbeat health check failed'
   };
   lifecycleLedger.set(contractId, next);
-  if (contractId.startsWith('ctr-')) {
+  if (contractId.startsWith('ctr-') && next.state !== lifecycle.state) {
     publishConnectionEvent({
       attemptId: contractId, kind: healthy ? 'active' : 'degraded', orbId: contract.sourceItemId,
       portId: contract.targetSocketId, presentedContract: contract.contractReference,

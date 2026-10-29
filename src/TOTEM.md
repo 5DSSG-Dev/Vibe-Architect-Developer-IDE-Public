@@ -64,3 +64,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-10-29 | codex | Custom Orb contracts
 - Architect-authored Orbs must select a profile before save/handshake. Both Orb Builder and Reliquary use the same CORE manifest registration path; custom manifest copies persist in CoreManifest and rehydrate before any Orb reference is resolved. The CORE-selected profile minimum is reflected in the saved memory requirement.
 - Production build, diff check, and STP-0003 validation pass; application tests not run. Conduit provider catalog mapping and lifecycle/Luminary gaps remain open.
+## 2026-10-29 | codex | Durable connection events
+- App archives sanitized CORE connection events in the hash-chained evidence archive and restores the read-only event ledger after archive verification. All evidence writes serialize to preserve hash-chain order. Heartbeat events record state transitions; the existing 5,000-record archive cap still applies.
+- Suspended-event production and Luminary consumer coordination remain open. Build and STP validation pass; tests not run.
+## 2026-10-29 | codex | Connection-event archive extension
+- PR #13 custom Orb contract work merged as d68379d; continuation branch starts from origin/main c43e545. Connection events append to the hash-chained evidence archive and restore to the read-only ledger after verification. Writes serialize through the local queue and Web Locks when available; archive capacity remains 5,000.
