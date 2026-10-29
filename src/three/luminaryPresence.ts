@@ -119,6 +119,8 @@ export function createLuminaryPresence(): LuminaryPresence {
         root.position.copy(camera.position).addScaledVector(ndc.sub(camera.position).normalize(), PRESENCE_DISTANCE);
         // Face the Architect's eye, not just the screen plane: in the lower right corner, matching the
         // camera's rotation left the figure looking turned to the right by perspective.
+        // Upright on screen: with a pitched camera, the world's up is not the screen's up off to the side.
+        root.up.set(0, 1, 0).applyQuaternion(camera.quaternion);
         root.lookAt(camera.position);
         root.rotateY(PRESENCE_YAW);
       }
