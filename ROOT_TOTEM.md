@@ -59,3 +59,47 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-10-20 | verus | STP-0001 executing: canonical UI tree recorded
 - The canonical IDE UI tree is the root `src/` (Vite entry `index.html` -> `src/main.tsx`). `apps/ide/src` was archived to `archive/apps-ide-src-2026-10-20/` under STP-0001 P6 after the Architect confirmed. `aether-realm` is unchanged.
 - STP-0001 (UI Flow and Design): P1-P8 approved by the Architect 2026-10-20; execution record and evidence in `.aegis/stp/0001-ui-flow-and-design.md`, journey map in `docs/stp/0001-screen-map.md`.
+
+## 2026-10-26 | codex | M5 readiness and foundation dependencies
+- At Architect direction, prepared STP-0004 at .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md using aegis-stp. Situation/Target/gaps/proposals only; P1-P6 Presented, not Approved or Executing.
+- M3 POD contracts and M4 UI flow recorded as structural and operational foundations for M5. Required capabilities precede integrated acceptance; M1.a governance priority and confirmed submission gate M1+M5+M6 remain intact.
+- Source baseline public checkout 39aa2e1; STP hash-chain validation passes. Final integrated verification and authenticated package signing remain open. No product-code edits or application runtime validation.
+
+## 2026-10-26 | codex | Architect purpose: learning through visible progress
+- Architect clarified that learning stays central to the IDE. Provide visible, genuine results of the Architect's efforts so young and older learners can stay motivated and continue developing understanding. Remove syntax and unfamiliar process as entry barriers while preserving authorship, informed choices and access to technical depth.
+- AI participates as Peer and Mentor. Connect actions to observable results and contextual explanations; make under-the-hood events, shortfalls and authorized recovery legible. Evaluate implementation against both useful outcomes and opportunities for understanding.
+- Recorded through aegis-stp in STP-0004 note N4. Purpose clarification only; existing proposals remain Presented.
+
+## 2026-10-26 | codex | Audience priority: neurodivergent Architects
+- Architect clarified Vibe Architect is designed with neurodivergent thinkers specifically in mind, while welcoming neurotypical thinkers. Visible, genuine results of effort and learning through building are central design priorities.
+- Apply this intent to review of visual feedback, understandable cause/effect, orientation and return points, and options for learning depth and pace. These implementation interpretations require evaluation with intended users; audience intent is not proof of universal usability.
+- Recorded in STP-0004 N5 through aegis-stp. Purpose clarification only, no new implementation approval.
+
+## 2026-10-26 | codex | Intentional architecture, color and movement
+- Architect explicitly states POD architecture, objects containing code, colors and movement are all intentional; nothing is added arbitrarily. Colors and movement are intended emotional-regulation features of the learning environment.
+- Preserve this rationale in engineering, visual, motion and performance reviews. Evaluate changes against the intended function in understanding, engagement and regulation. Recorded in STP-0004 N6; purpose clarification only.
+
+## 2026-10-26 | codex | Existing Aether UI and contracts reviewed
+- Corrects earlier conversational framing that suggested starting Element UI: substantial UI already exists. Reviewed Aether shader, authored models, cabinet, object interactions, hierarchical environments, inspectors/code frames, builder, Matrix, Wayfinder/resume and current contract runtime at public HEAD 39aa2e1.
+- Browser verified CORE -> Orb -> Satellite -> Actuator, reload/resume, code-frame save/restore, real handshake refusal and successful9-step commit, persisted relation evidence, and Docs Builder completion with verified ledger. Restored33 registry GLBs from Git LFS pointers to enable authored-model inspection; no tracked asset changes.
+- Existing Umbilical/Tether/Mesh runtime is to be aligned/extended, not recreated. Gaps include direct Satellite append bypassing Tether, runtime ledgers absent after restore, sample initial contracts, builder field loss/type confusion, unbound Aether lighting controls and narrow-layout clipping. Details/evidence: STP-0004 S11-S16, correction N7, verification N8.
+- Build passes with chunk warning. Gateway42/42 pass; app330/331 pass (identity deterministic rebuild failure reproduced); focused connection/core-capability/evidence17/17 pass. No product-source fixes, commit, push, provider setup or deployment.
+
+## 2026-10-26 | codex | Architect correction: application CORE and plain-language functions
+- Supersedes earlier CyberPeer/Formless-center framing for this IDE's application builds. CyberPeer Initiative is not a build option here. The CORE Crystal represents the application's main/root program; Orbs and Satellites add functions. Steward/Advocate and Formless-center concepts must not be presented as the app architecture or active application services.
+- Architect specifies the new-build opening: Luminary present asks what kind of app the Architect wants to build; CORE Crystal matches the app type (e.g. Extension Crystal). Current visual crystal styles are not proof of this mapping or flow.
+- Element names/descriptions explain function in everyday language, with technical detail beneath. Example draft Memory Orb: Keeps the information your app needs and helps it find it again, such as saved notes, customer details or a task list.
+- Source review located mismatches in CoreMatrixModal, CoreManifest fields, CORE Totem, auditEngine and two catalog sources. STP-0004 S17-S18/N9/T8-T9/G8-G9/P7-P8 record evidence, scope and proposed corrections. P7-P8 Presented only; no product-source changes this turn.
+
+## 2026-10-26 | codex | STP blueprint phase clarified by Architect
+- Current work is review, research and design into implementation-ready STP Proposals. Product changes are deferred; later execution follows the prepared blueprint. Record current evidence, rationale, paths/interfaces, dependencies/order, compatibility, concrete changes, acceptance checks and open decisions as each section is reviewed.
+- Preserve specialist STP ownership and cross-links rather than creating competing plans. A focused source/test/claim drift check remains necessary at execution; repeat discovery only where something changed.
+- STP-0004 N11 records this workflow. Expanded proposals P9 (supersedes P8, new-build flow) and P10 (supersedes P7, application scope/copy) demonstrate the blueprint structure. Both Presented; unresolved schema/asset/audit choices explicitly remain design work.
+
+## 2026-10-26 | codex | Proposal review as pre-build audit
+- Architect clarifies written Proposals remain revisable by incoming instances/models. A reviewer can propose a more efficient or better-supported way to meet the Target; the first method is not binding.
+- Second-set-of-eyes review evaluates Target coverage, evidence/assumptions, dependencies, compatibility, efficiency and verification. Append review findings and superseding rationale, then present the resulting proposal for Architect approval before implementation. Preserve Target and history; changed revisions do not inherit approval automatically.
+- STP-0004 N12 records this refinement. No independent review or implementation approval is claimed by this update.
+
+## 2026-10-29 | STP-0004 drift review recorded
+- Added N15 on `codex/m5-readiness-stp` in response to the Architect's direction and Claude's review. The note aligns the planning record with main 818f939 and pending PR #9; it adds an explicit, narrow Portal-removal allowance to saved-workspace migration acceptance and keeps all other retention checks. No STP proposal is thereby approved.

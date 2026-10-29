@@ -42,3 +42,63 @@
 
 ## 2026-10-25 | verus (coordinator) | IDE Orientation primer posted
 - Read `docs/IDE_ORIENTATION.md` FIRST (before your System audit): the IDE structure, operation, Element model (Cores/Orbs/Satellites/Actuators/Umbilicals/Portals), the four modes, and the Luminary and its role. Peer D (System 4) owns this orientation page going forward.
+
+## 2026-10-26 | codex | M5 readiness STP prepared
+- Architect authorized the M5 STP and identified M3 POD contracts and M4 UI flow as the foundation. Created .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md through aegis-stp on codex/m5-readiness-stp, baseline HEAD 39aa2e1.
+- STP-0004 contains 10 evidence-cited Situation findings, 7 Target items, 7 gaps and 6 Presented proposals. M3 supplies shared contracts/lifecycle; M4 supplies the usable journey. Final Luminary-assisted acceptance awaits M1/M2 and required M3/M4 behavior. Existing submission gate preserved.
+- Current public source: simulation fault/recovery success is emitted without executing a target failure; audit checks declarations/presence and includes an unconditional pass; DEPLOY pairs stored audit with current manifest and emits a random signature token. Existing connection lifecycle and evidence integrity primitives are reusable. These are source findings, not runtime test results.
+- Validation: aegis-stp --stp STP-0004 --json validate returned ok=true, errors=[]. No product code, application tests/build, provider setup, signing, commit, push or deployment this turn. No claim to M3/M4 adoption or M5 completion. Canonical Hackathon manifest remains in the peer's nested Claude worktree; no duplicate created and no peer worktree changed.
+
+## 2026-10-26 | codex | Learning and motivation purpose preserved
+- Architect clarified: learning is integral; visible genuine results should sustain motivation and enable further learning across ages. AI remains Peer and Mentor; implementation must retain Architect authorship and understanding.
+- Appended ROOT_TOTEM.md purpose principle and STP-0004 N4 via aegis-stp. Personal biography remains in conversation/Lumin rather than added to repository orientation.
+- Documentation only. No implementation approvals, source changes, commit or push. STP hash-chain and whitespace validation run after appends.
+
+## 2026-10-26 | codex | Neurodivergent-first audience direction recorded
+- Preserved Architect audience priority in ROOT_TOTEM.md and STP-0004 N5: neurodivergent thinkers specifically in mind, inclusive of neurotypical thinkers; visible progress supports learning and motivation.
+- Distinguished stated intent from Codex implementation interpretations and future usability evidence. No personal diagnostic details added to repository records.
+- Documentation only. STP hash-chain validation and git diff --check run after append; no product code, commit or push.
+
+## 2026-10-26 | codex | Intentional design rationale preserved
+- Recorded Architect clarification in Root Totem and STP-0004 N6: POD architecture, code-containing objects, colors and movement all serve intentional purposes, including intended emotional regulation.
+- Future engineering/UI/performance work must consider those purposes. No runtime or design changes this turn. Hash-chain and diff validation run after append.
+
+## 2026-10-26 | codex | Review before proceeding; earlier recommendation corrected
+- Architect corrected my assumption: Element UI already operates in the Aether. Reviewed current source, standard, existing STPs and browser flows before further work. Appended STP-0004 S11-S16/N7-N8 via CLI and Root/src/src-three Totems; preserve all previous history.
+- Confirmed substantial existing UI plus real Umbilical/Tether/Mesh routines. Browser evidence covers hierarchy to SQL Query Executor, reload/resume, code-frame save/restore, budget refusal then successful handshake/commit, and Docs Builder verified receipt. Next work should close integration/contract-alignment gaps in these systems, not start duplicate UI/contracts.
+- Setup: npm ci --ignore-scripts installed255 packages; started local Vite127.0.0.1:3002. Fetched only33 registered model GLBs (~85.5MB) via git lfs pull, enabling authored-model review with no tracked asset diff. Test browser state only: raised budget to16 and docked Auth Orb; code edit probe restored original text.
+- Build pass with large-chunk warning; gateway42/42; app330/331 (identity determinism fails, reproduced; Date.now-derived continuity id enters kernel hash); focused contract/evidence17/17. STP hash-chain validation and git diff --check pass. No product-code changes, implementation approval, commit/push/deployment or peer-worktree edits.
+
+## 2026-10-26 | codex | Application scope correction and understandable descriptions
+- Architect distinguishes this app-building IDE from CyberPeer Initiative: application CORE/root program, added Orb/Satellite functions, no CyberPeer build option. New-build Luminary asks app type and the CORE crystal matches it. Descriptions must explain function without engineering jargon.
+- Traced current mismatch through Matrix, data model, CORE Totem, audit and duplicated catalogs. Appended Root/src Totems and STP-0004 S17-S18,N9,T8-T9,G8-G9,P7-P8 via CLI. P7-P8 Presented; no app-type list or model mapping invented, and no implementation approval inferred.
+- STP chain and diff validation pass. Source review/documentation only; no new app tests or runtime claims, commit/push, peer-worktree change, provider setup or deployment.
+
+## 2026-10-26 | codex | Clarity without reducing technical depth
+- Architect refined terminology direction: do not dumb down the IDE; retain technical names, depth and learning while ensuring novices can understand purpose without being lost in syntax.
+- STP-0004 N10 clarifies T9 and previous wording examples: suggested function names are not blanket renaming approval. Prefer precise names accompanied by understandable explanations and contextual learning.
+- Documentation only; STP chain validation run after append. No product edits or approvals.
+
+## 2026-10-26 | codex | Proposal blueprint preparation, no product changes now
+- Architect clarified review/design should fill Proposals so implementation can execute researched sections without repeating discovery. Recorded workflow in Root Totem and STP-0004 N11.
+- Expanded new-build proposal P9 (supersedes P8) and application-scope/copy proposal P10 (supersedes P7), preserving technical names and recording concrete paths, order, acceptance, compatibility and remaining decisions. CLI creates new proposal ids for supersession; previous records preserved.
+- Both revisions Presented, not Approved. STP chain validates, diff check passes. No product edits, tests, commits, pushes or deployment this turn.
+
+## 2026-10-26 | codex | Revisable proposals and pre-build audit
+- Recorded Architect refinement in Root Totem/STP-0004 N12: any incoming instance may improve a Proposal against the Target. Review evidence, rationale, tradeoffs and revision history support presentation and Architect approval.
+- No new reviewer dispatched and no pre-build audit claimed complete; this is the process definition. Append-only continuity, hash-chain validation and diff check only; no product change or execution approval.
+
+## 2026-10-26 | codex | Findings prepared for Verus review
+- Architect explicitly authorized commit/push. Review branch codex/m5-readiness-stp includes STP-0004 and append-only Root/src/src-three Totem and Codex/STP lane records; product source unchanged.
+- Branch fast-forwarded to origin/main eece600 (Hackathon Totem/Verus lane additions only). Canonical totems/HACKATHON_TOTEM.md now available here; earlier nested-worktree references preserve the location observed then.
+- Review current P1-P6, P9 (supersedes P8), P10 (supersedes P7), Architect clarifications N4-N12 and source/browser findings S11-S18. Proposals remain Presented, not Approved. Look for better ways to meet the Target and append review/superseding rationale before implementation.
+- Active STP config restored to STP-0003; no session-local selection change included. STP validation and append-only/diff checks performed before commit. Prior application checks remain build pass, gateway42pass, app330pass1fail, focused17pass; no new product changes requiring a rerun.
+
+## 2026-10-26 | codex | Verus review assessed
+- Read Verus peer-review comment on existing draft PR2 (issuecomment-6431414126), reviewed head f23ae0a; no new branch commits or formal GitHub review were present. Assessed all five suggestions against Root Totem, current P6/P10 and installed STP lifecycle.
+- Root already holds repo-wide review/blueprint guidance. Reviewed annotation requires future aegis-stp tooling support; supported hash-chained note is available now. Recommend exact revision/source/reviewer/verdict/evidence binding, scope ownership cross-links, explicit saved-data/runtime rehydration round-trip acceptance, and named red-test accounting.
+- Full assessment and review provenance appended as STP-0004 N14. Proposals/Targets unchanged; no implementation or Architect approval inferred. No product/tooling code or new test run. All4 STPs validate; diff check passes. Review response remains local; no GitHub reply or peer message sent.
+
+## 2026-10-29 | codex | STP-0004 cross-peer drift update for PR #2
+- At Architect direction, appended N15 via `aegis-stp` to reconcile Claude's review and addendum. It updates stale Luminary/M1-M2 statements against main 818f939; marks PR #9's redesigned layout and STP-0002 Presence as pending until merged; adds a narrow expected Portal removal in P10 migration fixtures; preserves all other workspace data; and records the still-open continuityId determinism issue. No proposal approval is implied.
+- Fast-forward-synced PR branch with origin/main 818f939 (merge commit 0cd1be7). STP-0004 validates; `git diff --check` passes. This is a planning/Totem update only; application tests were not rerun. Untracked LUMINARY.glb in the separate primary checkout was not touched.

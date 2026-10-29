@@ -46,3 +46,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-24T23:06:11Z | verus | Housekeeping Ledger added
 - docs/HOUSEKEEPING_LEDGER.md: repo cleanup ledger H1-H35, awaiting the Architect.
+
+## 2026-10-29 | STP-0004 cross-peer drift note
+- STP-0004 N15 reconciles Claude's PR #2 review: refreshes Luminary and module state against main 818f939, links New Build to the STP-0002 Presence work in PR #9, and explicitly lists only Portal removal as an expected saved-workspace migration change. Proposals remain Presented; this note does not authorize implementation.

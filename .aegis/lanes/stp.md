@@ -250,6 +250,41 @@ Stage: Execution
 File: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md
 STP-Entry-Hash: f745edbe2ebd070928f08182987359845f92ea1b55f9112e253ac04761815437
 
+### 2026-10-26T23:57:21.631Z | stp | message
+Chain-Prev: df99865ea2a9b70b64ee343c30662fcb8bcaffb537cebe54bf11144a786bd013
+Chain-Hash: ae0641ffee98c51fd9b4a4386b3ae0c87f7de5b25c08d614cf29cb14d6f0fcf9
+STP pointer: STP-0004 "M5 SIMULATE and DEPLOY Demo Readiness"
+Event: created
+Stage: Situation
+File: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md
+STP-Entry-Hash: e4b36b799b907fcefc38af5d6d757fd4d9c708a43015596c4cd3e12c32784ca5
+
+### 2026-10-26T23:59:07.933Z | stp | message
+Chain-Prev: ae0641ffee98c51fd9b4a4386b3ae0c87f7de5b25c08d614cf29cb14d6f0fcf9
+Chain-Hash: 64c3ad574111f481f5204efa45fb41c7cc6785c9f2d727788c32b27221726f25
+STP pointer: STP-0004 "M5 SIMULATE and DEPLOY Demo Readiness"
+Event: stage → Target
+Stage: Target
+File: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md
+STP-Entry-Hash: 8e7da68d37aa0a85430bd2b17f7b5e77d10567d176a27bd14b5dfe20c159427f
+
+### 2026-10-26T23:59:08.838Z | stp | message
+Chain-Prev: 64c3ad574111f481f5204efa45fb41c7cc6785c9f2d727788c32b27221726f25
+Chain-Hash: 541367037bf1f6fd8d6d25162f36436ca88e07e4c17ab12f2e51833d2dcf6c4d
+STP pointer: STP-0004 "M5 SIMULATE and DEPLOY Demo Readiness"
+Event: stage → Gap
+Stage: Gap
+File: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md
+STP-Entry-Hash: 30c1ee9bb4840290d653b7ccdb5eaff187a76a003ba96a8a113789d9f42778f3
+
+### 2026-10-26T23:59:09.732Z | stp | message
+Chain-Prev: 541367037bf1f6fd8d6d25162f36436ca88e07e4c17ab12f2e51833d2dcf6c4d
+Chain-Hash: 873bd6ca64b3488468c7c42d39d01e8c73c541d6c3b74ffd419e1cbd68537e59
+STP pointer: STP-0004 "M5 SIMULATE and DEPLOY Demo Readiness"
+Event: stage → Proposal
+Stage: Proposal
+File: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md
+STP-Entry-Hash: b93557af5c4b3c9b0b29ac3a66ed615de82e3e270c2518a15056761bbaf6c10a
 ### 2026-10-26T23:40:39.231Z | stp | message
 Chain-Prev: df99865ea2a9b70b64ee343c30662fcb8bcaffb537cebe54bf11144a786bd013
 Chain-Hash: afc889f8f1d89e0d21bb2ef0fdfd0b47a54cbfc7278346e80cc0ebda57c97b16

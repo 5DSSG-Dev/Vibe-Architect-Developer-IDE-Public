@@ -34,3 +34,20 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 - Final verification addendum: production npm build passed (Vite 5.07s; large-chunk warning); app tests 164 pass. Changed-line trailing spaces removed. Local directory move remains blocked by Windows in-use lock.
 
+
+## 2026-10-26 | codex | SIMULATE/DEPLOY source map for STP-0004
+- simulationEngine.ts:16-31 seeds telemetry; :87-120 changes status and logs containment/recovery without executing a target operation or health probe. App.tsx:570-582 wires parameterless fault callbacks and manifest-based DEPLOY.
+- auditEngine.ts:19-122 checks invariant declarations, enum/presence and an unconditional pass; these do not prove runtime enforcement. DeployModeView.tsx:10-37 stores audit separately from current manifest and fabricates a random signature; :52-88 displays unconditional compliance/signed claims.
+- Reuse connectionRuntime.ts handshake/heartbeat/severance and evidenceArchive.ts hash-chain checks; integrity hashes are not signer authentication. Evidence, targets and proposed repairs: .aegis/stp/0004-m5-simulate-and-deploy-demo-readiness.md (S1-S10, T1-T7, P1-P6).
+- Source inspection only. No product changes or new application test results; M3 shared contracts and M4 operability remain foundation dependencies.
+
+## 2026-10-26 | codex | Existing Element UI/contract integration baseline
+- Aether.ts supplies cloudlike animated shader and lighting; ThreeCanvas supplies authored model scene, picking, docking/drop targets, spatial/view controls and Totems. EnvironmentView supplies Orb/Satellite/Actuator drill-down. Browser exercised full hierarchy and reload/resume through Wayfinder.
+- relationEngine.ts already defines Element code frames, child ids, SocketBinding, RelationContract, budgets/invariants and manifest. connectionRuntime.ts supplies9/5/4-step Umbilical/Tether/Mesh, reserve/rollback, lifecycle and severance. HandshakeModal calls real Umbilical validation, then persists evidence before App commits UI state.
+- Actual gaps: App.tsx:374-395 directly attaches Satellites without Tether call; restored relation ids are absent from contractStore Map after reload; builder rebuild loses child/model/codeFrame fields and adds satelliteClass to Orbs; App lacks Aether slider update wiring. Current named-standard/schema consolidation remains an extension to existing contracts.
+- STP-0004 S11-S16/N7-N8 hold source/browser/test evidence. Build pass; gateway42pass; app330pass1fail (identity determinism, reproduced); focused contract/evidence17pass. Documentation/continuity updates only; product code preserved.
+
+## 2026-10-26 | codex | Application CORE boundary and catalog copy correction
+- Architect clarifies CORE=main/root application, not CyberPeer Formless Center; no CyberPeer Initiative build option. CoreMatrixModal:35-56,139-150; relationEngine:312-328; three/elementTotem:209-219 and auditEngine:87-96 contain contrary concepts requiring coordinated correction.
+- Catalog descriptions are duplicated between relationEngine DEFAULT_APOTHECARY_CATALOG and modelCatalog MODEL_DESCRIPTORS. Update function-first copy consistently; preserve stable ids and user-authored content. New-build app-type/crystal mapping remains planned; current ThreeCanvas crystalVariant selects visual styles in local component state.
+- STP-0004 S17-S18/N9/T8-T9/G8-G9/P7-P8 hold evidence and proposals. No code/schema migration or UI change executed.
