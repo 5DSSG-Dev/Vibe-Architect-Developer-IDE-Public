@@ -1030,3 +1030,23 @@ Evidence: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md
 Channel: cli
 
 Attribution clarification: N5 records Codex's implementation evidence; the CLI defaulted its actor to Tracey's git user.name. N5 does not represent a new Architect decision or authored direction.
+
+### 2026-10-29T09:09:47.169Z | codex | note N7
+Chain-Prev: a7c2274d45f77fcb610f78d589f9a2e10bf4098b1272f76860db90fbede91642
+Chain-Hash: faccd053da3f076016a7e220239abaa44f896cd944aa31aadb7288242a3992e1
+Stage: Execution
+Kind: note
+Evidence: src/contracts/connectionEvents.ts; src/engine/evidenceArchive.ts; src/engine/connectionRuntime.ts; src/App.tsx
+Channel: cli
+
+Connection-event durability slice: App now subscribes to CORE's sanitized ConnectionEvent stream and appends each event to the existing hash-chained evidence archive. Archive writes are serialized to preserve chain order; verified connection events rehydrate the read-only in-memory ledger on startup; event IDs are unique across reloads. Healthy/degraded heartbeat records are emitted only on lifecycle-state changes to avoid duplicate history. The archive's existing 5,000-record limit applies. Luminary consumer/presentation coordination with Verus and the suspended-event producer remain open. Verification: production build PASS with existing chunk warning; diff check PASS; STP-0003 validation PASS; application tests not run.
+
+### 2026-10-29T09:10:59.308Z | codex | note N8
+Chain-Prev: faccd053da3f076016a7e220239abaa44f896cd944aa31aadb7288242a3992e1
+Chain-Hash: 19c2688999b355eb352d2d420987b5d6915bac3c3e908992b2f98cc703ed16c3
+Stage: Execution
+Kind: note
+Evidence: src/engine/evidenceArchive.ts; commit:d68379d03da648e54bd9fa27849890411e7d0d31
+Channel: cli
+
+PR #13 is confirmed merged (merge commit d68379d03da648e54bd9fa27849890411e7d0d31); the next M3 branch starts from origin/main c43e545, which includes subsequent PR #14. Supplement to N7: archive writes also use the browser Web Locks API when available to serialize across tabs; the in-process queue remains the fallback. The archive capacity remains 5,000 total records.

@@ -1,5 +1,6 @@
 import { computeContractChecksum } from './connectionRuntime';
 import type { RelationContract } from './relationEngine';
+import type { ConnectionEvent } from '../contracts/connectionEvents';
 import {
   canonicalJson,
   sha256Hex,
@@ -12,7 +13,7 @@ const EVIDENCE_STORAGE_KEY = 'aegis-vibe-architect.evidence.v1';
 // Raised from 1,000 when the Luminary's exchanges joined this record (STP-0002 P19, N34).
 export const MAX_EVIDENCE_RECORDS = 5_000;
 
-export type EvidenceKind = 'RELATION_CONTRACT' | 'WORK_REQUEST_RECEIPT' | 'LUMINARY_EXCHANGE';
+export type EvidenceKind = 'RELATION_CONTRACT' | 'WORK_REQUEST_RECEIPT' | 'LUMINARY_EXCHANGE' | 'CONNECTION_EVENT';
 
 export interface EvidenceStorage {
   getItem(key: string): string | null;
@@ -59,7 +60,7 @@ export interface EvidenceRecord {
   kind: EvidenceKind;
   subjectId: string;
   recordedAt: string;
-  payload: RelationContract | WorkRequestReceipt | LuminaryExchange;
+  payload: RelationContract | WorkRequestReceipt | LuminaryExchange | ConnectionEvent;
   payloadHash: string;
   previousRecordHash: string | null;
   recordHash: string;
@@ -120,10 +121,12 @@ export async function readEvidenceArchive(storage?: EvidenceStorage): Promise<Ev
   return records;
 }
 
-async function appendEvidence(
+let appendQueue: Promise<void> = Promise.resolve();
+
+async function appendEvidenceNow(
   kind: EvidenceKind,
   subjectId: string,
-  payload: RelationContract | WorkRequestReceipt | LuminaryExchange,
+  payload: RelationContract | WorkRequestReceipt | LuminaryExchange | ConnectionEvent,
   storage?: EvidenceStorage
 ): Promise<EvidenceAppendResult> {
   const target = resolveStorage(storage);
@@ -157,6 +160,25 @@ async function appendEvidence(
   target.setItem(EVIDENCE_STORAGE_KEY, JSON.stringify(next));
   if (!await verifyEvidenceArchive(next)) throw new Error('Evidence archive verification failed after append.');
   return { record, appended: true, archiveVerified: true };
+}
+
+/** Serialize archive writes so simultaneous lifecycle events cannot fork the hash chain. */
+function appendEvidence(
+  kind: EvidenceKind,
+  subjectId: string,
+  payload: RelationContract | WorkRequestReceipt | LuminaryExchange | ConnectionEvent,
+  storage?: EvidenceStorage
+): Promise<EvidenceAppendResult> {
+  const enqueue = () => {
+    const next = appendQueue.then(() => appendEvidenceNow(kind, subjectId, payload, storage));
+    appendQueue = next.then(() => undefined, () => undefined);
+    return next;
+  };
+  if (!storage && typeof navigator !== 'undefined' && 'locks' in navigator) {
+    const locks = (navigator as Navigator & { locks: { request<T>(name: string, callback: () => Promise<T>): Promise<T> } }).locks;
+    return locks.request<EvidenceAppendResult>('aegis-vibe-architect:evidence-archive', async () => await enqueue());
+  }
+  return enqueue();
 }
 
 export async function appendRelationContractEvidence(
@@ -201,6 +223,16 @@ export async function appendLuminaryExchangeEvidence(
 ): Promise<EvidenceAppendResult> {
   if (!exchange.exchangeId || !exchange.event || !exchange.conversationId) throw new Error('An incomplete Luminary exchange record was refused.');
   return appendEvidence('LUMINARY_EXCHANGE', exchange.exchangeId, structuredClone(exchange), storage);
+}
+
+export async function appendConnectionEventEvidence(
+  event: ConnectionEvent,
+  storage?: EvidenceStorage
+): Promise<EvidenceAppendResult> {
+  if (!event.eventId || !event.attemptId || !event.kind || !event.timestamp) {
+    throw new Error('An incomplete connection event record was refused.');
+  }
+  return appendEvidence('CONNECTION_EVENT', event.eventId, structuredClone(event), storage);
 }
 
 export async function exportVerifiedEvidenceArchive(storage?: EvidenceStorage): Promise<string> {

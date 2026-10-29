@@ -40,18 +40,28 @@ export interface ConnectionEvent {
 type ConnectionEventListener = (event: ConnectionEvent) => void;
 const eventLedger: ConnectionEvent[] = [];
 const listeners = new Set<ConnectionEventListener>();
+let eventSequence = 0;
 
-export function publishConnectionEvent(event: Omit<ConnectionEvent, 'eventId' | 'timestamp'> & { timestamp?: string }): ConnectionEvent {
-  const committed = Object.freeze({
+function freezeConnectionEvent(event: ConnectionEvent): ConnectionEvent {
+  return Object.freeze({
     ...event,
-    eventId: `conn-event-${eventLedger.length + 1}`,
-    timestamp: event.timestamp ?? new Date().toISOString(),
     presentedContract: event.presentedContract ? Object.freeze({ ...event.presentedContract }) : undefined,
     alternatives: event.alternatives ? Object.freeze(event.alternatives.map(alternative => Object.freeze({ ...alternative }))) : undefined,
     resources: event.resources ? Object.freeze({
       requested: event.resources.requested ? Object.freeze({ ...event.resources.requested }) : undefined,
       available: event.resources.available ? Object.freeze({ ...event.resources.available }) : undefined
     }) : undefined
+  });
+}
+
+export function publishConnectionEvent(event: Omit<ConnectionEvent, 'eventId' | 'timestamp'> & { timestamp?: string }): ConnectionEvent {
+  const eventId = typeof globalThis.crypto?.randomUUID === 'function'
+    ? `conn-event-${globalThis.crypto.randomUUID()}`
+    : `conn-event-${Date.now().toString(36)}-${++eventSequence}`;
+  const committed = freezeConnectionEvent({
+    ...event,
+    eventId,
+    timestamp: event.timestamp ?? new Date().toISOString()
   });
   eventLedger.push(committed);
   for (const listener of listeners) listener(committed);
@@ -65,4 +75,15 @@ export function subscribeConnectionEvents(listener: ConnectionEventListener): ()
 
 export function getConnectionEvents(): readonly ConnectionEvent[] {
   return Object.freeze([...eventLedger]);
+}
+
+/** Rehydrate persisted events without re-publishing them to persistence listeners. */
+export function restoreConnectionEvents(events: readonly ConnectionEvent[]): void {
+  const restored = new Map<string, ConnectionEvent>();
+  for (const event of events) {
+    if (!event.eventId || !event.attemptId || !event.timestamp || !event.kind) continue;
+    restored.set(event.eventId, freezeConnectionEvent(event));
+  }
+  for (const event of eventLedger) restored.set(event.eventId, event);
+  eventLedger.splice(0, eventLedger.length, ...restored.values());
 }

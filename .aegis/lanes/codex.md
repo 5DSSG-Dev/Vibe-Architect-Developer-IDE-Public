@@ -111,3 +111,8 @@
 ## 2026-10-29 | Custom Orb contract authoring
 - Added explicit Umbilical profile selection to Orb Builder and Reliquary. CORE registers a unique versioned custom manifest and persists it in CoreManifest; workspace restore re-registers it before resolution. Contract memory minimum is reflected in the saved Orb.
 - Build, diff check and STP-0003 validation pass. Tests not run. Provider-backed Conduit Orb remains unmodeled; event persistence/suspension and Luminary consumer remain open.
+## 2026-10-29 | CORE connection event persistence
+- Added append-only evidence records for sanitized ConnectionEvents, serialized writes, unique event ids and startup ledger restoration. Heartbeat emissions now represent state changes only. Existing archive capacity is 5,000 total records.
+- npm run build and STP-0003 validation pass; application tests not run. P13 still lacks a suspended-event producer and Verus's Luminary consumer.
+## 2026-10-29 | PR #13 merge and durable connection history
+- Verified PR #13 merged at d68379d; started continuation from origin/main c43e545 after PR #14. Added sanitized ConnectionEvent evidence records, unique ids, startup restoration, transition-only heartbeat emission, serialized append operations with Web Locks where available, and visible archive-write shortfalls. Build and STP validation pass; tests not run.

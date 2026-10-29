@@ -414,3 +414,8 @@ STP-Entry-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
 ## 2026-10-29 | STP-0003 custom Orb implementation
 - Execution addendum records explicit profile authoring for custom Orbs, immutable unique manifest ids, CORE library persistence/rehydration, and profile memory floors. This does not close the provider-backed Conduit Orb mapping or the other open event/Luminary/Archive seams.
 - npm run build, git diff --check, and STP-0003 validation pass; application tests were not run.
+## 2026-10-29 | STP-0003 durable connection history
+- Connection event records now join the append-only evidence archive and are rehydrated after verification. Serialized writes preserve chain order; event archive retains its 5,000-record global cap. Suspended-event production and Luminary consumption remain open.
+- Production build and STP chain validation pass; application tests not run.
+## 2026-10-29 | STP-0003 connection-event persistence update
+- PR #13 merged at d68379d. Connection events now use hash-chained evidence and restore from verified archive; write serialization uses Web Locks where available plus a local queue. Global archive remains capped at 5,000 records. Build and STP validation pass; app tests not run.

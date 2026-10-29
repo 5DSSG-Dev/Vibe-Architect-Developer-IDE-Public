@@ -116,3 +116,8 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-10-29 | codex | Custom Orb contract authoring
 - Custom Orb Builder and Reliquary flows now require the Architect to select an Umbilical profile; no profile is inferred from an Orb name. CORE creates a unique versioned manifest, persists custom manifests with the workspace, and restores them before contract resolution. The profile memory floor is reflected in the saved Orb resource requirement.
 - Production build, diff check, and STP-0003 validation pass. Application tests were not run. Provider-backed Conduit Orb mapping, durable connection event history, suspended-event production, Luminary presentation, and Archive asset mapping remain open.
+## 2026-10-29 | codex | Durable CORE connection event records
+- Sanitized connection events now append to the existing hash-chained evidence archive; verified event history rehydrates at app startup. Archive writes serialize through one queue, lifecycle heartbeats record state transitions only, and archive capacity remains 5,000 total records.
+- Build and STP validation pass; tests not run. Suspended-event production and Luminary consumer coordination remain open.
+## 2026-10-29 | codex | PR #13 merged and M3 event-history continuation
+- PR #13 merged as d68379d. This continuation is based on origin/main c43e545, including the subsequent PR #14 merge. Connection-event evidence now uses the existing append-only hash chain, serializes writes in-process and via Web Locks where available, and rehydrates the read-only event ledger. Archive cap remains 5,000 total records.
