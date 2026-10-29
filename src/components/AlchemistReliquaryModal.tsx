@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Beaker, Zap, Database, Shield, Hexagon, ArrowRight, Save, Sparkles, Filter, Code } from 'lucide-react';
 import { ApothecaryItem } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
+import { UMBILICAL_PROFILE_IDS, UMBILICAL_PROFILES, type UmbilicalProfileId } from '../contracts/umbilicalStandards';
 
 
 interface Reagent {
@@ -29,9 +30,11 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
   const [crucible, setCrucible] = useState<Reagent[]>([]);
   const [filter, setFilter] = useState<'ALL' | 'CORE' | 'SENSOR' | 'MUTATOR' | 'GUARD'>('ALL');
   const [outputName, setOutputName] = useState('Custom Telemetry Orb');
+  const [umbilicalProfileId, setUmbilicalProfileId] = useState<UmbilicalProfileId | ''>('');
 
   const filteredReagents = filter === 'ALL' ? MOCK_REAGENTS : MOCK_REAGENTS.filter(r => r.type === filter);
   const totalCost = crucible.reduce((acc, r) => acc + r.cost, 0);
+  const memoryFootprint = Math.max(totalCost, umbilicalProfileId ? UMBILICAL_PROFILES[umbilicalProfileId].minimumMemoryMB : 0);
 
   const getIconForType = (type: string) => {
     switch (type) {
@@ -54,7 +57,7 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
   };
 
   const handleSynthesizeClick = () => {
-    if (!onSynthesize || crucible.length === 0) return;
+    if (!onSynthesize || crucible.length === 0 || !umbilicalProfileId) return;
 
     const capabilities = crucible.map(r => r.name);
     const newOrb: ApothecaryItem = {
@@ -64,11 +67,12 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
       trust: 'Experimental',
       description: `Synthesized from ${crucible.length} reagents. Features: ${capabilities.join(', ')}`,
       version: '1.0.0-syn',
-      memoryReq: totalCost,
+      memoryReq: memoryFootprint,
       threadsReq: Math.max(1, Math.floor(crucible.length / 2)),
       capabilities: capabilities,
       requirements: [],
-      geometryType: 'sphere'
+      geometryType: 'sphere',
+      umbilicalProfileId
     };
 
     onSynthesize(newOrb);
@@ -208,14 +212,35 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
                   />
                 </div>
 
+                <div>
+                  <label className="text-[10px] font-mono text-slate-400 mb-1 block">Connection contract</label>
+                  <select
+                    value={umbilicalProfileId}
+                    onChange={(event) => setUmbilicalProfileId(event.target.value as UmbilicalProfileId | '')}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-cyan-200 focus:outline-none focus:border-purple-500/50"
+                  >
+                    <option value="">Choose how this Orb connects…</option>
+                    {UMBILICAL_PROFILE_IDS.map((profileId) => (
+                      <option key={profileId} value={profileId}>
+                        {profileId} — {UMBILICAL_PROFILES[profileId].label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-[10px] text-slate-500 font-sans leading-relaxed">
+                    This choice becomes part of the Orb’s CORE-verified contract. The CORE checks its copy and available resources when you connect it.
+                  </p>
+                </div>
+
                 <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3 space-y-2 font-mono text-[10px]">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Total Reagents:</span>
                     <span className="text-slate-200">{crucible.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Memory Footprint:</span>
-                    <span className={totalCost > 256 ? 'text-amber-400' : 'text-emerald-400'}>{totalCost} MB</span>
+                    <span className="text-slate-400">CORE Memory:</span>
+                    <span className={memoryFootprint > 256 ? 'text-amber-400' : 'text-emerald-400'}>
+                      {memoryFootprint} MB{memoryFootprint > totalCost ? ' (contract minimum)' : ''}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Taxonomy:</span>
@@ -237,7 +262,7 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
 
               <div className="pt-4 border-t border-slate-800 mt-4">
                 <button
-                  disabled={crucible.length === 0}
+                  disabled={crucible.length === 0 || !umbilicalProfileId || !outputName.trim()}
                   onClick={handleSynthesizeClick}
                   className="w-full btn-cyber py-2.5 rounded-xl text-xs font-orbitron font-bold flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >

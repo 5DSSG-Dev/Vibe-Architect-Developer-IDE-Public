@@ -410,3 +410,7 @@ Event: P14 Approved by tracey
 Stage: Execution
 File: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md
 STP-Entry-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
+
+## 2026-10-29 | STP-0003 custom Orb implementation
+- Execution addendum records explicit profile authoring for custom Orbs, immutable unique manifest ids, CORE library persistence/rehydration, and profile memory floors. This does not close the provider-backed Conduit Orb mapping or the other open event/Luminary/Archive seams.
+- npm run build, git diff --check, and STP-0003 validation pass; application tests were not run.

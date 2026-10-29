@@ -112,3 +112,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-10-29 | codex | CORE validated profile alternatives
 - Resource refusals now report alternatives only when the Orb declared them, the Port accepts them, and the current CORE memory/thread/bandwidth/GPU snapshot can satisfy them. A retry names the profile and CORE recalculates before allocation; offers do not authorize silent substitution.
 - STP-0003 N4 supersedes N2's bounded-alternative shortfall. Suspended has no runtime producer; event durability, custom/model Orb authoring, the actual Conduit Orb, Archive geometry and Luminary consumption remain open. Build, diff and STP-chain checks pass; application tests were not run.
+
+## 2026-10-29 | codex | Custom Orb contract authoring
+- Custom Orb Builder and Reliquary flows now require the Architect to select an Umbilical profile; no profile is inferred from an Orb name. CORE creates a unique versioned manifest, persists custom manifests with the workspace, and restores them before contract resolution. The profile memory floor is reflected in the saved Orb resource requirement.
+- Production build, diff check, and STP-0003 validation pass. Application tests were not run. Provider-backed Conduit Orb mapping, durable connection event history, suspended-event production, Luminary presentation, and Archive asset mapping remain open.

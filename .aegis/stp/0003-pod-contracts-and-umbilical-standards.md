@@ -1010,3 +1010,23 @@ Evidence: src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts; do
 Channel: cli
 
 P13 alternative seam completed after N2: resource-refusal events include only alternative profiles explicitly declared by the Orb, accepted by the target Port, and fully satisfiable against the fresh CORE memory/thread/bandwidth/GPU snapshot. The Architect/Luminary can request a named profile through HandshakeOptions.requestedProfileId; CORE repeats manifest, Port and live-capacity checks on retry, so offers neither reserve resources nor authorize silent substitution. N2's listed bounded alternatives gap is closed. Remaining P13 gaps: suspended is a schema event without a runtime producer; event ledger/tombstones are session-memory only; Luminary presentation/consumer wiring awaits Verus. Production build rerun after the change passes with the existing chunk warning; application tests still not run.
+
+### 2026-10-29T08:47:12.816Z | tracey | note N5
+Chain-Prev: 51bfadac73ef10dd8dc53d9dee1bb95ffb4ce9c5230fc479002a4b166c9889b7
+Chain-Hash: 6bccc072e9fe3b2c5c6a6a8ee406355edc1516e804ae40e481cdddae0fa6a56a
+Stage: Execution
+Kind: note
+Evidence: src/components/OrbBuilderModal.tsx; src/components/AlchemistReliquaryModal.tsx; src/contracts/orbManifest.ts; src/App.tsx; src/engine/relationEngine.ts; docs:assumption
+Channel: cli
+
+Custom Orb authoring now requires an explicit Umbilical profile in both Orb Builder and Reliquary. CORE creates a unique versioned library manifest from the Architect's choice, stores the manifest in the workspace CORE record, and restores it before handshake resolution. Resource memory reflects the selected profile floor. This closes the custom-Orb authoring/library persistence portion; provider-backed Conduit Orb mapping remains open. Verification: npm run build PASS; git diff --check PASS; STP-0003 validate PASS. Application tests not run. Suspended event production, durable lifecycle/tombstone history, Luminary consumer coordination with Verus, Conduit provider schema, and Archive geometry remain open.
+
+### 2026-10-29T08:47:52.865Z | codex | note N6
+Chain-Prev: 6bccc072e9fe3b2c5c6a6a8ee406355edc1516e804ae40e481cdddae0fa6a56a
+Chain-Hash: a7c2274d45f77fcb610f78d589f9a2e10bf4098b1272f76860db90fbede91642
+Stage: Execution
+Kind: note
+Evidence: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md
+Channel: cli
+
+Attribution clarification: N5 records Codex's implementation evidence; the CLI defaulted its actor to Tracey's git user.name. N5 does not represent a new Architect decision or authored direction.

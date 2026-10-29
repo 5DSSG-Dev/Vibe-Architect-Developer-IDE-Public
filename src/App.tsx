@@ -39,6 +39,7 @@ import { runComprehensiveCoreAudit } from './engine/auditEngine';
 import { appendRelationContractEvidence, readEvidenceArchive } from './engine/evidenceArchive';
 import { describeCurrentTask } from './utils/wayfinder';
 import { NavigationPosition, readNavigationPosition, resolveEnvironmentStack } from './utils/navigationSnapshot';
+import { getRegisteredOrbManifest, registerCustomOrbManifest, registerOrbManifest } from './contracts/orbManifest';
 
 // The key keeps its original name so version 1 workspaces are still found;
 // the `version` field inside the snapshot drives migration.
@@ -109,6 +110,8 @@ function vacateNonOrbSocket(socket: SocketBinding): SocketBinding {
 }
 
 function ensureManifestCodeFrames(manifest: CoreManifest): CoreManifest {
+  // Restore CORE-owned custom contract copies before Orb references are used.
+  for (const orbManifest of manifest.orbManifestLibrary ?? []) registerOrbManifest(orbManifest);
   return {
     ...manifest,
     sockets: manifest.sockets.map(vacateNonOrbSocket).map(ensureSocketCodeFrames)
@@ -475,9 +478,30 @@ export function App() {
     globalSimulationEngine.addLog('SUCCESS', `[CODE FRAME SAVED] Updated functional source for ${updatedItem.name}.`);
   };
 
+  const ensureCustomOrbContract = (item: ApothecaryItem): ApothecaryItem => {
+    let prepared = item;
+    if (item.category === 'Orbs' && !item.umbilicalContractRef && item.umbilicalProfileId) {
+      const reference = registerCustomOrbManifest(item, item.umbilicalProfileId);
+      const manifest = getRegisteredOrbManifest(reference);
+      prepared = {
+        ...item,
+        memoryReq: manifest?.resources.memoryMB ?? item.memoryReq,
+        umbilicalContractRef: reference
+      };
+      if (manifest) {
+        setCoreManifest((previous) => {
+          const library = previous.orbManifestLibrary ?? [];
+          if (library.some(entry => entry.id === manifest.id && entry.version === manifest.version)) return previous;
+          return { ...previous, orbManifestLibrary: [...library, manifest] };
+        });
+      }
+    }
+    return ensureElementCodeFrame(prepared);
+  };
+
   // Save custom configured Orb to Apothecary Palette Catalog
   const handleSaveToCatalog = (customItem: ApothecaryItem) => {
-    const customItemWithCodeFrame = ensureElementCodeFrame(customItem);
+    const customItemWithCodeFrame = ensureCustomOrbContract(customItem);
     setApothecaryCatalog((prev) => {
       const exists = prev.some(i => i.id === customItemWithCodeFrame.id);
       if (exists) {
@@ -491,7 +515,7 @@ export function App() {
   };
 
   const handleSynthesizeOrb = (customItem: ApothecaryItem) => {
-    const customItemWithCodeFrame = ensureElementCodeFrame(customItem);
+    const customItemWithCodeFrame = ensureCustomOrbContract(customItem);
     setApothecaryCatalog((prev) => [customItemWithCodeFrame, ...prev]);
     closeOverlay('RELIQUARY');
     globalSimulationEngine.addLog('SUCCESS', `[ALCHEMIST SYNTHESIS] Created new custom orb: ${customItemWithCodeFrame.name}`);
@@ -500,7 +524,7 @@ export function App() {
   // Explicit Handshake Initiation from Apothecary Studio
   const handleInitiateHandshakeFromBuilder = (item: ApothecaryItem, targetSocketId: string) => {
     setSelectedSocketId(targetSocketId);
-    setAttachingItem(item);
+    setAttachingItem(ensureCustomOrbContract(item));
     openOverlay('HANDSHAKE');
   };
 
