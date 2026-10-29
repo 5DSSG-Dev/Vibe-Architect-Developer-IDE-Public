@@ -161,6 +161,7 @@ test('with the Meta source, status shows the running total and a reached ceiling
   const app = await createGateway({
     config, sessions: new InMemorySessionStore(), entra, gauge: coherentGauge,
     askModel: createMetaAskModel({ apiKey: 'k', ledger, fetch: fetchNever }), replySource: 'Meta · muse-spark-1.3', spend: ledger,
+    knowledge: { version: 'v0.1', sha256: 'ab'.repeat(32), bytes: 30_000 },
   });
   const server = app.listen(0, '127.0.0.1');
   servers.push(server);
@@ -169,6 +170,7 @@ test('with the Meta source, status shows the running total and a reached ceiling
   const status = await (await fetch(`${base}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } })).json();
   assert.equal(status.replySource, 'Meta · muse-spark-1.3');
   assert.deepEqual(status.spend, { spentUsd: 0, ceilingUsd: 0.005, calls: 0 });
+  assert.deepEqual(status.knowledge, { version: 'v0.1', sha256: 'ab'.repeat(32), bytes: 30_000 });
   const res = await post(`${base}/api/luminary/ask`, { prompt: 'Architect: hello' });
   assert.equal(res.status, 503);
   assert.equal((await res.json()).shortfall.code, 'spend_ceiling');

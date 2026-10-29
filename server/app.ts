@@ -61,6 +61,8 @@ export interface CreateGatewayOptions {
   replySource?: string;
   /** The running spend total for a paid reply source (P21), shown to the Architect in the panel. */
   spend?: { summary(): { spentUsd: number; ceilingUsd: number; calls: number } };
+  /** The Knowledge Pack sent with every question (P23), named so each answer can record it. */
+  knowledge?: { version: string; sha256: string; bytes: number };
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
   vite?: ViteDevServer;
@@ -263,6 +265,7 @@ export async function createGateway(options: CreateGatewayOptions) {
       gauge: options.gauge ? 'configured' : 'not_configured',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
       ...(options.spend ? { spend: readSpend(options.spend) } : {}),
+      ...(options.knowledge ? { knowledge: options.knowledge } : {}),
     });
   });
   if (options.executor) {

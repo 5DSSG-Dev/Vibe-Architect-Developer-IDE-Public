@@ -18,6 +18,7 @@ import { DeployModeView } from './components/DeployModeView';
 import { EnvironmentView } from './components/EnvironmentView';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
+import { describeElement } from './luminary/knowledge';
 import {
   ApothecaryItem,
   SocketBinding,
@@ -234,7 +235,8 @@ export function App() {
   const luminarySelection = selectedForLuminary
     ? {
         label: `Selected: ${selectedForLuminary.name}`,
-        text: `${selectedForLuminary.name} (${selectedForLuminary.category}, v${selectedForLuminary.version})\n${selectedForLuminary.description}\nCapabilities: ${selectedForLuminary.capabilities.join(', ') || 'none'}\nRequirements: ${selectedForLuminary.requirements.join(', ') || 'none'}`,
+        // The same wording as the Knowledge Pack (P23), with its Satellites or Actuators named.
+        text: describeElement(selectedForLuminary, apothecaryCatalog),
       }
     : undefined;
 

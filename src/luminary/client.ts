@@ -52,6 +52,8 @@ export interface LuminaryStatus {
   codingTasks: 'on' | 'off' | 'local_only';
   /** The running total for a paid reply source (P21); absent for the stand-in. */
   spend?: { spentUsd: number; ceilingUsd: number; calls: number } | { unreadable: true };
+  /** The Knowledge Pack the gateway sends with every question (P23); absent for the stand-in. */
+  knowledge?: { version: string; sha256: string; bytes: number };
 }
 
 /** The running total in plain words, and whether it has reached the 80% warning. */
