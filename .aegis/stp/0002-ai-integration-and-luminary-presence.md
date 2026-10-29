@@ -1875,3 +1875,24 @@ Status: Presented
 Channel: cloud
 
 P22 → Presented.
+
+### 2026-10-29T08:21:45.000Z | claude | status
+Chain-Prev: 9b0aa4f217d1b4ee8b7dee8f3f4796e06b812b21b8c5191c62968b42190431ff
+Chain-Hash: f5556e9485e66a40f4f48c4725d1e4707722f90b1ea7046769ccd00ad4da4282
+Stage: Proposal
+Kind: status
+Item: P22
+Status: Approved
+Channel: cloud
+
+Approved P22 on the thread's decision card "Make Baseten's open-weights model the Luminary's main source, with which ceiling?", option chosen 2026-10-29T08:21:45Z: "Yes, Baseten main, $75 ceiling". Baseten ceiling $75 (LUMINARY_BASETEN_CEILING_USD=75); the Meta ceiling stays $50. Recorded from the cloud thread by claude.
+
+### 2026-10-29T08:22:00.000Z | claude | note N37
+Chain-Prev: f5556e9485e66a40f4f48c4725d1e4707722f90b1ea7046769ccd00ad4da4282
+Chain-Hash: 54dd755910e8d114d31635ae6d8920e62aa43d2832207b5a9e8fabe07754d04f
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts (parseLiveSourceEnv, BASETEN_BASE_URL, BASETEN_MODEL, price entry); server/config.ts; server/index.ts; server/luminary-meta.test.ts; docs/LUMINARY_SETTINGS.md; commit 36c0728
+Channel: cloud
+
+P22 built (in 36c0728, while the card was open, as the recommended option). LUMINARY_REPLY_SOURCE=baseten sends the same governed requests to https://inference.baseten.co/v1 with model meta-models/muse-spark-open, the key LUMINARY_BASETEN_API_KEY as a bearer token, its own ceiling LUMINARY_BASETEN_CEILING_USD and its own ledger (.luminary/baseten-spend.json); the panel labels it 'Muse Spark Open · Baseten'. Meta stays selectable with its own key, ceiling and ledger. Tests: gateway 143/143 (a fake Baseten checks address, model, bearer key, separate ledger and ceiling, and refusal without key or ceiling), app 303/303; typecheck and build clean. Next, with the Architect's go: one live question from her PC.
