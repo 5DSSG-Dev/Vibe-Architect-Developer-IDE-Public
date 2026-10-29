@@ -100,3 +100,6 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - Architect clarifies written Proposals remain revisable by incoming instances/models. A reviewer can propose a more efficient or better-supported way to meet the Target; the first method is not binding.
 - Second-set-of-eyes review evaluates Target coverage, evidence/assumptions, dependencies, compatibility, efficiency and verification. Append review findings and superseding rationale, then present the resulting proposal for Architect approval before implementation. Preserve Target and history; changed revisions do not inherit approval automatically.
 - STP-0004 N12 records this refinement. No independent review or implementation approval is claimed by this update.
+
+## 2026-10-29 | STP-0004 drift review recorded
+- Added N15 on `codex/m5-readiness-stp` in response to the Architect's direction and Claude's review. The note aligns the planning record with main 818f939 and pending PR #9; it adds an explicit, narrow Portal-removal allowance to saved-workspace migration acceptance and keeps all other retention checks. No STP proposal is thereby approved.
