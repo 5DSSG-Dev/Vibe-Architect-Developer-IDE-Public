@@ -59,12 +59,23 @@ export interface CreateGatewayOptions {
   gauge?: Gauge;
   /** Names the reply source in /api/luminary/status, e.g. 'rehearsal'. Absent = not configured. */
   replySource?: string;
+  /** The running spend total for a paid reply source (P21), shown to the Architect in the panel. */
+  spend?: { summary(): { spentUsd: number; ceilingUsd: number; calls: number } };
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
   vite?: ViteDevServer;
 }
 
 /** Reviewer-facing Luminary endpoint throttle: 30 requests per IP per minute. */
+/** The running total, or an honest 'unreadable' when the ledger cannot be read (every call is then refused). */
+function readSpend(spend: NonNullable<CreateGatewayOptions['spend']>): { spentUsd: number; ceilingUsd: number; calls: number } | { unreadable: true } {
+  try {
+    return spend.summary();
+  } catch {
+    return { unreadable: true };
+  }
+}
+
 const LUMINARY_RATE_WINDOW_MS = 60_000;
 const LUMINARY_RATE_LIMIT = 30;
 
@@ -251,6 +262,7 @@ export async function createGateway(options: CreateGatewayOptions) {
       replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
       gauge: options.gauge ? 'configured' : 'not_configured',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
+      ...(options.spend ? { spend: readSpend(options.spend) } : {}),
     });
   });
   if (options.executor) {

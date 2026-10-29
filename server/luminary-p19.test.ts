@@ -14,6 +14,7 @@ import { InMemorySessionStore } from './session-store.js';
 import { DEMO_KEY_HEADER } from './luminary-access.js';
 import { REHEARSAL_MODEL_ID, rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
+import { SpendLedger, createMetaAskModel } from './luminary-meta.js';
 import type { Gauge } from './luminary-pipeline/pipeline.js';
 import { composePrompt, parseReply } from '../src/luminary/blocks.js';
 
@@ -150,4 +151,25 @@ test('context sent with a coding task must be labelled notes within the limit', 
   const base = await listen({ gauge: coherentGauge, executor: new LuminaryExecutor({ repoRoot: dir }) });
   const res = await post(`${base}/api/luminary/tasks`, { goal: 'x', allowedFiles: ['docs/note.md'], context: [{ label: 'big', text: 'x'.repeat(25_000) }] });
   assert.equal(res.status, 400);
+});
+
+test('with the Meta source, status shows the running total and a reached ceiling is a named Shortfall', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'luminary-spend-'));
+  dirs.push(dir);
+  const ledger = new SpendLedger(join(dir, 'spend.json'), 0.005, Number.POSITIVE_INFINITY);
+  const fetchNever = (async () => { throw new Error('Meta must not be reached'); }) as unknown as typeof fetch;
+  const app = await createGateway({
+    config, sessions: new InMemorySessionStore(), entra, gauge: coherentGauge,
+    askModel: createMetaAskModel({ apiKey: 'k', ledger, fetch: fetchNever }), replySource: 'Meta · muse-spark-1.3', spend: ledger,
+  });
+  const server = app.listen(0, '127.0.0.1');
+  servers.push(server);
+  await new Promise((r) => server.once('listening', r));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const status = await (await fetch(`${base}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } })).json();
+  assert.equal(status.replySource, 'Meta · muse-spark-1.3');
+  assert.deepEqual(status.spend, { spentUsd: 0, ceilingUsd: 0.005, calls: 0 });
+  const res = await post(`${base}/api/luminary/ask`, { prompt: 'Architect: hello' });
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).shortfall.code, 'spend_ceiling');
 });

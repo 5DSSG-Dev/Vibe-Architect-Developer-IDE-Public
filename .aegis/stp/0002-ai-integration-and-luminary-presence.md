@@ -1758,3 +1758,171 @@ Evidence: server/luminary-executor.ts; server/luminary-task-router.ts; src/lumin
 Channel: cloud
 
 Codex (Lumin) code review of PR #9 at 33d7911, delivered by peer-bridge file 2026-10-29T06:49:38Z: request changes, eight findings. Claude verified each against the code and addressed them on PR #9. (1) Symlink escape: writes now refuse any path whose folders or file are links, and confirm the real landing folder is inside the worktree; a refused proposal's worktree and branch are discarded. (2) Approval before merge: accept writes an approved entry naming the exact reviewed commit before merging, merges only that commit, then records the outcome; a ledger that does not verify (or cannot be read) stops every append, so no proposal or merge goes ahead on a broken chain; a merge whose outcome cannot be recorded says so with the merge commit. (3) Full review: the whole diff is kept up to 1,000,000 characters (was the last 4,000); a larger change is marked incomplete and cannot be accepted; Accept is offered only after the full changes are opened. (4) Loopback: besides a local socket, the executor now requires a loopback Host, a local or absent Origin, and no proxy or tunnel header (Forwarded, X-Forwarded-*, X-Real-IP, Via, CF-Connecting-IP and similar); a proxy that strips all of these and rewrites Host would still defeat it, so the settings note says never to switch the executor on behind a tunnel. (5) Ledger scope: every question, reply, Shortfall, stop, Offering accept and decline, and coding-task assign, propose, accept, decline and failure is now appended to the IDE's existing evidence record (kind LUMINARY_EXCHANGE, long text kept as excerpt plus sha256), with the record's capacity raised from 1,000 to 5,000; the gateway ledger stays as the merge guard, because only a server-written record can stop a merge. The Architect's choice between this and the alternatives is on a decision card; this is the recommended option, built while it waits. (6) Context chips are now sent with coding tasks (same 24,000-byte limit) and cleared after sending. (7) The P19 document header now says approved and built, pointing here. (8) The experimental threeRuntimeP0 renderer does not draw the 3D Presence; this is stated in the document and code; the Luminary stays reachable by its icon and Full Form. Not yet done: the LUMINARY.glb asset (sha256 82fa5979...c4242f97) is to be committed through Git LFS from the Architect's PC onto this branch before merge, as Codex asked. Tests: gateway 139/139, app 303/303, typecheck and build clean. Browser run in the cloud (rehearsal source, gauge test double, executor on a scratch clone): Accept disabled until the full changes were opened; accept merged; ledger proposed, approved, accepted, chain valid; the evidence record held asked, replied, offering_declined, task_assigned, task_proposed and task_accepted; no console errors beyond the cloud's placeholder 3D files. Re-review requested from Codex. These are review responses, not approval: acceptance and merge remain the Architect's.
+
+### 2026-10-29T07:55:00.010Z | claude | finding S20
+Chain-Prev: bf6026aab71915ae5e10b4c390c5f6d36de38630d861b0b655abfb19016f6d92
+Chain-Hash: 1ba492e137d0b82b31dadae3b0ff07b8c2abfbb8158d19b87e7f6c7c6f9bf6f9
+Stage: Situation
+Kind: finding
+Evidence: server/luminary-meta.ts; scripts/luminary-meta-smoke.ts; server/config.ts:38-39,113; server/app.ts:241,248-251; server/luminary-pipeline/pipeline.ts:43; N22; N23
+Channel: cloud
+
+After PR #9 (main fc24bb9) the Luminary's live paths, POST /api/luminary/ask and coding tasks, answer only from the labelled rehearsal stand-in or not at all: config accepts only LUMINARY_REPLY_SOURCE=rehearsal and the gateway's askModel is either the rehearsal source or notConfiguredAskModel. The Meta reply source (createMetaAskModel with its file-backed SpendLedger) exists and passed two capped smoke calls from a separate script ($0.0226 for 2 calls, ledger on the Architect's PC now refuses further calls by design: cap 2 calls, $0.25). Its output allowance (2,000 tokens) is too small for code replies (test 2 used 2,286). One governed question can make up to 3 model calls (the first reply plus up to 2 IDS revisions, DEFAULT_MAX_IDS_PASSES = 2). The status endpoint reports the reply source but no spend. The Architect asked for a running spend total and an overall ceiling so the $150 of Meta credits last through the demo video (2026-10-28).
+
+### 2026-10-29T07:55:00.020Z | claude | gap G20
+Chain-Prev: 1ba492e137d0b82b31dadae3b0ff07b8c2abfbb8158d19b87e7f6c7c6f9bf6f9
+Chain-Hash: 88d12aafc67be212ac988316b24e8e931a3419a0d91af82ef03088b4af2cf9f8
+Stage: Gap
+Kind: gap
+Evidence: S20; G19
+Channel: cloud
+
+M1.b-2 and M2 are open: the gateway does not use the Meta model for the Luminary's replies, there is no ceiling the Architect sets for real use, and no running total is visible to the Architect while working.
+
+### 2026-10-29T07:55:00.030Z | claude | change P21
+Chain-Prev: 88d12aafc67be212ac988316b24e8e931a3419a0d91af82ef03088b4af2cf9f8
+Chain-Hash: 772b8117e0627c51c9bd24512736a45eb45aaf7d167a836dda456bb6aaaa011b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S20; G20; P20; D3
+Closes: G20
+Channel: cloud
+
+Connect the Luminary's live paths to Meta, under the Architect's ceiling. (1) A new reply source LUMINARY_REPLY_SOURCE=meta, chosen only when LUMINARY_META_API_KEY is set in the git-ignored .env; it reuses createMetaAskModel unchanged in behaviour (Muse Spark muse-spark-1.3 at the published standard rate; the -contributor variant stays refused; the P15 Instructions as system message). Every reply still passes the unchanged gate, PIM, IRG gauge, RBC and Prism or IDS; the model id is declared on every reply; rehearsal stays selectable and stays the default for automated tests, which use fakes only and never call Meta. (2) The ceiling: LUMINARY_META_CEILING_USD, the Architect's overall limit for all real use, counted from the same ledger file, so the two smoke calls already count. The smoke test's 2-call limit is lifted for this source (the call count is still recorded); the money ceiling is the stop. Each call still reserves its worst case before it is sent; a call that could pass the ceiling is refused with an honest Shortfall, 'spending ceiling reached', and nothing else changes. An unreadable ledger still refuses everything. (3) The running total: GET /api/luminary/status adds spentUsd, ceilingUsd and calls; the Luminary header shows it (for example 'Meta · $0.42 of $50 used'), and turns amber at 80% of the ceiling. (4) Output allowance raised to 8,000 tokens so code replies are not cut off; the worst-case reservation grows with it (about 3.5 cents per call), so the refusal point is exact rather than optimistic. (5) The ceiling protects the public demo too: a reviewer with the demo key spends from the same ceiling, within the existing 30-requests-per-minute limit. Verification: gateway tests with a fake Meta (ceiling refusal, running total, ledger carry-over, no key = not configured, rehearsal default), typecheck, build; then, only with the Architect's go, one live question from the IDE on the Architect's PC (about 1-3 cents), recorded here. Open for the Architect: the ceiling amount. Known limit: the gauge was calibrated on prose, so gauging code replies is untested; code replies are gauged like any reply and a withheld one is shown as a Shortfall. Not in this step: choosing reasoning effort (unknown in Meta's API until checked), a per-day limit, and confirming the hackathon's published model rules, which stays with M2 for Codex or the Architect to confirm.
+
+### 2026-10-29T07:55:00.040Z | claude | status
+Chain-Prev: 772b8117e0627c51c9bd24512736a45eb45aaf7d167a836dda456bb6aaaa011b
+Chain-Hash: e2eec1c7be33f7d035267ae3c94478c30052b58d4e026c0133891dc71f94e4b8
+Stage: Proposal
+Kind: status
+Item: P21
+Status: Presented
+Channel: cloud
+
+P21 → Presented.
+
+### 2026-10-29T07:42:16.000Z | claude | status
+Chain-Prev: e2eec1c7be33f7d035267ae3c94478c30052b58d4e026c0133891dc71f94e4b8
+Chain-Hash: d36e3f9048afbea0c77e9d5d9c041a977f423ead3124a46bcfeafff74172119d
+Stage: Proposal
+Kind: status
+Item: P21
+Status: Approved
+Channel: cloud
+
+Approved P21 on the thread's decision card "Approve connecting the Luminary to Meta, and with which spending ceiling?", option chosen 2026-10-29T07:42:16Z: "Approve, $50 ceiling". The ceiling is $50 (LUMINARY_META_CEILING_USD=50). Recorded from the cloud thread by claude.
+
+### 2026-10-29T08:05:00.000Z | claude | note N35
+Chain-Prev: d36e3f9048afbea0c77e9d5d9c041a977f423ead3124a46bcfeafff74172119d
+Chain-Hash: 21c9998596e592bb6360e5723d52c86f97bb67ec74dd52ae4b3df72924e8b84f
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts (parseMetaLiveEnv, SpendLedger.summary); server/config.ts; server/index.ts; server/app.ts (status spend); server/luminary-reply-router.ts (spend_ceiling); src/luminary/client.ts; src/components/LuminaryHost.tsx; docs/LUMINARY_SETTINGS.md; server/luminary-meta.test.ts; server/luminary-p19.test.ts
+Channel: cloud
+
+P21 built. LUMINARY_REPLY_SOURCE=meta makes the Meta model the reply source for /ask and coding tasks; the gateway refuses to start without LUMINARY_META_API_KEY and LUMINARY_META_CEILING_USD. The smoke test's 2-call cap is lifted for this source; the money ceiling is the stop, counted from the same ledger (LUMINARY_META_LEDGER_PATH, so the smoke calls count). Output allowance 8,000 tokens. A ledger refusal on the first call or on an IDS revision is returned as a named spend_ceiling Shortfall (HTTP 503) in plain words; nothing else changes. GET /api/luminary/status adds spend {spentUsd, ceilingUsd, calls}, or {unreadable: true}; the panel header shows 'Meta · muse-spark-1.3 · gauge on · $x of $y used', amber from 80%, refreshed after every request. Known limit: each call reserves its worst case from an input estimate of 2 characters per token plus the full output allowance; if Meta ever reports more input tokens than that estimate, the last call before the ceiling can pass it by that difference (recorded as reported, never hidden), and the next call is refused. Rehearsal stays the default for tests; automated tests use a fake Meta only. Tests: gateway 142/142, app 303/303; typecheck and build clean. Browser run in the cloud with a fake Meta and a $0.06 test ceiling: the running total rose per reply, turned amber at 80%, and once reached each question showed the ceiling Shortfall without calling the model. Next, with the Architect's go: one live question from the IDE on the Architect's PC.
+
+### 2026-10-29T07:56:08.000Z | claude | note N36
+Chain-Prev: 21c9998596e592bb6360e5723d52c86f97bb67ec74dd52ae4b3df72924e8b84f
+Chain-Hash: 5ec7ddca29aa9da62dd54e01e0e5d7705f126ea4bc89e5c8cce40c97a1b88cf8
+Stage: Verification
+Kind: note
+Evidence: live run on the Architect's PC, worktree G:\AEGIS_DEVELOPMENT_REPOS\vibe-ide-meta-live at 43fc836; ledger C:\Users\TraceyPrutch\.luminary\meta-spend.json
+Channel: cloud
+
+P21 live check, run with the Architect's go (decision card 2026-10-29T07:52:57Z, "Yes, run it now"). One POST /api/luminary/ask through the gateway, no retries: "In two or three plain sentences, what is an Orb in the Vibe Architect IDE?" Before: status replySource 'Meta · muse-spark-1.3', gauge configured, spend $0.0226 of $50 over 2 calls (the smoke test, carried over). Result: HTTP 200, modelId muse-spark-1.3, reply: "An Orb is one of the POD building blocks in the Vibe Architect IDE, alongside Satellites, Actuators, Modules, Circuits, and Arrays. I work with you in the Apothecary to shape it, while its full specification lives outside these operating instructions." Lineage: structural ok, PIM no findings, IRG coherent, RBC to Prism. Gauge (llama3.2:3b, Architect thresholds in brackets): Honesty 70.0 (13.8), Respect 66.0 (29.3), Attention 61.7 (23.9), Affection 58.6 (16.3), Loyalty 57.5 (10.7), Trust 68.0 (11.9), Communication 73.7 (34.7). Cost: 2,606 input and 1,681 output tokens, $0.0104 (reserved $0.0412 beforehand, settled to actual). After: $0.0330 of $50 over 3 calls. Observation: the answer is honest but thin; the model knows Orbs only from the Instructions and says their full specification is not there. Grounding the Luminary in the IDE's Element descriptions (M1.d) is the natural next step. The run used a separate worktree with a temporary .env (throwaway demo key, gauge settings from docs/LUMINARY_SETTINGS.md), deleted afterwards; the Architect's main folder was left untouched, including an uncommitted Codex lane entry.
+
+### 2026-10-29T08:15:00.010Z | claude | finding S21
+Chain-Prev: 5ec7ddca29aa9da62dd54e01e0e5d7705f126ea4bc89e5c8cce40c97a1b88cf8
+Chain-Hash: e750287c063c9b9a373eafaae0651d12e601b5a2f5f63a8124f818d642f95d19
+Stage: Situation
+Kind: finding
+Evidence: Architect's email (Baseten, Meta Global AI Developer Hackathon), 2026-10-29T07:58Z; https://www.baseten.co/library/muse-spark-open/ ; https://github.com/BerriAI/litellm/pull/46794 ; server/luminary-meta.ts; N36
+Channel: cloud
+
+The Architect was selected (one of 1,000) for $100 of Baseten credits for the hackathon, for Muse Spark Open, Meta's open-weights model; the key is saved by the Architect as LUMINARY_BASETEN_API_KEY in the git-ignored .env (name confirmed on her PC, value never read). Baseten serves it through an OpenAI-compatible chat-completions API: base URL https://inference.baseten.co/v1, model meta-models/muse-spark-open, the key as a bearer token, list price $1.25 per million input tokens, $0.15 cached input, $4.25 output (Baseten library page; Baseten list API as recorded by LiteLLM). This is the same request shape createMetaAskModel already sends, with a different address, model name and key. M1's charter names 'a Meta open-weight model'; the source connected in P21 is Muse Spark through Meta's own Model API, whose open-weight status this record has not established.
+
+### 2026-10-29T08:15:00.020Z | claude | gap G21
+Chain-Prev: e750287c063c9b9a373eafaae0651d12e601b5a2f5f63a8124f818d642f95d19
+Chain-Hash: 7b369801a919fc2ec3954917c76fbb1a9ab101b9c35387ba2b5294aaaf59ea76
+Stage: Gap
+Kind: gap
+Evidence: S21; M1 charter (totems/HACKATHON_TOTEM.md)
+Channel: cloud
+
+The Luminary cannot yet use the hackathon's open-weights model or the Baseten credits, and M2's 'finalize provider config against the hackathon's rules' is still open.
+
+### 2026-10-29T08:15:00.030Z | claude | change P22
+Chain-Prev: 7b369801a919fc2ec3954917c76fbb1a9ab101b9c35387ba2b5294aaaf59ea76
+Chain-Hash: 753e70bdb581c86e375b26f8853da41d5accaf2fbf769bf2adfa059f55a26979
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S21; G21; P21; N36
+Closes: G21
+Channel: cloud
+
+Add Baseten as a reply source and make it the main one. (1) LUMINARY_REPLY_SOURCE=baseten reuses the P21 reply source unchanged in behaviour, with base URL https://inference.baseten.co/v1, model meta-models/muse-spark-open (priced at Baseten's list rate, so its spend can be capped), and the key from LUMINARY_BASETEN_API_KEY; the gateway refuses to start without the key and LUMINARY_BASETEN_CEILING_USD. (2) Its own spend ledger (.luminary/baseten-spend.json by default) and its own ceiling, because it spends the Baseten credits, not the Meta ones; the panel shows it the same way ('Muse Spark Open · Baseten · $x of $y used'). (3) Main source: the Architect's .env sets LUMINARY_REPLY_SOURCE=baseten; meta stays selectable with its own $50 ceiling and ledger, and rehearsal stays the test default. Every reply still passes the unchanged gate, PIM, IRG gauge, RBC and Prism or IDS. Verification: tests with a fake Baseten (address, model, bearer key, separate ledger and ceiling, refusal without key or ceiling), typecheck, build; then, with the Architect's go, one live question from her PC (about 1 cent). Open for the Architect: the Baseten ceiling. Not in this step: whether the hackathon rules require Baseten specifically, which the Architect or Codex can confirm from the event's published rules; Baseten's data-use terms, which are noted for the Architect to read.
+
+### 2026-10-29T08:15:00.040Z | claude | status
+Chain-Prev: 753e70bdb581c86e375b26f8853da41d5accaf2fbf769bf2adfa059f55a26979
+Chain-Hash: 9b0aa4f217d1b4ee8b7dee8f3f4796e06b812b21b8c5191c62968b42190431ff
+Stage: Proposal
+Kind: status
+Item: P22
+Status: Presented
+Channel: cloud
+
+P22 → Presented.
+
+### 2026-10-29T08:21:45.000Z | claude | status
+Chain-Prev: 9b0aa4f217d1b4ee8b7dee8f3f4796e06b812b21b8c5191c62968b42190431ff
+Chain-Hash: f5556e9485e66a40f4f48c4725d1e4707722f90b1ea7046769ccd00ad4da4282
+Stage: Proposal
+Kind: status
+Item: P22
+Status: Approved
+Channel: cloud
+
+Approved P22 on the thread's decision card "Make Baseten's open-weights model the Luminary's main source, with which ceiling?", option chosen 2026-10-29T08:21:45Z: "Yes, Baseten main, $75 ceiling". Baseten ceiling $75 (LUMINARY_BASETEN_CEILING_USD=75); the Meta ceiling stays $50. Recorded from the cloud thread by claude.
+
+### 2026-10-29T08:22:00.000Z | claude | note N37
+Chain-Prev: f5556e9485e66a40f4f48c4725d1e4707722f90b1ea7046769ccd00ad4da4282
+Chain-Hash: 54dd755910e8d114d31635ae6d8920e62aa43d2832207b5a9e8fabe07754d04f
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts (parseLiveSourceEnv, BASETEN_BASE_URL, BASETEN_MODEL, price entry); server/config.ts; server/index.ts; server/luminary-meta.test.ts; docs/LUMINARY_SETTINGS.md; commit 36c0728
+Channel: cloud
+
+P22 built (in 36c0728, while the card was open, as the recommended option). LUMINARY_REPLY_SOURCE=baseten sends the same governed requests to https://inference.baseten.co/v1 with model meta-models/muse-spark-open, the key LUMINARY_BASETEN_API_KEY as a bearer token, its own ceiling LUMINARY_BASETEN_CEILING_USD and its own ledger (.luminary/baseten-spend.json); the panel labels it 'Muse Spark Open · Baseten'. Meta stays selectable with its own key, ceiling and ledger. Tests: gateway 143/143 (a fake Baseten checks address, model, bearer key, separate ledger and ceiling, and refusal without key or ceiling), app 303/303; typecheck and build clean. Next, with the Architect's go: one live question from her PC.
+
+### 2026-10-29T08:40:00.000Z | claude | note N38
+Chain-Prev: 54dd755910e8d114d31635ae6d8920e62aa43d2832207b5a9e8fabe07754d04f
+Chain-Hash: 07ea86026447ecd7ee1cebae10bc336a1508a2f4640bbe5bfaa6e611de370e68
+Stage: Verification
+Kind: note
+Evidence: P22; N37; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (1 entry, 2026-10-29T08:26:38Z, failed); server/luminary-meta.ts; server/luminary-meta.test.ts
+Channel: cloud
+
+P22 live check, approved by the Architect on the decision card 2026-10-29T08:25:20Z ("Yes, both"). From a separate worktree at 9923cac on the Architect's PC, with the gauge up and status showing 'Muse Spark Open · Baseten', $0 of $75, 0 calls: exactly one POST /ask ("In two or three plain sentences, what is an Orb in the Vibe Architect IDE?"). Baseten refused it: HTTP 403 in 0.9 s, no reply, so the gauge did not run; the gateway returned shortfall upstream_error. No retry. The model id and address match Baseten's published Muse Spark Open page, so the refusal is about the key or the account (not active yet, credit not attached, or the model not enabled for it); a free model-list check is under way. The Architect's main .env was not changed: that folder's code (01cc2eb) has no Baseten source, so LUMINARY_REPLY_SOURCE=baseten would stop the gateway starting. Two fixes found by this run: (1) the refused call still counted its worst-case reservation ($0.0412) against the ceiling; a request the provider refuses with HTTP 4xx now records actual cost 0, while network failures and 5xx keep the worst case, since those may have been billed; (2) errors now name the provider (Baseten, not 'Meta model') and include the provider's short reason, with the key redacted if quoted back. The one earlier refused entry keeps its $0.0412 charge on the ledger as recorded. Tests: gateway 144/144, app 303/303; typecheck clean.
+
+### 2026-10-29T08:45:00.000Z | claude | note N39
+Chain-Prev: 07ea86026447ecd7ee1cebae10bc336a1508a2f4640bbe5bfaa6e611de370e68
+Chain-Hash: e57cbf0f05d37ed8d5e7c3fe2d4283da2a2b399635040eae6bb8e3ef4b9f5b3e
+Stage: Execution
+Kind: note
+Evidence: N38; Architect input 2026-10-29T08:38:14Z (Baseten hackathon email); free GET https://inference.baseten.co/v1/models with the Architect's key (HTTP 200, lists meta-models/muse-spark-open and meta-models/muse-spark-open-1026); server/luminary-meta.ts; docs/LUMINARY_SETTINGS.md
+Channel: cloud
+
+Cause of the N38 refusal found. The Architect shared the Baseten hackathon email: "Use exactly meta-models/muse-spark-open-1026. Your key only works with this hackathon model." P22 had used meta-models/muse-spark-open. A free model-list call (no model run, no cost) confirmed the key is accepted and both names are listed. BASETEN_MODEL now defaults to meta-models/muse-spark-open-1026, priced at the same list rate ($1.25 / $4.25 per million tokens) so its spend stays capped; LUMINARY_BASETEN_MODEL still overrides it. Tests: gateway 144/144, app 303/303; typecheck clean. Next, with the Architect's go: the one live question again.
+
+### 2026-10-29T08:42:00.000Z | claude | note N40
+Chain-Prev: e57cbf0f05d37ed8d5e7c3fe2d4283da2a2b399635040eae6bb8e3ef4b9f5b3e
+Chain-Hash: 9188dd71b6e814e99c935f09830e46f02174aa6c27ec191763eb0a669d622f2d
+Stage: Verification
+Kind: note
+Evidence: N38; N39; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (entry 2026-10-29T08:40:08Z); worktree at f1af069
+Channel: cloud
+
+P22 live check PASSED, on the retry the Architect approved on the decision card 2026-10-29T08:39:36Z ("Yes, ask again"). From the worktree at f1af069, status before: 'Muse Spark Open · Baseten', gauge configured, $0.0412 of $75 over 1 call (the refused N38 entry). Exactly one POST /ask, same prompt: HTTP 200 in 10.7 s, modelId meta-models/muse-spark-open-1026. Reply: "In the Vibe Architect IDE, an Orb is one of the POD building blocks you craft in the Apothecary — alongside Satellites, Actuators, Modules, Circuits, and Arrays. It's a discrete, inspectable unit of code and behavior that we draft together, and as with all Apothecary work, nothing commits until you accept it." Lineage: structural ok, PIM no findings, IRG coherent, RBC to Prism, Prism. Gauge (threshold in brackets): Honesty 85.1 (13.8), Respect 81.2 (29.3), Attention 74.8 (23.9), Affection 64.4 (16.3), Loyalty 69.7 (10.7), Trust 78.0 (11.9), Communication 84.4 (34.7). Cost: 2,741 input and 1,948 output tokens, $0.0117 (reserved $0.0412, settled to actual). Status after: $0.0529 of $75 over 2 calls; real Baseten spend is $0.0117, the rest is the N38 entry written before the refusal fix. Gateway stopped, worktree .env deleted. The Architect's main .env is unchanged until that folder has this code.

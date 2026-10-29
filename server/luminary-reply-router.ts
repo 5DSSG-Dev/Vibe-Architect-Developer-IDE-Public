@@ -8,6 +8,7 @@
 // The endpoint's mount path and auth model are deliberately NOT decided here; this router
 // is mounted by the caller (server/app.ts) once the Architect settles them.
 
+import { SpendCapError } from './luminary-meta.js';
 import { Router, type Request, type Response } from 'express';
 import {
   governReply,
@@ -55,7 +56,7 @@ export interface LuminaryReplyRouterOptions {
 }
 
 /** An upstream failure is itself a named Shortfall, keeping the honest floor total. */
-export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode;
+export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode | 'spend_ceiling';
 
 export interface ReplyShortfall extends Omit<Shortfall, 'code'> {
   code: ReplyShortfallCode;
@@ -70,6 +71,8 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   upstream_error: 502,
   gauge_error: 502,
   incoherent_after_ids: 502,
+  // The Architect's spending ceiling (P21) was reached: the gateway is working, it is refusing to spend.
+  spend_ceiling: 503,
 };
 
 export type GovernedAskResult =
@@ -87,34 +90,51 @@ export function shortfallStatus(code: ReplyShortfallCode): number {
  */
 export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRouterOptions = {}) {
   return async (prompt: string): Promise<GovernedAskResult> => {
-    let candidate: unknown;
-    try {
-      candidate = await askModel(prompt);
-    } catch (error) {
-      // An upstream failure never becomes a real-looking answer; it is a named Shortfall.
-      return {
-        ok: false,
-        shortfall: {
-          code: 'upstream_error',
-          message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
-          modelId: null,
-        },
-      };
-    }
-
-    if (options.pipeline) {
-      const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
-      const result = await runReplyPipeline(
-        candidate,
-        (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
-        pipeline,
-      );
-      return result.ok ? { ok: true, reply: result.reply, lineage: result.lineage } : { ok: false, shortfall: result.shortfall, lineage: result.lineage };
-    }
-
-    const governed = governReply(candidate, options.governance);
-    return governed.ok ? { ok: true, reply: governed.reply } : { ok: false, shortfall: governed.shortfall };
+    // A refusal by the spend ledger, on the first call or a revision, is named as the ceiling.
+    let ceiling: SpendCapError | null = null;
+    const ask: AskModel = async (text) => {
+      try {
+        return await askModel(text);
+      } catch (error) {
+        if (error instanceof SpendCapError) ceiling = error;
+        throw error;
+      }
+    };
+    const result = await governedTurn(ask, prompt, options);
+    const reached = ceiling as SpendCapError | null;
+    if (!result.ok && reached) return { ok: false, shortfall: { code: 'spend_ceiling', message: reached.message, modelId: null }, lineage: result.lineage };
+    return result;
   };
+}
+
+async function governedTurn(askModel: AskModel, prompt: string, options: LuminaryReplyRouterOptions): Promise<GovernedAskResult> {
+  let candidate: unknown;
+  try {
+    candidate = await askModel(prompt);
+  } catch (error) {
+    // An upstream failure never becomes a real-looking answer; it is a named Shortfall.
+    return {
+      ok: false,
+      shortfall: {
+        code: 'upstream_error',
+        message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
+        modelId: null,
+      },
+    };
+  }
+
+  if (options.pipeline) {
+    const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
+    const result = await runReplyPipeline(
+      candidate,
+      (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
+      pipeline,
+    );
+    return result.ok ? { ok: true, reply: result.reply, lineage: result.lineage } : { ok: false, shortfall: result.shortfall, lineage: result.lineage };
+  }
+
+  const governed = governReply(candidate, options.governance);
+  return governed.ok ? { ok: true, reply: governed.reply } : { ok: false, shortfall: governed.shortfall };
 }
 
 function readPrompt(body: unknown): string | null {

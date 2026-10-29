@@ -8,6 +8,10 @@
 // only lowered to the provider's reported usage after the call returns, so a crash, a timeout or
 // a response without usage can never spend more than the ledger shows. An unreadable ledger
 // refuses every call. The API key is never logged, echoed or written to the ledger.
+//
+// P21 makes this the live reply source (LUMINARY_REPLY_SOURCE=meta): the smoke test's call cap is
+// lifted and the Architect's overall ceiling (LUMINARY_META_CEILING_USD) is the stop, counted from
+// the same ledger, so every earlier call counts toward it.
 
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -20,6 +24,8 @@ export const DEFAULT_META_MAX_CALLS = 2;
 export const DEFAULT_META_MAX_OUTPUT_TOKENS = 2_000;
 export const DEFAULT_META_TIMEOUT_MS = 60_000;
 export const DEFAULT_META_LEDGER_PATH = '.luminary/meta-spend.json';
+/** Live replies (P21) include code, which needs more room than the smoke test's 2,000 tokens. */
+export const DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS = 8_000;
 
 /**
  * Published standard rates in USD per million tokens. Reasoning tokens bill at the output rate.
@@ -30,7 +36,15 @@ export const DEFAULT_META_LEDGER_PATH = '.luminary/meta-spend.json';
 export const META_PRICING_USD_PER_MILLION: Readonly<Record<string, { input: number; output: number }>> = {
   'muse-spark-1.3': { input: 1.25, output: 4.25 },
   'muse-spark-1.1': { input: 1.25, output: 4.25 },
+  // Muse Spark Open, the open-weights model, served by Baseten (P22) at its list rate.
+  'meta-models/muse-spark-open': { input: 1.25, output: 4.25 },
+  // The hackathon's dated release; the event's Baseten keys work only with this one. Priced the same.
+  'meta-models/muse-spark-open-1026': { input: 1.25, output: 4.25 },
 };
+
+export const BASETEN_BASE_URL = 'https://inference.baseten.co/v1';
+export const BASETEN_MODEL = 'meta-models/muse-spark-open-1026';
+export const DEFAULT_BASETEN_LEDGER_PATH = '.luminary/baseten-spend.json';
 
 /** Characters per token assumed for the up-front input estimate. Real text runs nearer 4; 2 over-charges. */
 const ESTIMATE_CHARS_PER_TOKEN = 2;
@@ -112,12 +126,15 @@ export class SpendLedger {
   /** Charge the worst case for one call, or refuse. Returns the entry index to settle later. */
   reserve(model: string, worstCaseUsd: number): number {
     const state = this.read();
+    if (state.spentUsd >= this.capUsd) {
+      throw new SpendCapError(`Your spending ceiling is reached ($${state.spentUsd.toFixed(2)} of $${this.capUsd.toFixed(2)} used), so the Luminary did not ask the model. It answers again once the ceiling is raised.`);
+    }
     if (state.calls >= this.maxCalls) {
       throw new SpendCapError(`Meta model call cap reached (${state.calls} of ${this.maxCalls}); no further calls are allowed.`);
     }
     if (state.spentUsd + worstCaseUsd > this.capUsd) {
       throw new SpendCapError(
-        `Meta model spend cap would be exceeded ($${state.spentUsd.toFixed(4)} spent, this call up to $${worstCaseUsd.toFixed(4)}, cap $${this.capUsd.toFixed(2)}).`,
+        `This question could cost up to $${worstCaseUsd.toFixed(4)}, and the spending ceiling would be passed ($${state.spentUsd.toFixed(4)} of $${this.capUsd.toFixed(2)} used), so the Luminary did not ask the model.`,
       );
     }
     const entries = [...state.entries, {
@@ -133,12 +150,23 @@ export class SpendLedger {
     return entries.length - 1;
   }
 
+  /** The running total for the Architect: spent, ceiling and calls, read from disk each time. */
+  summary(): { spentUsd: number; ceilingUsd: number; calls: number } {
+    const state = this.read();
+    return { spentUsd: state.spentUsd, ceilingUsd: this.capUsd, calls: state.calls };
+  }
+
   /** Record the outcome. Usage only ever lowers the charge to the reported cost; it never raises it. */
-  settle(index: number, outcome: { inputTokens: number; outputTokens: number; actualUsd: number } | 'failed' | 'no_usage'): void {
+  settle(index: number, outcome: { inputTokens: number; outputTokens: number; actualUsd: number } | 'failed' | 'refused' | 'no_usage'): void {
     const entries = this.read().entries;
     const entry = entries[index];
     if (!entry) return;
     if (outcome === 'failed') entry.status = 'failed';
+    else if (outcome === 'refused') {
+      // The provider turned the request away (HTTP 4xx), so no model ran and nothing was billed.
+      entry.status = 'failed';
+      entry.actualUsd = 0;
+    }
     else if (outcome === 'no_usage') entry.status = 'settled';
     else {
       entry.status = 'settled';
@@ -160,6 +188,8 @@ export interface MetaAskModelOptions {
   maxOutputTokens?: number;
   timeoutMs?: number;
   ledger: SpendLedger;
+  /** Who serves the model, named in errors. Defaults to "Meta model". */
+  providerName?: string;
   /** Injected for tests; defaults to the global fetch. */
   fetch?: typeof fetch;
 }
@@ -178,9 +208,21 @@ function readUsage(body: unknown): { inputTokens: number; outputTokens: number }
   return { inputTokens: input, outputTokens: output };
 }
 
+/** The provider's own short explanation of an error, if it gave one, as plain single-line text. */
+function providerReason(body: unknown): string {
+  const error = (body as { error?: unknown; message?: unknown; detail?: unknown })?.error;
+  const raw = typeof error === 'string' ? error
+    : typeof (error as { message?: unknown })?.message === 'string' ? (error as { message: string }).message
+    : typeof (body as { message?: unknown })?.message === 'string' ? (body as { message: string }).message
+    : typeof (body as { detail?: unknown })?.detail === 'string' ? (body as { detail: string }).detail
+    : '';
+  return raw.replace(/\s+/g, ' ').trim().slice(0, 200);
+}
+
 /** Build the Meta Model API reply source. Every call passes the ledger first. */
 export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
   const doFetch = options.fetch ?? fetch;
+  const provider = options.providerName ?? 'Meta model';
   const model = options.model ?? DEFAULT_META_MODEL;
   const maxOutputTokens = options.maxOutputTokens ?? DEFAULT_META_MAX_OUTPUT_TOKENS;
   const timeoutMs = options.timeoutMs ?? DEFAULT_META_TIMEOUT_MS;
@@ -208,7 +250,7 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
     } catch (error) {
       // The request may still have been billed, so the worst-case charge stays.
       options.ledger.settle(index, 'failed');
-      throw new Error(`Meta model unreachable: ${error instanceof Error ? error.message : 'request failed'}.`);
+      throw new Error(`${provider} unreachable: ${error instanceof Error ? error.message : 'request failed'}.`);
     }
 
     let body: unknown;
@@ -218,9 +260,17 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       body = null;
     }
     const usage = readUsage(body);
-    options.ledger.settle(index, usage ? { ...usage, actualUsd: costUsd(model, usage.inputTokens, usage.outputTokens) } : response.ok ? 'no_usage' : 'failed');
+    const refused = response.status >= 400 && response.status < 500;
+    options.ledger.settle(
+      index,
+      usage ? { ...usage, actualUsd: costUsd(model, usage.inputTokens, usage.outputTokens) } : response.ok ? 'no_usage' : refused ? 'refused' : 'failed',
+    );
 
-    if (!response.ok) throw new Error(`Meta model returned HTTP ${response.status}.`);
+    if (!response.ok) {
+      // The key is never echoed, even if the provider quotes it back.
+      const reason = providerReason(body).split(options.apiKey).join('[key]');
+      throw new Error(`${provider} returned HTTP ${response.status}${reason ? `: ${reason}` : ''}.`);
+    }
     const choice = (body as { model?: unknown; choices?: Array<{ message?: { content?: unknown } }> })?.choices?.[0];
     const declared = (body as { model?: unknown })?.model;
     // Untrusted: governReply() decides whether this is a reply.
@@ -254,3 +304,43 @@ export function parseMetaModelEnv(env: NodeJS.ProcessEnv): Omit<MetaAskModelOpti
     ledger: new SpendLedger(env.LUMINARY_META_LEDGER_PATH?.trim() || DEFAULT_META_LEDGER_PATH, capUsd, maxCalls),
   };
 }
+
+/** The two live sources: Meta's own Model API (P21) and Baseten's Muse Spark Open (P22). */
+export type LiveSource = 'meta' | 'baseten';
+
+const LIVE_SETTINGS: Record<LiveSource, { prefix: string; baseUrl: string; model: string; ledgerPath: string; providerName: string }> = {
+  meta: { prefix: 'LUMINARY_META', baseUrl: DEFAULT_META_BASE_URL, model: DEFAULT_META_MODEL, ledgerPath: DEFAULT_META_LEDGER_PATH, providerName: 'Meta model' },
+  baseten: { prefix: 'LUMINARY_BASETEN', baseUrl: BASETEN_BASE_URL, model: BASETEN_MODEL, ledgerPath: DEFAULT_BASETEN_LEDGER_PATH, providerName: 'Baseten' },
+};
+
+/**
+ * Read a live reply source's settings (P21, P22). The key and the Architect's ceiling are both
+ * required: without a ceiling the spend could not be bounded, so the gateway refuses to start.
+ * Each source has its own key, ceiling and ledger, because each spends its own credits.
+ */
+export function parseLiveSourceEnv(source: LiveSource, env: NodeJS.ProcessEnv): Omit<MetaAskModelOptions, 'fetch' | 'systemPrompt'> {
+  const { prefix, baseUrl, model, ledgerPath, providerName } = LIVE_SETTINGS[source];
+  const apiKey = env[`${prefix}_API_KEY`]?.trim();
+  if (!apiKey) throw new Error(`LUMINARY_REPLY_SOURCE=${source} needs ${prefix}_API_KEY in .env`);
+  const rawCeiling = env[`${prefix}_CEILING_USD`]?.trim();
+  const ceiling = rawCeiling ? Number(rawCeiling) : NaN;
+  if (!Number.isFinite(ceiling) || ceiling <= 0) throw new Error(`LUMINARY_REPLY_SOURCE=${source} needs ${prefix}_CEILING_USD, the Architect's spending ceiling in dollars`);
+  const positiveInteger = (name: string, fallback: number) => {
+    const raw = env[name]?.trim();
+    const value = raw ? Number(raw) : fallback;
+    if (!Number.isInteger(value) || value <= 0) throw new Error(`${name} must be a positive integer`);
+    return value;
+  };
+  return {
+    apiKey,
+    model: env[`${prefix}_MODEL`]?.trim() || model,
+    baseUrl: env[`${prefix}_BASE_URL`]?.trim() || baseUrl,
+    maxOutputTokens: positiveInteger(`${prefix}_MAX_OUTPUT_TOKENS`, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS),
+    timeoutMs: positiveInteger(`${prefix}_TIMEOUT_MS`, DEFAULT_META_TIMEOUT_MS),
+    ledger: new SpendLedger(env[`${prefix}_LEDGER_PATH`]?.trim() || ledgerPath, ceiling, Number.POSITIVE_INFINITY),
+    providerName,
+  };
+}
+
+/** The live Meta Model API settings (P21). */
+export const parseMetaLiveEnv = (env: NodeJS.ProcessEnv) => parseLiveSourceEnv('meta', env);

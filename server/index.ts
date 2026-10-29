@@ -8,8 +8,17 @@ import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
+import { readFileSync } from 'node:fs';
+import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 
 const config = loadConfig();
+// A live reply source: Meta's Model API (STP-0002 P21) or Baseten's Muse Spark Open (P22). The key
+// and the Architect's ceiling come from .env, and the P15 Instructions are the system message.
+const liveSource = config.luminaryReplySource === 'meta' || config.luminaryReplySource === 'baseten' ? config.luminaryReplySource : undefined;
+const meta = liveSource ? parseLiveSourceEnv(liveSource, process.env) : undefined;
+const metaAskModel = meta
+  ? createMetaAskModel({ ...meta, systemPrompt: readFileSync(new URL('../docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md', import.meta.url), 'utf8') })
+  : undefined;
 const evidenceStore = config.redisUrl
   ? await RedisEvidenceStore.connect(config.redisUrl)
   : new InMemoryEvidenceStore();
@@ -32,8 +41,9 @@ try {
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
     gauge: config.luminaryGauge ? createLocalGauge(config.luminaryGauge) : undefined,
-    askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : undefined,
-    replySource: config.luminaryReplySource,
+    askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : metaAskModel,
+    replySource: meta ? (liveSource === 'baseten' ? 'Muse Spark Open · Baseten' : `Meta · ${meta.model}`) : config.luminaryReplySource,
+    spend: meta?.ledger,
     executor: config.luminaryExecutor ? new LuminaryExecutor({ repoRoot: process.cwd() }) : undefined,
   });
 } catch (error) {
