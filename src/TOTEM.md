@@ -60,3 +60,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-10-29 | codex | CORE validated profile alternatives
 - Refusal events may include profiles only when Orb-declared, Port-supported, and feasible against current CORE capacity. Retry names the profile and CORE revalidates before reservation; Luminary cannot silently connect.
 - Suspended remains schema-only; event history is session-memory; custom Orb authoring and Conduit catalog support remain open. See STP-0003 N4. Build and STP validation pass; tests not run.
+
+## 2026-10-29 | codex | Custom Orb contracts
+- Architect-authored Orbs must select a profile before save/handshake. Both Orb Builder and Reliquary use the same CORE manifest registration path; custom manifest copies persist in CoreManifest and rehydrate before any Orb reference is resolved. The CORE-selected profile minimum is reflected in the saved memory requirement.
+- Production build, diff check, and STP-0003 validation pass; application tests not run. Conduit provider catalog mapping and lifecycle/Luminary gaps remain open.

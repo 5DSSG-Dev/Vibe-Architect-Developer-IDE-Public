@@ -54,6 +54,10 @@ export function registerOrbManifest(manifest: OrbManifest): OrbContractReference
   return Object.freeze({ id: manifest.id, version: manifest.version, digest: manifestDigest(manifest) });
 }
 
+export function getRegisteredOrbManifest(reference: OrbContractReference): OrbManifest | undefined {
+  return manifestLibrary.get(contractKey(reference.id, reference.version));
+}
+
 export function resolveOrbManifest(reference: OrbContractReference | undefined): ManifestResolution {
   if (!reference || !reference.id || !reference.version || !reference.digest) {
     return { ok: false, reason: 'MISSING_REFERENCE', message: 'This Orb did not present a complete contract reference.' };
@@ -132,6 +136,43 @@ export function registerDefaultOrbManifest(orb: DefaultOrbSource): OrbContractRe
   const reference = registerOrbManifest(manifest);
   builtInReferences.set(orb.id, reference);
   return reference;
+}
+
+/**
+ * Register an Architect-authored Orb contract under a unique CORE library id.
+ * The profile is an explicit authoring choice; this helper never guesses from
+ * the Orb's display name or capabilities.
+ */
+export function registerCustomOrbManifest(
+  orb: DefaultOrbSource,
+  profileId: UmbilicalProfileId
+): OrbContractReference {
+  const profile = UMBILICAL_PROFILES[profileId];
+  if (!profile) throw new Error(`Unknown Umbilical profile: ${profileId}`);
+
+  const baseId = `orb-contract/custom/${orb.id}`;
+  let revision = 1;
+  while (manifestLibrary.has(contractKey(`${baseId}/${revision}`, '1.0.0'))) revision += 1;
+
+  const manifest: OrbManifest = {
+    id: `${baseId}/${revision}`,
+    version: '1.0.0',
+    orbId: orb.id,
+    orbVersion: orb.version,
+    functionName: orb.name,
+    technicalName: orb.name,
+    profileIds: [profileId],
+    protocolVersions: ['4D-VIBE-v1.0'],
+    capabilities: [...orb.capabilities],
+    requirements: [...orb.requirements],
+    resources: {
+      memoryMB: Math.max(orb.memoryReq, profile.minimumMemoryMB),
+      threads: orb.threadsReq,
+      gpuRequired: orb.requirements.some(requirement => requirement === 'gpu_acceleration' || requirement === 'gpu_enabled'),
+      bandwidth: { [profileId]: { normal: profile.bandwidth.normal, peak: profile.bandwidth.peak, unit: profile.bandwidth.unit } }
+    }
+  };
+  return registerOrbManifest(manifest);
 }
 
 export function getBuiltInOrbContractReference(orbId: string): OrbContractReference | undefined {

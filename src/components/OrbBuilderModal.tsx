@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Sparkles, Cpu, HardDrive, ShieldCheck, Zap, Layers, Plus, Trash2, ArrowRight, Save, ToggleLeft, ToggleRight } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, TrustBadgeType, CategoryType, SatelliteClass } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
+import { UMBILICAL_PROFILE_IDS, UMBILICAL_PROFILES, type UmbilicalProfileId } from '../contracts/umbilicalStandards';
 
 interface OrbBuilderModalProps {
   initialItem?: ApothecaryItem;
@@ -28,6 +29,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
   const [description, setDescription] = useState(initialItem?.description || 'Deep learning tensor processing module with hardware acceleration.');
   const [language, setLanguage] = useState<'Python' | 'TypeScript' | 'Rust' | 'PyTorch'>('PyTorch');
   const [category, setCategory] = useState<CategoryType>(initialItem?.category || 'Formulas');
+  const [umbilicalProfileId, setUmbilicalProfileId] = useState<UmbilicalProfileId | ''>(initialItem?.umbilicalProfileId ?? '');
   const [trust, setTrust] = useState<TrustBadgeType>(initialItem?.trust || 'Formulated');
 
   // Capabilities Pair Builder
@@ -78,7 +80,8 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
       threadsReq,
       capabilities,
       requirements: initialItem?.requirements || ['invariant_guard'],
-      satelliteClass: primarySatClass
+      satelliteClass: primarySatClass,
+      umbilicalProfileId: category === 'Orbs' && umbilicalProfileId ? umbilicalProfileId : undefined
     };
   };
 
@@ -91,6 +94,9 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
     const item = buildConfiguredItem();
     onInitiateHandshake(item, selectedSocketId);
   };
+
+  const profileMemoryReady = category !== 'Orbs' || !umbilicalProfileId ||
+    memoryReq >= UMBILICAL_PROFILES[umbilicalProfileId].minimumMemoryMB;
 
   return (
     <Dialog label="Orb and Satellite Builder" onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 font-mono select-none">
@@ -161,6 +167,41 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                 <option value="PyTorch">PyTorch</option>
               </select>
             </div>
+          </div>
+
+          {/* Purpose & Description */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase">Element kind</label>
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value as CategoryType)}
+                className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-cyan-400"
+              >
+                <option value="Formulas">Formula</option>
+                <option value="Orbs">Orb</option>
+              </select>
+            </div>
+            {category === 'Orbs' && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase">Orb connection contract</label>
+                <select
+                  value={umbilicalProfileId}
+                  onChange={(event) => setUmbilicalProfileId(event.target.value as UmbilicalProfileId | '')}
+                  className="w-full bg-slate-900 border border-slate-700 text-cyan-200 rounded-lg p-2 text-xs focus:outline-none focus:border-cyan-400"
+                >
+                  <option value="">Choose how this Orb connects…</option>
+                  {UMBILICAL_PROFILE_IDS.map((profileId) => (
+                    <option key={profileId} value={profileId}>
+                      {profileId} — {UMBILICAL_PROFILES[profileId].label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-slate-500">
+                  CORE checks this contract and available capacity when you connect. This profile needs at least {umbilicalProfileId ? UMBILICAL_PROFILES[umbilicalProfileId].minimumMemoryMB : '—'} MB.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Purpose & Description */}
@@ -347,7 +388,8 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
             <button
               type="button"
               onClick={handleSaveCatalog}
-              className="px-4 py-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-cyan-300 text-xs font-orbitron font-bold flex items-center space-x-1.5 hover:border-cyan-400"
+              disabled={category === 'Orbs' && (!umbilicalProfileId || !profileMemoryReady)}
+              className="px-4 py-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-cyan-300 text-xs font-orbitron font-bold flex items-center space-x-1.5 hover:border-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Save className="w-3.5 h-3.5" />
               <span>Save to Apothecary Catalog</span>
@@ -356,7 +398,8 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
             <button
               type="button"
               onClick={handleHandshake}
-              className="btn-cyber-emerald px-4 py-2 rounded-xl text-xs font-orbitron font-bold flex items-center space-x-1.5 shadow-md"
+              disabled={category !== 'Orbs' || !umbilicalProfileId || !profileMemoryReady}
+              className="btn-cyber-emerald px-4 py-2 rounded-xl text-xs font-orbitron font-bold flex items-center space-x-1.5 shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <span>Initiate Umbilical Handshake</span>
               <ArrowRight className="w-3.5 h-3.5" />

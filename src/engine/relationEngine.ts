@@ -4,6 +4,8 @@ export type ElementCodeLanguage = 'TypeScript' | 'Python' | 'Rust' | 'JSON' | 'S
 import type { ElementCategory } from '../contracts/elementSchema';
 import type { OrbContractReference } from '../contracts/orbManifest';
 import { getBuiltInOrbContractReference, registerDefaultOrbManifest } from '../contracts/orbManifest';
+import type { UmbilicalProfileId } from '../contracts/umbilicalStandards';
+import type { OrbManifest } from '../contracts/orbManifest';
 
 export type CategoryType = ElementCategory;
 export type TrustBadgeType = 'Canonical' | 'Validated' | 'Formulated' | 'Experimental' | 'Draft';
@@ -65,6 +67,8 @@ export interface ApothecaryItem {
   stellarPackage?: StellarPackageDescriptor;
   /** Presented by this Orb when it is dropped onto a CORE Port. */
   umbilicalContractRef?: OrbContractReference;
+  /** Explicit authoring choice used to create a CORE-library contract for a custom Orb. */
+  umbilicalProfileId?: UmbilicalProfileId;
 }
 
 export interface SocketBinding {
@@ -340,6 +344,8 @@ export interface CoreManifest {
   sockets: SocketBinding[];
   portals: PortalPlacement[];
   contracts: RelationContract[];
+  /** CORE-owned contract copies required to resolve custom Orb references after reload. */
+  orbManifestLibrary?: OrbManifest[];
 }
 
 export const HANDSHAKE_STEPS = [
