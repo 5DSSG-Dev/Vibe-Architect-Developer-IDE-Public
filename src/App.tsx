@@ -803,6 +803,8 @@ export function App() {
           item={inspectingItem || undefined}
           socket={inspectingSocket || undefined}
           onClose={() => closeOverlay('INSPECT_CODE')}
+          catalog={apothecaryCatalog}
+          mode={activeMode}
           onSaveCodeFrame={(updated) => {
             handleSaveInspectedCodeFrame(updated);
           }}

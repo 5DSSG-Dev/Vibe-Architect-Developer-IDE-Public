@@ -2117,3 +2117,24 @@ Status: Presented
 Channel: cloud
 
 P25 → Presented.
+
+### 2026-10-29T14:08:10.000Z | claude | status
+Chain-Prev: 82441205cbee75933a2748dcdb2624628e32cbb15a66864775dda8984640f656
+Chain-Hash: b82e78acebc8e34c86c4f7c39b4c4309904a8b97a190f34aa21ff6e30ed11622
+Stage: Proposal
+Kind: status
+Item: P25
+Status: Approved
+Channel: cloud
+
+Approved P25 on the thread's decision card "Have the Luminary write an Element's code this way?", option chosen 2026-10-29T14:08:10Z: "Yes, build it". Recorded from the cloud thread by claude.
+
+### 2026-10-29T14:30:00.000Z | claude | note N47
+Chain-Prev: b82e78acebc8e34c86c4f7c39b4c4309904a8b97a190f34aa21ff6e30ed11622
+Chain-Hash: 1b1768f824a2bf92d4e69541faf84e6beb8c5a5a24241508c16abf863afb4339
+Stage: Execution
+Kind: note
+Evidence: P25; src/luminary/elementCode.ts; src/luminary/elementCode.test.ts; src/components/CodeEditorOverlayModal.tsx; src/App.tsx; server/luminary-rehearsal.ts; server/luminary-p25.test.ts; STP-0005 N2 (PR #21)
+Channel: cloud
+
+P25 built as approved. (1) src/luminary/elementCode.ts: composeElementCodePrompt sends only the Element's description (describeElement, as the P23 chip), its code frame (language, file, entrypoint, current editor source) and the Architect's request, with a marker asking for a plain explanation and exactly one fenced block. readElementCodeProposal accepts exactly one non-empty code block; none, several or an empty one gives a plain reason and no proposal. lineDiff marks added and removed lines. (2) CodeEditorOverlayModal gains an 'Ask the Luminary' box with Stop. It uses the ordinary governed /ask with the demo key and explanation level the Architect set in the Luminary panel. The proposal is shown above the editor with the Luminary's explanation, a marked diff against the current source and the model id. Accept puts the code in the editor and says to press Save Code Frame; Decline changes nothing. The editor's Save, with its JSON check, remains the only thing that changes the Element. The record keeps asked, replied (or shortfall or stopped) and offering_accepted or offering_declined, each with the Element id and file name, and the proposal's hash. (3) The rehearsal stand-in answers an Element code request with the current source plus one marked comment line, so the flow can be rehearsed with no model and no spend. (4) No repository file is written and the coding-task branch is unused. STP-0005 (PR #21, drafted on Tracey's PC at their request) records that its P1 and P2 are delivered by this P25, and its P3 (rehearsal plan, fallback take) stays open there. Tests: 4 app (prompt contents, one-block rule, refusals, diff), 1 gateway (rehearsal); app 320/320, gateway 148/148, typecheck, server build and client build clean.

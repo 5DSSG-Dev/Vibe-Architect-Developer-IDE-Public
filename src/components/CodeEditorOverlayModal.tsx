@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
-import { X, Code, Save, CheckCircle2, AlertTriangle, FileCode2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Code, Save, CheckCircle2, AlertTriangle, FileCode2, Send, Square } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, ensureElementCodeFrame } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
+import { describeShortfall, luminaryApi, readDemoKey, readLevel } from '../luminary/client';
+import { composeElementCodePrompt, lineDiff, readElementCodeProposal } from '../luminary/elementCode';
+import { recordExchange, textEvidence } from '../luminary/record';
 
 interface CodeEditorOverlayModalProps {
   item?: ApothecaryItem;
   socket?: SocketBinding;
   onClose: () => void;
   onSaveCodeFrame: (updatedItem: ApothecaryItem) => void;
+  /** The Apothecary, so the Luminary can be told about this Element's Satellites or Actuators (P25). */
+  catalog?: readonly ApothecaryItem[];
+  mode?: string;
 }
+
+type Proposal = { code: string; explanation: string; modelId: string; sha256: string };
 
 export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
   item,
   socket,
   onClose,
-  onSaveCodeFrame
+  onSaveCodeFrame,
+  catalog = [],
+  mode = 'DESIGN'
 }) => {
   const targetItem = ensureElementCodeFrame(item || socket?.connectedItem || {
     id: socket?.id || 'socket-alpha',
@@ -32,6 +42,75 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
   const [sourceText, setSourceText] = useState<string>(targetItem.codeFrame.source);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+
+  // Ask the Luminary (STP-0002 P25): the reply is a proposal shown beside the current code. Only
+  // Accept puts it in the editor, and only the editor's Save changes the Element.
+  const [request, setRequest] = useState('');
+  const [asking, setAsking] = useState(false);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [luminaryNote, setLuminaryNote] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const keep = async (event: Parameters<typeof recordExchange>[0], detail: Parameters<typeof recordExchange>[1]) => {
+    const reason = await recordExchange(event, { ...detail, elementId: targetItem.id, codeFrame: targetItem.codeFrame.fileName });
+    if (reason) setLuminaryNote(`This was not written to the evidence record: ${reason}`);
+  };
+
+  const askLuminary = async () => {
+    const trimmed = request.trim();
+    if (!trimmed || asking) return;
+    const demoKey = readDemoKey();
+    if (!demoKey) {
+      setLuminaryNote('Open the Luminary and enter the demo key first.');
+      return;
+    }
+    const level = readLevel();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setAsking(true);
+    setProposal(null);
+    setLuminaryNote(null);
+    const prompt = composeElementCodePrompt({ item: targetItem, catalog, frame: targetItem.codeFrame, source: sourceText, request: trimmed, level, mode });
+    const asked = await textEvidence(trimmed);
+    await keep('asked', { excerpt: asked.excerpt, sha256: asked.sha256, chars: asked.chars, mode, level, context: ['This Element', 'Element code frame'] });
+    try {
+      const result = await luminaryApi.ask(demoKey, prompt, controller.signal);
+      if (!result.ok) {
+        setLuminaryNote(describeShortfall(result.shortfall));
+        await keep('shortfall', { kind: result.kind, code: result.shortfall.code });
+        return;
+      }
+      const { reply, lineage } = result.value;
+      const content = await textEvidence(reply.content);
+      await keep('replied', { modelId: reply.modelId, excerpt: content.excerpt, sha256: content.sha256, chars: content.chars, checked: lineage?.some((entry) => entry.stage === 'prism') ?? false });
+      const read = readElementCodeProposal(reply.content);
+      if (!read.ok) {
+        setLuminaryNote(read.reason);
+        return;
+      }
+      const code = await textEvidence(read.code);
+      setProposal({ code: read.code, explanation: read.explanation, modelId: reply.modelId, sha256: code.sha256 });
+    } catch (error) {
+      if ((error as Error).name === 'AbortError') {
+        setLuminaryNote('Stopped. Nothing from this request is shown.');
+        await keep('stopped', {});
+      } else {
+        setLuminaryNote('The request failed before any reply arrived.');
+        await keep('shortfall', { kind: 'unreachable', code: 'request_failed' });
+      }
+    } finally {
+      abortRef.current = null;
+      setAsking(false);
+    }
+  };
+
+  const decide = async (accept: boolean) => {
+    if (!proposal) return;
+    if (accept) setSourceText(proposal.code);
+    setProposal(null);
+    setLuminaryNote(accept ? 'Accepted into the editor. Press Save Code Frame to keep it.' : 'Declined. The code is unchanged.');
+    await keep(accept ? 'offering_accepted' : 'offering_declined', { modelId: proposal.modelId, sha256: proposal.sha256 });
+  };
 
   const handleSaveCode = async () => {
     try {
@@ -137,6 +216,58 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
             spellCheck={false}
             className="flex-1 bg-[#0d1117] p-3 text-xs text-cyan-300/90 font-mono leading-5 resize-none focus:outline-none selection:bg-cyan-900/60"
           />
+        </div>
+
+        {/* Ask the Luminary (P25) */}
+        <div className="border-t border-amber-400/30 bg-slate-950/90 p-3 space-y-2">
+          {proposal && (
+            <div className="rounded-xl border border-amber-400/40 bg-slate-900/70 p-2 space-y-2" aria-label="The Luminary's proposal">
+              {proposal.explanation && <p className="text-[11px] text-amber-100 whitespace-pre-wrap leading-relaxed">{proposal.explanation}</p>}
+              <pre className="max-h-48 overflow-auto rounded-lg bg-[#090d13] p-2 text-[11px] leading-5 font-mono" aria-label="Changes to the code">
+                {lineDiff(sourceText, proposal.code).map((line, index) => (
+                  <div
+                    key={index}
+                    className={line.kind === 'added' ? 'bg-emerald-900/40 text-emerald-200' : line.kind === 'removed' ? 'bg-rose-900/40 text-rose-200 line-through decoration-rose-400/60' : 'text-slate-400'}
+                  >
+                    {line.kind === 'added' ? '+ ' : line.kind === 'removed' ? '- ' : '  '}{line.text}
+                  </div>
+                ))}
+              </pre>
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] text-slate-500 mr-auto">Written by {proposal.modelId}. Nothing changes until you accept.</span>
+                <button type="button" onClick={() => void decide(false)} className="px-3 py-1 rounded-lg text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300">Decline</button>
+                <button type="button" onClick={() => void decide(true)} className="px-3 py-1 rounded-lg text-[11px] border border-amber-400/60 text-amber-100 hover:bg-amber-900/30">Accept</button>
+              </div>
+            </div>
+          )}
+          {luminaryNote && <p role="status" className="text-[10px] text-amber-200/90">{luminaryNote}</p>}
+          <form
+            className="flex items-end gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void askLuminary();
+            }}
+          >
+            <img src="/assets/luminary/luminary-codeglass-96.webp" alt="" aria-hidden="true" className="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(252,211,77,0.45)]" />
+            <textarea
+              rows={2}
+              value={request}
+              onChange={(e) => setRequest(e.target.value)}
+              placeholder="Ask the Luminary: what should this Element do?"
+              aria-label="Ask the Luminary to write this Element's code"
+              className="flex-1 min-w-0 bg-slate-900/90 border border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-200 resize-none focus:outline-none focus:border-amber-400/60"
+            />
+            {asking ? (
+              <button type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop" title="Stop" className="p-2 rounded-lg border border-rose-400/50 text-rose-200 hover:bg-rose-900/40">
+                <Square className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button type="submit" disabled={!request.trim()} aria-label="Ask the Luminary" title="Ask the Luminary" className="p-2 rounded-lg border border-amber-400/50 text-amber-100 hover:bg-amber-900/30 disabled:opacity-40">
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </form>
+          {asking && <p className="text-[10px] text-slate-400">The Luminary is writing…</p>}
         </div>
 
         {/* Footer Bar */}
