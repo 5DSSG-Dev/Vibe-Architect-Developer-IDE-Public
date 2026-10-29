@@ -15,6 +15,8 @@ function repo(): string {
   const dir = mkdtempSync(join(tmpdir(), 'luminary-exec-'));
   dirs.push(dir);
   git(dir, 'init', '-q', '-b', 'main');
+  // Keep files byte-for-byte on Windows, where a global core.autocrlf would turn 'hello\n' into 'hello\r\n'.
+  git(dir, 'config', 'core.autocrlf', 'false');
   writeFileSync(join(dir, 'README.md'), 'start\n');
   writeFileSync(join(dir, '.gitignore'), '/.luminary/\n');
   git(dir, 'add', '-A');
