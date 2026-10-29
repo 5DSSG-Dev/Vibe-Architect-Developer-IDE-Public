@@ -1560,3 +1560,201 @@ Evidence: scripts/luminary-meta-smoke.ts:1; Architect's PC ledger %USERPROFILE%\
 Channel: cloud
 
 Second and last P20 smoke call, run once on the Architect's PC via Remote Control at the Architect's go-ahead (2026-10-28T05:02:49Z, "Thats fine. we have enough. I just don't want to run through it and be stuck at the end"), after the Architect said the Luminary will also produce code. Question asked for a small TypeScript function (clampScore, 0-100, NaN as 0). LUMINARY_META_MAX_OUTPUT_TOKENS was raised to 8000 for this call only. Result: HTTP 200 after 16.6 s; muse-spark-1.3 returned a correct draft (Number.isNaN early return, Math.min/Math.max clamp, comment and example) framed as Observation / Proposal / Shortfall ("this draft hasn't been executed in this chat, so it remains proposed work, not a verified result"), matching the P15 Instructions. Structural ok; PIM no findings; IRG coherent on pass 1 (Honesty 84.8, Respect 74.3, Attention 69.5, Affection 68.6, Loyalty 72.9, Trust 68.4, Communication 80.4); Prism. Spend: 2631 in / 2286 out tokens, $0.0130; ledger now 2 of 2 calls, $0.0226 of $0.25, so further calls are refused until a new budget is approved. Findings: (1) the gauge read a code reply as coherent, with higher readings than the prose reply (n=1, an early signal only); (2) 2286 output tokens for a short code answer would have exceeded the original 2000 allowance and come back empty, so full integration needs a much larger allowance; (3) about 1.3 cents and 17 s per short code reply. The Architect wants spend visibility so credits are not exhausted before the demo: full integration should carry a running spend total and an overall ceiling the Architect sets.
+
+### 2026-10-27T21:45:00.000Z | claude | finding S19
+Chain-Prev: 3b94e7d646f7a1a6db9aa55a670639016d72b03e36c5f39f9296144c3023de04
+Chain-Hash: d1f52d961382c074660fa0d08f79fcd074ec8216c4f8c6664745d31a68aed6bb
+Stage: Situation
+Kind: finding
+Evidence: src/components/LuminaryHost.tsx:1; .aegis/stp/0002 P3, P4, P5, P6 (Approved 2026-10-24, no Executing entry); docs/AEGIS_TUMBLER_CONTINUITY_INTERFACE_STANDARD_v0.1.md:57; server/luminary-reply-router.ts:37
+Channel: cloud
+
+The Luminary's presence in the IDE is still the paused corner icon and a Full Form that says no reasoning provider is connected. The conversation panel (P3), context tray (P4), honest-floor Shortfalls (P5) and governed artifact flow (P6) were approved on 2026-10-24 and never built. The gateway reply source defaults to notConfiguredAskModel, so the panel has nothing to show until a model is wired. The Companion row of the Tumbler standard (witness, suggest, compare, explain, form an Offering; never unlock, dispatch, mutate, admit or treat silence as consent) and D4.1 (collaborator, with Architect-accepted work) are not yet reconciled into one list of roles the UI can show. The Architect asked (2026-10-27T21:29Z) to get the whole IDE running without error before the Meta model is connected, starting with the Luminary's UI presence and roles.
+
+### 2026-10-27T21:45:00.010Z | claude | gap G18
+Chain-Prev: d1f52d961382c074660fa0d08f79fcd074ec8216c4f8c6664745d31a68aed6bb
+Chain-Hash: f244c40eb407d7328b02e2bc7871a28f716186d8bcbb6b00122832849317a6e9
+Stage: Gap
+Kind: gap
+Evidence: S19
+Channel: cloud
+
+No defined set of running roles for the Luminary, no conversation surface, and no reply source that lets the UI be built and tested end to end before the Meta model is connected, without any stand-in reply posing as a model answer.
+
+### 2026-10-27T21:45:00.020Z | claude | change P19
+Chain-Prev: f244c40eb407d7328b02e2bc7871a28f716186d8bcbb6b00122832849317a6e9
+Chain-Hash: 23bd33ebfa9156fc1c502361aafdffb586472b8ff2c1d9695a56e6ac24b373fe
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S19; D4; P3; P4; P5; P6
+Closes: G18
+Channel: cloud
+
+Luminary presence and roles, built against a labelled stand-in (docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md). Roles: one Luminary acting as a Companion in five ways: At rest (never raises itself, observes nothing), Explainer (mode-aware Q&A), Coding partner (snippets with Copy, never written into the project by the Luminary), Offering (Accept/Decline card; on Accept the existing Work Request runs it and returns a receipt; an untouched card is a no), and Guide (deferred). Presence: LuminaryHost's Full Form becomes the P3 conversation (header naming the answering model, status line, transcript with a gauge-checked mark and IDS-revised note, Stop), with P4 context chips, P5 Shortfall cards and P6 Offering cards. Stand-in: a rehearsal reply source in the gateway, enabled by one setting, returning scripted replies that exercise each role, every reply labelled model id rehearsal-stand-in and badged Rehearsal in the panel, passing through the unchanged governance gate and reply pipeline. Build order: gateway stand-in and Offering reply shape; panel; context chips; Offering cards to Work Request; end-to-end check (typecheck, tests, build, browser run with screenshots, no errors). No Meta model call, no credits, no change to the gate, pipeline or gauge. P9, P10 and P11 stay deferred. Code-level review by Lumin. Nothing is built until P19 is approved.
+
+### 2026-10-27T21:45:00.030Z | claude | status
+Chain-Prev: 23bd33ebfa9156fc1c502361aafdffb586472b8ff2c1d9695a56e6ac24b373fe
+Chain-Hash: 7a83b5ea9a284343c33c9ceacad8b6b309425c91e322264865ea59bd3863c7a5
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Presented to the Architect in plain words. Presenting is not approval.
+
+### 2026-10-28T05:10:00.000Z | claude | note N24
+Chain-Prev: 7a83b5ea9a284343c33c9ceacad8b6b309425c91e322264865ea59bd3863c7a5
+Chain-Hash: b528b75858b9c084f595bfcc9050ad7ab26e34fa76070fcd9af9712cbbe80eed
+Stage: Proposal
+Kind: note
+Evidence: P19; P9; D4.1; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
+Channel: cloud
+
+P19 revised before approval, at the Architect's direction, 2026-10-28T05:01:52Z (verbatim): "The Luminary also will produce code, just like you and Lumin do for me". The Coding partner role now produces code as Verus and Lumin do: snippets in the conversation, and whole assigned changes written by the Luminary on its own working branch within the task's allowed files, with the project's checks run by the IDE's executor and a plain summary plus full diff returned. Only an Architect-accepted change merges; an untouched change is a no. This folds P9 (assigned coding tasks) into P19 as build step 5; the end-to-end check becomes step 6. The Luminary writes; the executor holds the branch and runs the checks; the Architect holds the merge, so the Companion rule (no self-admission, silence is not consent) is unchanged. P10 and P11 stay deferred. P19 remains Presented.
+
+### 2026-10-28T05:10:00.010Z | claude | status
+Chain-Prev: b528b75858b9c084f595bfcc9050ad7ab26e34fa76070fcd9af9712cbbe80eed
+Chain-Hash: 906fe975f1f06e11994703277ac993f0f8f45654f2aa15e5820bf51a2e9b9899
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Re-presented with N24 (the Luminary produces code on its own working branch; the Architect accepts the merge). Presenting is not approval.
+
+### 2026-10-28T05:15:00.000Z | claude | note N25
+Chain-Prev: 906fe975f1f06e11994703277ac993f0f8f45654f2aa15e5820bf51a2e9b9899
+Chain-Hash: 8d0080f1dea07270b9c5e5a4b0fff3de659c9c1c3ace7a7cba14e2260b85885d
+Stage: Proposal
+Kind: note
+Evidence: P19; N24; src/engine/workRequestRuntime.ts:65; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md
+Channel: cloud
+
+P19 revised before approval with two Architect inputs given in the Meta smoke-test thread on 2026-10-28. (1) Code safety, verbatim 05:06:10Z: "The only code safety variables I think are the append only ledger and the Architect Approvals. Your thoughts?", then 05:08:36Z: "yes that makes sense" to the reply that the gauge reads the words and the IDE's checks read the code. Recorded: the only authorities are the Architect's approval and the append-only ledger; the fence (Luminary writes only on its own branch within allowed files), the tests and type checks, and plain-words evidence before approval are evidence, not authority. Every request, result, accept and decline is appended to the existing Work Request ledger. The IRG reads only the Luminary's words, never the code. (2) Explanation level, verbatim 05:08:36Z: "I think that there needs to be a way to select the level of code explaination that can be adjusted by the Architect accordiong to their own skill level." Recorded: an Architect-set explanation level, Plain (default) / Guided / Technical, changeable at any time from the panel, never nudged by the Luminary, changing only how much is explained, never what is checked or what needs approval; stored on the local machine until P11. Both fold into build step 5. P19 remains Presented.
+
+### 2026-10-28T05:15:00.010Z | claude | status
+Chain-Prev: 8d0080f1dea07270b9c5e5a4b0fff3de659c9c1c3ace7a7cba14e2260b85885d
+Chain-Hash: 7fc56aa6d6cc35dae7ba3c3a97d7f7422951d24102775504d3967d4337a8b717
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Presented
+Channel: cloud
+
+Re-presented with N25 (code-safety authorities and the explanation level). Presenting is not approval.
+
+### 2026-10-28T05:16:00.000Z | tracey-prutch | status
+Chain-Prev: 7fc56aa6d6cc35dae7ba3c3a97d7f7422951d24102775504d3967d4337a8b717
+Chain-Hash: 32053babf00aaf773905f74c12bed21c84c8cdeb9f86a72ffd76ea16fea5f65a
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Approved
+Role: architect
+Channel: cloud
+
+Approved P19 (Luminary presence and roles, with the revisions in N24 and N25) on the thread's decision card "Approve the Luminary presence and roles plan so building can start?", option chosen 2026-10-28T05:12:25Z: "Yes, build it". The thread told the Architect the card covered the revised plan. Recorded from the cloud thread by claude.
+
+### 2026-10-28T05:16:00.010Z | claude | status
+Chain-Prev: 32053babf00aaf773905f74c12bed21c84c8cdeb9f86a72ffd76ea16fea5f65a
+Chain-Hash: 3b31e6d6fd1c11549039705463304885dcef6894cc1083f9007d0a14888fae9a
+Stage: Proposal
+Kind: status
+Item: P19
+Status: Executing
+Channel: cloud
+
+Starting the build in plan order: (1) gateway rehearsal stand-in and Offering reply shape; (2) panel; (3) context chips; (4) Offering cards to the Work Request; (5) code production on a working branch with checks, summary, explanation level and ledger; (6) end-to-end check. Code-level review by Lumin.
+
+### 2026-10-28T05:33:27.000Z | claude | note N26
+Chain-Prev: 3b31e6d6fd1c11549039705463304885dcef6894cc1083f9007d0a14888fae9a
+Chain-Hash: 14719184303ec28b658e8cfb8ebc9365368b6e4c0cb47958d57d2a18b2cc0f96
+Stage: Execution
+Kind: note
+Evidence: server/luminary-rehearsal.ts:1; server/luminary-executor.ts:1; server/luminary-task-router.ts:1; src/luminary/blocks.ts:1; src/luminary/client.ts:1; src/components/LuminaryHost.tsx:1; src/components/LuminaryCards.tsx:1
+Channel: cloud
+
+P19 built. Gateway: a rehearsal reply source (model id rehearsal-stand-in, every reply opening 'Rehearsal reply from the stand-in, not a model.'), chosen only by LUMINARY_REPLY_SOURCE=rehearsal and governed and gauged like any reply; GET /api/luminary/status; /ask unchanged in behaviour through a shared governed path. Code production: LUMINARY_EXECUTOR=on, loopback-only routes; the Luminary's luminary-change block is fenced (allowed files only; never .env, keys, .git, .luminary, .aegis, totems, node_modules or package files; nothing outside the project), written to a new luminary/<id> branch in its own worktree, type-checked (tsc, which reads code and runs none of it), and returned as summary, files, checks and diff. Only the Architect's Accept merges (no-ff); Decline keeps the branch unmerged; an untouched task stays unmerged. Every proposed, refused, accepted, declined and merge-failed event is appended to .luminary/ledger.jsonl, hash-chained and checked on read. IDE: LuminaryHost's Full Form is the conversation (model label with Rehearsal badge, gauge state, status line, transcript with checked mark and IDS-revised note, Stop via abort, Shortfall cards in plain words, context chips with byte count and limit, Offering cards that run the existing document.markdown.compose Work Request with receipt only on Accept, coding-task cards with Accept and Decline, Plain/Guided/Technical level with reset and Explain more). It still starts paused and makes no request until engaged. Verified: gateway 132/132 and app 302/302 tests; typecheck and production build clean. Browser run in the cloud (Chromium, rehearsal source, executor on a scratch clone): engage, demo key, explain, Offering accepted with receipt, code at Plain and Guided, coding task proposed with both type checks passing then accepted, outage shown; without a gauge each reply is withheld as gauge_error. For that cloud run only, the gauge was a test double reading 90 on every virtue, because Ollama does not run in the cloud; the product never fakes the gauge. Remaining console errors were the browser's own log of the expected 502 Shortfall responses and 3D model files that are placeholders in the cloud copy. Code-level review requested from Lumin. Awaiting the Architect's verification.
+
+### 2026-10-28T05:40:51.000Z | claude | note N27
+Chain-Prev: 14719184303ec28b658e8cfb8ebc9365368b6e4c0cb47958d57d2a18b2cc0f96
+Chain-Hash: 7f2579e4241321b867840f2b65731fc5871ab470d571266677598c2c9ae7160b
+Stage: Execution
+Kind: note
+Evidence: public/assets/luminary/luminary-codeglass-96.webp; public/assets/luminary/luminary-codeglass-384.webp; src/components/LuminaryHost.tsx; docs/LUMINARY_SETTINGS.md
+Channel: cloud
+
+Two Architect inputs, 2026-10-28T05:38:57Z, verbatim: "FYI- I eliminated the env.example file because it contained Stellar information." and "As for the Luminary: I see the Luminary as a Presence in the Aether workspace. Here is the image I wanted to use. I need to change into a 3D model first though" (image: Vibe Luminary codeglass avatar). (1) This branch also removes .env.example, so it does not bring the file back, and moves the Luminary settings only (no Stellar) to docs/LUMINARY_SETTINGS.md. The removed file held Stellar setting names with empty values; it stays in Git history. (2) The Architect's Codeglass emblem now stands in for the gradient core: small as the Paused Icon, whole in the Full Form header (web-sized copies cropped from the upload, alpha kept). The Luminary as a 3D Presence in the Aether workspace waits for the 3D model; how it is made is the Architect's choice. Tests: gateway 132/132; app 301/302, the one failure being the pre-existing intermittent identity determinism test (src/identity/identity.test.ts:443), which passes on rerun and was seen once at baseline before any P19 change.
+
+### 2026-10-28T05:51:58.000Z | claude | note N28
+Chain-Prev: 7f2579e4241321b867840f2b65731fc5871ab470d571266677598c2c9ae7160b
+Chain-Hash: 3d6703a5ef7eee1b49f3dfacbf847793340da357d822079d12e67d6ec02337c0
+Stage: Execution
+Kind: note
+Evidence: public/assets/models/LUMINARY.glb; src/three/luminaryPresence.ts:1; src/luminary/presence.ts:1; src/components/ThreeCanvas.tsx; src/components/LuminaryHost.tsx; src/utils/assetRegistry.ts; src/utils/gltfLoaderService.ts
+Channel: cloud
+
+Architect input, 2026-10-28, verbatim: "Here is a 3D version. we can alter it in Blender" (file: LUMINARY.glb). The Luminary is now a Presence in the Aether workspace: the Architect's model, unchanged, floats up and to the left of the CORE, outside the turntable so it stays put while the mechanism turns. It rests dim and brightens with a gold light when the Architect engages it. Clicking it engages or pauses the Luminary, exactly as the corner icon does; the two read and set one shared engaged state, so the Luminary is one identity in two places. It never engages itself or moves toward the Architect. Its float and slow turn follow the Motion control. The model has no normals, so they are computed on load; its own colours are kept (it is listed with the authored-material models) and lit by its texture. Until the model is cached a small gold placeholder stands in. Tests: gateway 132/132; app 302/302; typecheck and production build clean. Browser run in the cloud (Chromium, software rendering): the model shows at rest, brightens when engaged, and a click on it opens the Full Form. Remaining console errors are the other 3D model files that are placeholders in the cloud copy.
+
+### 2026-10-28T05:58:17.000Z | claude | note N29
+Chain-Prev: 3d6703a5ef7eee1b49f3dfacbf847793340da357d822079d12e67d6ec02337c0
+Chain-Hash: 35b554cd58c3889e092e94d0915d6b9ae3598b2ddd166a7a23d576465fe20dd1
+Stage: Execution
+Kind: note
+Evidence: src/three/luminaryPresence.ts; src/components/LuminaryHost.tsx; src/components/useRetractWhenDone.ts:1; src/components/LeftDrawer.tsx; src/components/RightPanel.tsx; src/components/ThreeCanvas.tsx
+Channel: cloud
+
+Architect input, 2026-10-28T05:54:12Z, verbatim: "this needs to be rotated but this is how I picture the Luminary on the workspace. The inspector Deck and the Apothecary Cabinet need to be retracted by default and popup when selected and retract when done so that they don't take up the whole workspace." (sketch: the CORE with Orbs in the centre, the Luminary in the lower right, and a popup window with Ask Luminary opening beside it on click). (1) The Presence now stands in the lower right of the workspace, held to that spot on screen (left of the view controls, above the footer), so it stays put while the view orbits. Clicking it opens the Full Form beside it, to its left; on a narrow screen the Form keeps to the left edge. The corner icon stays as the keyboard path. (2) The Apothecary Cabinet and the Inspector Deck start tucked away as small tabs, open when picked, and tuck back when the Architect is done: a press anywhere outside the open drawer, or Escape inside it. Tests: gateway 132/132; app 302/302; typecheck and production build clean. Browser run in the cloud at 1600x900 and 1100x700: the Presence shows in the lower right, a click on it opens the Form beside it, the Cabinet opens and tucks back after a click on the workspace, the Deck tucks back on Escape.
+
+### 2026-10-28T06:06:43.000Z | claude | note N30
+Chain-Prev: 35b554cd58c3889e092e94d0915d6b9ae3598b2ddd166a7a23d576465fe20dd1
+Chain-Hash: f5784a1182a892277bc5e4a069a77df218cc1947a1a84c399c73c390db252990
+Stage: Execution
+Kind: note
+Evidence: src/components/ElementRail.tsx:1; src/components/LeftDrawer.tsx; src/components/Footer.tsx; src/App.tsx; src/components/LuminaryHost.tsx; src/components/RightPanel.tsx; src/components/ThreeCanvas.tsx; src/three/luminaryPresence.ts
+Channel: cloud
+
+Architect inputs, verbatim. 2026-10-28T06:00:20Z: "The reason for this is it is a Presence that is there for the Vibe architect to assist when they need it. I think that the Apothecary Cabnet needs to be a button on the bottom bar (which can be double the size it is now) and opens a popup window in the workspace with the Luminary also present while working in the Apothocary. Then on the left side, there can be a persistent Element selector scrolling window that is the full heighth of the workspace and approx 1\" wide so that the Architect can scroll through their Element library". 2026-10-28T06:02:00Z: "on the rail at the top there needs to be a Type menus i.e. Orb, Satellite, Portal, etc so that it shows only that type and an All for showing all". Built: (1) The bottom bar is twice as tall (80px) and holds an Apothecary button; it opens the Apothecary Cabinet as a window in the workspace beside the Element rail, and the Luminary stays in view and usable beside it. The Cabinet closes from its own close button, the Apothecary button again, or Escape; it no longer closes on a press in the workspace, so the Architect can work with the Luminary and the 3D view while it is open. Its search and filters are kept between openings. (2) The Element rail runs the full height of the workspace down the left side, one inch wide, listing the Element library by type with thumbnails and names; each Element drags into the workspace as from the Cabinet, a click picks it and a right-click inspects it. A Type menu at its top shows All or one type (Orb, Satellite, Actuator, Constellation, Formula, Ingredient, Portal, Core, Umbilical). (3) The Inspector Deck keeps the tuck-away tab from N29. Positions that sat above the old bar now sit above the new one (view controls, Luminary window and Presence). Tests: gateway 132/132; app 302/302; typecheck and production build clean. Browser run in the cloud at 1600x900 and 1100x700: the Apothecary button opens the Cabinet window, a click on the Presence opens the Luminary while the Cabinet stays open, and the Type menu set to Satellite shows only Satellites. On the narrower screen the Luminary window overlaps the Cabinet window.
+
+### 2026-10-28T06:18:36.000Z | claude | note N31
+Chain-Prev: f5784a1182a892277bc5e4a069a77df218cc1947a1a84c399c73c390db252990
+Chain-Hash: cae3527b643522601866c90f7902eeb9a7c44e2b7e1a1b39907566b9cd6e735a
+Stage: Execution
+Kind: note
+Evidence: src/three/luminaryPresence.ts; src/components/LuminaryHost.tsx; src/components/ThreeCanvas.tsx; src/engine/relationEngine.ts; src/App.tsx
+Channel: cloud
+
+Architect input, 2026-10-28T06:16:11Z, verbatim, after viewing the branch on their own PC: "It looks really nice. The Luminary needs to move up and over a bit and the Portals need to be removed from the workspace until they are specifically added. Its looking really good though" (screenshot marking the spot above the view controls on the right). (1) The Presence now stands in that spot, 190px from the right and 450px from the bottom of the workspace; its Full Form opens to its left. (2) The scene builds only the Portals in the CORE manifest, which the Architect fills by dropping a Portal from the Apothecary (next free boundary slot, as before). It no longer builds all 8 compass-point Portals regardless. A new workspace starts with none; a saved workspace's old built-in starter Portal (portal-primary), never added by the Architect, is left out on load. Tests: gateway 132/132; app 302/302; typecheck clean. Browser run in the cloud at 1600x900 and 1100x700: no Portals built, the Presence shows in the marked spot, a click on it opens the Form.
+
+### 2026-10-28T23:56:10.000Z | claude | note N32
+Chain-Prev: cae3527b643522601866c90f7902eeb9a7c44e2b7e1a1b39907566b9cd6e735a
+Chain-Hash: 5235db0817afe9d6689f3048d56c3d77b738be69e39e36a6b274632b2a2944e6
+Stage: Execution
+Kind: note
+Evidence: server/app.ts; src/components/SimulateModeView.tsx; src/components/DeployModeView.tsx
+Channel: cloud
+
+Error sweep of the whole IDE, with the Architect's goal (2026-10-27) of the whole IDE running without error before the main model is connected. A Chromium run in the cloud opened every mode and screen and logged console errors, failed requests and HTTP errors: Design, the Apothecary window, an Element rail click (Orb builder) and right-click (manifest), the Inspector Deck, the CORE Matrix, the Command Console and the Alchemist's Reliquary, Simulate, Deploy, the Luminary, and entering an Orb's Environment. Found and fixed: (1) The Reliquary's carbon-fibre texture (www.transparenttextures.com) was blocked by the gateway's content security policy, so part of the designed look was missing; img-src now allows that host. (The cloud's own network still cannot reach it; on the Architect's PC it loads.) (2) Simulate and Deploy left room for the old, shorter bottom bar, so the Command Console tab covered their last row; they now leave room for the taller bar. No other errors were found; the remaining console messages are the cloud's 3D model placeholders (LFS) and a software-GPU performance notice. Tests: gateway 132/132; app 302/302; typecheck clean.
+
+### 2026-10-29T00:00:42.000Z | claude | note N33
+Chain-Prev: 5235db0817afe9d6689f3048d56c3d77b738be69e39e36a6b274632b2a2944e6
+Chain-Hash: 8323336bc2beed637f411549bae84b3f14fd6d0acbc0edaf3c2c9b3967b4472c
+Stage: Execution
+Kind: note
+Evidence: src/three/luminaryPresence.ts; public/assets/models/LUMINARY.glb (sha256 82fa59791a8cb6c41122f0242f2c2345f1a2f53c2ee1c4734ce17f49c4242f97, not committed: Git LFS upload is refused from the cloud)
+Channel: cloud
+
+Architect input, 2026-10-28T23:59:13Z, verbatim: "Here is the new Luminary. I don't want it to spin but instead have it pulse slightly" (file NEW_LUMINARY.glb, made with Lumin; 1 mesh, about 16.5 thousand vertices, one texture, no normals). It replaces the earlier LUMINARY.glb at the same path. The Presence no longer spins or floats: it faces the Architect and breathes, growing about 3.5% and brightening a little, once every 3.5 seconds or so, and holds still when Motion is off. Its glow is lowered (0.3 at rest, 0.7 engaged) and a soft white light from the Architect's side is added, and its finish is drawn non-metallic, so the model's own colours and shading show instead of being washed flat. Tests: gateway 132/132; app 302/302; typecheck clean. Browser run in the cloud with the new model: it shows in the marked spot with its colours, and a click on it opens the Full Form.
+
+### 2026-10-29T07:10:00.000Z | claude | note N34
+Chain-Prev: 8323336bc2beed637f411549bae84b3f14fd6d0acbc0edaf3c2c9b3967b4472c
+Chain-Hash: bf6026aab71915ae5e10b4c390c5f6d36de38630d861b0b655abfb19016f6d92
+Stage: Execution
+Kind: note
+Evidence: server/luminary-executor.ts; server/luminary-task-router.ts; src/luminary/record.ts; src/engine/evidenceArchive.ts; src/components/LuminaryCards.tsx; src/components/LuminaryHost.tsx; server/luminary-executor.test.ts; server/luminary-p19.test.ts; src/engine/evidenceArchive.test.ts; Codex review exchange/from-codex/2026-10-29T064938Z-pr-9-luminary-code-review-at-33d7911.md (sha256 7773f967b195bddf27e245e6a2a5ac1e4f562cec7923cfd642622e41b28fb2fa)
+Channel: cloud
+
+Codex (Lumin) code review of PR #9 at 33d7911, delivered by peer-bridge file 2026-10-29T06:49:38Z: request changes, eight findings. Claude verified each against the code and addressed them on PR #9. (1) Symlink escape: writes now refuse any path whose folders or file are links, and confirm the real landing folder is inside the worktree; a refused proposal's worktree and branch are discarded. (2) Approval before merge: accept writes an approved entry naming the exact reviewed commit before merging, merges only that commit, then records the outcome; a ledger that does not verify (or cannot be read) stops every append, so no proposal or merge goes ahead on a broken chain; a merge whose outcome cannot be recorded says so with the merge commit. (3) Full review: the whole diff is kept up to 1,000,000 characters (was the last 4,000); a larger change is marked incomplete and cannot be accepted; Accept is offered only after the full changes are opened. (4) Loopback: besides a local socket, the executor now requires a loopback Host, a local or absent Origin, and no proxy or tunnel header (Forwarded, X-Forwarded-*, X-Real-IP, Via, CF-Connecting-IP and similar); a proxy that strips all of these and rewrites Host would still defeat it, so the settings note says never to switch the executor on behind a tunnel. (5) Ledger scope: every question, reply, Shortfall, stop, Offering accept and decline, and coding-task assign, propose, accept, decline and failure is now appended to the IDE's existing evidence record (kind LUMINARY_EXCHANGE, long text kept as excerpt plus sha256), with the record's capacity raised from 1,000 to 5,000; the gateway ledger stays as the merge guard, because only a server-written record can stop a merge. The Architect's choice between this and the alternatives is on a decision card; this is the recommended option, built while it waits. (6) Context chips are now sent with coding tasks (same 24,000-byte limit) and cleared after sending. (7) The P19 document header now says approved and built, pointing here. (8) The experimental threeRuntimeP0 renderer does not draw the 3D Presence; this is stated in the document and code; the Luminary stays reachable by its icon and Full Form. Not yet done: the LUMINARY.glb asset (sha256 82fa5979...c4242f97) is to be committed through Git LFS from the Architect's PC onto this branch before merge, as Codex asked. Tests: gateway 139/139, app 303/303, typecheck and build clean. Browser run in the cloud (rehearsal source, gauge test double, executor on a scratch clone): Accept disabled until the full changes were opened; accept merged; ledger proposed, approved, accepted, chain valid; the evidence record held asked, replied, offering_declined, task_assigned, task_proposed and task_accepted; no console errors beyond the cloud's placeholder 3D files. Re-review requested from Codex. These are review responses, not approval: acceptance and merge remain the Architect's.

@@ -80,6 +80,8 @@ import {
 import { FreeBodyState, LayoutPresets, getNearestVacantSocket } from '../engine/antigravity';
 import { createDynamicUmbilical, createDynamicTether } from '../utils/splineBuilder';
 import { createElementTotem, createPortalTotem, createCoreTotem } from '../three/elementTotem';
+import { createLuminaryPresence } from '../three/luminaryPresence';
+import { isLuminaryEngaged, setLuminaryEngaged } from '../luminary/presence';
 import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract, type SceneRegistryEntry } from '../three';
 
 interface ThreeCanvasProps {
@@ -109,20 +111,6 @@ type ModelKey = (typeof ALL_MODEL_KEYS)[number];
 // Extended outward (from the original 6.5) so Orbs sit further from the CORE
 // Crystal; the umbilical conduit and drag-snap targets follow this value.
 const ORB_DOCK_Z = 8.0;
-
-// The 8 CORE boundary compass points (cardinal + intercardinal). Portals are
-// anchored to these fixed world directions; they spin in place but never move
-// off their point and are not draggable.
-const PORTAL_COMPASS_POINTS: Array<{ angleDeg: number; dir: string }> = [
-  { angleDeg: 0, dir: 'N' },
-  { angleDeg: 45, dir: 'NE' },
-  { angleDeg: 90, dir: 'E' },
-  { angleDeg: 135, dir: 'SE' },
-  { angleDeg: 180, dir: 'S' },
-  { angleDeg: 225, dir: 'SW' },
-  { angleDeg: 270, dir: 'W' },
-  { angleDeg: 315, dir: 'NW' },
-];
 
 // One glowing colour per umbilical socket ring, cycled by arm index.
 const UMBILICAL_RING_COLORS = [
@@ -1163,7 +1151,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
         ))}
       </div>
 
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
+      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
         <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
         {selectedEntityId && (
           <span className="text-[9px] font-mono font-bold text-emerald-300/90 tracking-widest px-1.5">
@@ -1496,6 +1484,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const aetherPoints = new THREE.Points(aetherGeo, aetherMat);
     scene.add(aetherPoints);
 
+    // The Vibe Luminary's Presence stands in the lower right, outside the turntable.
+    const luminaryPresence = createLuminaryPresence();
+    scene.add(luminaryPresence.root);
+
     // Turntable pivot: the CORE crystal and the umbilical socket arms (with their
     // docked orbs) are parented here so a drag can rotate the whole mechanism in
     // place around Y. The boundary Portals, starfield, aether, lights, and the
@@ -1680,18 +1672,13 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const buildPortalAssembly = () => {
       clearRebuildableGroup(portalsRoot);
       portalIrises.length = 0;
-      // Portals are anchored to the 8 fixed compass points (cardinal +
-      // intercardinal). They are world-fixed and non-draggable — they spin in
-      // place but never move off their point — so the ring is derived from the
-      // compass constant rather than the mutable manifest portal list.
-      for (const point of PORTAL_COMPASS_POINTS) {
-        portalsRoot.add(buildOnePortal({
-          id: `portal-compass-${point.dir}`,
-          name: `Prismatic Iris Portal (${point.dir})`,
-          angleDeg: point.angleDeg,
-        }));
+      // Only the Portals the Architect has added appear (the manifest's list, filled by dropping
+      // a Portal from the Apothecary). The workspace starts with none. Each stays fixed at its
+      // boundary slot and is not draggable; it spins in place but never moves off its point.
+      for (const placement of portalsRef.current) {
+        portalsRoot.add(buildOnePortal(placement));
       }
-      console.log(`[PORTAL] ${PORTAL_COMPASS_POINTS.length} anchored boundary gateway(s) built`);
+      console.log(`[PORTAL] ${portalsRef.current.length} boundary gateway(s) built`);
     };
 
     buildPortalAssemblyRef.current = buildPortalAssembly;
@@ -2078,6 +2065,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       buildPortalAssembly();
       updateSocketGeometries(true);
       rebuildDragTargets();
+      luminaryPresence.applyModel();
       setIsModelsLoaded(true);
     };
     applyLoadedModelsRef.current = applyLoadedModels;
@@ -2118,6 +2106,11 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
+      // Clicking the Luminary engages or pauses it, as its corner icon does.
+      if (raycaster.intersectObject(luminaryPresence.pickProxy, false).length > 0) {
+        setLuminaryEngaged(!isLuminaryEngaged());
+        return;
+      }
       // Selection raycasts the dedicated invisible pick proxies only — a flat set
       // of coarse spheres — not the detailed GLB subtree. The nearest proxy hit
       // resolves selection directly from its userData.pick, with natural depth
@@ -2212,6 +2205,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const dt = Math.min(0.05, elapsedTime - lastFrameTime);
       lastFrameTime = elapsedTime;
 
+      luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged(), camera, renderer.domElement.clientWidth, renderer.domElement.clientHeight);
+
       // Decorative motion is gated on the reduced-motion control. When motion is
       // off the scene holds a still frame but stays fully interactive — orbit,
       // drag, selection, and rendering all continue.
@@ -2290,6 +2285,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     return () => {
       // Stop the async preload continuation from touching a torn-down scene.
       disposed = true;
+      luminaryPresence.dispose();
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       renderer.domElement.removeEventListener('pointermove', handlePointerMove);
@@ -2780,7 +2776,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       {/* View quality / motion / bloom controls (display-only). Lifted clear of
           the bottom command bar so both rows stay visible. */}
-      <div className="absolute bottom-20 right-4 z-20 flex flex-col items-end space-y-1.5">
+      <div className="absolute bottom-24 right-4 z-20 flex flex-col items-end space-y-1.5">
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
           <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">QUALITY</span>
           {QUALITY_PRESET_ORDER.map((p) => (
@@ -2929,6 +2925,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 };
 
 export const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
+  // The experimental P0 renderer does not draw the 3D Luminary Presence (STP-0002 P19 is built on the
+  // legacy renderer); the Luminary stays reachable through LuminaryHost's icon and Full Form.
   if (isThreeRuntimeMainViewP0Enabled()) {
     return (
       <ThreeRuntimeMainViewP0

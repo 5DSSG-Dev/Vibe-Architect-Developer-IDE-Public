@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["server/**/*.ts", "src/admin/domain/**/*.ts", "src/admin/data/**/*.ts"]
+  "include": ["server/**/*.ts", "src/luminary/blocks.ts", "src/admin/domain/**/*.ts", "src/admin/data/**/*.ts"]
 }

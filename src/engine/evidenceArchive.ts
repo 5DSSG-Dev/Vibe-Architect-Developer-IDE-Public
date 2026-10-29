@@ -9,9 +9,10 @@ import {
 } from './workRequestRuntime';
 
 const EVIDENCE_STORAGE_KEY = 'aegis-vibe-architect.evidence.v1';
-const MAX_EVIDENCE_RECORDS = 1_000;
+// Raised from 1,000 when the Luminary's exchanges joined this record (STP-0002 P19, N34).
+export const MAX_EVIDENCE_RECORDS = 5_000;
 
-export type EvidenceKind = 'RELATION_CONTRACT' | 'WORK_REQUEST_RECEIPT';
+export type EvidenceKind = 'RELATION_CONTRACT' | 'WORK_REQUEST_RECEIPT' | 'LUMINARY_EXCHANGE';
 
 export interface EvidenceStorage {
   getItem(key: string): string | null;
@@ -35,6 +36,22 @@ export interface WorkRequestReceipt {
   ledger: WorkLedgerEntry[];
 }
 
+/**
+ * One Luminary exchange (STP-0002 P19): every request, result, accept and decline. Long text is kept
+ * as an excerpt plus the sha256 of the whole, so the record stays small and still binds the full text.
+ */
+export type LuminaryExchangeEvent =
+  | 'asked' | 'replied' | 'shortfall' | 'stopped'
+  | 'offering_accepted' | 'offering_declined'
+  | 'task_assigned' | 'task_proposed' | 'task_refused' | 'task_accepted' | 'task_declined' | 'task_decision_failed';
+
+export interface LuminaryExchange {
+  exchangeId: string;
+  event: LuminaryExchangeEvent;
+  conversationId: string;
+  detail: Record<string, string | number | boolean | string[] | null>;
+}
+
 export interface EvidenceRecord {
   schemaVersion: 1;
   sequence: number;
@@ -42,7 +59,7 @@ export interface EvidenceRecord {
   kind: EvidenceKind;
   subjectId: string;
   recordedAt: string;
-  payload: RelationContract | WorkRequestReceipt;
+  payload: RelationContract | WorkRequestReceipt | LuminaryExchange;
   payloadHash: string;
   previousRecordHash: string | null;
   recordHash: string;
@@ -106,7 +123,7 @@ export async function readEvidenceArchive(storage?: EvidenceStorage): Promise<Ev
 async function appendEvidence(
   kind: EvidenceKind,
   subjectId: string,
-  payload: RelationContract | WorkRequestReceipt,
+  payload: RelationContract | WorkRequestReceipt | LuminaryExchange,
   storage?: EvidenceStorage
 ): Promise<EvidenceAppendResult> {
   const target = resolveStorage(storage);
@@ -176,6 +193,14 @@ export async function appendWorkRequestEvidence(
     ledger: structuredClone(result.ledger)
   };
   return appendEvidence('WORK_REQUEST_RECEIPT', receipt.workRequestId, receipt, storage);
+}
+
+export async function appendLuminaryExchangeEvidence(
+  exchange: LuminaryExchange,
+  storage?: EvidenceStorage
+): Promise<EvidenceAppendResult> {
+  if (!exchange.exchangeId || !exchange.event || !exchange.conversationId) throw new Error('An incomplete Luminary exchange record was refused.');
+  return appendEvidence('LUMINARY_EXCHANGE', exchange.exchangeId, structuredClone(exchange), storage);
 }
 
 export async function exportVerifiedEvidenceArchive(storage?: EvidenceStorage): Promise<string> {

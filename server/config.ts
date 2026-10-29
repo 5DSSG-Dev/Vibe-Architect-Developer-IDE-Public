@@ -35,6 +35,10 @@ export interface GatewayConfig {
   luminaryDemoKey?: string;
   /** The embedded gauge model for the Luminary reply pipeline (STP-0002 P18). Absent = not configured. */
   luminaryGauge?: { endpoint: string; model: string; timeoutMs: number; thresholds: VirtueThresholds };
+  /** The Luminary's reply source (P19). Only 'rehearsal' is selectable here; absent = not configured. */
+  luminaryReplySource?: 'rehearsal';
+  /** The Luminary's code-production executor (P19). Off unless LUMINARY_EXECUTOR=on. */
+  luminaryExecutor?: boolean;
   stellarCapabilities?: StellarCapabilityConfig;
   entra?: {
     tenantId: string;
@@ -104,6 +108,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
   const redisUrl = env.REDIS_URL?.trim();
   const luminaryDemoKey = env.LUMINARY_DEMO_KEY?.trim() || undefined;
   const luminaryGauge = parseLuminaryGauge(env);
+  const replySource = env.LUMINARY_REPLY_SOURCE?.trim().toLowerCase();
+  if (replySource && replySource !== 'rehearsal') throw new Error('LUMINARY_REPLY_SOURCE must be rehearsal or unset');
+  const luminaryReplySource = replySource === 'rehearsal' ? 'rehearsal' as const : undefined;
+  const executorFlag = env.LUMINARY_EXECUTOR?.trim().toLowerCase();
+  if (executorFlag && executorFlag !== 'on' && executorFlag !== 'off') throw new Error('LUMINARY_EXECUTOR must be on, off or unset');
+  const luminaryExecutor = executorFlag === 'on';
   if (redisUrl && !['redis:', 'rediss:'].includes(new URL(redisUrl).protocol)) {
     throw new Error('REDIS_URL must use the redis: or rediss: scheme');
   }
@@ -180,6 +190,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
     redisUrl,
     luminaryDemoKey,
     luminaryGauge,
+    luminaryReplySource,
+    luminaryExecutor,
     stellarCapabilities,
     entra,
   };

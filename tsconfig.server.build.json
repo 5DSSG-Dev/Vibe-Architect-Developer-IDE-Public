@@ -11,6 +11,7 @@
   },
   "include": [
     "server/**/*.ts",
+    "src/luminary/blocks.ts",
     "src/admin/domain/**/*.ts",
     "src/admin/data/operationsDataSource.ts",
     "src/admin/data/replayFixture.ts"

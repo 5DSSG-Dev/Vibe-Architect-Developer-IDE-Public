@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
 import { LeftDrawer } from './components/LeftDrawer';
+import { ElementRail } from './components/ElementRail';
 import { RightPanel } from './components/RightPanel';
 import { Footer, WorkspaceSaveStatus } from './components/Footer';
 import { HandshakeModal } from './components/HandshakeModal';
@@ -157,10 +158,18 @@ export function App() {
     () => restoredWorkspace?.activeMode ?? 'DESIGN'
   );
   const [coreManifest, setCoreManifest] = useState<CoreManifest>(
-    () => restoredWorkspace?.coreManifest ?? ensureManifestCodeFrames(createInitialCoreManifest())
+    () => {
+      if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
+      // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
+      // Architect never added. Portals now appear only once added, so that one is left out.
+      const restored = restoredWorkspace.coreManifest;
+      return { ...restored, portals: restored.portals.filter((portal) => portal.id !== 'portal-primary') };
+    }
   );
   const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
+  // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
+  const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
   // user-created items so a refresh never erases the working cabinet.
@@ -216,6 +225,15 @@ export function App() {
   // 3-Tier Object Inspection payload
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
   const [inspectingSocket, setInspectingSocket] = useState<SocketBinding | null>(null);
+
+  // What the Architect may add to the Luminary as context with one click. Offered, never sent on its own.
+  const selectedForLuminary = inspectingItem ?? currentEnvironment ?? attachingItem ?? undefined;
+  const luminarySelection = selectedForLuminary
+    ? {
+        label: `Selected: ${selectedForLuminary.name}`,
+        text: `${selectedForLuminary.name} (${selectedForLuminary.category}, v${selectedForLuminary.version})\n${selectedForLuminary.description}\nCapabilities: ${selectedForLuminary.capabilities.join(', ') || 'none'}\nRequirements: ${selectedForLuminary.requirements.join(', ') || 'none'}`,
+      }
+    : undefined;
 
   const [saveStatus, setSaveStatus] = useState<WorkspaceSaveStatus>({ state: 'pending' });
 
@@ -512,8 +530,23 @@ export function App() {
       {/* Mode View overlays or side drawers */}
       {activeMode === 'DESIGN' && environmentStack.length === 0 && (
         <>
+          <ElementRail
+            catalog={apothecaryCatalog}
+            onSelectItem={(item) => {
+              setOrbBuilderTargetItem(item);
+              openOverlay('ORB_BUILDER');
+            }}
+            onRightClickItem={(item) => {
+              setInspectingItem(item);
+              setInspectingSocket(null);
+              openOverlay('INSPECT_MANIFEST');
+            }}
+          />
+
           <LeftDrawer
             catalog={apothecaryCatalog}
+            isOpen={isApothecaryOpen}
+            onClose={() => setIsApothecaryOpen(false)}
             isFooterExpanded={isFooterExpanded}
             onSelectAttachItem={(item) => {
               setOrbBuilderTargetItem(item);
@@ -603,6 +636,12 @@ export function App() {
         onValidateCore={() => runComprehensiveCoreAudit(coreManifest)}
         showTelemetryDeck={isFooterExpanded}
         onToggleTelemetryDeck={() => setIsFooterExpanded(!isFooterExpanded)}
+        isApothecaryOpen={isApothecaryOpen && activeMode === 'DESIGN' && environmentStack.length === 0}
+        onToggleApothecary={() => {
+          if (activeMode !== 'DESIGN') setActiveMode('DESIGN');
+          if (environmentStack.length > 0) popEnvironmentTo(0);
+          setIsApothecaryOpen((open) => !(open && activeMode === 'DESIGN' && environmentStack.length === 0));
+        }}
         onOpenReliquary={() => openOverlay('RELIQUARY')}
         onOpenBrowser={() => {
           openOverlay('BROWSER');
@@ -642,7 +681,7 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
-      <LuminaryHost />
+      <LuminaryHost mode={activeMode} selection={luminarySelection} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (

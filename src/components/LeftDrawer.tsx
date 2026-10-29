@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, ChevronLeft, ChevronRight, ChevronDown, Layers, Move, ShieldCheck, Cpu, HardDrive, Zap, Lock } from 'lucide-react';
+import { Search, X, ChevronDown, Layers, Move, ShieldCheck, Cpu, HardDrive, Zap, Lock } from 'lucide-react';
 import {
   ApothecaryItem,
   CategoryType,
@@ -20,6 +20,9 @@ interface LeftDrawerProps {
   onRightClickItem?: (item: ApothecaryItem) => void;
   onOpenOrbBuilder?: () => void;
   isFooterExpanded?: boolean;
+  /** The Cabinet is a window opened from the bottom bar's Apothecary button. */
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 type WireMesh = { verts: number[][]; edges: number[][] };
@@ -171,7 +174,7 @@ const getWireMesh = (geometryType: string): WireMesh => {
  * AND on screen, driven by the shared scheduler rather than a permanent per-card
  * rAF loop, and leaves a final static frame behind when animation stops.
  */
-const Item3DThumbnail: React.FC<{ item: ApothecaryItem; active: boolean }> = ({ item, active }) => {
+export const Item3DThumbnail: React.FC<{ item: ApothecaryItem; active: boolean; className?: string }> = ({ item, active, className = 'w-24 h-24' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotRef = useRef({ x: 0.2, y: 0.3 });
   const tickRef = useRef<(() => void) | null>(null);
@@ -322,7 +325,7 @@ const Item3DThumbnail: React.FC<{ item: ApothecaryItem; active: boolean }> = ({ 
       ref={canvasRef}
       width={96}
       height={96}
-      className="w-24 h-24 flex-shrink-0 cursor-grab active:cursor-grabbing rounded-xl bg-slate-950/60 border border-cyan-500/30 shadow-[inset_0_0_15px_rgba(0,243,255,0.08)]"
+      className={`${className} flex-shrink-0 cursor-grab active:cursor-grabbing rounded-xl bg-slate-950/60 border border-cyan-500/30 shadow-[inset_0_0_15px_rgba(0,243,255,0.08)]`}
     />
   );
 };
@@ -336,7 +339,7 @@ const getTrustBadgeClass = (trust: TrustBadgeType) => {
   }
 };
 
-const handleDragStart = (e: React.DragEvent, item: ApothecaryItem) => {
+export const handleDragStart = (e: React.DragEvent, item: ApothecaryItem) => {
   const taxonomy = getItem3DTaxonomy(item);
   const payload = {
     orb_id: item.id,
@@ -450,9 +453,10 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
   onSelectAttachItem,
   onRightClickItem,
   onOpenOrbBuilder,
-  isFooterExpanded = true
+  isFooterExpanded = true,
+  isOpen,
+  onClose
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'ALL'>('ALL');
   const [selectedTrustFilter, setSelectedTrustFilter] = useState<TrustBadgeType | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -481,15 +485,23 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
   const isNarrowed = searchQuery.trim() !== '' || selectedCategory !== 'ALL' || selectedTrustFilter !== 'ALL';
 
   return (
+    // A window in the workspace beside the Element rail, leaving the Luminary in view in the
+    // lower right. It stays mounted while closed so a search or filter is kept for next time.
     <div
-      className={`fixed left-4 top-20 ${isFooterExpanded ? 'bottom-[228px]' : 'bottom-14'} z-10 transition-all duration-300 flex ${
-        isOpen ? 'w-80 sm:w-96' : 'w-12'
-      }`}
+      role="dialog"
+      aria-label="Apothecary Cabinet"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          onClose();
+        }
+      }}
+      className={`fixed left-[calc(1in+1rem)] top-20 ${isFooterExpanded ? 'bottom-[268px]' : 'bottom-24'} z-20 w-[min(26rem,calc(100vw-1in-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl">
         {/* Header */}
         <div className="p-3 border-b border-cyan-500/20 flex items-center justify-between bg-slate-950/40">
-          <div className={`flex items-center space-x-2 ${!isOpen && 'hidden'}`}>
+          <div className="flex items-center space-x-2">
             <Layers className="w-4 h-4 text-cyan-400 animate-pulse" />
             <h2 className="font-orbitron text-xs font-bold tracking-wider text-slate-100 uppercase">
               The Apothecary Cabinet
@@ -497,15 +509,16 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
           </div>
 
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={onClose}
             className="p-1 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 transition-colors ml-auto"
-            title={isOpen ? 'Collapse Apothecary Cabinet' : 'Expand Apothecary Cabinet'}
+            title="Close Apothecary Cabinet"
+            aria-label="Close Apothecary Cabinet"
           >
-            {isOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4 text-cyan-400" />}
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {isOpen && (
+        {(
           <>
             {/* Search Bar */}
             <div className="p-3 pb-2 border-b border-slate-800/80">

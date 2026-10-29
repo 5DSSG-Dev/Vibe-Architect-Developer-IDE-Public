@@ -10,7 +10,9 @@ import { createOperationsRouter, type OperationsProvider } from './operations-ro
 import { SessionCapacityError, type AdminSession, type SessionStore } from './session-store.js';
 import { createEvidenceRouter } from './evidence-router.js';
 import { EvidenceService, InMemoryEvidenceStore, type EvidenceStore } from './evidence-store.js';
-import { createLuminaryReplyRouter, notConfiguredAskModel, type AskModel } from './luminary-reply-router.js';
+import { createGovernedAsk, createLuminaryReplyRouter, notConfiguredAskModel, type AskModel } from './luminary-reply-router.js';
+import { createLuminaryTaskRouter, isLoopback } from './luminary-task-router.js';
+import type { LuminaryExecutor } from './luminary-executor.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
 import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
 
@@ -55,6 +57,10 @@ export interface CreateGatewayOptions {
    * a not-configured gauge, so no reply leaves ungauged: it fails closed as a gauge_error Shortfall.
    */
   gauge?: Gauge;
+  /** Names the reply source in /api/luminary/status, e.g. 'rehearsal'. Absent = not configured. */
+  replySource?: string;
+  /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
+  executor?: LuminaryExecutor;
   vite?: ViteDevServer;
 }
 
@@ -89,7 +95,9 @@ export async function createGateway(options: CreateGatewayOptions) {
         scriptSrc: scriptSources,
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
+        // transparenttextures.com serves the Reliquary's carbon-fibre texture, part of the IDE's
+        // designed look; it was being blocked here.
+        imgSrc: ["'self'", 'data:', 'blob:', 'https://www.transparenttextures.com'],
         connectSrc: ["'self'", 'ws:', 'wss:'],
         workerSrc: ["'self'", 'blob:'],
         objectSrc: ["'none'"],
@@ -228,14 +236,27 @@ export async function createGateway(options: CreateGatewayOptions) {
   // fail-closed when no key is configured. The reply source defaults to an honest placeholder
   // that yields a named Shortfall until a real model is wired (M1.b). Every reply then passes
   // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
+  // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
+  // that take the same governed path as /ask.
+  const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
+  const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge } };
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),
     createIpRateLimiter({ windowMs: LUMINARY_RATE_WINDOW_MS, limit: LUMINARY_RATE_LIMIT }),
-    createLuminaryReplyRouter(options.askModel ?? notConfiguredAskModel, {
-      pipeline: { gauge: options.gauge ?? notConfiguredGauge },
-    }),
   );
+  app.get('/api/luminary/status', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({
+      replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
+      gauge: options.gauge ? 'configured' : 'not_configured',
+      codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
+    });
+  });
+  if (options.executor) {
+    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
+  }
+  app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));
 
   const vite = options.vite ?? (config.nodeEnv === 'development'
     ? await import('vite').then(({ createServer }) => createServer({ server: { middlewareMode: true }, appType: 'custom' }))

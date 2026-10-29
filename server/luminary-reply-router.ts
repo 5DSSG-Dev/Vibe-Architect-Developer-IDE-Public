@@ -12,11 +12,12 @@ import { Router, type Request, type Response } from 'express';
 import {
   governReply,
   type GovernanceOptions,
+  type GovernedReply,
   type Shortfall,
   type ShortfallCode,
 } from './luminary-governance.js';
 import { composeRevisionPrompt } from './luminary-pipeline/ids.js';
-import { runReplyPipeline, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
+import { runReplyPipeline, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
 
 /**
  * Produces a candidate reply for a prompt. Its result is untrusted: it is handed straight
@@ -71,6 +72,51 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   incoherent_after_ids: 502,
 };
 
+export type GovernedAskResult =
+  | { ok: true; reply: GovernedReply; lineage?: LineageEntry[] }
+  | { ok: false; shortfall: ReplyShortfall; lineage?: LineageEntry[] };
+
+/** The HTTP status for a Shortfall, shared with the coding-task route. */
+export function shortfallStatus(code: ReplyShortfallCode): number {
+  return SHORTFALL_STATUS[code];
+}
+
+/**
+ * One governed model turn: ask, then the structural gate and (when configured) the reply pipeline.
+ * Shared by /ask and the coding-task route, so every Luminary reply takes the same path.
+ */
+export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRouterOptions = {}) {
+  return async (prompt: string): Promise<GovernedAskResult> => {
+    let candidate: unknown;
+    try {
+      candidate = await askModel(prompt);
+    } catch (error) {
+      // An upstream failure never becomes a real-looking answer; it is a named Shortfall.
+      return {
+        ok: false,
+        shortfall: {
+          code: 'upstream_error',
+          message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
+          modelId: null,
+        },
+      };
+    }
+
+    if (options.pipeline) {
+      const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
+      const result = await runReplyPipeline(
+        candidate,
+        (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
+        pipeline,
+      );
+      return result.ok ? { ok: true, reply: result.reply, lineage: result.lineage } : { ok: false, shortfall: result.shortfall, lineage: result.lineage };
+    }
+
+    const governed = governReply(candidate, options.governance);
+    return governed.ok ? { ok: true, reply: governed.reply } : { ok: false, shortfall: governed.shortfall };
+  };
+}
+
 function readPrompt(body: unknown): string | null {
   if (typeof body !== 'object' || body === null || Array.isArray(body)) return null;
   const raw = (body as Record<string, unknown>).prompt;
@@ -88,6 +134,7 @@ export function createLuminaryReplyRouter(
   options: LuminaryReplyRouterOptions = {},
 ): Router {
   const router = Router();
+  const governedAsk = createGovernedAsk(askModel, options);
 
   router.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -101,42 +148,12 @@ export function createLuminaryReplyRouter(
       return;
     }
 
-    let candidate: unknown;
-    try {
-      candidate = await askModel(prompt);
-    } catch (error) {
-      // An upstream failure never becomes a real-looking answer; it is a named Shortfall.
-      const shortfall: ReplyShortfall = {
-        code: 'upstream_error',
-        message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
-        modelId: null,
-      };
-      res.status(SHORTFALL_STATUS.upstream_error).json({ error: 'luminary_shortfall', shortfall });
+    const result = await governedAsk(prompt);
+    if (!result.ok) {
+      res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...(result.lineage ? { lineage: result.lineage } : {}) });
       return;
     }
-
-    if (options.pipeline) {
-      const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
-      const result = await runReplyPipeline(
-        candidate,
-        (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
-        pipeline,
-      );
-      if (!result.ok) {
-        res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, lineage: result.lineage });
-        return;
-      }
-      res.status(200).json({ reply: result.reply, lineage: result.lineage });
-      return;
-    }
-
-    const governed = governReply(candidate, options.governance);
-    if (!governed.ok) {
-      res.status(SHORTFALL_STATUS[governed.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: governed.shortfall });
-      return;
-    }
-
-    res.status(200).json({ reply: governed.reply });
+    res.status(200).json({ reply: result.reply, ...(result.lineage ? { lineage: result.lineage } : {}) });
   });
 
   return router;

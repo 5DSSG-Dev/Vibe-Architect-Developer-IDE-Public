@@ -81,6 +81,15 @@ The Architect sets and confirms the gate.
 - Open for the Architect: confirm the submission gate (M1+M5+M6) and the module list before
   any CyberPeer adopts.
 
+### 2026-10-28 | claude | M1.c — Luminary presence and roles BUILT (P19, awaiting Architect verification)
+- The Architect approved P19 with two revisions: the Luminary produces code like Verus and Lumin (own
+  working branch, IDE checks, Architect accepts the merge) and an Architect-set explanation level
+  (Plain / Guided / Technical). Only authorities: the Architect's approval and the append-only ledger.
+- Built: rehearsal stand-in reply source (labelled, never a default), conversation panel, context chips,
+  Offering cards -> existing Work Request, coding tasks via the fenced executor (LUMINARY_EXECUTOR=on,
+  loopback only), explanation level. Tests 132/132 gateway, 302/302 app; build clean; browser run done.
+- Open: Lumin's code review; the Architect's verification; a run on the Architect's PC with the real gauge.
+
 ### 2026-10-27 | claude | M1.b-2 — Meta model smoke test approved and built (P20)
 - The Architect approved a small smoke test of the main Meta model: at most 2 real replies, a hard stop at $0.25,
   every reply read by the embedded gauge. Built `server/luminary-meta.ts` (Muse Spark via Meta's Model API, spend

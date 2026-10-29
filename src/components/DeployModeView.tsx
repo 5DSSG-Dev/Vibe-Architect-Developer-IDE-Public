@@ -38,7 +38,7 @@ export const DeployModeView: React.FC<DeployModeViewProps> = ({ manifest }) => {
   };
 
   return (
-    <div className="absolute inset-0 z-10 pt-20 pb-20 px-6 overflow-y-auto flex flex-col items-center legible-glass">
+    <div className="absolute inset-0 z-10 pt-20 pb-36 px-6 overflow-y-auto flex flex-col items-center legible-glass">
       <div className="w-full max-w-7xl space-y-6">
         {/* Banner */}
         <div className="panel-glass rounded-2xl p-4 border border-purple-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
