@@ -22,3 +22,4 @@ CLAIM   | 2026-10-29T08:05:36Z | codex | src/App.tsx, src/components/HandshakeMo
 
 
 CLAIM   | 2026-10-29T08:07:33Z | codex | src/contracts/connectionEvents.ts, src/engine/connectionRuntime.ts, docs/CORE_CONNECTION_STANDARD.md | STP-0003 P13 alternative seam | codex/stp-0003-umbilical-contracts | on commit
+CLAIM   | 2026-10-29T09:14:41Z | codex | .aegis/claims.md, .aegis/stp/0003-pod-contracts-and-umbilical-standards.md, .aegis/lanes/codex.md, .aegis/lanes/verus.md, ROOT_TOTEM.md, src/TOTEM.md, docs/TOTEM.md | STP-0003 M3 merged-contract closeout and Verus handoff | codex/unblock-verus-m3-notes | on commit
