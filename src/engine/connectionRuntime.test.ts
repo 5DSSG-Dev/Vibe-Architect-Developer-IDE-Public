@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { getCapabilityProviders } from './capabilityRegistry';
+import { registerCustomOrbManifest } from '../contracts/orbManifest';
 import {
   computeContractChecksum,
   executeMeshHandshake,
@@ -17,7 +18,7 @@ import { ApothecaryItem, RelationContract, SocketBinding } from './relationEngin
 import { getAvailableBudget } from './resourceAllocator';
 
 function item(id: string, overrides: Partial<ApothecaryItem> = {}): ApothecaryItem {
-  return {
+  const result: ApothecaryItem = {
     id,
     name: id,
     category: 'Orbs',
@@ -30,6 +31,23 @@ function item(id: string, overrides: Partial<ApothecaryItem> = {}): ApothecaryIt
     requirements: [],
     ...overrides
   };
+
+  if (result.category === 'Orbs' && !Object.prototype.hasOwnProperty.call(overrides, 'umbilicalContractRef')) {
+    return {
+      ...result,
+      umbilicalContractRef: registerCustomOrbManifest({
+        id: result.id,
+        name: result.name,
+        version: result.version,
+        memoryReq: result.memoryReq,
+        threadsReq: result.threadsReq,
+        capabilities: result.capabilities,
+        requirements: result.requirements
+      }, 'Interface')
+    };
+  }
+
+  return result;
 }
 
 function socket(id = 'socket-1'): SocketBinding {

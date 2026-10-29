@@ -72,3 +72,10 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-10-29 | M3 merged connection-event handoff
 - PR #15's event-history work is on main at fe52077. Verus can consume the read-only connection event API and restored evidence history; suspended has no runtime producer. See STP-0003 N9 and Verus lane. M3 acceptance remains open.
+
+## 2026-10-29 | CORE contract regression fixtures repaired
+- Umbilical test Orbs now present a registered test contract reference, allowing runtime/evidence tests to reach their intended assertions instead of stopping at handshake step 3. Knowledge Pack equality now normalizes CRLF/LF, preserving content-drift detection across Windows checkouts.
+- Targeted runtime/evidence/Knowledge Pack tests pass 20/20; `npm run test:app` passes 341/341. No production code changed.
+
+## 2026-10-29 | Verification follow-up correction
+- Fresh whole-app run reports 340/341: the unrelated identity deterministic-rebuild test fails when run with the app suite; `src/identity/identity.test.ts` passes alone (37/37). Targeted M3 runtime/evidence/Knowledge Pack tests remain 20/20. Production build and STP-0003 validation pass.
