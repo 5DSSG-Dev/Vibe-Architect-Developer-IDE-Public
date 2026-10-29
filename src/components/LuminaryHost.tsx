@@ -3,6 +3,7 @@ import { ClipboardPaste, Code2, KeyRound, Minimize2, Paperclip, Send, Square, X 
 import { composePrompt, EXPLANATION_LABELS, EXPLANATION_LEVELS, type ExplanationLevel } from '../luminary/blocks';
 import {
   describeShortfall,
+  describeSpend,
   luminaryApi,
   readDemoKey,
   readLevel,
@@ -232,6 +233,8 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
       }
     } finally {
       abortRef.current = null;
+      // Keep the running total current after every request.
+      void luminaryApi.status(demoKey).then((next) => { if (next.ok) setStatus(next.value); });
     }
   };
 
@@ -292,6 +295,10 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                   {modelLabel(status)}
                   {status?.replySource === 'rehearsal' && <span className="ml-1 px-1 rounded bg-amber-500/20 text-amber-200">Rehearsal</span>}
                   {status && <span> · gauge {status.gauge === 'configured' ? 'on' : 'off'}</span>}
+                  {status?.spend && (() => {
+                    const spend = describeSpend(status.spend);
+                    return <span className={spend.warn ? 'text-amber-300' : undefined} aria-label="Spending so far"> · {spend.text}</span>;
+                  })()}
                 </p>
               </div>
             </div>

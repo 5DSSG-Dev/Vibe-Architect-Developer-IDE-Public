@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SpendLedger, SpendCapError, costUsd, createMetaAskModel, parseMetaModelEnv } from './luminary-meta.js';
+import { DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS, SpendLedger, SpendCapError, costUsd, createMetaAskModel, parseMetaLiveEnv, parseMetaModelEnv } from './luminary-meta.js';
 
 // Every test uses a fake fetch. Meta's API is never reached.
 
@@ -53,7 +53,7 @@ test('the spend cap refuses a call whose worst case would exceed it, before any 
   const meta = fakeMeta(() => ok('x'));
   // 2,000 output tokens alone are $0.0085 at the output rate, above a $0.005 cap.
   const ask = createMetaAskModel({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 0.005, 10), fetch: meta.fetch });
-  await assert.rejects(ask('hi'), /spend cap would be exceeded/);
+  await assert.rejects(ask('hi'), /spending ceiling would be passed/);
   assert.equal(meta.calls.length, 0);
 });
 
@@ -118,4 +118,33 @@ test('env: no key means no Meta model; defaults are a $0.25 cap and 2 calls', ()
   assert.equal(parsed.ledger.capUsd, 0.25);
   assert.equal(parsed.ledger.maxCalls, 2);
   assert.throws(() => parseMetaModelEnv({ LUMINARY_META_API_KEY: 'k', LUMINARY_META_MAX_CALLS: '0' }), /LUMINARY_META_MAX_CALLS/);
+});
+
+test('live settings need the key and the Architect\'s ceiling, lift the call cap and allow 8,000 output tokens', () => {
+  assert.throws(() => parseMetaLiveEnv({}), /LUMINARY_META_API_KEY/);
+  assert.throws(() => parseMetaLiveEnv({ LUMINARY_META_API_KEY: 'k' }), /LUMINARY_META_CEILING_USD/);
+  assert.throws(() => parseMetaLiveEnv({ LUMINARY_META_API_KEY: 'k', LUMINARY_META_CEILING_USD: '0' }), /CEILING/);
+  const live = parseMetaLiveEnv({ LUMINARY_META_API_KEY: 'k', LUMINARY_META_CEILING_USD: '50', LUMINARY_META_LEDGER_PATH: ledgerPath() });
+  assert.equal(live.ledger.capUsd, 50);
+  assert.equal(live.ledger.maxCalls, Number.POSITIVE_INFINITY);
+  assert.equal(live.maxOutputTokens, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS);
+});
+
+test('the ceiling counts earlier calls in the same ledger, reports a running total, and stops once reached', async () => {
+  const path = ledgerPath();
+  // Two earlier smoke-test calls, as on the Architect's PC.
+  writeFileSync(path, JSON.stringify({ entries: [
+    { at: 't', model: 'muse-spark-1.3', reservedUsd: 0.02, actualUsd: 0.0096, inputTokens: 2606, outputTokens: 1485, status: 'settled' },
+    { at: 't', model: 'muse-spark-1.3', reservedUsd: 0.02, actualUsd: 0.013, inputTokens: 1, outputTokens: 2286, status: 'settled' },
+  ] }));
+  const ledger = new SpendLedger(path, 0.05, Number.POSITIVE_INFINITY);
+  assert.deepEqual(ledger.summary(), { spentUsd: 0.0226, ceilingUsd: 0.05, calls: 2 });
+  const meta = fakeMeta(() => ok('x', { prompt_tokens: 1_000, completion_tokens: 4_000 }));
+  const ask = createMetaAskModel({ apiKey: 'k', ledger, maxOutputTokens: 4_000, fetch: meta.fetch });
+  await ask('three'); // $0.01825 actual, so $0.04085 spent; the next worst case (about $0.017) would pass $0.05
+  assert.equal(ledger.summary().calls, 3);
+  await assert.rejects(ask('four'), /spending ceiling would be passed/);
+  assert.equal(meta.calls.length, 1, 'a call that could pass the ceiling is never sent');
+  writeFileSync(path, JSON.stringify({ entries: [{ at: 't', model: 'muse-spark-1.3', reservedUsd: 0.05, actualUsd: 0.05, inputTokens: 1, outputTokens: 1, status: 'settled' }] }));
+  await assert.rejects(ask('five'), /spending ceiling is reached/);
 });

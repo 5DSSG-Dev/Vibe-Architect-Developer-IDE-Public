@@ -1801,3 +1801,24 @@ Status: Presented
 Channel: cloud
 
 P21 → Presented.
+
+### 2026-10-29T07:42:16.000Z | claude | status
+Chain-Prev: e2eec1c7be33f7d035267ae3c94478c30052b58d4e026c0133891dc71f94e4b8
+Chain-Hash: d36e3f9048afbea0c77e9d5d9c041a977f423ead3124a46bcfeafff74172119d
+Stage: Proposal
+Kind: status
+Item: P21
+Status: Approved
+Channel: cloud
+
+Approved P21 on the thread's decision card "Approve connecting the Luminary to Meta, and with which spending ceiling?", option chosen 2026-10-29T07:42:16Z: "Approve, $50 ceiling". The ceiling is $50 (LUMINARY_META_CEILING_USD=50). Recorded from the cloud thread by claude.
+
+### 2026-10-29T08:05:00.000Z | claude | note N35
+Chain-Prev: d36e3f9048afbea0c77e9d5d9c041a977f423ead3124a46bcfeafff74172119d
+Chain-Hash: 21c9998596e592bb6360e5723d52c86f97bb67ec74dd52ae4b3df72924e8b84f
+Stage: Execution
+Kind: note
+Evidence: server/luminary-meta.ts (parseMetaLiveEnv, SpendLedger.summary); server/config.ts; server/index.ts; server/app.ts (status spend); server/luminary-reply-router.ts (spend_ceiling); src/luminary/client.ts; src/components/LuminaryHost.tsx; docs/LUMINARY_SETTINGS.md; server/luminary-meta.test.ts; server/luminary-p19.test.ts
+Channel: cloud
+
+P21 built. LUMINARY_REPLY_SOURCE=meta makes the Meta model the reply source for /ask and coding tasks; the gateway refuses to start without LUMINARY_META_API_KEY and LUMINARY_META_CEILING_USD. The smoke test's 2-call cap is lifted for this source; the money ceiling is the stop, counted from the same ledger (LUMINARY_META_LEDGER_PATH, so the smoke calls count). Output allowance 8,000 tokens. A ledger refusal on the first call or on an IDS revision is returned as a named spend_ceiling Shortfall (HTTP 503) in plain words; nothing else changes. GET /api/luminary/status adds spend {spentUsd, ceilingUsd, calls}, or {unreadable: true}; the panel header shows 'Meta · muse-spark-1.3 · gauge on · $x of $y used', amber from 80%, refreshed after every request. Known limit: each call reserves its worst case from an input estimate of 2 characters per token plus the full output allowance; if Meta ever reports more input tokens than that estimate, the last call before the ceiling can pass it by that difference (recorded as reported, never hidden), and the next call is refused. Rehearsal stays the default for tests; automated tests use a fake Meta only. Tests: gateway 142/142, app 303/303; typecheck and build clean. Browser run in the cloud with a fake Meta and a $0.06 test ceiling: the running total rose per reply, turned amber at 80%, and once reached each question showed the ceiling Shortfall without calling the model. Next, with the Architect's go: one live question from the IDE on the Architect's PC.

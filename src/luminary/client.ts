@@ -50,6 +50,15 @@ export interface LuminaryStatus {
   replySource: string;
   gauge: 'configured' | 'not_configured';
   codingTasks: 'on' | 'off' | 'local_only';
+  /** The running total for a paid reply source (P21); absent for the stand-in. */
+  spend?: { spentUsd: number; ceilingUsd: number; calls: number } | { unreadable: true };
+}
+
+/** The running total in plain words, and whether it has reached the 80% warning. */
+export function describeSpend(spend: NonNullable<LuminaryStatus['spend']>): { text: string; warn: boolean } {
+  if ('unreadable' in spend) return { text: 'spend record unreadable, so no calls are made', warn: true };
+  const { spentUsd, ceilingUsd } = spend;
+  return { text: `$${spentUsd.toFixed(2)} of $${ceilingUsd.toFixed(2)} used`, warn: spentUsd >= ceilingUsd * 0.8 };
 }
 
 /** Every call resolves to one of these; nothing throws past the client except an abort. */
@@ -135,6 +144,7 @@ export const luminaryApi = {
 export function describeShortfall(shortfall: Shortfall): string {
   switch (shortfall.code) {
     case 'upstream_error': return `No model answered. ${shortfall.message}`;
+    case 'spend_ceiling': return shortfall.message;
     case 'gauge_error': return 'The reply was held back because the gauge that checks every reply is not running.';
     case 'incoherent_after_ids': return 'The reply was held back: after two tries it still did not read as coherent.';
     case 'empty_reply': return 'The model sent an empty reply, so nothing is shown.';
