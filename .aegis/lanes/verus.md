@@ -47,3 +47,8 @@ Branch `stellar-extraction/public-prep` (off main b72e568). Removed the unfinish
 - Created totems/HACKATHON_TOTEM.md: single canonical module manifest (M1-M6) for pull-adoption. Adopt = CLAIM line on .aegis/claims.md naming the module id; per-section continuity via aegis-stp STP; release via RELEASE line + Totem log append.
 - This is the sole genesis; the other-account instance adopts from this file, not a parallel one. No module adopted, no claims line, no commit/push/provider action this turn. Totem illuminates only.
 - Submission gate proposed: M1 (Luminary<->Meta) + M5 (SIMULATE/DEPLOY demo) + M6 (submission artifacts), with M2 as M1 dependency. Awaiting Architect confirmation of gate + module list.
+
+## 2026-10-29 | codex | M3 connection-event handoff (for Verus)
+- PR #12 merged at 34a7899 and PR #13 at d68379d; PR #15 merged at fe52077. The old Codex claims on the contract/event paths are released in .aegis/claims.md. No Codex ownership claim remains on those product paths.
+- You can proceed with the Luminary consumer/presentation against the existing read-only subscribeConnectionEvents / getConnectionEvents API in src/contracts/connectionEvents.ts; sanitized event history is persisted in the existing hash-chained evidence archive and restored on startup.
+- Remaining shared seam: suspended is declared but has no runtime producer. Luminary event consumption/presentation and application test coverage remain open. This is a handoff, not a claim of M3 acceptance or Architect approval.

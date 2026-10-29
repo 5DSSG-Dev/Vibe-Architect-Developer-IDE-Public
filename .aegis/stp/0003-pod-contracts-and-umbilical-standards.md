@@ -1050,3 +1050,13 @@ Evidence: src/engine/evidenceArchive.ts; commit:d68379d03da648e54bd9fa2784989041
 Channel: cli
 
 PR #13 is confirmed merged (merge commit d68379d03da648e54bd9fa27849890411e7d0d31); the next M3 branch starts from origin/main c43e545, which includes subsequent PR #14. Supplement to N7: archive writes also use the browser Web Locks API when available to serialize across tabs; the in-process queue remains the fallback. The archive capacity remains 5,000 total records.
+
+### 2026-10-29T09:15:24.562Z | codex | note N9
+Chain-Prev: 19c2688999b355eb352d2d420987b5d6915bac3c3e908992b2f98cc703ed16c3
+Chain-Hash: 64c1e44de9a6eec7486613e6fc1e8807bba38b240b013f8a62795386a1e187d6
+Stage: Execution
+Kind: note
+Evidence: commit:34a7899bc9108d6f48e1d8ac4c91a0867f5b80e8; commit:d68379d03da648e54bd9fa27849890411e7d0d31; commit:fe52077c50ea8632958fe13c384ce614e41c17dc; src/contracts/connectionEvents.ts; src/App.tsx; src/engine/connectionRuntime.ts
+Channel: cli
+
+M3 handoff after merges: PR #12 (34a7899) and PR #13 (d68379d) delivered the CORE Orb-presented contract resolution, profile/resource negotiation, validated alternatives, and custom Orb library registration; PR #15 merged at fe52077 and its event-history head 68eeb74 is an ancestor of origin/main. The earlier Codex claims on the Umbilical and event-history paths are released below because their PRs are merged. Verus/Luminary may now consume the existing read-only API in src/contracts/connectionEvents.ts (subscribeConnectionEvents/getConnectionEvents) and persisted sanitized event history in the hash-chained evidence archive without waiting on Codex ownership. Current source declares suspended as an event kind but has no runtime producer; Luminary presentation/consumer and app-level test coverage remain open. This is an ownership/status handoff, not M3 acceptance or new Architect approval.

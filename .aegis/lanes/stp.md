@@ -419,3 +419,7 @@ STP-Entry-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
 - Production build and STP chain validation pass; application tests not run.
 ## 2026-10-29 | STP-0003 connection-event persistence update
 - PR #13 merged at d68379d. Connection events now use hash-chained evidence and restore from verified archive; write serialization uses Web Locks where available plus a local queue. Global archive remains capped at 5,000 records. Build and STP validation pass; app tests not run.
+
+## 2026-10-29 | codex | M3 ownership closeout / Verus handoff
+- STP-0003 N9 records that PR #12, #13 and #15 are merged and releases the corresponding stale Codex path claims. Luminary can build its consumer on the merged read-only ConnectionEvent feed and restored archive history.
+- suspended remains declared without a runtime producer; Luminary presentation and app-level tests remain open. M3 is not marked accepted.
