@@ -1906,3 +1906,13 @@ Evidence: P22; N37; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (1
 Channel: cloud
 
 P22 live check, approved by the Architect on the decision card 2026-10-29T08:25:20Z ("Yes, both"). From a separate worktree at 9923cac on the Architect's PC, with the gauge up and status showing 'Muse Spark Open · Baseten', $0 of $75, 0 calls: exactly one POST /ask ("In two or three plain sentences, what is an Orb in the Vibe Architect IDE?"). Baseten refused it: HTTP 403 in 0.9 s, no reply, so the gauge did not run; the gateway returned shortfall upstream_error. No retry. The model id and address match Baseten's published Muse Spark Open page, so the refusal is about the key or the account (not active yet, credit not attached, or the model not enabled for it); a free model-list check is under way. The Architect's main .env was not changed: that folder's code (01cc2eb) has no Baseten source, so LUMINARY_REPLY_SOURCE=baseten would stop the gateway starting. Two fixes found by this run: (1) the refused call still counted its worst-case reservation ($0.0412) against the ceiling; a request the provider refuses with HTTP 4xx now records actual cost 0, while network failures and 5xx keep the worst case, since those may have been billed; (2) errors now name the provider (Baseten, not 'Meta model') and include the provider's short reason, with the key redacted if quoted back. The one earlier refused entry keeps its $0.0412 charge on the ledger as recorded. Tests: gateway 144/144, app 303/303; typecheck clean.
+
+### 2026-10-29T08:45:00.000Z | claude | note N39
+Chain-Prev: 07ea86026447ecd7ee1cebae10bc336a1508a2f4640bbe5bfaa6e611de370e68
+Chain-Hash: e57cbf0f05d37ed8d5e7c3fe2d4283da2a2b399635040eae6bb8e3ef4b9f5b3e
+Stage: Execution
+Kind: note
+Evidence: N38; Architect input 2026-10-29T08:38:14Z (Baseten hackathon email); free GET https://inference.baseten.co/v1/models with the Architect's key (HTTP 200, lists meta-models/muse-spark-open and meta-models/muse-spark-open-1026); server/luminary-meta.ts; docs/LUMINARY_SETTINGS.md
+Channel: cloud
+
+Cause of the N38 refusal found. The Architect shared the Baseten hackathon email: "Use exactly meta-models/muse-spark-open-1026. Your key only works with this hackathon model." P22 had used meta-models/muse-spark-open. A free model-list call (no model run, no cost) confirmed the key is accepted and both names are listed. BASETEN_MODEL now defaults to meta-models/muse-spark-open-1026, priced at the same list rate ($1.25 / $4.25 per million tokens) so its spend stays capped; LUMINARY_BASETEN_MODEL still overrides it. Tests: gateway 144/144, app 303/303; typecheck clean. Next, with the Architect's go: the one live question again.

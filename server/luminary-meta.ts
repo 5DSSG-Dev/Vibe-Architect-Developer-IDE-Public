@@ -38,10 +38,12 @@ export const META_PRICING_USD_PER_MILLION: Readonly<Record<string, { input: numb
   'muse-spark-1.1': { input: 1.25, output: 4.25 },
   // Muse Spark Open, the open-weights model, served by Baseten (P22) at its list rate.
   'meta-models/muse-spark-open': { input: 1.25, output: 4.25 },
+  // The hackathon's dated release; the event's Baseten keys work only with this one. Priced the same.
+  'meta-models/muse-spark-open-1026': { input: 1.25, output: 4.25 },
 };
 
 export const BASETEN_BASE_URL = 'https://inference.baseten.co/v1';
-export const BASETEN_MODEL = 'meta-models/muse-spark-open';
+export const BASETEN_MODEL = 'meta-models/muse-spark-open-1026';
 export const DEFAULT_BASETEN_LEDGER_PATH = '.luminary/baseten-spend.json';
 
 /** Characters per token assumed for the up-front input estimate. Real text runs nearer 4; 2 over-charges. */

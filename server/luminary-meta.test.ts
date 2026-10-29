@@ -183,7 +183,7 @@ test('Baseten is its own source: its own key, ceiling and ledger, Muse Spark Ope
   const ask = createMetaAskModel({ ...live, fetch: baseten.fetch });
   assert.deepEqual(await ask('Hi'), { modelId: BASETEN_MODEL, content: 'Hello from Muse Spark Open.' });
   assert.equal(baseten.calls[0].url, 'https://inference.baseten.co/v1/chat/completions');
-  assert.equal(baseten.calls[0].body.model, 'meta-models/muse-spark-open');
+  assert.equal(baseten.calls[0].body.model, 'meta-models/muse-spark-open-1026');
   assert.equal((baseten.calls[0].init.headers as Record<string, string>).authorization, 'Bearer baseten-key');
   assert.equal(live.ledger.summary().calls, 1);
   assert.ok(Math.abs(live.ledger.summary().spentUsd - (100 * 1.25 + 50 * 4.25) / 1_000_000) < 1e-12);
