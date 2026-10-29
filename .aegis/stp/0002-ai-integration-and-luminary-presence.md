@@ -2074,3 +2074,13 @@ Evidence: P24; N44; Architect screenshots 2026-10-29T13:43Z and 13:44Z; src/engi
 Channel: cloud
 
 Architect try-out on their PC (worktree vibe-ide-p24-try, localhost:3003). Docking a Relational Database Engine was refused at handshake step 5 (missing thread_pool), and the Luminary showed 'its handshake did not complete. It asked for 1024 MB and 4 threads; 4096 MB and 16 threads were free.' That line was vague and contradicted the refusal. Cause, older than P24: the CORE keeps two resource views. The step-5 capability check (coreCapabilities.ts) uses the CORE manifest's 8 threads, all used by the two Orbs docked at start. The allocator (resourceAllocator.ts) keeps its own default 4096 MB / 16 threads, never set to the CORE's budget and never told about the starting Orbs. Fix in P24's scope: the runtime now gives a step-5 refusal the reason code CAPABILITY_UNSATISFIED and a structured missingCapabilities list (claimed by verus in .aegis/claims.md). The Luminary names what is missing and why the CORE may lack it (thread_pool: offered only while a thread is free), and leaves out the allocator's 'free' figures for this kind of refusal. Root fix (one resource view) is referred to Codex. Tests: runtime test for the structured refusal, moments test for the sentence; app 316/316, typecheck and build clean.
+
+### 2026-10-29T13:58:24.000Z | claude | note N46
+Chain-Prev: ef0670575cc9ae5cd50b35a7fb2b0ea1c75ae89fd791f0d25992d660a3992fbb
+Chain-Hash: fe5efa0353edcb60f6cc66d60ab7019492f7b96d6dc1b4541afc1d4434592a55
+Stage: Proposal
+Kind: note
+Evidence: N45; decision card 'Should a third Orb fit in the CORE without cutting one off?'; src/engine/coreCapabilities.ts; src/engine/resourceAllocator.ts
+Channel: cloud
+
+Architect decision, 2026-10-29T13:58:24Z, option chosen: 'Give the CORE 16 threads' (not 'count only what's in use', not 'keep it full'). The CORE's thread budget becomes 16, so the two Orbs docked at start (4 threads each) leave room for two more such Orbs, and the CORE's two resource views agree. It is to be settled in one place, as part of Codex's work to merge the two views (N45), which is in the STP-0003 runtime area. Referred to Codex on PR #19. Recorded from the cloud thread by claude.
