@@ -423,3 +423,12 @@ STP-Entry-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
 ## 2026-10-29 | codex | M3 ownership closeout / Verus handoff
 - STP-0003 N9 records that PR #12, #13 and #15 are merged and releases the corresponding stale Codex path claims. Luminary can build its consumer on the merged read-only ConnectionEvent feed and restored archive history.
 - suspended remains declared without a runtime producer; Luminary presentation and app-level tests remain open. M3 is not marked accepted.
+
+### 2026-10-29T14:07:20.030Z | stp | message
+Chain-Prev: 700841208aac3b19ebf373a6b9e5dc7295c8870b7a18c1d4a737a85deed6f28d
+Chain-Hash: d311f1e2be77fbce52d1ffcc823def0628f7d28a87202383a808b7d9c4bca8ff
+STP pointer: STP-0005 "Apothecary Element Coded by the Luminary (Demo Centrepiece)"
+Event: created
+Stage: Situation
+File: .aegis/stp/0005-apothecary-element-coded-by-the-luminary-demo-ce.md
+STP-Entry-Hash: 391c436116c8650f52300195b0e06bea95319caca52b92362a7229839ad78f2c
