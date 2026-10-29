@@ -116,3 +116,7 @@
 - npm run build and STP-0003 validation pass; application tests not run. P13 still lacks a suspended-event producer and Verus's Luminary consumer.
 ## 2026-10-29 | PR #13 merge and durable connection history
 - Verified PR #13 merged at d68379d; started continuation from origin/main c43e545 after PR #14. Added sanitized ConnectionEvent evidence records, unique ids, startup restoration, transition-only heartbeat emission, serialized append operations with Web Locks where available, and visible archive-write shortfalls. Build and STP validation pass; tests not run.
+
+## 2026-10-29 | codex | M3 claims released and Luminary handoff
+- Confirmed PR #12/#13/#15 merged (34a7899, d68379d, fe52077). Appended RELEASE rows for stale M3 claims; Verus may work against the merged contract/event API. Shared claim closeout and handoff details are in STP-0003 N9 and the Verus lane.
+- Current verified seam: read-only event subscription/history is present; suspended has no runtime producer. Luminary consumer and application tests remain open. No M3 acceptance is inferred.

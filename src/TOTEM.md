@@ -69,3 +69,6 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Suspended-event production and Luminary consumer coordination remain open. Build and STP validation pass; tests not run.
 ## 2026-10-29 | codex | Connection-event archive extension
 - PR #13 custom Orb contract work merged as d68379d; continuation branch starts from origin/main c43e545. Connection events append to the hash-chained evidence archive and restore to the read-only ledger after verification. Writes serialize through the local queue and Web Locks when available; archive capacity remains 5,000.
+
+## 2026-10-29 | M3 merged connection-event handoff
+- PR #15's event-history work is on main at fe52077. Verus can consume the read-only connection event API and restored evidence history; suspended has no runtime producer. See STP-0003 N9 and Verus lane. M3 acceptance remains open.

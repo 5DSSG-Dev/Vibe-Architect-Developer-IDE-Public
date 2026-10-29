@@ -54,3 +54,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 - CORE_CONNECTION_STANDARD.md now describes Orb-presents-first reference resolution from the CORE's own library, profile versioning, provisional relative bandwidth credits, memory minima, atomic resource reservation and the sanitized read-only lifecycle event boundary.
 - Implementation progress and open integration/asset/test issues are recorded in STP-0003 N2/N3. This is not a claim of full M3 acceptance.
 - Resource-refusal alternatives are limited to Orb-declared profiles accepted by the Port and feasible against current capacity; an explicit retry is revalidated by CORE. N4 records closure; Luminary presentation, suspension production and durable event history remain open.
+
+## 2026-10-29 | M3 to Luminary coordination
+- Connection contract/event implementation PRs #12, #13 and #15 are merged. Verus lane now records that Luminary consumption can proceed against the read-only event feed; suspended production and app-level test coverage remain open. See STP-0003 N9. No M3 acceptance inferred.

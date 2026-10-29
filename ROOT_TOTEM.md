@@ -121,3 +121,6 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - Build and STP validation pass; tests not run. Suspended-event production and Luminary consumer coordination remain open.
 ## 2026-10-29 | codex | PR #13 merged and M3 event-history continuation
 - PR #13 merged as d68379d. This continuation is based on origin/main c43e545, including the subsequent PR #14 merge. Connection-event evidence now uses the existing append-only hash chain, serializes writes in-process and via Web Locks where available, and rehydrates the read-only event ledger. Archive cap remains 5,000 total records.
+
+## 2026-10-29 | M3 contract ownership handoff
+- PR #12, #13 and #15 are merged. Codex appended RELEASE rows for the completed M3 claims and left a Verus lane handoff for Luminary event consumption. STP-0003 N9 records merged state and the remaining suspended-event producer, Luminary presentation and app-test gaps; this does not mark M3 accepted.

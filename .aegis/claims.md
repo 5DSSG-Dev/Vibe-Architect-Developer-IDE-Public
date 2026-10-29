@@ -22,3 +22,10 @@ CLAIM   | 2026-10-29T08:05:36Z | codex | src/App.tsx, src/components/HandshakeMo
 
 
 CLAIM   | 2026-10-29T08:07:33Z | codex | src/contracts/connectionEvents.ts, src/engine/connectionRuntime.ts, docs/CORE_CONNECTION_STANDARD.md | STP-0003 P13 alternative seam | codex/stp-0003-umbilical-contracts | on commit
+CLAIM   | 2026-10-29T09:14:41Z | codex | .aegis/claims.md, .aegis/stp/0003-pod-contracts-and-umbilical-standards.md, .aegis/lanes/codex.md, .aegis/lanes/verus.md, ROOT_TOTEM.md, src/TOTEM.md, docs/TOTEM.md | STP-0003 M3 merged-contract closeout and Verus handoff | codex/unblock-verus-m3-notes | on commit
+CLAIM   | 2026-10-29T09:14:57Z | codex | .aegis/lanes/stp.md | STP-0003 M3 merged-contract closeout pointer | codex/unblock-verus-m3-notes | on commit
+RELEASE | 2026-10-29T09:15:24Z | codex | src/contracts/**, src/engine/relationEngine.ts, src/engine/connectionRuntime.ts, src/engine/resourceAllocator.ts, docs/CORE_CONNECTION_STANDARD.md (see CLAIM above) | STP-0003 P1-P14 | merged PR #12 at 34a7899bc9108d6f48e1d8ac4c91a0867f5b80e8
+RELEASE | 2026-10-29T09:15:24Z | codex | src/App.tsx, src/components/HandshakeModal.tsx, src/components/ThreeCanvas.tsx, src/utils/splineBuilder.ts, src/engine/coreCapabilities.ts, src/admin/domain/contracts.ts, src/three/contracts.ts, src/contracts/** (see CLAIM above) | STP-0003 P1-P14 | merged PR #12 at 34a7899bc9108d6f48e1d8ac4c91a0867f5b80e8
+RELEASE | 2026-10-29T09:15:24Z | codex | src/contracts/connectionEvents.ts, src/engine/connectionRuntime.ts, docs/CORE_CONNECTION_STANDARD.md (see CLAIM above) | STP-0003 P13 alternative seam | merged PR #12 at 34a7899bc9108d6f48e1d8ac4c91a0867f5b80e8
+RELEASE | 2026-10-29T09:15:24Z | codex | .aegis/claims.md, .aegis/stp/0003-pod-contracts-and-umbilical-standards.md, .aegis/lanes/codex.md, .aegis/lanes/verus.md, ROOT_TOTEM.md, src/TOTEM.md, docs/TOTEM.md | STP-0003 M3 merged-contract closeout and Verus handoff | committed in this branch; handoff posted
+RELEASE | 2026-10-29T09:15:24Z | codex | .aegis/lanes/stp.md | STP-0003 M3 merged-contract closeout pointer | committed in this branch
