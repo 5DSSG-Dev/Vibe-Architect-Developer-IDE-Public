@@ -209,3 +209,13 @@ Closes: G3
 Channel: cli
 
 P3 Rehearsal and fallback. Add a stand-in reply for one fixed demo Element (for example a small Rate Limiter or Greeter in TypeScript) so the whole flow runs without a model call, keep the live call behind the existing gauge and its $75 ceiling, and record a clean take as the fallback. Docking the accepted Element relies on the 16-thread CORE decision (STP-0002 N46) reaching main.
+
+### 2026-10-29T14:09:43.727Z | claude | note N2
+Chain-Prev: 93d7d61cb7fa61aa7bb062c95df5a79728c2a0e888b2a5a38a7fd9cf84e51d49
+Chain-Hash: 1e7e1e9cd9245c358d55dc9d885617f671070b520c4892d2d871767ae52be263
+Stage: Proposal
+Kind: note
+Evidence: commit:b176837; totem:.aegis/stp/0002-ai-integration-and-luminary-presence.md
+Channel: cli
+
+Reconciliation, append-only (nothing above is rewritten). (1) The Architect directed at 2026-10-29T14:06:19Z that this STP be placed now, with its Proposals to be determined later. (2) P1 (Ask the Luminary from the Element editor) and P2 (diff review, Accept/Decline, record) are delivered by STP-0002 P25, which the Architect approved at 2026-10-29T14:08:10Z and which is being built on PR #19 (branch claude/project-thread-zapc7o). P1 and P2 here are not separate work. (3) P3 (rehearsal stand-in, fixed demo Element, fallback take) stays open here for the Architect to decide. (4) STP-0005 is the home for the demo-segment plan. (5) Numbering collision: a Codex STP-0005, 'Portal Customs Boundary and Return Inspection' (introduced in commit b176837), exists on the branches codex/stp-0003-customs-tumbler-review, codex/stp-0003-p1-element-schema, codex/stp-0003-review-followups and codex/stp-0004-blueprint-closeout. It is not on main. Renumbering is left to the Architect and the peers.
