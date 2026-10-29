@@ -19,6 +19,8 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
 export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;
+/** Fine turn of the figure around its own upright axis, in radians (positive turns it to its left). */
+const PRESENCE_YAW = 0;
 const REST_GLOW = 0.3;
 const ENGAGED_GLOW = 0.7;
 /** The gentle pulse: how much it grows and how fast it breathes (about one breath every 3.5 s). */
@@ -115,7 +117,10 @@ export function createLuminaryPresence(): LuminaryPresence {
       if (width > 0 && height > 0) {
         ndc.set(1 - (2 * PRESENCE_SCREEN_OFFSET.right) / width, -1 + (2 * PRESENCE_SCREEN_OFFSET.bottom) / height, 0.5).unproject(camera);
         root.position.copy(camera.position).addScaledVector(ndc.sub(camera.position).normalize(), PRESENCE_DISTANCE);
-        root.quaternion.copy(camera.quaternion);
+        // Face the Architect's eye, not just the screen plane: in the lower right corner, matching the
+        // camera's rotation left the figure looking turned to the right by perspective.
+        root.lookAt(camera.position);
+        root.rotateY(PRESENCE_YAW);
       }
       const target = engaged ? ENGAGED_GLOW : REST_GLOW;
       glow += (target - glow) * Math.min(1, dt * 4);
