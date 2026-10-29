@@ -2084,3 +2084,36 @@ Evidence: N45; decision card 'Should a third Orb fit in the CORE without cutting
 Channel: cloud
 
 Architect decision, 2026-10-29T13:58:24Z, option chosen: 'Give the CORE 16 threads' (not 'count only what's in use', not 'keep it full'). The CORE's thread budget becomes 16, so the two Orbs docked at start (4 threads each) leave room for two more such Orbs, and the CORE's two resource views agree. It is to be settled in one place, as part of Codex's work to merge the two views (N45), which is in the STP-0003 runtime area. Referred to Codex on PR #19. Recorded from the cloud thread by claude.
+
+### 2026-10-29T14:15:00.010Z | claude | gap G24
+Chain-Prev: fe5efa0353edcb60f6cc66d60ab7019492f7b96d6dc1b4541afc1d4434592a55
+Chain-Hash: e80847fe307ffba802689628348c3b7c10f9a48bde9d3e28e572e4e403662ca0
+Stage: Proposal
+Kind: gap
+Evidence: Architect message 2026-10-29T14:03:48Z (demo idea); src/components/CodeEditorOverlayModal.tsx; src/components/OrbBuilderModal.tsx; src/engine/relationEngine.ts (ElementCodeFrame); src/luminary/blocks.ts; server/luminary-executor.ts
+Channel: cloud
+
+The Architect wants the demo to show an Element being created in the Apothecary and coded by the Luminary. Both halves exist but are not joined. An Element's code is its code frame (language, file name, entrypoint, source), kept with the Element in the Apothecary and edited in the Element Code Editor. The Luminary's coding task writes repository files on its own branch, so it cannot write an Element's code frame, and the Element Code Editor has no way to ask the Luminary.
+
+### 2026-10-29T14:15:00.020Z | claude | change P25
+Chain-Prev: e80847fe307ffba802689628348c3b7c10f9a48bde9d3e28e572e4e403662ca0
+Chain-Hash: 0df6592a87cd440cbc478e0c3122291df40185f721ae9a9ba50563d224e5ebe3
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G24; P19; P23; P24; N46
+Closes: G24
+Channel: cloud
+
+The Luminary writes an Element's code, inside the Element Code Editor (M1.d, demo centrepiece). (1) An 'Ask the Luminary' box in the Element Code Editor: the Architect says in plain words what the Element should do. The Luminary receives the Element's description (as in P23's 'This Element' chip: category, capabilities, requirements, Satellites or Actuators), its language, file name and entrypoint, the current source, and the request. It replies through the normal governed pipeline (gauge, record), with an explanation at the Architect's level and the new source in one fenced block. (2) The proposal is shown beside the current code, with the changed lines marked and the Luminary's plain explanation. Nothing changes until the Architect presses Accept; Decline leaves the code as it was. After Accept the code still goes through the editor's own Save and its checks (for example, JSON must parse), so the Architect's Save stays the only thing that changes the Element. (3) The record keeps the request, the reply's hash and the Accept or Decline, using the existing offering_accepted and offering_declined events. (4) It changes no repository file and does not use the coding-task branch, since an Element's code lives with the Element; the Luminary's coding tasks are unchanged. (5) The demo arc it enables: the Architect creates a new Orb in the Orb Builder, opens its code, asks the Luminary, accepts, saves, then docks it on the CORE while the Luminary explains each connection moment (P24). It depends on N46 (CORE gets 16 threads, Codex) so the new Orb has room. Not in this step: the Luminary filling in the Orb Builder itself, running the Element's code, and any change to how Elements are stored. Verification: tests (what is sent: description, frame, request, no other data; one fenced block becomes the proposal; no block or more than one gives a plain Shortfall; Accept fills the editor and does not save; Decline changes nothing; record events), typecheck and build; then, with the Architect's go, a rehearsal on their PC with one small Element (for example a greeter or a rate limiter) on Baseten, about 2 to 3 cents a run.
+
+### 2026-10-29T14:15:00.030Z | claude | status
+Chain-Prev: 0df6592a87cd440cbc478e0c3122291df40185f721ae9a9ba50563d224e5ebe3
+Chain-Hash: 82441205cbee75933a2748dcdb2624628e32cbb15a66864775dda8984640f656
+Stage: Proposal
+Kind: status
+Item: P25
+Status: Presented
+Channel: cloud
+
+P25 → Presented.
