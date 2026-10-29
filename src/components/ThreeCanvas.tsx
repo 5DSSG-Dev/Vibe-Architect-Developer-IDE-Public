@@ -84,13 +84,14 @@ import { createElementTotem, createPortalTotem, createCoreTotem } from '../three
 import { createLuminaryPresence } from '../three/luminaryPresence';
 import { isLuminaryEngaged, setLuminaryEngaged } from '../luminary/presence';
 import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract, type SceneRegistryEntry } from '../three';
+import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 interface ThreeCanvasProps {
   sockets: SocketBinding[];
   portals?: PortalPlacement[];
   onSelectSocket: (socket: SocketBinding, item?: ApothecaryItem) => void;
   /** Click a docked Orb or a Satellite to drill into its Environment. */
-  onEnterElement?: (item: ApothecaryItem) => void;
+  onEnterElement?: (item: ApothecaryItem, entryView?: EnvironmentEntryView) => void;
   onDropAttachItem?: (item: ApothecaryItem, targetSocketId: string) => void;
   onRightClickElement?: (socket?: SocketBinding, item?: ApothecaryItem) => void;
   onAttachSatellite?: (satellite: ApothecaryItem, hostSocketId: string) => void;
@@ -766,7 +767,11 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       }
       runtimeNavigationTimerRef.current = window.setTimeout(() => {
         runtimeNavigationTimerRef.current = null;
-        onEnterElement(socket.connectedItem!);
+        const pose = runtime.cameraController.capturePose();
+        onEnterElement(socket.connectedItem!, {
+          cameraOffset: [pose.position.x - pose.target.x, pose.position.y - pose.target.y, pose.position.z - pose.target.z],
+          centerScale: 0.52,
+        });
       }, navigationDelay);
       return;
     }
@@ -847,7 +852,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       runtime.cameraController.controls.minDistance = 4;
       runtime.cameraController.controls.maxDistance = 55;
       runtime.cameraController.controls.update();
-      runtime.setReducedMotion(true);
+      runtime.setReducedMotion(prefersReducedMotion());
 
       const coreTotem = createCoreTotem();
       coreTotem.position.set(0, 4.6, 0);
@@ -2143,10 +2148,11 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const direction = camera.position.clone().sub(controls.target).normalize();
       if (direction.lengthSq() === 0) direction.set(0, 0.35, 1).normalize();
       const distance = Math.max(2.5, camera.position.distanceTo(controls.target) * 0.28);
+      const cameraOffset: [number, number, number] = [direction.x * distance, direction.y * distance, direction.z * distance];
       startCameraTween({
-        position: [target.x + direction.x * distance, target.y + direction.y * distance, target.z + direction.z * distance],
+        position: [target.x + cameraOffset[0], target.y + cameraOffset[1], target.z + cameraOffset[2]],
         target: [target.x, target.y, target.z],
-      }, () => onEnterElement(item));
+      }, () => onEnterElement(item, { cameraOffset, centerScale: 0.52 }));
     };
 
     const handlePointerDown = (event: MouseEvent) => {
