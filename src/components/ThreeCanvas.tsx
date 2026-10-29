@@ -79,6 +79,7 @@ import {
 } from '../utils/meshBuilders';
 import { FreeBodyState, LayoutPresets, getNearestVacantSocket } from '../engine/antigravity';
 import { createDynamicUmbilical, createDynamicTether } from '../utils/splineBuilder';
+import { getUmbilicalProfile } from '../contracts/umbilicalStandards';
 import { createElementTotem, createPortalTotem, createCoreTotem } from '../three/elementTotem';
 import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract, type SceneRegistryEntry } from '../three';
 
@@ -447,6 +448,8 @@ function armSignature(s: SocketBinding, index: number): string {
     index,
     s.state,
     s.connectedItem?.id ?? '-',
+    s.resolvedProfileId ?? '-',
+    s.resolvedProfileVersion ?? '-',
     (s.attachedSatellites ?? []).map((sat) => sat.id).join('+') || '-',
   ].join('|');
 }
@@ -939,7 +942,9 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
             const conduit = createDynamicUmbilical(
               new THREE.Vector3(0, 0, 2.5),
               dockedGroup.position.clone().multiplyScalar(0.85),
-              'solid'
+              'solid',
+              getUmbilicalProfile(socket.resolvedProfileId ?? '')?.visualModelKey ?? 'umbilical',
+              getUmbilicalProfile(socket.resolvedProfileId ?? '')?.visualThickness ?? 0.44
             );
             conduit.name = `runtime-main-umbilical:${socket.id}`;
             armGroup.add(conduit);
@@ -1797,7 +1802,9 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       // Umbilicals extended so Orbs dock further out from the CORE (ORB_DOCK_Z).
       const fromPos = new THREE.Vector3(0, 0, 2.5);
       const toPos = new THREE.Vector3(0, 0, 7.0);
-      const conduit = createDynamicUmbilical(fromPos, toPos, isWireframe ? 'wireframe' : 'solid');
+      const profile = getUmbilicalProfile(s.resolvedProfileId ?? '');
+      const conduit = createDynamicUmbilical(fromPos, toPos, isWireframe ? 'wireframe' : 'solid',
+        profile?.visualModelKey ?? conduitKey, profile?.visualThickness ?? 0.44);
       conduit.name = 'dynamic-umbilical';
 
       // buildSignature lets the reconciler detect an unchanged arm and skip it.
@@ -1947,7 +1954,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         const isWire = Boolean(arm.userData?.isWireframe);
         const fromPos = new THREE.Vector3(0, 0, 2.5);
         const toPos = dock.position.clone().multiplyScalar(0.85);
-        const conduit = createDynamicUmbilical(fromPos, toPos, isWire ? 'wireframe' : 'solid');
+        const socket = sockets.find((entry) => entry.id === arm.userData?.socketId);
+        const profile = getUmbilicalProfile(socket?.resolvedProfileId ?? '');
+        const conduit = createDynamicUmbilical(fromPos, toPos, isWire ? 'wireframe' : 'solid',
+          profile?.visualModelKey ?? 'umbilical', profile?.visualThickness ?? 0.44);
         conduit.name = 'dynamic-umbilical';
         if (conduit.children.length > 0) arm.add(conduit);
       });
@@ -1988,7 +1998,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             // We pull it back slightly from the exact center so it grips the surface
             const toPos = obj.position.clone().multiplyScalar(0.85); 
             const isWire = armGroup.userData.isWireframe;
-            const newConduit = createDynamicUmbilical(fromPos, toPos, isWire ? 'wireframe' : 'solid');
+            const socket = sockets.find((entry) => entry.id === armGroup.userData?.socketId);
+            const profile = getUmbilicalProfile(socket?.resolvedProfileId ?? '');
+            const newConduit = createDynamicUmbilical(fromPos, toPos, isWire ? 'wireframe' : 'solid',
+              profile?.visualModelKey ?? 'umbilical', profile?.visualThickness ?? 0.44);
             newConduit.name = 'dynamic-umbilical';
             armGroup.add(newConduit);
           }

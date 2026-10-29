@@ -102,3 +102,8 @@
 ## 2026-10-29 | codex | STP-0004 cross-peer drift update for PR #2
 - At Architect direction, appended N15 via `aegis-stp` to reconcile Claude's review and addendum. It updates stale Luminary/M1-M2 statements against main 818f939; marks PR #9's redesigned layout and STP-0002 Presence as pending until merged; adds a narrow expected Portal removal in P10 migration fixtures; preserves all other workspace data; and records the still-open continuityId determinism issue. No proposal approval is implied.
 - Fast-forward-synced PR branch with origin/main 818f939 (merge commit 0cd1be7). STP-0004 validates; `git diff --check` passes. This is a planning/Totem update only; application tests were not rerun. Untracked LUMINARY.glb in the separate primary checkout was not touched.
+
+
+## 2026-10-29 | codex | CORE validated profile alternatives
+- Resource-refusal events carry only alternatives declared by the Orb, accepted by the Port, and feasible against the current CORE snapshot. Retry names the profile; runtime repeats manifest, Port and live-capacity checks before allocation. Luminary cannot switch or connect by itself.
+- STP-0003 N4 closes the bounded alternative-offer item. Suspended has no producer, event history is in-memory, custom/model Orb authoring and Conduit catalog mapping are absent, Archive geometry is unresolved, and Luminary event consumption awaits Verus. No application tests run.

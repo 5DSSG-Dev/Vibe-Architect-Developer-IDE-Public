@@ -612,3 +612,401 @@ Kind: note
 Channel: cli
 
 P2 not yet started. The Architect directed a repo-wide Housekeeping Ledger first (2026-10-24), so the repo is clean before the hackathon. P2 resumes after it.
+
+### 2026-10-29T07:55:01.845Z | tracey | change P9
+Chain-Prev: 143531530c664afd826632a5125f22e9baa43abfa8210f7f3ec61dc7f0a25787
+Chain-Hash: 9d17749105a6944cb27ea49788c134f1c1c3ba90eab7628006c11556d185219b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G2
+Targets: T2
+Gaps: G2
+Supersedes: P2
+Channel: cli
+
+P9 Versioned Umbilical profiles. Define Pulse, Record, Archive, Interface, and Conduit as versioned profiles. Each declares supported protocol versions, flow types/directions, permitted reach, health signals, and normal/peak bandwidth plus memory/thread/GPU requirements with explicit units and a configurable resource envelope. Do not copy numeric estimates from descriptive catalog entries; preserve profile-level relative needs so model-API Conduit requires greater memory and bandwidth than Library Archive, while concrete numeric limits remain CORE/deployment configuration.
+
+### 2026-10-29T07:55:02.047Z | tracey | change P10
+Chain-Prev: 9d17749105a6944cb27ea49788c134f1c1c3ba90eab7628006c11556d185219b
+Chain-Hash: ba4c315bff2c490bd3444aac66b231ecece003518dad4d142905e4150c5ec44b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G3
+Targets: T3
+Gaps: G3
+Supersedes: P3
+Channel: cli
+
+P10 Versioned Orb manifest. Every Orb presents a stable contract reference (id, version, digest) and its functional/technical names, capabilities, requirements, resource envelope, and supported profile references. The reference is a pointer to the canonical CORE contract library; the CORE verifies and resolves authoritative content there.
+
+### 2026-10-29T07:55:02.222Z | tracey | change P11
+Chain-Prev: ba4c315bff2c490bd3444aac66b231ecece003518dad4d142905e4150c5ec44b
+Chain-Hash: 13676f83a633e44f4affd4806f6c77c1d37d193edb9d1db4ec51e086ee61a567
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G4
+Targets: T4
+Gaps: G4
+Supersedes: P4
+Channel: cli
+
+P11 Orb-presents-first CORE resolution. On drop, the Orb presents its stable contract reference before the handshake. CORE resolves the authoritative version from its own library, verifies id/version/digest and profile support, then selects a compatible vacant Port and negotiates. CORE does not query the Orb after the drop; missing, stale, unknown, mismatched, or incompatible references fail closed. This supersedes the earlier CORE-asks-for-spec wording.
+
+### 2026-10-29T07:55:02.403Z | tracey | change P12
+Chain-Prev: 13676f83a633e44f4affd4806f6c77c1d37d193edb9d1db4ec51e086ee61a567
+Chain-Hash: 5038b2c19ff7cb76015e0d9fd58be94db48ab5930197a4bfd04b6c2720da16a1
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G5
+Targets: T5
+Gaps: G5
+Supersedes: P5
+Channel: cli
+
+P12 Atomic multidimensional resource negotiation. Reserve memory, normal/peak bandwidth, threads, and GPU requirements as one allocation during the handshake; refusal or any later handshake failure releases the whole provisional allocation, and severance releases committed resources. CORE reports requested and available amounts and a plain-language reason. Concrete physical bandwidth limits remain configurable until deployment measurements establish them.
+
+### 2026-10-29T07:55:11.623Z | tracey | status
+Chain-Prev: 5038b2c19ff7cb76015e0d9fd58be94db48ab5930197a4bfd04b6c2720da16a1
+Chain-Hash: ae37aa3acbc5b2489f2bbcb13e825d46e4fbe294a08b5174da21ac8022055abd
+Stage: Proposal
+Kind: status
+Item: P9
+Status: Presented
+Channel: cli
+
+Presented as the revised profile definition for implementation; numeric deployment capacities remain configurable pending evidence.
+
+### 2026-10-29T07:55:11.832Z | tracey | status
+Chain-Prev: ae37aa3acbc5b2489f2bbcb13e825d46e4fbe294a08b5174da21ac8022055abd
+Chain-Hash: 37644eb1bf0150810c90a84fbc13ad75340c6666a573cfd9eb260755a404ce71
+Stage: Proposal
+Kind: status
+Item: P10
+Status: Presented
+Channel: cli
+
+Presented as the revised Orb manifest and canonical contract-reference proposal.
+
+### 2026-10-29T07:55:12.093Z | tracey | status
+Chain-Prev: 37644eb1bf0150810c90a84fbc13ad75340c6666a573cfd9eb260755a404ce71
+Chain-Hash: cb3633d147372523eac76b50b9689070aa92add7275a28952c42fb207384a5a6
+Stage: Proposal
+Kind: status
+Item: P11
+Status: Presented
+Channel: cli
+
+Presented with Architect direction: Orb presents the reference first; CORE resolves locally.
+
+### 2026-10-29T07:55:12.296Z | tracey | status
+Chain-Prev: cb3633d147372523eac76b50b9689070aa92add7275a28952c42fb207384a5a6
+Chain-Hash: 801124e3a26651944486f2311986649d4f55bf329bea53fabee442c0e69ced5a
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Presented
+Channel: cli
+
+Presented as atomic memory/bandwidth/thread/GPU reservation; deployment bandwidth values remain configurable.
+
+### 2026-10-29T07:55:12.842Z | tracey | status
+Chain-Prev: 801124e3a26651944486f2311986649d4f55bf329bea53fabee442c0e69ced5a
+Chain-Hash: 30047c79cda3e1fcfabb29f926d78de5e46e1fbefb5089178dc1012293fcd233
+Stage: Proposal
+Kind: status
+Item: P9
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts.
+
+### 2026-10-29T07:55:13.628Z | tracey | status
+Chain-Prev: 30047c79cda3e1fcfabb29f926d78de5e46e1fbefb5089178dc1012293fcd233
+Chain-Hash: a5d313c8e408f2563045ba248fcc8096f9a2ee90fdaa3916e2347885be1a2b71
+Stage: Proposal
+Kind: status
+Item: P10
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts.
+
+### 2026-10-29T07:55:13.897Z | tracey | status
+Chain-Prev: a5d313c8e408f2563045ba248fcc8096f9a2ee90fdaa3916e2347885be1a2b71
+Chain-Hash: d9e17fe974ca55f52a4044b5def73d5adeaf6814fce275e996b7a2d1268f8a34
+Stage: Proposal
+Kind: status
+Item: P11
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts.
+
+### 2026-10-29T07:55:14.153Z | tracey | status
+Chain-Prev: d9e17fe974ca55f52a4044b5def73d5adeaf6814fce275e996b7a2d1268f8a34
+Chain-Hash: 57e9bbb608919955b269140c3eaa54736681a7159e76123d5cdc7274b35f828a
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts.
+
+### 2026-10-29T07:56:09.397Z | tracey | status
+Chain-Prev: 57e9bbb608919955b269140c3eaa54736681a7159e76123d5cdc7274b35f828a
+Chain-Hash: 22b9c4c3881179a4dfb0c5216f9c440def3389194f0ee38143b69fd05f449054
+Stage: Proposal
+Kind: status
+Item: P1
+Status: Executing
+Channel: cli
+
+P1 → Executing.
+
+### 2026-10-29T07:56:09.542Z | tracey | status
+Chain-Prev: 22b9c4c3881179a4dfb0c5216f9c440def3389194f0ee38143b69fd05f449054
+Chain-Hash: e352ca61209da43b4985c80661316e577da9fa0abeccf79280df5dde214e070f
+Stage: Proposal
+Kind: status
+Item: P6
+Status: Executing
+Channel: cli
+
+P6 → Executing.
+
+### 2026-10-29T07:56:09.683Z | tracey | status
+Chain-Prev: e352ca61209da43b4985c80661316e577da9fa0abeccf79280df5dde214e070f
+Chain-Hash: 9b4221321deeeb3ef7bf3069b956641ce29bf1f92b4694b113e150094fc7f69d
+Stage: Proposal
+Kind: status
+Item: P7
+Status: Executing
+Channel: cli
+
+P7 → Executing.
+
+### 2026-10-29T07:56:09.834Z | tracey | status
+Chain-Prev: 9b4221321deeeb3ef7bf3069b956641ce29bf1f92b4694b113e150094fc7f69d
+Chain-Hash: b0c417c11d6ce9efaafbd513db9371f1c50399d376d08b0145b2ed20bd9ab525
+Stage: Proposal
+Kind: status
+Item: P8
+Status: Executing
+Channel: cli
+
+P8 → Executing.
+
+### 2026-10-29T07:56:09.992Z | tracey | status
+Chain-Prev: b0c417c11d6ce9efaafbd513db9371f1c50399d376d08b0145b2ed20bd9ab525
+Chain-Hash: 44c226c615e0a62c1ea1b1ea4d68e2048585adc9a29cdf912c085fd1bcd48fc4
+Stage: Proposal
+Kind: status
+Item: P9
+Status: Executing
+Channel: cli
+
+P9 → Executing.
+
+### 2026-10-29T07:56:10.153Z | tracey | status
+Chain-Prev: 44c226c615e0a62c1ea1b1ea4d68e2048585adc9a29cdf912c085fd1bcd48fc4
+Chain-Hash: c3693e9434a337746420edaa03f41536bf2e1c8a33f69156a352b7b3bbea6936
+Stage: Proposal
+Kind: status
+Item: P10
+Status: Executing
+Channel: cli
+
+P10 → Executing.
+
+### 2026-10-29T07:56:10.301Z | tracey | status
+Chain-Prev: c3693e9434a337746420edaa03f41536bf2e1c8a33f69156a352b7b3bbea6936
+Chain-Hash: 5bd5a5622155c874305b8eee552eb2703146ae3fafc1dfee4f71b2c451999cb0
+Stage: Proposal
+Kind: status
+Item: P11
+Status: Executing
+Channel: cli
+
+P11 → Executing.
+
+### 2026-10-29T07:56:10.443Z | tracey | status
+Chain-Prev: 5bd5a5622155c874305b8eee552eb2703146ae3fafc1dfee4f71b2c451999cb0
+Chain-Hash: d814bc52d606072035ce79355e534133364ac82e0180f628aa6511a781b02fbf
+Stage: Proposal
+Kind: status
+Item: P12
+Status: Executing
+Channel: cli
+
+P12 → Executing.
+
+### 2026-10-29T07:56:18.911Z | tracey | gap G9
+Chain-Prev: d814bc52d606072035ce79355e534133364ac82e0180f628aa6511a781b02fbf
+Chain-Hash: 30e2e183c527edc90a1ed0de08552a718b9008645b84ae1d9540661e7c4b2ead
+Stage: Gap
+Kind: gap
+Targets: T4
+Channel: cli
+
+The CORE does not publish a typed, sanitized connection lifecycle and resource event stream that another component can inspect without mutating connection state.
+
+### 2026-10-29T07:56:19.055Z | tracey | gap G10
+Chain-Prev: 30e2e183c527edc90a1ed0de08552a718b9008645b84ae1d9540661e7c4b2ead
+Chain-Hash: a21083f2da84a120a92be24bafdc4621e198ea1222a5ccfec97d353fa9a7018f
+Stage: Gap
+Kind: gap
+Targets: T2
+Channel: cli
+
+The existing Orb catalog has no operation-based crosswalk to versioned Umbilical profiles; display names alone cannot safely select a contract.
+
+### 2026-10-29T07:56:19.212Z | tracey | change P13
+Chain-Prev: a21083f2da84a120a92be24bafdc4621e198ea1222a5ccfec97d353fa9a7018f
+Chain-Hash: 632cbc44c5d7cb1eae63508366dbe1a0298a9a6999a3141a7e26f5ea0c7146c8
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G9
+Targets: T4
+Channel: cli
+
+P13 CORE-to-Luminary read-only connection event contract. Publish sanitized typed events for attempt start, contract/profile resolution, resource commit/refusal, active/degraded/suspended/severed and resource release. Include stable attempt/contract, Orb and Port ids; presented/resolved contract/profile versions; timestamp, typed and plain-language reasons, and requested/available/negotiated resource facts. Alternatives must be CORE-validated against a fresh resource snapshot and revalidated before a new handshake. Luminary may explain and offer options, but cannot silently substitute or connect. Exclude prompts, keys and unrelated payloads. M3 owns event schema/producer; coordinate consumer/presentation with Verus.
+
+### 2026-10-29T07:56:19.362Z | tracey | change P14
+Chain-Prev: 632cbc44c5d7cb1eae63508366dbe1a0298a9a6999a3141a7e26f5ea0c7146c8
+Chain-Hash: e7224b570ace8c336c60209d00828426237125918ffbea2e4f51908914c23aac
+Stage: Proposal
+Kind: change
+Status: Drafted
+Closes: G10
+Targets: T2
+Channel: cli
+
+P14 Orb-class/profile crosswalk. Assign profiles by actual operation, not display name: Pulse for bounded scheduling/control/health; Record for stateful transactions; Archive for files/documents/artifacts including Library Orb; Interface for bounded request/response/control APIs; Conduit for model API calls, media, or sustained high-bandwidth streams. An Orb may present multiple operation-specific refs; CORE selects only a profile covered by the presented contract. Preserve Architect direction that a model-API profile has greater memory and bandwidth need than Library file storage. Do not infer numeric limits from catalog estimates or provider use without evidence. Keep Umbilical geometry mapping provisional and resolve the missing Archive model separately.
+
+### 2026-10-29T07:56:19.515Z | tracey | status
+Chain-Prev: e7224b570ace8c336c60209d00828426237125918ffbea2e4f51908914c23aac
+Chain-Hash: 22ee89a343af8e6ddb06093e931212057e183576b0a88152f209ecde1fa1ad37
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Presented
+Channel: cli
+
+Presented for M3 read-only event schema and CORE producer; Luminary consumer remains Verus coordination.
+
+### 2026-10-29T07:56:19.663Z | tracey | status
+Chain-Prev: 22ee89a343af8e6ddb06093e931212057e183576b0a88152f209ecde1fa1ad37
+Chain-Hash: 3794a3ea01682474b72420807a77b6cecc7fd333f362bb3805129d9f256d9a72
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Presented
+Channel: cli
+
+Presented as operation-based class mapping; no provider use or physical model mapping is inferred.
+
+### 2026-10-29T07:56:19.774Z | tracey | status
+Chain-Prev: 3794a3ea01682474b72420807a77b6cecc7fd333f362bb3805129d9f256d9a72
+Chain-Hash: b8710efe19ce8d45a4677a41ddb7c6c7b56d594a753ce43ed59590289fc1270d
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts; Luminary display is coordinated with Verus.
+
+### 2026-10-29T07:56:20.024Z | tracey | status
+Chain-Prev: b8710efe19ce8d45a4677a41ddb7c6c7b56d594a753ce43ed59590289fc1270d
+Chain-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Approved
+Role: architect
+Channel: cli
+
+Architect instruction 2026-10-29: proceed with the M3 contracts; numeric limits remain evidence-bound.
+
+### 2026-10-29T07:56:20.309Z | tracey | status
+Chain-Prev: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
+Chain-Hash: 16d0befa673eb1d6d976c6972a4efa46b4db7668a93bd8483cf8abc9bd18fed0
+Stage: Proposal
+Kind: status
+Item: P13
+Status: Executing
+Channel: cli
+
+P13 → Executing.
+
+### 2026-10-29T07:56:20.465Z | tracey | status
+Chain-Prev: 16d0befa673eb1d6d976c6972a4efa46b4db7668a93bd8483cf8abc9bd18fed0
+Chain-Hash: 9703b123cb2e603ed15f27e4aaae5ff2061dc9393ad1a6bb04dda8cd5d7e7712
+Stage: Proposal
+Kind: status
+Item: P14
+Status: Executing
+Channel: cli
+
+P14 → Executing.
+
+### 2026-10-29T07:56:42.191Z | tracey | gap G11
+Chain-Prev: 9703b123cb2e603ed15f27e4aaae5ff2061dc9393ad1a6bb04dda8cd5d7e7712
+Chain-Hash: 046070024f732059796c18f629e16d8b8057c622e644f31efe831848e946d0f2
+Stage: Gap
+Kind: gap
+Targets: T4
+Channel: cli
+
+The CORE does not publish a typed, sanitized connection lifecycle and resource event stream that another component can inspect without mutating connection state.
+
+### 2026-10-29T07:56:42.338Z | tracey | gap G12
+Chain-Prev: 046070024f732059796c18f629e16d8b8057c622e644f31efe831848e946d0f2
+Chain-Hash: bcc8955e0cbc5af0229574517a0f88488fae17a1d3114187d4da6092ebe9e7dc
+Stage: Gap
+Kind: gap
+Targets: T2
+Channel: cli
+
+The existing Orb catalog has no operation-based crosswalk to versioned Umbilical profiles; display names alone cannot safely select a contract.
+
+### 2026-10-29T08:05:17.934Z | tracey | note N2
+Chain-Prev: bcc8955e0cbc5af0229574517a0f88488fae17a1d3114187d4da6092ebe9e7dc
+Chain-Hash: 818b66788704b945e2ef032ceafc824551e25f4f26d6bc24a1620bc128608fdb
+Stage: Execution
+Kind: note
+Evidence: src/contracts/umbilicalStandards.ts; src/contracts/orbManifest.ts; src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts; src/components/ThreeCanvas.tsx; src/App.tsx; docs/CORE_CONNECTION_STANDARD.md; assumption
+Channel: cli
+
+M3 contract implementation progress: added canonical Element vocabulary, versioned Umbilical profiles, CORE-local digest-checked Orb manifest registry/resolver, provisional relative bandwidth credits and minimum-memory floors, atomic multidimensional resource reservation/release, CORE-resolved profiles on socket contracts, and sanitized read-only lifecycle events. Orb drop presents its embedded reference; CORE resolves from its own library and the modal shows the handshake result. Persisted selected profile and applied profile-specific geometry/thickness in both ThreeCanvas render paths; profile changes are part of arm reconciliation. Archive has no mapped visual asset, so it retains existing geometry fallback. Profile capacities remain provisional credits, not throughput claims. Validation: npm run build PASS; git diff --check PASS; application tests not run. Remaining: tests, bounded alternative-offer/suspended event semantics, durable event/tombstone rehydration, custom Orb manifest authoring/catalog path, real model API Orb using Conduit, Archive asset decision, and Luminary consumer coordination with Verus. Gap G11/G12 are append-only duplicates accidentally created alongside G9/G10; implementation remains linked to G9/G10/P13-P14.
+
+### 2026-10-29T08:05:24.546Z | codex | note N3
+Chain-Prev: 818b66788704b945e2ef032ceafc824551e25f4f26d6bc24a1620bc128608fdb
+Chain-Hash: 2560dc0ffbc922ee6c703e52893be5a3fd8da5aea88a0e377c4b27d7c60fa502
+Stage: Execution
+Kind: note
+Evidence: .aegis/stp/0003-pod-contracts-and-umbilical-standards.md; assumption
+Channel: cli
+
+Attribution clarification: the preceding N2 entry was authored by Codex, but the CLI defaulted its actor field to the local Git user name Tracey. N2 is implementation evidence only; it does not represent a new Architect decision. G11 and G12 are duplicate gap records produced during repeated CLI entry; retain them as history, with P13/P14 and this work linked to the original G9/G10.
+
+### 2026-10-29T08:07:33.451Z | codex | note N4
+Chain-Prev: 2560dc0ffbc922ee6c703e52893be5a3fd8da5aea88a0e377c4b27d7c60fa502
+Chain-Hash: 51bfadac73ef10dd8dc53d9dee1bb95ffb4ce9c5230fc479002a4b166c9889b7
+Stage: Execution
+Kind: note
+Evidence: src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts; docs/CORE_CONNECTION_STANDARD.md; assumption
+Channel: cli
+
+P13 alternative seam completed after N2: resource-refusal events include only alternative profiles explicitly declared by the Orb, accepted by the target Port, and fully satisfiable against the fresh CORE memory/thread/bandwidth/GPU snapshot. The Architect/Luminary can request a named profile through HandshakeOptions.requestedProfileId; CORE repeats manifest, Port and live-capacity checks on retry, so offers neither reserve resources nor authorize silent substitution. N2's listed bounded alternatives gap is closed. Remaining P13 gaps: suspended is a schema event without a runtime producer; event ledger/tombstones are session-memory only; Luminary presentation/consumer wiring awaits Verus. Production build rerun after the change passes with the existing chunk warning; application tests still not run.

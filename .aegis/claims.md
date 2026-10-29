@@ -17,3 +17,8 @@ RELEASE | 2026-10-24T23:09:29Z | verus | low-risk group paths (see CLAIM above) 
 CLAIM   | 2026-10-26T16:24:19Z | verus | native/stellar/**, src/stellar/**, server/stellar-*, scripts/stellar-*, docs/STELLAR_*, src/components/{StellarWorkbench,StellarNativeStarter,CodeModeView}.tsx, App.tsx+CodeEditorOverlayModal+BuiltInBrowserModal (rewire) | Hackathon public-repo prep (remove unfinished Stellar) | stellar-extraction/public-prep | on commit
 RELEASE | 2026-10-26T16:33:03Z | verus | stellar extraction paths (see CLAIM above) | Hackathon public-repo prep | committed e4f7bb4 on stellar-extraction/public-prep; build+tests green
 CLAIM   | 2026-10-26T23:40:20Z | verus | server/** (AEGIS governance/validation layer for model replies), src/components/LuminaryHost.tsx | M1 / M1.a AEGIS Governance layer / STP-0002 | claude/dataquad-meta-hackathon-9793f8 | on PR
+CLAIM   | 2026-10-29T07:56:51Z | codex | src/contracts/**, src/engine/relationEngine.ts, src/engine/connectionRuntime.ts, src/engine/resourceAllocator.ts, docs/CORE_CONNECTION_STANDARD.md | STP-0003 P1-P14 | codex/stp-0003-umbilical-contracts | on commit
+CLAIM   | 2026-10-29T08:05:36Z | codex | src/App.tsx, src/components/HandshakeModal.tsx, src/components/ThreeCanvas.tsx, src/utils/splineBuilder.ts, src/engine/coreCapabilities.ts, src/admin/domain/contracts.ts, src/three/contracts.ts, src/contracts/** | STP-0003 P1-P14 | codex/stp-0003-umbilical-contracts | on commit
+
+
+CLAIM   | 2026-10-29T08:07:33Z | codex | src/contracts/connectionEvents.ts, src/engine/connectionRuntime.ts, docs/CORE_CONNECTION_STANDARD.md | STP-0003 P13 alternative seam | codex/stp-0003-umbilical-contracts | on commit

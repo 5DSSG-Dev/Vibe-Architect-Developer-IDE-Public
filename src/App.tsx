@@ -310,7 +310,9 @@ export function App() {
             ...s,
             state: 'Active' as const,
             connectedItem: itemWithCodeFrame,
-            contractId: contract.contractId
+            contractId: contract.contractId,
+            resolvedProfileId: contract.resolvedProfileId,
+            resolvedProfileVersion: contract.resolvedProfileVersion
           };
         }
         return s;

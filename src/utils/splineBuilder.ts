@@ -13,7 +13,13 @@ import { createUmbilicalConduit } from './meshBuilders';
  * built along local +Z by meshBuilders and then oriented between the supplied
  * points so the authored asset follows an Orb when it is moved.
  */
-export function createDynamicUmbilical(from: THREE.Vector3, to: THREE.Vector3, variant: string): THREE.Group {
+export function createDynamicUmbilical(
+  from: THREE.Vector3,
+  to: THREE.Vector3,
+  variant: string,
+  modelKey = 'umbilical',
+  thickness = 0.44
+): THREE.Group {
   const group = new THREE.Group();
 
   if (variant === 'wireframe') {
@@ -29,10 +35,10 @@ export function createDynamicUmbilical(from: THREE.Vector3, to: THREE.Vector3, v
   if (length < 1e-4) return group;
 
   const conduit = createUmbilicalConduit(
-    'umbilical',
+    modelKey,
     0,
     length,
-    0.44,
+    thickness,
     1.6,
     true
   );
