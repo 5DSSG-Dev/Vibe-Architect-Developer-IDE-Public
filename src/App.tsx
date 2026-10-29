@@ -168,7 +168,13 @@ export function App() {
       // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
       // Architect never added. Portals now appear only once added, so that one is left out.
       const restored = restoredWorkspace.coreManifest;
-      return { ...restored, portals: restored.portals.filter((portal) => portal.id !== 'portal-primary') };
+      return {
+        ...restored,
+        hardwareBudget: restored.hardwareBudget.threads === 8
+          ? { ...restored.hardwareBudget, threads: 16 }
+          : restored.hardwareBudget,
+        portals: restored.portals.filter((portal) => portal.id !== 'portal-primary')
+      };
     }
   );
   const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
@@ -730,6 +736,7 @@ export function App() {
           availableSockets={coreManifest.sockets}
           availableCoreCapabilities={getCoreRuntimeCapabilities(coreManifest)}
           availableCoreResources={getAvailableCoreResources(coreManifest)}
+          coreManifest={coreManifest}
           initialTargetSocketId={selectedSocketId}
           onClose={() => {
             setAttachingItem(null);

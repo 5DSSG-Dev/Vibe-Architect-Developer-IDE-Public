@@ -79,3 +79,10 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-10-29 | Verification follow-up correction
 - Fresh whole-app run reports 340/341: the unrelated identity deterministic-rebuild test fails when run with the app suite; `src/identity/identity.test.ts` passes alone (37/37). Targeted M3 runtime/evidence/Knowledge Pack tests remain 20/20. Production build and STP-0003 validation pass.
+- 2026-10-29 | codex | M4 CORE immobility and drill-down transitions
+- CORE Crystal is fixed at the root and excluded from drag targets; historical saved CORE transforms are discarded while valid Orb placements are retained. CORE remains selectable, animates in place, and no longer arms the turntable on pointer drag.
+- Orb and Satellite selections in the default view ease camera focus before entering the next Environment. EnvironmentView eases toward child Elements before drill-down and respects the OS reduced-motion preference. Opt-in ThreeRuntime path now delays Orb entry until its existing focus completes; that experimental path does not yet register Satellites.
+- Production build and `git diff --check` pass; build retains the existing Vite large-chunk warning. No tests run and no commit/push performed. Branch: `codex/m4-core-motion-transitions`.
+- 2026-10-29 | codex | M3 shared CORE resource budget and M4 combined commit
+- CORE default thread capacity is 16; restored workspaces using the previous default of 8 migrate to 16. Capability calculation and allocator now share the same manifest-derived reservations, counting each active Orb by the greater of its saved allocation and declared requirement. Handshake retries rebuild allocator state from the current manifest before capability/resource validation.
+- Combined M3 and M4 work compiles with `npm run build`; `git diff --check` passes. Tests were not run. Existing Vite large-chunk warning remains.

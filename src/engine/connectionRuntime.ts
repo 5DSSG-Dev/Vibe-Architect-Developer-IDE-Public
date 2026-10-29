@@ -1,5 +1,6 @@
-import type { ApothecaryItem, NegativeSpaceInvariants, RelationContract, SocketBinding } from './relationEngine';
-import { allocateFromBudget, getAvailableBudget, releaseAllocation } from './resourceAllocator';
+import type { ApothecaryItem, CoreManifest, NegativeSpaceInvariants, RelationContract, SocketBinding } from './relationEngine';
+import { allocateFromBudget, getAvailableBudget, releaseAllocation, synchronizeCoreResourceState } from './resourceAllocator';
+import { getCoreResourceReservations } from './coreCapabilities';
 import { getContract, signContract, voidContract } from './contractStore';
 import { registerCapabilities, unregisterCapabilities } from './capabilityRegistry';
 import { publishConnectionEvent, type ConnectionAlternative } from '../contracts/connectionEvents';
@@ -30,6 +31,8 @@ export interface HandshakeOptions {
   requestedProfileId?: UmbilicalProfileId;
   receptorAccepted?: boolean;
   resourcesAvailable?: boolean;
+  /** Current CORE manifest is the authoritative budget and committed-allocation snapshot. */
+  coreManifest?: CoreManifest;
   invariants?: Partial<Record<InvariantName, boolean>>;
 }
 
@@ -259,6 +262,14 @@ export function executeUmbilicalHandshake(
   socket: SocketBinding,
   options: HandshakeOptions = {}
 ): RelationContract {
+  if (options.coreManifest) {
+    synchronizeCoreResourceState({
+      memoryMB: options.coreManifest.hardwareBudget.memoryMB,
+      threads: options.coreManifest.hardwareBudget.threads,
+      bandwidthCredits: options.coreManifest.hardwareBudget.bandwidthCredits ?? 256,
+      gpuAccess: options.coreManifest.hardwareBudget.gpuEnabled
+    }, getCoreResourceReservations(options.coreManifest));
+  }
   const available = options.availableCapabilities ?? [];
   const initialMemory = element.memoryReq || 128;
   const initialThreads = element.threadsReq || 1;

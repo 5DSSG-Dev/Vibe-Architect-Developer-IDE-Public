@@ -587,7 +587,14 @@ const THREE_RUNTIME_MAIN_VIEW_P0_FLAG = 'aegis-vibe-architect.threeRuntimeMainVi
 function loadSpatialEdits(): SpatialEdits {
   try {
     const raw = window.localStorage.getItem(SPATIAL_EDITS_STORAGE_KEY);
-    if (raw) return deserializeSpatialEdits(JSON.parse(raw));
+    if (raw) {
+      const restored = deserializeSpatialEdits(JSON.parse(raw));
+      if (!Object.prototype.hasOwnProperty.call(restored.overrides, 'core')) return restored;
+      // Older builds allowed CORE repositioning. Preserve Orb placements but
+      // discard the retired CORE transform when restoring local edits.
+      const { core: _legacyCorePlacement, ...orbOverrides } = restored.overrides;
+      return createSpatialEdits(orbOverrides);
+    }
   } catch (error) {
     console.warn('[SPATIAL] Persisted spatial edits could not be restored.', error);
   }
@@ -638,6 +645,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
   const assemblyPivotRef = useRef<THREE.Group | null>(null);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
   const turntableDragRef = useRef<{ lastX: number; hasMoved: boolean } | null>(null);
+  const runtimeNavigationTimerRef = useRef<number | null>(null);
   const starSpriteRef = useRef<THREE.CanvasTexture | null>(null);
   const starGeometryRef = useRef<THREE.BufferGeometry | null>(null);
   const starMaterialRef = useRef<THREE.PointsMaterial | null>(null);
@@ -657,6 +665,12 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
     setContextLost(false);
     if (recovery) recovery.requestRebuild();
     else setSceneRemountKey((value) => value + 1);
+  }, []);
+
+  useEffect(() => () => {
+    if (runtimeNavigationTimerRef.current !== null) {
+      window.clearTimeout(runtimeNavigationTimerRef.current);
+    }
   }, []);
 
   const handleFrameAll = useCallback(() => {
@@ -734,15 +748,29 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
     );
     setSelectedEntityId(hit?.entry.id ?? null);
     if (!hit) return;
-    runtime.focusEntity(hit.entry.id);
     const socketId = hit.entry.metadata?.socketId;
-    if (typeof socketId !== 'string') return;
-    const socket = socketsRef.current.find((entry) => entry.id === socketId);
-    if (!socket) return;
-    if (hit.entry.kind === 'orb' && socket.connectedItem && onEnterElement) {
-      onEnterElement(socket.connectedItem);
+    if (typeof socketId !== 'string') {
+      runtime.focusEntity(hit.entry.id);
       return;
     }
+    const socket = socketsRef.current.find((entry) => entry.id === socketId);
+    if (!socket) {
+      runtime.focusEntity(hit.entry.id);
+      return;
+    }
+    if (hit.entry.kind === 'orb' && socket.connectedItem && onEnterElement) {
+      runtime.focusEntity(hit.entry.id, performance.now(), prefersReducedMotion() ? 1 : 500);
+      const navigationDelay = prefersReducedMotion() ? 0 : 500;
+      if (runtimeNavigationTimerRef.current !== null) {
+        window.clearTimeout(runtimeNavigationTimerRef.current);
+      }
+      runtimeNavigationTimerRef.current = window.setTimeout(() => {
+        runtimeNavigationTimerRef.current = null;
+        onEnterElement(socket.connectedItem!);
+      }, navigationDelay);
+      return;
+    }
+    runtime.focusEntity(hit.entry.id);
     onSelectSocket(socket, socket.connectedItem);
   }, [onEnterElement, onSelectSocket]);
 
@@ -1305,8 +1333,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     setSceneRemountKey((k) => k + 1);
   }, []);
 
-  // Durable spatial edits: per-object transform overrides (the CORE and each
-  // docked orb) that survive rebuilds and reloads, with undo/redo/reset and
+  // Durable spatial edits: per-object transform overrides for each docked Orb
+  // that survive rebuilds and reloads, with undo/redo/reset and
   // optional grid snapping. The scene reads the current value through a ref so
   // the drag/build closures stay stable; a dedicated effect persists and re-applies.
   const [spatialEdits, setSpatialEdits] = useState<SpatialEdits>(() => loadSpatialEdits());
@@ -1321,7 +1349,13 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   // camera move. The imperative helpers are assigned by the scene effect (which
   // owns the camera + controls) and invoked from the toolbar buttons via refs.
   const [savedViews, setSavedViews] = useState<SavedViews>(() => loadSavedViews());
-  const cameraTweenRef = useRef<{ from: CameraPose; to: CameraPose; start: number; dur: number } | null>(null);
+  const cameraTweenRef = useRef<{
+    from: CameraPose;
+    to: CameraPose;
+    start: number;
+    dur: number;
+    onComplete?: () => void;
+  } | null>(null);
   const frameAllRef = useRef<() => void>();
   const captureCurrentPoseRef = useRef<() => CameraPose>();
   const gotoPoseRef = useRef<(pose: CameraPose) => void>();
@@ -1356,7 +1390,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     let disposed = false;
 
     // Interaction state shared across the pointer + drag handlers.
-    // objectDragActive: DragControls is moving an orb/core, so the turntable must
+    // objectDragActive: DragControls is moving an Orb, so the turntable must
     // stand down. rotateArmed / rotateLastX: an empty-space left-drag is spinning
     // the assembly pivot.
     let objectDragActive = false;
@@ -1906,10 +1940,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     updateSocketGeometriesRef.current = () => updateSocketGeometries(false);
     updateSocketGeometries(true);
 
-    // Collect draggable 3D objects (docked orbs, portal assemblies, core) and
+    // Collect draggable 3D objects (docked Orbs) and
     // wire up DragControls so the user can freely reposition them by clicking
     // and dragging. OrbitControls is disabled while a drag is active.
-    // Re-apply persisted spatial overrides to the CORE and each docked orb, and
+    // Re-apply persisted spatial overrides to each docked Orb, and
     // rebuild each arm's umbilical so it reaches wherever its orb now sits. This
     // is the single source of truth for placement + conduit reach, so it stays
     // correct across socket reconciles, model loads, undo/redo, reset, and
@@ -1918,10 +1952,9 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const applySpatialOverrides = () => {
       const edits = spatialEditsRef.current;
 
-      const coreOv = getOverride(edits, 'core');
-      if (coreOv?.position) coreGroup.position.set(coreOv.position[0], coreOv.position[1], coreOv.position[2]);
-      else coreGroup.position.set(0, 0, 0);
-      coreGroup.scale.setScalar(coreOv?.scale ?? 1);
+      // CORE is a fixed root anchor; only its in-place visual motion is animated.
+      coreGroup.position.set(0, 0, 0);
+      coreGroup.scale.setScalar(1);
 
       socketMeshesGroup.children.forEach((arm) => {
         const sid = arm.userData?.socketId as string | undefined;
@@ -1961,9 +1994,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       // Portals are anchored to their fixed compass points and are intentionally
       // NOT added to the drag targets, so they cannot be repositioned.
-
-      // Core crystal
-      if (coreGroup.children.length > 0) targets.push(coreGroup);
 
       draggableObjectsRef.current = targets;
 
@@ -2052,12 +2082,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
               tintGlowRing(ring, baseColor, 1.0);
             }
           });
-        } else if (obj === coreGroup) {
-          // The CORE was repositioned: persist its local placement.
-          const raw: [number, number, number] = [obj.position.x, obj.position.y, obj.position.z];
-          const pos: readonly [number, number, number] = snap ? snapPositionToGrid(raw, SPATIAL_SNAP_GRID) : raw;
-          obj.position.set(pos[0], pos[1], pos[2]);
-          setSpatialEdits(prev => setOverride(prev, 'core', { position: pos }));
         }
       });
       dragControlsRef.current = drag;
@@ -2110,6 +2134,21 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const raycaster = raycasterRef.current;
     const mouse = new THREE.Vector2();
 
+    let navigationPending = false;
+    const enterAfterCameraFocus = (item: ApothecaryItem, object: THREE.Object3D) => {
+      if (!onEnterElement || navigationPending) return;
+      navigationPending = true;
+      const target = new THREE.Vector3();
+      object.getWorldPosition(target);
+      const direction = camera.position.clone().sub(controls.target).normalize();
+      if (direction.lengthSq() === 0) direction.set(0, 0.35, 1).normalize();
+      const distance = Math.max(2.5, camera.position.distanceTo(controls.target) * 0.28);
+      startCameraTween({
+        position: [target.x + direction.x * distance, target.y + direction.y * distance, target.z + direction.z * distance],
+        target: [target.x, target.y, target.z],
+      }, () => onEnterElement(item));
+    };
+
     const handlePointerDown = (event: MouseEvent) => {
       if (event.button !== 0) return; // left button only; right-click → context menu
       rotateArmed = false;
@@ -2138,8 +2177,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
           | undefined;
 
         if (pick?.kind === 'satellite') {
-          // Clicking a Satellite drills into its Actuator Environment.
-          if (onEnterElement) onEnterElement(pick.item);
+          // Focus the selected Satellite before opening its Actuator Environment.
+          if (onEnterElement) enterAfterCameraFocus(pick.item, intersects[0].object);
           else if (onSelectSatellite) onSelectSatellite(pick.item);
           return;
         }
@@ -2150,14 +2189,14 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             // A docked Orb drills into its Environment; a vacant socket opens the
             // builder to dock something.
             if (found.connectedItem && onEnterElement) {
-              onEnterElement(found.connectedItem);
+              enterAfterCameraFocus(found.connectedItem, intersects[0].object);
             } else {
               onSelectSocket(found, found.connectedItem);
             }
           }
         }
-      } else if (!viewLockedRef.current) {
-        // Empty space (or the bare CORE): arm the turntable so a drag spins the
+      } else if (!viewLockedRef.current && raycaster.intersectObject(coreGroup, true).length === 0) {
+        // Empty space arms the turntable so a drag spins the
         // assembly. A DragControls object-drag flips objectDragActive and stands
         // this down; a plain click never moves, so nothing rotates.
         rotateArmed = true;
@@ -2190,9 +2229,15 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     // Saved-camera navigation helpers. Bounds are framed over the mechanism
     // (assembly pivot) plus the boundary portals; a move eases via a tween the
     // animation loop advances. Exposed through refs for the toolbar buttons.
-    const startCameraTween = (to: CameraPose) => {
+    const startCameraTween = (to: CameraPose, onComplete?: () => void) => {
       const from = poseFromCamera(camera, controls);
-      cameraTweenRef.current = { from, to, start: clock.getElapsedTime(), dur: VIEW_TWEEN_SECONDS };
+      cameraTweenRef.current = {
+        from,
+        to,
+        start: clock.getElapsedTime(),
+        dur: prefersReducedMotion() ? 0 : VIEW_TWEEN_SECONDS,
+        onComplete,
+      };
     };
     const frameAll = () => {
       const box = new THREE.Box3();
@@ -2269,7 +2314,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       if (tween) {
         const t = Math.min(1, (elapsedTime - tween.start) / tween.dur);
         applyPoseToCamera(camera, controls, lerpPose(tween.from, tween.to, easeInOutCubic(t)));
-        if (t >= 1) cameraTweenRef.current = null;
+        if (t >= 1) {
+          cameraTweenRef.current = null;
+          tween.onComplete?.();
+        }
       }
 
       controls.update();

@@ -1,4 +1,5 @@
 import { CoreManifest, HardwareBudget } from './relationEngine';
+import type { CommittedResourceReservation } from './resourceAllocator';
 
 // Platform-substrate primitives the CORE Umbilical always provides to any docked
 // element. These are the non-resource "requirements" the Apothecary catalog draws
@@ -25,24 +26,33 @@ export const CORE_TRUST_CAPABILITIES = [
 // Resources still free after subtracting what the currently docked orbs occupy.
 // Pure over the manifest; never mutates it.
 export function getAvailableCoreResources(manifest: CoreManifest): HardwareBudget {
-  const occupied = manifest.sockets.reduce(
-    (total, socket) => {
-      if (!socket.connectedItem) return total;
-      const contract = manifest.contracts.find(entry => entry.contractId === socket.contractId);
-      return {
-        memoryMB: total.memoryMB + Math.max(contract?.allocatedMemoryMB ?? 0, socket.connectedItem.memoryReq ?? 0),
-        threads: total.threads + Math.max(contract?.allocatedThreads ?? 0, socket.connectedItem.threadsReq ?? 0),
-        bandwidthCredits: total.bandwidthCredits + (contract?.allocatedBandwidthPeakCredits ?? 0)
-      };
-    },
-    { memoryMB: 0, threads: 0, bandwidthCredits: 0 }
-  );
+  const occupied = getCoreResourceReservations(manifest).reduce((total, reservation) => ({
+    memoryMB: total.memoryMB + reservation.memoryMB,
+    threads: total.threads + reservation.threads,
+    bandwidthCredits: total.bandwidthCredits + reservation.bandwidthPeakCredits
+  }), { memoryMB: 0, threads: 0, bandwidthCredits: 0 });
   return {
     memoryMB: Math.max(0, manifest.hardwareBudget.memoryMB - occupied.memoryMB),
     threads: Math.max(0, manifest.hardwareBudget.threads - occupied.threads),
     bandwidthCredits: Math.max(0, (manifest.hardwareBudget.bandwidthCredits ?? 256) - occupied.bandwidthCredits),
     gpuEnabled: manifest.hardwareBudget.gpuEnabled
   };
+}
+
+/** Full resource requirements held by active CORE Orb connections. */
+export function getCoreResourceReservations(manifest: CoreManifest): CommittedResourceReservation[] {
+  return manifest.sockets.flatMap((socket) => {
+    if (!socket.connectedItem || !socket.contractId) return [];
+    const contract = manifest.contracts.find((entry) => entry.contractId === socket.contractId);
+    return [{
+      contractId: socket.contractId,
+      memoryMB: Math.max(contract?.allocatedMemoryMB ?? 0, socket.connectedItem.memoryReq ?? 0),
+      threads: Math.max(contract?.allocatedThreads ?? 0, socket.connectedItem.threadsReq ?? 0),
+      bandwidthNormalCredits: contract?.allocatedBandwidthNormalCredits ?? 0,
+      bandwidthPeakCredits: contract?.allocatedBandwidthPeakCredits ?? 0,
+      gpuAccess: contract?.allocatedGpuAccess ?? false
+    }];
+  });
 }
 
 // The full set of execution primitives + capabilities the CORE can offer over the

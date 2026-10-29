@@ -9,6 +9,11 @@ import { ApothecaryItem } from '../engine/relationEngine';
 import { buildElementEnvironment } from '../utils/environmentScene';
 import { createElementTotem } from '../three/elementTotem';
 import { preloadAllGltfModels } from '../utils/gltfLoaderService';
+import { prefersReducedMotion } from '../utils/viewQuality';
+import { easeInOutCubic } from '../utils/cameraNav';
+
+const ENVIRONMENT_ENTRY_TWEEN_SECONDS = 0.58;
+const ENVIRONMENT_ENTRY_DISTANCE_RATIO = 0.45;
 
 interface EnvironmentViewProps {
   /** The Element at the centre of this Environment. */
@@ -45,6 +50,9 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 1000);
     camera.position.set(0, 1.5, 12);
     camera.lookAt(0, 0, 0);
+
+    let navigationPending = false;
+    let navigationFrame = 0;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
@@ -148,6 +156,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
     const handlePointerDown = (event: MouseEvent) => {
+      if (navigationPending) return;
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -157,7 +166,33 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       let node: THREE.Object3D | null = hits[0].object;
       while (node) {
         if (node.userData?.isEnvChild && node.userData.childItem) {
-          onEnterChildRef.current(node.userData.childItem as ApothecaryItem);
+          const item = node.userData.childItem as ApothecaryItem;
+          navigationPending = true;
+          controls.enabled = false;
+          const fromPosition = camera.position.clone();
+          const fromTarget = controls.target.clone();
+          const target = new THREE.Vector3();
+          node.getWorldPosition(target);
+          const direction = camera.position.clone().sub(controls.target).normalize();
+          if (direction.lengthSq() === 0) direction.set(0, 0.2, 1).normalize();
+          const distance = camera.position.distanceTo(controls.target) * ENVIRONMENT_ENTRY_DISTANCE_RATIO;
+          const toPosition = target.clone().addScaledVector(direction, distance);
+          const startedAt = performance.now();
+          const duration = prefersReducedMotion() ? 0 : ENVIRONMENT_ENTRY_TWEEN_SECONDS * 1000;
+          const animateEntry = (now: number) => {
+            const progress = duration === 0 ? 1 : Math.min(1, (now - startedAt) / duration);
+            const eased = easeInOutCubic(progress);
+            camera.position.lerpVectors(fromPosition, toPosition, eased);
+            controls.target.lerpVectors(fromTarget, target, eased);
+            controls.update();
+            if (progress >= 1) {
+              navigationPending = false;
+              onEnterChildRef.current(item);
+              return;
+            }
+            navigationFrame = requestAnimationFrame(animateEntry);
+          };
+          navigationFrame = requestAnimationFrame(animateEntry);
           return;
         }
         node = node.parent;
@@ -194,6 +229,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       cancelAnimationFrame(frameId);
+      cancelAnimationFrame(navigationFrame);
       disposeEnv();
       controls.dispose();
       starGeo.dispose();

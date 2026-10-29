@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { X, CheckCircle2, Play, ShieldCheck, Cpu, HardDrive, Sparkles, ArrowRight, CircleX } from 'lucide-react';
-import { ApothecaryItem, SocketBinding, HANDSHAKE_STEPS, RelationContract } from '../engine/relationEngine';
+import { ApothecaryItem, CoreManifest, SocketBinding, HANDSHAKE_STEPS, RelationContract } from '../engine/relationEngine';
 import { executeUmbilicalHandshake, severConnection } from '../engine/connectionRuntime';
 import { Dialog } from './Dialog';
 
@@ -10,6 +10,7 @@ interface HandshakeModalProps {
   availableSockets: SocketBinding[];
   availableCoreCapabilities: string[];
   availableCoreResources: { memoryMB: number; threads: number; bandwidthCredits?: number; gpuEnabled: boolean };
+  coreManifest: CoreManifest;
   initialTargetSocketId?: string;
   onClose: () => void;
   onCommitHandshake: (item: ApothecaryItem, targetSocketId: string, contract: RelationContract) => void | Promise<void>;
@@ -20,6 +21,7 @@ export const HandshakeModal: React.FC<HandshakeModalProps> = ({
   availableSockets,
   availableCoreCapabilities,
   availableCoreResources,
+  coreManifest,
   initialTargetSocketId,
   onClose,
   onCommitHandshake
@@ -68,7 +70,8 @@ export const HandshakeModal: React.FC<HandshakeModalProps> = ({
     if (!selectedSocket) return;
     const runtimeContract = executeUmbilicalHandshake(item, selectedSocket, {
       availableCapabilities: availableCoreCapabilities,
-      availableResources: availableCoreResources
+      availableResources: availableCoreResources,
+      coreManifest
     });
     setContract(runtimeContract);
     setCurrentStep(0);
