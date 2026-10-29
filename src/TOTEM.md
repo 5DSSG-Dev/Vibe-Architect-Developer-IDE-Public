@@ -86,3 +86,6 @@ Record conventions, ownership, risks, and useful reference information for this 
 - 2026-10-29 | codex | M3 shared CORE resource budget and M4 combined commit
 - CORE default thread capacity is 16; restored workspaces using the previous default of 8 migrate to 16. Capability calculation and allocator now share the same manifest-derived reservations, counting each active Orb by the greater of its saved allocation and declared requirement. Handshake retries rebuild allocator state from the current manifest before capability/resource validation.
 - Combined M3 and M4 work compiles with `npm run build`; `git diff --check` passes. Tests were not run. Existing Vite large-chunk warning remains.
+- 2026-10-29 | codex | Continuous drill-down zoom handoff
+- Drill-down now passes the completed camera offset from the outgoing CORE/Environment view into the incoming Environment. The incoming center starts at a scale matched to the selected Orb/Satellite and eases to its normal focus scale, extending the zoom across scene replacement instead of resetting to the default camera. The experimental ThreeRuntime path now honors OS reduced-motion preference instead of forcing it on.
+- `npm run build` and `git diff --check` pass; the existing Vite large-chunk warning remains. Tests were not run.

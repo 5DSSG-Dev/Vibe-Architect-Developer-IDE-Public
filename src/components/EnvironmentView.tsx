@@ -11,9 +11,11 @@ import { createElementTotem } from '../three/elementTotem';
 import { preloadAllGltfModels } from '../utils/gltfLoaderService';
 import { prefersReducedMotion } from '../utils/viewQuality';
 import { easeInOutCubic } from '../utils/cameraNav';
+import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 const ENVIRONMENT_ENTRY_TWEEN_SECONDS = 0.58;
 const ENVIRONMENT_ENTRY_DISTANCE_RATIO = 0.45;
+const ENVIRONMENT_CENTER_SETTLE_SECONDS = 0.48;
 
 interface EnvironmentViewProps {
   /** The Element at the centre of this Environment. */
@@ -21,7 +23,9 @@ interface EnvironmentViewProps {
   /** The next tier down (Orb→Satellites, Satellite→Actuators). */
   children: ApothecaryItem[];
   /** Drill one level deeper by clicking a child Element. */
-  onEnterChild: (item: ApothecaryItem) => void;
+  onEnterChild: (item: ApothecaryItem, entryView?: EnvironmentEntryView) => void;
+  /** Camera framing from the outgoing scene, used to continue its zoom. */
+  entryView?: EnvironmentEntryView | null;
 }
 
 /**
@@ -30,7 +34,7 @@ interface EnvironmentViewProps {
  * (CORE → Orb → Satellite → Actuator). Rendering geometry comes from the shared
  * buildElementEnvironment builder; each Element carries its Element Totem.
  */
-export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, children, onEnterChild }) => {
+export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, children, onEnterChild, entryView }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const onEnterChildRef = useRef(onEnterChild);
   onEnterChildRef.current = onEnterChild;
@@ -48,7 +52,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     scene.fog = new THREE.FogExp2(0x05070c, 0.015);
 
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 1000);
-    camera.position.set(0, 1.5, 12);
+    camera.position.set(...(entryView?.cameraOffset ?? [0, 1.5, 12]));
     camera.lookAt(0, 0, 0);
 
     let navigationPending = false;
@@ -98,6 +102,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     const envRoot = new THREE.Group();
     scene.add(envRoot);
+    let centerSettleStartedAt: number | null = entryView ? performance.now() : null;
 
     // Attaches the centre + child Element Totems above their meshes.
     const addTotems = () => {
@@ -140,6 +145,10 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       // Re-parent the built group's children into envRoot so totems and disposal
       // can address them directly.
       while (group.children.length > 0) envRoot.add(group.children[0]);
+      const centerNode = envRoot.children.find((node) => node.userData?.isEnvCenter);
+      if (centerNode && entryView && centerSettleStartedAt !== null) {
+        centerNode.scale.setScalar(entryView.centerScale);
+      }
       addTotems();
     };
 
@@ -187,7 +196,12 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
             controls.update();
             if (progress >= 1) {
               navigationPending = false;
-              onEnterChildRef.current(item);
+              const cameraOffset: [number, number, number] = [
+                toPosition.x - target.x,
+                toPosition.y - target.y,
+                toPosition.z - target.z,
+              ];
+              onEnterChildRef.current(item, { cameraOffset, centerScale: 0.85 / 1.9 });
               return;
             }
             navigationFrame = requestAnimationFrame(animateEntry);
@@ -207,6 +221,15 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       const t = clock.getElapsedTime();
       // Gentle rotation of the whole environment ring so children read as orbiting.
       envRoot.rotation.z = t * 0.05;
+      if (centerSettleStartedAt !== null) {
+        const duration = prefersReducedMotion() ? 0 : ENVIRONMENT_CENTER_SETTLE_SECONDS * 1000;
+        const progress = duration === 0 ? 1 : Math.min(1, (performance.now() - centerSettleStartedAt) / duration);
+        const centerNode = envRoot.children.find((node) => node.userData?.isEnvCenter);
+        if (centerNode && entryView) {
+          centerNode.scale.setScalar(THREE.MathUtils.lerp(entryView.centerScale, 1, easeInOutCubic(progress)));
+        }
+        if (progress >= 1) centerSettleStartedAt = null;
+      }
       controls.update();
       composer.render();
       labelRenderer.render(scene, camera);
