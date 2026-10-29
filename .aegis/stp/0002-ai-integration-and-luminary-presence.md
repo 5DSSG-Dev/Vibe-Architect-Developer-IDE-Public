@@ -2043,3 +2043,24 @@ Evidence: P24; P19; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md (At rest: neve
 Channel: cloud
 
 P24 revised before approval: point (3) conflicted with D4.2. At rest the Luminary never raises itself and observes nothing, so a notice or pulse while it is at rest is not allowed. Revised (3): connection moments are shown only while the Architect has the Luminary open. While at rest it reads nothing and shows nothing; the Presence does not pulse for connections. When the Architect opens it, it reads the IDE's own record and offers one line, 'N connection moments since you last opened me. Show them?', and shows them only if the Architect taps it. Moments that happen while it is open appear as lines in the conversation. All other points of P24 are unchanged.
+
+### 2026-10-29T13:33:59.000Z | claude | status
+Chain-Prev: b01f090ed4c6fa5b2e6cb6877790ab6dbfa5012e92f274ed02381bbec67e6420
+Chain-Hash: 3eb3f5af1c0621e76f59c702c4321ecae3256c6cc65c365ea8be476339fa58b7
+Stage: Proposal
+Kind: status
+Item: P24
+Status: Approved
+Channel: cloud
+
+Approved P24 as revised in N43, on the thread's decision card "Teach the Luminary to explain connections this way?", option chosen 2026-10-29T13:33:59Z: "Yes, build it". The card stated the N43 revision: silent at rest with no pulse, and an offer to show moments when opened. Recorded from the cloud thread by claude.
+
+### 2026-10-29T13:55:00.000Z | claude | note N44
+Chain-Prev: 3eb3f5af1c0621e76f59c702c4321ecae3256c6cc65c365ea8be476339fa58b7
+Chain-Hash: b28ed24b661bc0295e5019ba8dec1702d50fe6848c63968a14ba6ca4090ae630
+Stage: Execution
+Kind: note
+Evidence: P24; N43; src/luminary/connectionMoments.ts; src/luminary/connectionMoments.test.ts; src/components/LuminaryHost.tsx; src/App.tsx
+Channel: cloud
+
+P24 built as approved (with N43). (1) src/luminary/connectionMoments.ts: toMoment copies only allow-listed fields (kind, time, Orb id and name, port, contract id and version, Umbilical profile and version, reason code, requested and free memory and threads, offered profiles); the event's message, the contract digest and every other field are dropped. 'suspended' returns nothing. momentLines makes one sentence per line from a fixed wording table; consecutive routine steps of one handshake share a line, while refused, degraded, severed and active stand alone, and active after degraded reads as a recovery. Unknown reason codes are named, never guessed. describeForQuestion gives the 'Ask why' text. (2) LuminaryHost: at rest, no read and no display (D4.2). On opening, if there are moments not yet shown, it offers one line 'N connection moments since you last opened me. Show them'; while open, each new moment appears as a line. 'Ask why' adds a chip with that line only and suggests a question; the Architect still sends it. No model call is made for a moment. Orb names come from the Apothecary (App passes nameOf). No change to the 3D Presence, evidenceArchive or the runtime. Tests: 6 new (eight sentences, grouping and refusal with offered profile, recovery, suspended and unknown code, allow-list strips message, digest and extra fields, Ask why text); app 314/314 (one earlier run hit the known identity timing flake); gateway 147/147; typecheck and build clean. Next: the Architect docks, refuses and cuts off an Orb on their PC.

@@ -18,6 +18,8 @@ import {
 import { ReplyView, TaskCard } from './LuminaryCards';
 import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
 import { recordExchange, textEvidence } from '../luminary/record';
+import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } from '../luminary/connectionMoments';
+import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
 import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
 /**
@@ -48,7 +50,9 @@ type Entry =
   | { id: string; kind: 'reply'; reply: GovernedReply; lineage?: LineageEntry[]; level: ExplanationLevel; forTask?: boolean }
   | { id: string; kind: 'shortfall'; text: string }
   | { id: string; kind: 'task'; task: CodingTask; level: ExplanationLevel }
-  | { id: string; kind: 'note'; text: string };
+  | { id: string; kind: 'note'; text: string }
+  | { id: string; kind: 'moments-offer'; eventIds: string[] }
+  | { id: string; kind: 'moments'; moments: ConnectionMoment[] };
 
 export interface LuminarySelection {
   label: string;
@@ -60,6 +64,9 @@ const CONTEXT_LIMIT_BYTES = 24_000;
 const bytes = (text: string) => new TextEncoder().encode(text).length;
 let nextId = 0;
 const newId = () => `l${++nextId}`;
+
+/** Connection moments already shown to the Architect, kept for the page visit (P24). */
+const seenMoments = new Set<string>();
 
 const ACTIVITY_LABEL: Record<Activity, string> = {
   resting: 'Resting',
@@ -76,7 +83,7 @@ function modelLabel(status: LuminaryStatus | null): string {
   return status.replySource;
 }
 
-export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelection }> = ({ mode, selection }) => {
+export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelection; nameOf?: (elementId: string) => string | undefined }> = ({ mode, selection, nameOf }) => {
   // Shared with the Presence in the Aether workspace, so clicking either one engages the Luminary.
   const isEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
   const setIsEngaged = setLuminaryEngaged;
@@ -135,6 +142,39 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     setActivity(result.kind === 'shortfall' ? 'resting' : 'unavailable');
     push({ id: newId(), kind: 'shortfall', text: describeShortfall(result.shortfall) });
   }, []);
+
+  const nameOfRef = useRef(nameOf);
+  nameOfRef.current = nameOf;
+  const momentOf = (event: ConnectionEvent) => toMoment(event, (id) => nameOfRef.current?.(id));
+
+  // Connection moments (P24, N43). At rest the Luminary reads nothing and shows nothing (D4.2). When
+  // the Architect opens it, it offers the moments it has not shown yet, and while it is open each new
+  // moment appears as a plain line. The wording is made here, with no model call.
+  useEffect(() => {
+    if (!isEngaged) return;
+    const unseen = getConnectionEvents().filter((event) => !seenMoments.has(event.eventId) && toMoment(event) !== null);
+    setEntries((current) => {
+      const kept = current.filter((entry) => entry.kind !== 'moments-offer');
+      return unseen.length ? [...kept, { id: newId(), kind: 'moments-offer', eventIds: unseen.map((event) => event.eventId) }] : kept;
+    });
+    return subscribeConnectionEvents((event) => {
+      const moment = momentOf(event);
+      if (!moment) return;
+      seenMoments.add(event.eventId);
+      setEntries((current) => {
+        const last = current[current.length - 1];
+        if (last?.kind === 'moments') return [...current.slice(0, -1), { ...last, moments: [...last.moments, moment] }];
+        return [...current, { id: newId(), kind: 'moments', moments: [moment] }];
+      });
+    });
+  }, [isEngaged]);
+
+  const showMoments = (offer: Extract<Entry, { kind: 'moments-offer' }>) => {
+    const ids = new Set(offer.eventIds);
+    const shown = getConnectionEvents().filter((event) => ids.has(event.eventId)).map(momentOf).filter((moment): moment is ConnectionMoment => moment !== null);
+    shown.forEach((moment) => seenMoments.add(moment.eventId));
+    setEntries((current) => current.map((entry) => (entry.id === offer.id ? { id: entry.id, kind: 'moments', moments: shown } : entry)));
+  };
 
   // The status read happens only when the Architect engages the Luminary, never while paused.
   useEffect(() => {
@@ -387,6 +427,37 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                   return <p key={entry.id} role="alert" className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-2 text-[10px] text-rose-200">{entry.text}</p>;
                 case 'note':
                   return <p key={entry.id} className="text-[10px] text-slate-400">{entry.text}</p>;
+                case 'moments-offer': {
+                  const count = entry.eventIds.length;
+                  return (
+                    <p key={entry.id} className="rounded-lg border border-cyan-700/40 bg-slate-900/50 p-2 text-[10px] text-cyan-100">
+                      {count} connection moment{count === 1 ? '' : 's'} since you last opened me.{' '}
+                      <button type="button" onClick={() => showMoments(entry)} className="text-amber-300 hover:text-amber-100 underline-offset-2 hover:underline">Show them</button>
+                    </p>
+                  );
+                }
+                case 'moments':
+                  return (
+                    <ul key={entry.id} aria-label="Connection moments" className="rounded-lg border border-cyan-700/40 bg-slate-900/50 p-2 space-y-1">
+                      {momentLines(entry.moments).map((line) => (
+                        <li key={line.id} className="text-[10px] text-cyan-100 leading-relaxed">
+                          {line.text}
+                          {!taskMode && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                addChip(`Connection: ${line.orbName}`, describeForQuestion(line));
+                                if (!message.trim()) setMessage('Why did this happen, and what can I do next?');
+                              }}
+                              className="ml-1 text-[9px] text-amber-300 hover:text-amber-100"
+                            >
+                              Ask why
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  );
               }
             })}
           </div>
