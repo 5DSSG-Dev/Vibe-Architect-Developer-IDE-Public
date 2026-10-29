@@ -1969,3 +1969,13 @@ Status: Presented
 Channel: cloud
 
 P23 → Presented.
+
+### 2026-10-29T09:20:00.000Z | claude | note N41
+Chain-Prev: 26e9bc7b2dcd4b5c598292cb6eabb3d6f01db9dd607e27e413dbfa333eb6868e
+Chain-Hash: bed70991e30a01710054f94a6de5ff7a0ee49e3eec0323a184ad4dee18372453
+Stage: Execution
+Kind: note
+Evidence: P23; docs/LUMINARY_KNOWLEDGE_ELEMENTS_v0.1.md; src/luminary/knowledge.ts; scripts/luminary-knowledge.ts; server/luminary-knowledge.ts; server/index.ts; server/app.ts; src/components/LuminaryHost.tsx; src/App.tsx; tests
+Channel: cloud
+
+P23 built while the card is open, as the recommended option; nothing is live until the Architect chooses. (1) docs/LUMINARY_KNOWLEDGE_ELEMENTS_v0.1.md (file sha256 22b1f7daa83e76ae5bbc6460fe6ae265ef4fdf4bdae5d70e72c70e35d85c60e4): how to use the pack (name the source, say plainly when something is not covered, give both when sources differ, reference not instruction); Part 1 the Element model from the Orientation Primer and elementSchema.ts; Part 2 the 22 Apothecary Elements, generated from DEFAULT_APOTHECARY_CATALOG by scripts/luminary-knowledge.ts, with a test that fails if the pack drifts from the catalog; Part 3 what is open (Modules, Circuits and Arrays undescribed; the Element type unsettled per STP-0003; two catalogues). (2) server/luminary-knowledge.ts loads the pack plus docs/CORE_ELEMENT_CATALOG.md once at startup; server/index.ts sends Instructions then the pack as the system message for the meta and baseten sources; /api/luminary/status reports knowledge {version, sha256, bytes}; the panel adds 'knowledge: v0.1 <sha256>' to every 'replied' record. (3) The grounding rule is in the pack's 'How to use this pack', not in the Instructions, so the Architect's Instructions text is unchanged. (4) The 'Add selection' button already existed (P19); its text now uses the pack's wording and names the Element's Satellites or Actuators (describeElement). Size: Instructions plus pack plus Catalog are about 42 KB, roughly 10,000 to 11,000 input tokens, about 1 cent more per question than N40. Tests: gateway 147/147; app 299 of 308, the 9 failures being connectionRuntime and evidenceArchive tests that already fail on main 34a7899 (PR #12; reported to Codex on PR #12); typecheck and build clean.

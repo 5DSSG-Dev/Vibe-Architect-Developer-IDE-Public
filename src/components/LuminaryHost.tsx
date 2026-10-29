@@ -123,7 +123,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   };
   const keepReply = async (reply: GovernedReply, lineage: LineageEntry[] | undefined, extra: LuminaryExchange['detail'] = {}) => {
     const content = await textEvidence(reply.content);
-    await keep('replied', { modelId: reply.modelId, excerpt: content.excerpt, sha256: content.sha256, chars: content.chars, checked: lineage?.some((entry) => entry.stage === 'prism') ?? false, ...extra });
+    // The Knowledge Pack's hash (P23) records what the Luminary was told when it answered.
+    const knowledge: LuminaryExchange['detail'] = status?.knowledge ? { knowledge: `${status.knowledge.version} ${status.knowledge.sha256}` } : {};
+    await keep('replied', { modelId: reply.modelId, excerpt: content.excerpt, sha256: content.sha256, chars: content.chars, checked: lineage?.some((entry) => entry.stage === 'prism') ?? false, ...knowledge, ...extra });
   };
   const keepFailure = (result: Extract<CallResult<unknown>, { ok: false }>, extra: LuminaryExchange['detail'] = {}) =>
     keep('shortfall', { kind: result.kind, code: result.shortfall.code, ...extra });
