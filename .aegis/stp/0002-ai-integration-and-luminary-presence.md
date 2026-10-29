@@ -1758,3 +1758,46 @@ Evidence: server/luminary-executor.ts; server/luminary-task-router.ts; src/lumin
 Channel: cloud
 
 Codex (Lumin) code review of PR #9 at 33d7911, delivered by peer-bridge file 2026-10-29T06:49:38Z: request changes, eight findings. Claude verified each against the code and addressed them on PR #9. (1) Symlink escape: writes now refuse any path whose folders or file are links, and confirm the real landing folder is inside the worktree; a refused proposal's worktree and branch are discarded. (2) Approval before merge: accept writes an approved entry naming the exact reviewed commit before merging, merges only that commit, then records the outcome; a ledger that does not verify (or cannot be read) stops every append, so no proposal or merge goes ahead on a broken chain; a merge whose outcome cannot be recorded says so with the merge commit. (3) Full review: the whole diff is kept up to 1,000,000 characters (was the last 4,000); a larger change is marked incomplete and cannot be accepted; Accept is offered only after the full changes are opened. (4) Loopback: besides a local socket, the executor now requires a loopback Host, a local or absent Origin, and no proxy or tunnel header (Forwarded, X-Forwarded-*, X-Real-IP, Via, CF-Connecting-IP and similar); a proxy that strips all of these and rewrites Host would still defeat it, so the settings note says never to switch the executor on behind a tunnel. (5) Ledger scope: every question, reply, Shortfall, stop, Offering accept and decline, and coding-task assign, propose, accept, decline and failure is now appended to the IDE's existing evidence record (kind LUMINARY_EXCHANGE, long text kept as excerpt plus sha256), with the record's capacity raised from 1,000 to 5,000; the gateway ledger stays as the merge guard, because only a server-written record can stop a merge. The Architect's choice between this and the alternatives is on a decision card; this is the recommended option, built while it waits. (6) Context chips are now sent with coding tasks (same 24,000-byte limit) and cleared after sending. (7) The P19 document header now says approved and built, pointing here. (8) The experimental threeRuntimeP0 renderer does not draw the 3D Presence; this is stated in the document and code; the Luminary stays reachable by its icon and Full Form. Not yet done: the LUMINARY.glb asset (sha256 82fa5979...c4242f97) is to be committed through Git LFS from the Architect's PC onto this branch before merge, as Codex asked. Tests: gateway 139/139, app 303/303, typecheck and build clean. Browser run in the cloud (rehearsal source, gauge test double, executor on a scratch clone): Accept disabled until the full changes were opened; accept merged; ledger proposed, approved, accepted, chain valid; the evidence record held asked, replied, offering_declined, task_assigned, task_proposed and task_accepted; no console errors beyond the cloud's placeholder 3D files. Re-review requested from Codex. These are review responses, not approval: acceptance and merge remain the Architect's.
+
+### 2026-10-29T07:55:00.010Z | claude | finding S20
+Chain-Prev: bf6026aab71915ae5e10b4c390c5f6d36de38630d861b0b655abfb19016f6d92
+Chain-Hash: 1ba492e137d0b82b31dadae3b0ff07b8c2abfbb8158d19b87e7f6c7c6f9bf6f9
+Stage: Situation
+Kind: finding
+Evidence: server/luminary-meta.ts; scripts/luminary-meta-smoke.ts; server/config.ts:38-39,113; server/app.ts:241,248-251; server/luminary-pipeline/pipeline.ts:43; N22; N23
+Channel: cloud
+
+After PR #9 (main fc24bb9) the Luminary's live paths, POST /api/luminary/ask and coding tasks, answer only from the labelled rehearsal stand-in or not at all: config accepts only LUMINARY_REPLY_SOURCE=rehearsal and the gateway's askModel is either the rehearsal source or notConfiguredAskModel. The Meta reply source (createMetaAskModel with its file-backed SpendLedger) exists and passed two capped smoke calls from a separate script ($0.0226 for 2 calls, ledger on the Architect's PC now refuses further calls by design: cap 2 calls, $0.25). Its output allowance (2,000 tokens) is too small for code replies (test 2 used 2,286). One governed question can make up to 3 model calls (the first reply plus up to 2 IDS revisions, DEFAULT_MAX_IDS_PASSES = 2). The status endpoint reports the reply source but no spend. The Architect asked for a running spend total and an overall ceiling so the $150 of Meta credits last through the demo video (2026-10-28).
+
+### 2026-10-29T07:55:00.020Z | claude | gap G20
+Chain-Prev: 1ba492e137d0b82b31dadae3b0ff07b8c2abfbb8158d19b87e7f6c7c6f9bf6f9
+Chain-Hash: 88d12aafc67be212ac988316b24e8e931a3419a0d91af82ef03088b4af2cf9f8
+Stage: Gap
+Kind: gap
+Evidence: S20; G19
+Channel: cloud
+
+M1.b-2 and M2 are open: the gateway does not use the Meta model for the Luminary's replies, there is no ceiling the Architect sets for real use, and no running total is visible to the Architect while working.
+
+### 2026-10-29T07:55:00.030Z | claude | change P21
+Chain-Prev: 88d12aafc67be212ac988316b24e8e931a3419a0d91af82ef03088b4af2cf9f8
+Chain-Hash: 772b8117e0627c51c9bd24512736a45eb45aaf7d167a836dda456bb6aaaa011b
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S20; G20; P20; D3
+Closes: G20
+Channel: cloud
+
+Connect the Luminary's live paths to Meta, under the Architect's ceiling. (1) A new reply source LUMINARY_REPLY_SOURCE=meta, chosen only when LUMINARY_META_API_KEY is set in the git-ignored .env; it reuses createMetaAskModel unchanged in behaviour (Muse Spark muse-spark-1.3 at the published standard rate; the -contributor variant stays refused; the P15 Instructions as system message). Every reply still passes the unchanged gate, PIM, IRG gauge, RBC and Prism or IDS; the model id is declared on every reply; rehearsal stays selectable and stays the default for automated tests, which use fakes only and never call Meta. (2) The ceiling: LUMINARY_META_CEILING_USD, the Architect's overall limit for all real use, counted from the same ledger file, so the two smoke calls already count. The smoke test's 2-call limit is lifted for this source (the call count is still recorded); the money ceiling is the stop. Each call still reserves its worst case before it is sent; a call that could pass the ceiling is refused with an honest Shortfall, 'spending ceiling reached', and nothing else changes. An unreadable ledger still refuses everything. (3) The running total: GET /api/luminary/status adds spentUsd, ceilingUsd and calls; the Luminary header shows it (for example 'Meta · $0.42 of $50 used'), and turns amber at 80% of the ceiling. (4) Output allowance raised to 8,000 tokens so code replies are not cut off; the worst-case reservation grows with it (about 3.5 cents per call), so the refusal point is exact rather than optimistic. (5) The ceiling protects the public demo too: a reviewer with the demo key spends from the same ceiling, within the existing 30-requests-per-minute limit. Verification: gateway tests with a fake Meta (ceiling refusal, running total, ledger carry-over, no key = not configured, rehearsal default), typecheck, build; then, only with the Architect's go, one live question from the IDE on the Architect's PC (about 1-3 cents), recorded here. Open for the Architect: the ceiling amount. Known limit: the gauge was calibrated on prose, so gauging code replies is untested; code replies are gauged like any reply and a withheld one is shown as a Shortfall. Not in this step: choosing reasoning effort (unknown in Meta's API until checked), a per-day limit, and confirming the hackathon's published model rules, which stays with M2 for Codex or the Architect to confirm.
+
+### 2026-10-29T07:55:00.040Z | claude | status
+Chain-Prev: 772b8117e0627c51c9bd24512736a45eb45aaf7d167a836dda456bb6aaaa011b
+Chain-Hash: e2eec1c7be33f7d035267ae3c94478c30052b58d4e026c0133891dc71f94e4b8
+Stage: Proposal
+Kind: status
+Item: P21
+Status: Presented
+Channel: cloud
+
+P21 → Presented.
