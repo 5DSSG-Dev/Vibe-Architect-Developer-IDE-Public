@@ -173,7 +173,7 @@ function fail(
   step: number,
   reason: string,
   allocated = false,
-  failureFacts?: { available?: { memoryMB: number; threads: number; bandwidthCredits: number; gpu: boolean }; alternatives?: readonly ConnectionAlternative[] }
+  failureFacts?: { available?: { memoryMB: number; threads: number; bandwidthCredits: number; gpu: boolean }; alternatives?: readonly ConnectionAlternative[]; missingCapabilities?: readonly string[] }
 ): RelationContract {
   if (allocated) {
     releaseAllocation(contract.contractId);
@@ -207,8 +207,10 @@ function fail(
       profileVersion: contract.resolvedProfileVersion,
       reasonCode: failureFacts?.alternatives?.length ? 'RESOURCE_SHORTFALL_WITH_ALTERNATIVES'
         : step === 7 || step === 8 ? 'RESOURCE_SHORTFALL'
-          : step === 3 ? 'CONTRACT_REFUSED' : 'HANDSHAKE_REFUSED',
+          : step === 3 ? 'CONTRACT_REFUSED'
+            : failureFacts?.missingCapabilities?.length ? 'CAPABILITY_UNSATISFIED' : 'HANDSHAKE_REFUSED',
       message: reason,
+      missingCapabilities: failureFacts?.missingCapabilities,
       alternatives: failureFacts?.alternatives,
       resources: { requested: { memoryMB: contract.allocatedMemoryMB, threads: contract.allocatedThreads,
         bandwidthNormal: contract.allocatedBandwidthNormalCredits ?? 0, bandwidthPeak: contract.allocatedBandwidthPeakCredits ?? 0,
@@ -312,7 +314,7 @@ export function executeUmbilicalHandshake(
   if (options.directionAccepted === false) return fail(contract, 4, 'Connection direction was not accepted');
   contract.handshakeCompletedStep = 4;
   const missing = missingRequirements(manifest.requirements, available);
-  if (missing.length > 0) return fail(contract, 5, `Unsatisfied capabilities: ${missing.join(', ')}`);
+  if (missing.length > 0) return fail(contract, 5, `Unsatisfied capabilities: ${missing.join(', ')}`, false, { missingCapabilities: missing });
   contract.handshakeCompletedStep = 6;
   const runtimeBudget = getAvailableBudget();
   const availableBudget = options.availableResources

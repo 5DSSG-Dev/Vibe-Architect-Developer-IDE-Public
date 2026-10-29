@@ -80,7 +80,7 @@ test('only allow-listed fields leave the event: the raw message and anything els
     prompt: 'private prompt', credential: 'sk-secret',
   } as ConnectionEvent;
   const moment = toMoment(raw, names)!;
-  const allowed = ['eventId', 'attemptId', 'kind', 'time', 'orbId', 'orbName', 'portId', 'contract', 'profile', 'reasonCode', 'requested', 'available', 'alternatives'];
+  const allowed = ['eventId', 'attemptId', 'kind', 'time', 'orbId', 'orbName', 'portId', 'contract', 'profile', 'reasonCode', 'missingCapabilities', 'requested', 'available', 'alternatives'];
   for (const key of Object.keys(moment)) assert.ok(allowed.includes(key), key);
   const everything = JSON.stringify(moment) + describeForQuestion(momentLines([moment])[0]);
   for (const secret of ['sk-secret', '.env', 'private prompt', 'tumbler-proof-digest', 'Error:']) assert.ok(!everything.includes(secret), secret);
@@ -93,4 +93,11 @@ test('the Ask why text carries the sentence and plain facts only', () => {
     'Auth & Session Service is weakened on port socket-1: a health check failed.',
     '- moment: degraded; time: 2026-10-29T13:40:00.000Z; Orb: Auth & Session Service (orb-auth-service); port: socket-1; Umbilical profile: Record v1.0.0; reason: a health check failed (HEALTH_CHECK_FAILED)',
   ].join('\n'));
+});
+
+test('a missing capability is named, with why the CORE may lack it', () => {
+  const [line] = momentLines(moments([event({ kind: 'refused', reasonCode: 'CAPABILITY_UNSATISFIED', missingCapabilities: ['thread_pool'],
+    resources: { requested: { memoryMB: 1024, threads: 4, bandwidthNormal: 0, bandwidthPeak: 0, gpu: false }, available: { memoryMB: 2048, threads: 0, bandwidthCredits: 0, gpu: false } } })]));
+  assert.equal(line.text, 'Auth & Session Service was refused on port socket-1: it needs something the CORE cannot provide right now. It needs thread pool (the CORE offers it only while it has a free thread).');
+  assert.match(describeForQuestion(line), /missing: thread_pool/);
 });

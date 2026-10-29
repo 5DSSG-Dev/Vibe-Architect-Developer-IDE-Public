@@ -23,9 +23,20 @@ const REASONS: Record<string, string> = {
   RESOURCE_SHORTFALL: 'the CORE did not have enough free resources for it',
   RESOURCE_SHORTFALL_WITH_ALTERNATIVES: 'the CORE did not have enough free resources for it',
   HANDSHAKE_REFUSED: 'its handshake did not complete',
+  CAPABILITY_UNSATISFIED: 'it needs something the CORE cannot provide right now',
   HEALTH_CHECK_FAILED: 'a health check failed',
   FAULT_ISOLATION: 'it was isolated after a fault, so the fault could not spread',
   MUTUAL_DISCONNECT: 'it was disconnected on purpose',
+};
+
+/** Why the CORE may lack a capability it offers itself (src/engine/coreCapabilities.ts). */
+const CAPABILITY_HINTS: Record<string, string> = {
+  thread_pool: 'the CORE offers it only while it has a free thread',
+  single_thread: 'the CORE offers it only while it has a free thread',
+  cpu_time: 'the CORE offers it only while it has a free thread',
+  multi_core: 'the CORE offers it only while it has at least 2 free threads',
+  memory_heap: 'the CORE offers it only while it has free memory',
+  high_memory: 'the CORE offers it only while it has at least 768 MB free',
 };
 
 interface Amount {
@@ -45,6 +56,7 @@ export interface ConnectionMoment {
   contract?: { id: string; version: string };
   profile?: { id: string; version?: string };
   reasonCode?: string;
+  missingCapabilities?: string[];
   requested?: Amount;
   available?: Amount;
   alternatives?: { profileId: string; profileVersion: string; memoryMB: number; threads: number }[];
@@ -73,6 +85,7 @@ export function toMoment(event: ConnectionEvent, nameOf: (orbId: string) => stri
     ...(contractId && contractVersion ? { contract: { id: contractId, version: contractVersion } } : {}),
     ...(event.profileId ? { profile: { id: event.profileId, ...(event.profileVersion ? { version: event.profileVersion } : {}) } } : {}),
     ...(event.reasonCode ? { reasonCode: event.reasonCode } : {}),
+    ...(event.missingCapabilities?.length ? { missingCapabilities: [...event.missingCapabilities] } : {}),
     ...(requested ? { requested: { memoryMB: requested.memoryMB, threads: requested.threads } } : {}),
     ...(available ? { available: { memoryMB: available.memoryMB, threads: available.threads } } : {}),
     ...(event.alternatives?.length
@@ -104,7 +117,15 @@ function phrase(moment: ConnectionMoment, recovered = false): string {
       return `was cut off${port(moment)}${moment.reasonCode ? `: ${reason(moment.reasonCode)}` : ''}`;
     case 'refused': {
       let text = `was refused${port(moment)}${moment.reasonCode ? `: ${reason(moment.reasonCode)}` : ''}`;
-      if (moment.requested && moment.available) text += `. It asked for ${amount(moment.requested)}; ${amount(moment.available)} were free`;
+      if (moment.missingCapabilities?.length) {
+        text += `. It needs ${joinPhrases(moment.missingCapabilities.map((capability) => {
+          const hint = CAPABILITY_HINTS[capability];
+          return `${capability.replace(/_/g, ' ')}${hint ? ` (${hint})` : ''}`;
+        }))}`;
+      }
+      // At step 5 the CORE's capability check and the resource budget count threads differently, so
+      // the budget's 'free' figures are not the reason and would contradict it. They are left out.
+      if (moment.reasonCode !== 'CAPABILITY_UNSATISFIED' && moment.requested && moment.available) text += `. It asked for ${amount(moment.requested)}; ${amount(moment.available)} were free`;
       if (moment.alternatives?.length) {
         const offered = moment.alternatives.map((alt) => `${alt.profileId} v${alt.profileVersion} (${amount(alt)})`).join(', ');
         text += `. The CORE offered a profile that fits instead: ${offered}`;
@@ -161,6 +182,7 @@ export function describeForQuestion(line: MomentLine): string {
     if (moment.contract) parts.push(`contract: ${moment.contract.id} v${moment.contract.version}`);
     if (moment.profile) parts.push(`Umbilical profile: ${moment.profile.id}${moment.profile.version ? ` v${moment.profile.version}` : ''}`);
     if (moment.reasonCode) parts.push(`reason: ${reason(moment.reasonCode)} (${moment.reasonCode})`);
+    if (moment.missingCapabilities) parts.push(`missing: ${moment.missingCapabilities.join(', ')}`);
     if (moment.requested) parts.push(`asked for: ${amount(moment.requested)}`);
     if (moment.available) parts.push(`free: ${amount(moment.available)}`);
     if (moment.alternatives?.length) parts.push(`offered instead: ${moment.alternatives.map((alt) => `${alt.profileId} v${alt.profileVersion} (${amount(alt)})`).join(', ')}`);

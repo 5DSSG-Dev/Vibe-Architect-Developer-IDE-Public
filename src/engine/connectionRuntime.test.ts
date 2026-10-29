@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import { getCapabilityProviders } from './capabilityRegistry';
 import { registerCustomOrbManifest } from '../contracts/orbManifest';
+import { getConnectionEvents } from '../contracts/connectionEvents';
 import {
   computeContractChecksum,
   executeMeshHandshake,
@@ -201,4 +202,14 @@ test('graceful sever requires mutual consent and releases resources and capabili
   assert.equal(getAvailableBudget().memoryMB, during.memoryMB + contract.allocatedMemoryMB);
   assert.equal(getCapabilityProviders('observe').includes('orb-sever'), false);
   assert.throws(() => heartbeatCycle(contract.contractId), /terminal/i);
+});
+
+test('a step-5 refusal names the missing capabilities as structured event data', () => {
+  const before = getConnectionEvents().length;
+  const element = item('orb-needs-pool', { requirements: ['capability_nobody_offers'] });
+  const contract = executeUmbilicalHandshake(element, socket('socket-cap'), { availableCapabilities: [] });
+  assert.equal(contract.handshakeStatus, 'FAILED');
+  const refused = getConnectionEvents().slice(before).find((event) => event.kind === 'refused');
+  assert.equal(refused?.reasonCode, 'CAPABILITY_UNSATISFIED');
+  assert.deepEqual(refused?.missingCapabilities, ['capability_nobody_offers']);
 });
