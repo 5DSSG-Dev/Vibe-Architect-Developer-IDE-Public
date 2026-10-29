@@ -1896,3 +1896,13 @@ Evidence: server/luminary-meta.ts (parseLiveSourceEnv, BASETEN_BASE_URL, BASETEN
 Channel: cloud
 
 P22 built (in 36c0728, while the card was open, as the recommended option). LUMINARY_REPLY_SOURCE=baseten sends the same governed requests to https://inference.baseten.co/v1 with model meta-models/muse-spark-open, the key LUMINARY_BASETEN_API_KEY as a bearer token, its own ceiling LUMINARY_BASETEN_CEILING_USD and its own ledger (.luminary/baseten-spend.json); the panel labels it 'Muse Spark Open · Baseten'. Meta stays selectable with its own key, ceiling and ledger. Tests: gateway 143/143 (a fake Baseten checks address, model, bearer key, separate ledger and ceiling, and refusal without key or ceiling), app 303/303; typecheck and build clean. Next, with the Architect's go: one live question from her PC.
+
+### 2026-10-29T08:40:00.000Z | claude | note N38
+Chain-Prev: 54dd755910e8d114d31635ae6d8920e62aa43d2832207b5a9e8fabe07754d04f
+Chain-Hash: 07ea86026447ecd7ee1cebae10bc336a1508a2f4640bbe5bfaa6e611de370e68
+Stage: Verification
+Kind: note
+Evidence: P22; N37; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (1 entry, 2026-10-29T08:26:38Z, failed); server/luminary-meta.ts; server/luminary-meta.test.ts
+Channel: cloud
+
+P22 live check, approved by the Architect on the decision card 2026-10-29T08:25:20Z ("Yes, both"). From a separate worktree at 9923cac on the Architect's PC, with the gauge up and status showing 'Muse Spark Open · Baseten', $0 of $75, 0 calls: exactly one POST /ask ("In two or three plain sentences, what is an Orb in the Vibe Architect IDE?"). Baseten refused it: HTTP 403 in 0.9 s, no reply, so the gauge did not run; the gateway returned shortfall upstream_error. No retry. The model id and address match Baseten's published Muse Spark Open page, so the refusal is about the key or the account (not active yet, credit not attached, or the model not enabled for it); a free model-list check is under way. The Architect's main .env was not changed: that folder's code (01cc2eb) has no Baseten source, so LUMINARY_REPLY_SOURCE=baseten would stop the gateway starting. Two fixes found by this run: (1) the refused call still counted its worst-case reservation ($0.0412) against the ceiling; a request the provider refuses with HTTP 4xx now records actual cost 0, while network failures and 5xx keep the worst case, since those may have been billed; (2) errors now name the provider (Baseten, not 'Meta model') and include the provider's short reason, with the key redacted if quoted back. The one earlier refused entry keeps its $0.0412 charge on the ledger as recorded. Tests: gateway 144/144, app 303/303; typecheck clean.

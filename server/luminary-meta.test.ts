@@ -74,10 +74,10 @@ test('reported usage settles the charge; without usage the worst case stays char
   assert.ok(!readFileSync(path, 'utf8').includes('"k"'), 'the key is never written to the ledger');
 });
 
-test('an HTTP error or a network failure keeps the worst-case charge and becomes a thrown error', async () => {
+test('a server error or a network failure keeps the worst-case charge and becomes a thrown error', async () => {
   const ledger = new SpendLedger(ledgerPath(), 0.25, 5);
-  const http = createMetaAskModel({ apiKey: 'k', ledger, fetch: fakeMeta(() => ({ status: 401, body: { error: 'bad key' } })).fetch });
-  await assert.rejects(http('hi'), /HTTP 401/);
+  const http = createMetaAskModel({ apiKey: 'k', ledger, fetch: fakeMeta(() => ({ status: 500, body: { error: 'busy' } })).fetch });
+  await assert.rejects(http('hi'), /HTTP 500: busy/);
   const down = createMetaAskModel({
     apiKey: 'k', ledger, fetch: (async () => { throw new Error('offline'); }) as unknown as typeof fetch,
   });
@@ -86,6 +86,25 @@ test('an HTTP error or a network failure keeps the worst-case charge and becomes
   assert.deepEqual(state.entries.map((e) => e.status), ['failed', 'failed']);
   assert.equal(state.calls, 2);
   assert.ok(state.spentUsd > 0);
+});
+
+test('a request the provider refuses (HTTP 4xx) is recorded but charges nothing, and names the provider and its reason', async () => {
+  const ledger = new SpendLedger(ledgerPath(), 0.25, 5);
+  const refused = createMetaAskModel({
+    apiKey: 'baseten-test-key', ledger, providerName: 'Baseten',
+    fetch: fakeMeta(() => ({ status: 403, body: { error: { message: 'Model not\n enabled for this key' } } })).fetch,
+  });
+  await assert.rejects(refused('hi'), /^Error: Baseten returned HTTP 403: Model not enabled for this key\.$/);
+  const state = ledger.read();
+  assert.equal(state.entries[0].status, 'failed');
+  assert.equal(state.entries[0].actualUsd, 0);
+  assert.equal(state.calls, 1);
+  assert.equal(state.spentUsd, 0);
+
+  const echoes = createMetaAskModel({
+    apiKey: 'secret-key-123', ledger, fetch: fakeMeta(() => ({ status: 401, body: { message: 'Bad key secret-key-123' } })).fetch,
+  });
+  await assert.rejects(echoes('hi'), (error: Error) => !error.message.includes('secret-key-123') && /Bad key \[key\]/.test(error.message));
 });
 
 test('the caps hold across restarts because they are counted from the ledger on disk', async () => {
