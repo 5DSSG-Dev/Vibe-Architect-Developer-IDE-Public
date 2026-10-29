@@ -1832,3 +1832,46 @@ Evidence: live run on the Architect's PC, worktree G:\AEGIS_DEVELOPMENT_REPOS\vi
 Channel: cloud
 
 P21 live check, run with the Architect's go (decision card 2026-10-29T07:52:57Z, "Yes, run it now"). One POST /api/luminary/ask through the gateway, no retries: "In two or three plain sentences, what is an Orb in the Vibe Architect IDE?" Before: status replySource 'Meta · muse-spark-1.3', gauge configured, spend $0.0226 of $50 over 2 calls (the smoke test, carried over). Result: HTTP 200, modelId muse-spark-1.3, reply: "An Orb is one of the POD building blocks in the Vibe Architect IDE, alongside Satellites, Actuators, Modules, Circuits, and Arrays. I work with you in the Apothecary to shape it, while its full specification lives outside these operating instructions." Lineage: structural ok, PIM no findings, IRG coherent, RBC to Prism. Gauge (llama3.2:3b, Architect thresholds in brackets): Honesty 70.0 (13.8), Respect 66.0 (29.3), Attention 61.7 (23.9), Affection 58.6 (16.3), Loyalty 57.5 (10.7), Trust 68.0 (11.9), Communication 73.7 (34.7). Cost: 2,606 input and 1,681 output tokens, $0.0104 (reserved $0.0412 beforehand, settled to actual). After: $0.0330 of $50 over 3 calls. Observation: the answer is honest but thin; the model knows Orbs only from the Instructions and says their full specification is not there. Grounding the Luminary in the IDE's Element descriptions (M1.d) is the natural next step. The run used a separate worktree with a temporary .env (throwaway demo key, gauge settings from docs/LUMINARY_SETTINGS.md), deleted afterwards; the Architect's main folder was left untouched, including an uncommitted Codex lane entry.
+
+### 2026-10-29T08:15:00.010Z | claude | finding S21
+Chain-Prev: 5ec7ddca29aa9da62dd54e01e0e5d7705f126ea4bc89e5c8cce40c97a1b88cf8
+Chain-Hash: e750287c063c9b9a373eafaae0651d12e601b5a2f5f63a8124f818d642f95d19
+Stage: Situation
+Kind: finding
+Evidence: Architect's email (Baseten, Meta Global AI Developer Hackathon), 2026-10-29T07:58Z; https://www.baseten.co/library/muse-spark-open/ ; https://github.com/BerriAI/litellm/pull/46794 ; server/luminary-meta.ts; N36
+Channel: cloud
+
+The Architect was selected (one of 1,000) for $100 of Baseten credits for the hackathon, for Muse Spark Open, Meta's open-weights model; the key is saved by the Architect as LUMINARY_BASETEN_API_KEY in the git-ignored .env (name confirmed on her PC, value never read). Baseten serves it through an OpenAI-compatible chat-completions API: base URL https://inference.baseten.co/v1, model meta-models/muse-spark-open, the key as a bearer token, list price $1.25 per million input tokens, $0.15 cached input, $4.25 output (Baseten library page; Baseten list API as recorded by LiteLLM). This is the same request shape createMetaAskModel already sends, with a different address, model name and key. M1's charter names 'a Meta open-weight model'; the source connected in P21 is Muse Spark through Meta's own Model API, whose open-weight status this record has not established.
+
+### 2026-10-29T08:15:00.020Z | claude | gap G21
+Chain-Prev: e750287c063c9b9a373eafaae0651d12e601b5a2f5f63a8124f818d642f95d19
+Chain-Hash: 7b369801a919fc2ec3954917c76fbb1a9ab101b9c35387ba2b5294aaaf59ea76
+Stage: Gap
+Kind: gap
+Evidence: S21; M1 charter (totems/HACKATHON_TOTEM.md)
+Channel: cloud
+
+The Luminary cannot yet use the hackathon's open-weights model or the Baseten credits, and M2's 'finalize provider config against the hackathon's rules' is still open.
+
+### 2026-10-29T08:15:00.030Z | claude | change P22
+Chain-Prev: 7b369801a919fc2ec3954917c76fbb1a9ab101b9c35387ba2b5294aaaf59ea76
+Chain-Hash: 753e70bdb581c86e375b26f8853da41d5accaf2fbf769bf2adfa059f55a26979
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: S21; G21; P21; N36
+Closes: G21
+Channel: cloud
+
+Add Baseten as a reply source and make it the main one. (1) LUMINARY_REPLY_SOURCE=baseten reuses the P21 reply source unchanged in behaviour, with base URL https://inference.baseten.co/v1, model meta-models/muse-spark-open (priced at Baseten's list rate, so its spend can be capped), and the key from LUMINARY_BASETEN_API_KEY; the gateway refuses to start without the key and LUMINARY_BASETEN_CEILING_USD. (2) Its own spend ledger (.luminary/baseten-spend.json by default) and its own ceiling, because it spends the Baseten credits, not the Meta ones; the panel shows it the same way ('Muse Spark Open · Baseten · $x of $y used'). (3) Main source: the Architect's .env sets LUMINARY_REPLY_SOURCE=baseten; meta stays selectable with its own $50 ceiling and ledger, and rehearsal stays the test default. Every reply still passes the unchanged gate, PIM, IRG gauge, RBC and Prism or IDS. Verification: tests with a fake Baseten (address, model, bearer key, separate ledger and ceiling, refusal without key or ceiling), typecheck, build; then, with the Architect's go, one live question from her PC (about 1 cent). Open for the Architect: the Baseten ceiling. Not in this step: whether the hackathon rules require Baseten specifically, which the Architect or Codex can confirm from the event's published rules; Baseten's data-use terms, which are noted for the Architect to read.
+
+### 2026-10-29T08:15:00.040Z | claude | status
+Chain-Prev: 753e70bdb581c86e375b26f8853da41d5accaf2fbf769bf2adfa059f55a26979
+Chain-Hash: 9b0aa4f217d1b4ee8b7dee8f3f4796e06b812b21b8c5191c62968b42190431ff
+Stage: Proposal
+Kind: status
+Item: P22
+Status: Presented
+Channel: cloud
+
+P22 → Presented.
