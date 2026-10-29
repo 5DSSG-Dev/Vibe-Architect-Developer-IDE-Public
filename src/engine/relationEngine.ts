@@ -813,7 +813,7 @@ export function createInitialCoreManifest(): CoreManifest {
     formlessCoreState: 'UNSERIALIZED_PRISTINE',
     hardwareBudget: {
       memoryMB: 4096,
-      threads: 8,
+      threads: 16,
       bandwidthCredits: 256,
       gpuEnabled: true
     },

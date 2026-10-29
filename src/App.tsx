@@ -16,6 +16,7 @@ import { BuiltInBrowserModal } from './components/BuiltInBrowserModal';
 import { SimulateModeView } from './components/SimulateModeView';
 import { DeployModeView } from './components/DeployModeView';
 import { EnvironmentView } from './components/EnvironmentView';
+import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
 import { describeElement } from './luminary/knowledge';
@@ -168,7 +169,13 @@ export function App() {
       // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
       // Architect never added. Portals now appear only once added, so that one is left out.
       const restored = restoredWorkspace.coreManifest;
-      return { ...restored, portals: restored.portals.filter((portal) => portal.id !== 'portal-primary') };
+      return {
+        ...restored,
+        hardwareBudget: restored.hardwareBudget.threads === 8
+          ? { ...restored.hardwareBudget, threads: 16 }
+          : restored.hardwareBudget,
+        portals: restored.portals.filter((portal) => portal.id !== 'portal-primary')
+      };
     }
   );
   const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
@@ -202,12 +209,17 @@ export function App() {
   // Drill-down Environment navigation: CORE (empty) → Orb → Satellite → Actuator.
   // Each entry is the Element centred in that Environment.
   const [environmentStack, setEnvironmentStack] = useState<ApothecaryItem[]>([]);
-  const handleEnterElement = (item: ApothecaryItem) => {
+  const [environmentEntryView, setEnvironmentEntryView] = useState<EnvironmentEntryView | null>(null);
+  const handleEnterElement = (item: ApothecaryItem, entryView?: EnvironmentEntryView) => {
     // Moving on replaces the old resume point with the new position.
     setResumeStack([]);
+    setEnvironmentEntryView(entryView ?? null);
     setEnvironmentStack((prev) => [...prev, item]);
   };
-  const popEnvironmentTo = (depth: number) => setEnvironmentStack((prev) => prev.slice(0, depth));
+  const popEnvironmentTo = (depth: number) => {
+    setEnvironmentEntryView(null);
+    setEnvironmentStack((prev) => prev.slice(0, depth));
+  };
   const currentEnvironment = environmentStack[environmentStack.length - 1];
 
   // Resume point: a reload starts at the CORE root and offers, once, to return
@@ -625,6 +637,7 @@ export function App() {
             center={currentEnvironment}
             children={getElementChildren(currentEnvironment, apothecaryCatalog)}
             onEnterChild={handleEnterElement}
+            entryView={environmentEntryView}
           />
 
           {/* Back control beside the content; the full path lives in the Wayfinder. */}
@@ -730,6 +743,7 @@ export function App() {
           availableSockets={coreManifest.sockets}
           availableCoreCapabilities={getCoreRuntimeCapabilities(coreManifest)}
           availableCoreResources={getAvailableCoreResources(coreManifest)}
+          coreManifest={coreManifest}
           initialTargetSocketId={selectedSocketId}
           onClose={() => {
             setAttachingItem(null);

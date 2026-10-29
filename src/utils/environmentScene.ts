@@ -7,6 +7,12 @@ import { createDynamicTether } from './splineBuilder';
 import type { ApothecaryItem, GeometryType } from '../engine/relationEngine';
 import { getItem3DTaxonomy } from '../engine/relationEngine';
 
+/** Camera framing carried across a drill-down scene replacement. */
+export interface EnvironmentEntryView {
+  cameraOffset: readonly [number, number, number];
+  centerScale: number;
+}
+
 /**
  * environmentScene — a pure Three.js builder for a single "element environment".
  *
