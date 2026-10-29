@@ -2033,3 +2033,13 @@ Status: Presented
 Channel: cloud
 
 P24 → Presented.
+
+### 2026-10-29T13:40:00.000Z | claude | note N43
+Chain-Prev: f76f396822c83bf69991c34fb40cd32cc8e6cccad061791499c2fa503c4adbcf
+Chain-Hash: b01f090ed4c6fa5b2e6cb6877790ab6dbfa5012e92f274ed02381bbec67e6420
+Stage: Proposal
+Kind: note
+Evidence: P24; P19; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md (At rest: never raises itself, observes nothing, D4.2); docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md rule 2
+Channel: cloud
+
+P24 revised before approval: point (3) conflicted with D4.2. At rest the Luminary never raises itself and observes nothing, so a notice or pulse while it is at rest is not allowed. Revised (3): connection moments are shown only while the Architect has the Luminary open. While at rest it reads nothing and shows nothing; the Presence does not pulse for connections. When the Architect opens it, it reads the IDE's own record and offers one line, 'N connection moments since you last opened me. Show them?', and shows them only if the Architect taps it. Moments that happen while it is open appear as lines in the conversation. All other points of P24 are unchanged.
