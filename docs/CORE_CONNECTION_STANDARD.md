@@ -436,3 +436,55 @@ severance. There is no warning state for invariant violations. There is no
 grace period. The contract is voided and resources are released.
 
 This is not a bug. This is the system working correctly.
+
+---
+
+## 8. Versioned Umbilical Profiles and Orb-Presented Contracts (STP-0003)
+
+The five profiles are selected by the operation the Orb performs, not by its
+display name:
+
+| Profile | Intended use | Flow | Architect-facing description |
+|---|---|---|---|
+| Pulse | Bounded scheduling, control, health and small notifications | Messages | A light connection for signals and quick checks |
+| Record | Stateful transactions and structured records | Request/response | A steady connection for account and database work |
+| Archive | Files, documents and saved artifacts, including Library Orb storage | Request/response or bounded stream | A connection for files and saved work |
+| Interface | Bounded request/response and control APIs | Request/response | A connection for APIs and app controls |
+| Conduit | Model API calls, media and sustained high-volume streams | Request/response or stream | A wider connection for model calls and sustained streams |
+
+Every profile is versioned and declares direction, permitted reach, health
+signals, and normal/peak bandwidth. The current reference implementation uses
+provisional `CORE_BANDWIDTH_CREDIT` units. Those credits express relative
+pressure in the CORE allocator; they are not Mbps or measured throughput. The
+initial profile amounts and minimum memory values are provisional development
+defaults. A deployment must configure measured capacities before treating them
+as physical network guarantees. Conduit has a higher provisional memory and
+bandwidth requirement than Archive so a model-call Orb does not inherit the
+lighter Library connection by name.
+
+When dropped onto a vacant CORE Port, an Orb presents an
+`OrbContractReference` containing contract id, version and SHA-256 digest. CORE
+resolves that reference from its own canonical contract library, verifies the
+identity/version/digest, selects a profile supported by that Port, and then
+negotiates. CORE does not query the dropped Orb for the authoritative contract.
+Missing, stale, unknown, changed or incompatible references fail closed.
+
+The contract manifest carries functional and technical names, capabilities,
+requirements, protocol versions and the resource envelope. Memory, normal/peak
+bandwidth, threads and GPU are checked and reserved together. Failed handshakes
+release provisional reservations; severance releases the active allocation.
+The read-only connection event feed publishes sanitized lifecycle/resource
+facts for the Luminary. It does not include prompt content or credentials, and
+it does not grant the Luminary authority to select or connect an alternative.
+
+`src/contracts/umbilicalStandards.ts` and `src/contracts/orbManifest.ts` are the
+runtime definitions. The Umbilical model/geometry mapping remains unresolved
+for Archive until the repository contains a verified matching asset; profile
+identity does not depend on a particular GLB.
+
+When a declared profile cannot fit the current CORE capacity, the refusal event
+may include alternatives only when the Orb declared that profile, the Port
+supports it, and the current resource snapshot can satisfy its full envelope.
+The Luminary may explain these choices to the Architect. A retry must explicitly
+name the selected profile, and CORE recomputes the resource snapshot and repeats
+all checks; an offer never reserves resources or authorizes an automatic switch.

@@ -13,19 +13,19 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## Append Log
 
 
-## 2026-10-20 Codex follow-up — Verus audit located and reviewed
+## 2026-10-20 Codex follow-up ï¿½ Verus audit located and reviewed
 - Supersedes the earlier missing-artifact shortfall: found final audit in Verus user-level .claude project session 5a845f13-bd2e-4dd9-9b92-db37e86b3094.jsonl after Architect directed that search.
 - Durable review: docs/VERUS_AUDIT_INDEPENDENT_REVIEW_2026-10-20.md. Confirms custom-Orb category rejection, misleading random signature/compliance label, production bridge composition/documentation gap. Adds source-derived stale-audit export concern. Corrects Basis mismatch inference, snapshot-only specs assertion, and blanket stale-worktree path claim; scopes dead-code/duplication/security assertions.
 - Fresh checks remain typecheck/app164/build pass; gateway76 pass1skip with NODE_ENV=test. No source fixes or deployment/host actions.
 
-## 2026-10-20 — Hackathon direction and Vibe Luminary inclusion
+## 2026-10-20 ï¿½ Hackathon direction and Vibe Luminary inclusion
 - Architect direction: Vibe Luminary is the upcoming Meta Hackathon focal point and replaces the unworked Buildmaster product concept. Start with the behavior contract and role/engineering draft, prepare inclusion, then review the build section by section; update associated Folder Totems during work.
 - Preserve the Architect's seven review sections: (1) UI Flow and Design; (2) 3D Element Setup and Function; (3) UX Operability; (4) Documentation; (5) POD Architecture Engineering; (6) AI Integration & Luminary Presence; (7) Governance and Alignment.
 - Initial review and proposed integration map: docs/VIBE_LUMINARY_INCLUSION_REVIEW_2026-10-20.md. Both primary drafts preserved. Conflicts pending Architect resolution: proposal-only versus delegated execution; paused observation/offer permission; voice restrictions versus candid technical advice. No automatic adoption of either conflicting clause.
 - Current source: RightPanel Build Master synthesis is timed catalog matching, not AI; its host is DESIGN/root-environment only. WorkRequestPanel has a real bounded in-memory Markdown/evidence slice, not a general code executor. .github/agents/BuildMasters.agent.md is a template. Luminary replacement remains unimplemented.
 - Proposed next review: UI Flow and Design, retaining cross-links to all seven categories. Source baseline HEAD 714920c. Documentation/source tracing only this turn; no runtime changes or new test results, model setup, commits or pushes.
 
-## 2026-10-20 — Coordinated product/repository rename and STP lane
+## 2026-10-20 ï¿½ Coordinated product/repository rename and STP lane
 - Architect approved the singular name: Vibe Architect Developer IDE; short name Vibe Architect; AEGIS remains parent attribution.
 - Updated index.html title, src/components/Header.tsx title/badge, package.json + package-lock root package names (vibe-architect-developer-ide), four current project metadata headers, and totems/README.md. Added root README.md and append-only naming notices to the two Luminary drafts and conceptual outline. Source filenames, historical evidence/Totem shards and browser storage keys preserved.
 - GitHub repository renamed successfully to https://github.com/thelight1122/Vibe-Architect-Developer-IDE using authorized gh API PATCH. Local origin fetch/push URL updated and verified. No commits or source pushes performed.
@@ -49,3 +49,8 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-29 | STP-0004 cross-peer drift note
 - STP-0004 N15 reconciles Claude's PR #2 review: refreshes Luminary and module state against main 818f939, links New Build to the STP-0002 Presence work in PR #9, and explicitly lists only Portal removal as an expected saved-workspace migration change. Proposals remain Presented; this note does not authorize implementation.
+
+## 2026-10-29T08:05:36Z | codex | Umbilical contract implementation addendum
+- CORE_CONNECTION_STANDARD.md now describes Orb-presents-first reference resolution from the CORE's own library, profile versioning, provisional relative bandwidth credits, memory minima, atomic resource reservation and the sanitized read-only lifecycle event boundary.
+- Implementation progress and open integration/asset/test issues are recorded in STP-0003 N2/N3. This is not a claim of full M3 acceptance.
+- Resource-refusal alternatives are limited to Orb-declared profiles accepted by the Port and feasible against current capacity; an explicit retry is revalidated by CORE. N4 records closure; Luminary presentation, suspension production and durable event history remain open.

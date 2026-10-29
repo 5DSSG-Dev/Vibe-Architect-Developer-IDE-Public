@@ -26,15 +26,21 @@ export const CORE_TRUST_CAPABILITIES = [
 // Pure over the manifest; never mutates it.
 export function getAvailableCoreResources(manifest: CoreManifest): HardwareBudget {
   const occupied = manifest.sockets.reduce(
-    (total, socket) => ({
-      memoryMB: total.memoryMB + (socket.connectedItem?.memoryReq ?? 0),
-      threads: total.threads + (socket.connectedItem?.threadsReq ?? 0)
-    }),
-    { memoryMB: 0, threads: 0 }
+    (total, socket) => {
+      if (!socket.connectedItem) return total;
+      const contract = manifest.contracts.find(entry => entry.contractId === socket.contractId);
+      return {
+        memoryMB: total.memoryMB + Math.max(contract?.allocatedMemoryMB ?? 0, socket.connectedItem.memoryReq ?? 0),
+        threads: total.threads + Math.max(contract?.allocatedThreads ?? 0, socket.connectedItem.threadsReq ?? 0),
+        bandwidthCredits: total.bandwidthCredits + (contract?.allocatedBandwidthPeakCredits ?? 0)
+      };
+    },
+    { memoryMB: 0, threads: 0, bandwidthCredits: 0 }
   );
   return {
     memoryMB: Math.max(0, manifest.hardwareBudget.memoryMB - occupied.memoryMB),
     threads: Math.max(0, manifest.hardwareBudget.threads - occupied.threads),
+    bandwidthCredits: Math.max(0, (manifest.hardwareBudget.bandwidthCredits ?? 256) - occupied.bandwidthCredits),
     gpuEnabled: manifest.hardwareBudget.gpuEnabled
   };
 }

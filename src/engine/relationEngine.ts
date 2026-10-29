@@ -1,16 +1,11 @@
 export type GeometryType = 'sphere' | 'octahedron' | 'cube' | 'cylinder' | 'dodecahedron' | 'tetrahedron';
 export type SatelliteClass = 'I/O' | 'Compute' | 'Storage' | 'Validation' | 'Security';
 export type ElementCodeLanguage = 'TypeScript' | 'Python' | 'Rust' | 'JSON' | 'Stellar';
-export type CategoryType =
-  | 'Ingredients'
-  | 'Formulas'
-  | 'Satellites'
-  | 'Actuators'
-  | 'Constellations'
-  | 'Portals'
-  | 'Orbs'
-  | 'Cores'
-  | 'Umbilicals';
+import type { ElementCategory } from '../contracts/elementSchema';
+import type { OrbContractReference } from '../contracts/orbManifest';
+import { getBuiltInOrbContractReference, registerDefaultOrbManifest } from '../contracts/orbManifest';
+
+export type CategoryType = ElementCategory;
 export type TrustBadgeType = 'Canonical' | 'Validated' | 'Formulated' | 'Experimental' | 'Draft';
 export type SocketState = 'Vacant' | 'Active' | 'Degraded' | 'Severed';
 
@@ -68,6 +63,8 @@ export interface ApothecaryItem {
   codeFrame?: ElementCodeFrame;
   /** Compiler-owned provenance for the executable Stellar Lab subset. */
   stellarPackage?: StellarPackageDescriptor;
+  /** Presented by this Orb when it is dropped onto a CORE Port. */
+  umbilicalContractRef?: OrbContractReference;
 }
 
 export interface SocketBinding {
@@ -80,6 +77,11 @@ export interface SocketBinding {
   /** Satellites tethered to this socket's host Orb (CK-04 attachment stem). */
   attachedSatellites?: ApothecaryItem[];
   contractId?: string;
+  /** The profile selected by CORE, persisted with the committed connection. */
+  resolvedProfileId?: string;
+  resolvedProfileVersion?: string;
+  /** Omitted means this CORE Port supports every profile in its contract library. */
+  supportedProfileIds?: string[];
 }
 
 /**
@@ -257,8 +259,11 @@ export function createDefaultElementCodeFrame(item: ApothecaryItem): ElementCode
 }
 
 export function ensureElementCodeFrame(item: ApothecaryItem): ApothecaryItem & { codeFrame: ElementCodeFrame } {
-  if (item.codeFrame?.source) return { ...item, codeFrame: item.codeFrame };
-  return { ...item, codeFrame: createDefaultElementCodeFrame(item) };
+  const orbReference = item.category === 'Orbs'
+    ? item.umbilicalContractRef ?? getBuiltInOrbContractReference(item.id)
+    : undefined;
+  if (item.codeFrame?.source) return { ...item, umbilicalContractRef: orbReference, codeFrame: item.codeFrame };
+  return { ...item, umbilicalContractRef: orbReference, codeFrame: createDefaultElementCodeFrame(item) };
 }
 
 /** A Portal placed on the CORE boundary, with its Tender running outboard. */
@@ -299,6 +304,12 @@ export interface RelationContract {
   negotiatedProtocolVersion: string;
   allocatedMemoryMB: number;
   allocatedThreads: number;
+  allocatedBandwidthNormalCredits?: number;
+  allocatedBandwidthPeakCredits?: number;
+  allocatedGpuAccess?: boolean;
+  contractReference?: OrbContractReference;
+  resolvedProfileId?: string;
+  resolvedProfileVersion?: string;
   checksum: string;
   failureReason?: string;
 }
@@ -306,6 +317,8 @@ export interface RelationContract {
 export interface HardwareBudget {
   memoryMB: number;
   threads: number;
+  /** Provisional CORE bandwidth credits, not a measured throughput claim. */
+  bandwidthCredits?: number;
   gpuEnabled: boolean;
 }
 
@@ -332,12 +345,12 @@ export interface CoreManifest {
 export const HANDSHAKE_STEPS = [
   { step: 1, key: 'orb_detected', label: '1. Orb Detected', desc: 'Sensing proximity of target interface' },
   { step: 2, key: 'umbilical_connection_established', label: '2. Umbilical Connection Established', desc: 'Physically docking physical tube & ring geometry' },
-  { step: 3, key: 'protocol_negotiated', label: '3. Protocol Negotiated', desc: 'Handshaking v4D relational protocol spec' },
+  { step: 3, key: 'protocol_negotiated', label: '3. Orb Contract Resolved', desc: 'The Orb presents its versioned contract reference; CORE verifies the matching profile in its library' },
   { step: 4, key: 'direction_confirmed', label: '4. Direction Confirmed', desc: 'Validating bilateral data stream orientation' },
   { step: 5, key: 'capabilities_exchanged', label: '5. Capabilities Exchanged', desc: 'Exchanging available execution primitives' },
   { step: 6, key: 'requirements_transmitted', label: '6. Requirements Transmitted', desc: 'Checking hardware & memory constraint envelope' },
   { step: 7, key: 'memory_requirements_validated', label: '7. Memory Requirements Validated', desc: 'Allocating non-fragmented heap buffers' },
-  { step: 8, key: 'processing_requirements_validated', label: '8. Processing Requirements Validated', desc: 'Verifying thread pool availability' },
+  { step: 8, key: 'processing_requirements_validated', label: '8. Resources Reserved', desc: 'Reserving memory, bandwidth, threads and any required GPU access' },
   { step: 9, key: 'negative_space_verified', label: '9. Negative-Space Verified', desc: 'Asserting non-interfering witness boundary invariants' }
 ] as const;
 
@@ -721,6 +734,12 @@ export const DEFAULT_APOTHECARY_CATALOG: ApothecaryItem[] = [
   }
 ];
 
+// Built-in Orbs present a stable contract-library reference with their catalog
+// entry. The CORE still resolves the canonical manifest independently.
+for (const item of DEFAULT_APOTHECARY_CATALOG) {
+  if (item.category === 'Orbs') item.umbilicalContractRef = registerDefaultOrbManifest(item);
+}
+
 export const INITIAL_SOCKET_BINDINGS: SocketBinding[] = [
   { id: 'socket-alpha', name: 'Alpha Socket (North)', angleDeg: 0, radius: 4, state: 'Active', connectedItem: DEFAULT_APOTHECARY_CATALOG[2], contractId: 'ctr-alpha-99' },
   { id: 'socket-beta', name: 'Beta Socket (NE)', angleDeg: 45, radius: 4, state: 'Vacant' },
@@ -789,6 +808,7 @@ export function createInitialCoreManifest(): CoreManifest {
     hardwareBudget: {
       memoryMB: 4096,
       threads: 8,
+      bandwidthCredits: 256,
       gpuEnabled: true
     },
     activeDaemons: {

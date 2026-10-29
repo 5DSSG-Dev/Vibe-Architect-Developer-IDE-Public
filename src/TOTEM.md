@@ -18,13 +18,13 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## Append Log
 
 
-## 2026-10-20 — Luminary inclusion source baseline
+## 2026-10-20 ï¿½ Luminary inclusion source baseline
 - Architect selected Luminary as hackathon focus, replacing the unworked Buildmaster product concept. Reference docs/VIBE_LUMINARY_INCLUSION_REVIEW_2026-10-20.md and ROOT_TOTEM.md for seven review sections and unresolved contract choices.
 - Verified src/App.tsx places RightPanel only in top-level DESIGN; persistent Luminary availability in CODE and element drill-down requires a wider host. RightPanel.handleSynthesizeIntent is timed catalog string matching with fixed fallback, not model reasoning.
 - WorkRequestPanel and engine/workRequestRuntime provide bounded in-memory Markdown composition and evidence verification. Do not describe this as arbitrary project editing or server-enforced user authorization. Preserve useful evidence contracts during replacement planning.
 - No source behavior changed; the section-wide review is pending. Next target is UI Flow and Design.
 
-## 2026-10-20 — Coordinated product/repository rename and STP lane
+## 2026-10-20 ï¿½ Coordinated product/repository rename and STP lane
 - Architect approved the singular name: Vibe Architect Developer IDE; short name Vibe Architect; AEGIS remains parent attribution.
 - Updated index.html title, src/components/Header.tsx title/badge, package.json + package-lock root package names (vibe-architect-developer-ide), four current project metadata headers, and totems/README.md. Added root README.md and append-only naming notices to the two Luminary drafts and conceptual outline. Source filenames, historical evidence/Totem shards and browser storage keys preserved.
 - GitHub repository renamed successfully to https://github.com/thelight1122/Vibe-Architect-Developer-IDE using authorized gh API PATCH. Local origin fetch/push URL updated and verified. No commits or source pushes performed.
@@ -51,3 +51,12 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Architect clarifies CORE=main/root application, not CyberPeer Formless Center; no CyberPeer Initiative build option. CoreMatrixModal:35-56,139-150; relationEngine:312-328; three/elementTotem:209-219 and auditEngine:87-96 contain contrary concepts requiring coordinated correction.
 - Catalog descriptions are duplicated between relationEngine DEFAULT_APOTHECARY_CATALOG and modelCatalog MODEL_DESCRIPTORS. Update function-first copy consistently; preserve stable ids and user-authored content. New-build app-type/crystal mapping remains planned; current ThreeCanvas crystalVariant selects visual styles in local component state.
 - STP-0004 S17-S18/N9/T8-T9/G8-G9/P7-P8 hold evidence and proposals. No code/schema migration or UI change executed.
+
+## 2026-10-29T08:05:36Z | codex | M3 contract runtime and handshake wiring
+- src/contracts/ now centralizes Element/connection vocabulary, versioned Umbilical profiles and bandwidth envelopes, canonical digest verification, a CORE-local Orb manifest resolver, and a read-only typed connection event feed.
+- connectionRuntime.ts resolves the Orb-presented reference against the CORE library, negotiates a Port-supported profile, reserves resources, and emits lifecycle events; resourceAllocator.ts accounts for memory, threads, GPU and peak bandwidth credits; old manifests without the optional bandwidth budget retain defaults.
+- App persists the resolved profile/version at commit. ThreeCanvas selects profile geometry/thickness and includes profile identity in arm reconciliation. Capacity numbers are provisional normalized credits/memory floors, not measured provider/network throughput. Build and diff checks pass; tests not run. See STP-0003 N2/N3 for scope and open items.
+
+## 2026-10-29 | codex | CORE validated profile alternatives
+- Refusal events may include profiles only when Orb-declared, Port-supported, and feasible against current CORE capacity. Retry names the profile and CORE revalidates before reservation; Luminary cannot silently connect.
+- Suspended remains schema-only; event history is session-memory; custom Orb authoring and Conduit catalog support remain open. See STP-0003 N4. Build and STP validation pass; tests not run.

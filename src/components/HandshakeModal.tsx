@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { X, CheckCircle2, Play, ShieldCheck, Cpu, HardDrive, Sparkles, ArrowRight, CircleX } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, HANDSHAKE_STEPS, RelationContract } from '../engine/relationEngine';
@@ -9,7 +9,7 @@ interface HandshakeModalProps {
   item: ApothecaryItem;
   availableSockets: SocketBinding[];
   availableCoreCapabilities: string[];
-  availableCoreResources: { memoryMB: number; threads: number; gpuEnabled: boolean };
+  availableCoreResources: { memoryMB: number; threads: number; bandwidthCredits?: number; gpuEnabled: boolean };
   initialTargetSocketId?: string;
   onClose: () => void;
   onCommitHandshake: (item: ApothecaryItem, targetSocketId: string, contract: RelationContract) => void | Promise<void>;
@@ -34,6 +34,7 @@ export const HandshakeModal: React.FC<HandshakeModalProps> = ({
   const [isCommitted, setIsCommitted] = useState(false);
   const [isCommitting, setIsCommitting] = useState(false);
   const [commitError, setCommitError] = useState<string | null>(null);
+  const autoStarted = useRef(false);
 
   const selectedSocket = availableSockets.find(s => s.id === selectedSocketId);
 
@@ -77,6 +78,14 @@ export const HandshakeModal: React.FC<HandshakeModalProps> = ({
     setCommitError(null);
   };
 
+  // Dropping an Orb on a vacant Port presents its reference and starts CORE
+  // resolution/negotiation automatically. The button remains for explicit retry.
+  useEffect(() => {
+    if (autoStarted.current || !initialTargetSocketId || !selectedSocket || selectedSocket.state !== 'Vacant') return;
+    autoStarted.current = true;
+    handleStartHandshake();
+  }, [initialTargetSocketId, selectedSocketId, selectedSocket]);
+
   const handleClose = () => {
     if (isCommitting) return;
     if (contract?.handshakeStatus === 'SUCCESS' && !isCommitted) {
@@ -118,6 +127,16 @@ export const HandshakeModal: React.FC<HandshakeModalProps> = ({
               <p className="text-xs font-mono text-cyan-400">
                 9-Step Relational Binding • Non-Destructive Invariant Handshake
               </p>
+          <p className="mt-1 text-[10px] font-mono text-slate-400">
+            Orb contract presented: {item.umbilicalContractRef
+              ? `${item.umbilicalContractRef.id}@${item.umbilicalContractRef.version}`
+              : 'missing — CORE will refuse this connection'}
+          </p>
+          {contract?.resolvedProfileId && (
+            <p className="mt-1 text-[10px] font-mono text-emerald-300">
+              CORE selected {contract.resolvedProfileId} profile v{contract.resolvedProfileVersion}
+            </p>
+          )}
             </div>
           </div>
 

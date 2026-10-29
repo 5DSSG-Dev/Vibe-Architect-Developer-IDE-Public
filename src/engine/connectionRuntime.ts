@@ -2,6 +2,9 @@ import type { ApothecaryItem, NegativeSpaceInvariants, RelationContract, SocketB
 import { allocateFromBudget, getAvailableBudget, releaseAllocation } from './resourceAllocator';
 import { getContract, signContract, voidContract } from './contractStore';
 import { registerCapabilities, unregisterCapabilities } from './capabilityRegistry';
+import { publishConnectionEvent, type ConnectionAlternative } from '../contracts/connectionEvents';
+import { resolveOrbManifest } from '../contracts/orbManifest';
+import { getUmbilicalProfile, type UmbilicalProfileId } from '../contracts/umbilicalStandards';
 
 const PROTOCOL_VERSION = '4D-VIBE-v1.0';
 const INVARIANT_NAMES = [
@@ -22,7 +25,9 @@ export interface HandshakeOptions {
   protocolSupported?: boolean;
   directionAccepted?: boolean;
   availableCapabilities?: string[];
-  availableResources?: { memoryMB: number; threads: number; gpuEnabled: boolean };
+  availableResources?: { memoryMB: number; threads: number; bandwidthCredits?: number; gpuEnabled: boolean };
+  /** Explicit Architect/Luminary choice from a prior CORE-validated offer; never substituted silently. */
+  requestedProfileId?: UmbilicalProfileId;
   receptorAccepted?: boolean;
   resourcesAvailable?: boolean;
   invariants?: Partial<Record<InvariantName, boolean>>;
@@ -136,6 +141,8 @@ function draftContract(
   targetName: string,
   memoryMB: number,
   threads: number,
+  bandwidthNormalCredits: number,
+  bandwidthPeakCredits: number,
   capabilities: string[],
   invariants: RuntimeInvariants
 ): RuntimeContract {
@@ -153,14 +160,34 @@ function draftContract(
     negotiatedProtocolVersion: PROTOCOL_VERSION,
     allocatedMemoryMB: memoryMB,
     allocatedThreads: threads,
+    allocatedBandwidthNormalCredits: bandwidthNormalCredits,
+    allocatedBandwidthPeakCredits: bandwidthPeakCredits,
     checksum: ''
   };
   lifecycleLedger.set(contract.contractId, { contractId: contract.contractId, state: 'HANDSHAKING', missedHeartbeats: 0 });
   return contract;
 }
 
-function fail(contract: RuntimeContract, step: number, reason: string, allocated = false): RelationContract {
-  if (allocated) releaseAllocation(contract.contractId);
+function fail(
+  contract: RuntimeContract,
+  step: number,
+  reason: string,
+  allocated = false,
+  failureFacts?: { available?: { memoryMB: number; threads: number; bandwidthCredits: number; gpu: boolean }; alternatives?: readonly ConnectionAlternative[] }
+): RelationContract {
+  if (allocated) {
+    releaseAllocation(contract.contractId);
+    publishConnectionEvent({
+      attemptId: contract.contractId, kind: 'resources-released', orbId: contract.sourceItemId,
+      portId: contract.targetSocketId, presentedContract: contract.contractReference,
+      resolvedContractId: contract.contractReference?.id, resolvedContractVersion: contract.contractReference?.version,
+      profileId: contract.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract.resolvedProfileVersion,
+      resources: { requested: { memoryMB: contract.allocatedMemoryMB, threads: contract.allocatedThreads,
+        bandwidthNormal: contract.allocatedBandwidthNormalCredits ?? 0, bandwidthPeak: contract.allocatedBandwidthPeakCredits ?? 0,
+        gpu: false } }
+    });
+  }
   contract.handshakeCompletedStep = step;
   contract.handshakeStatus = 'FAILED';
   contract.failureReason = reason;
@@ -171,6 +198,25 @@ function fail(contract: RuntimeContract, step: number, reason: string, allocated
     missedHeartbeats: 0,
     reason
   });
+  if (contract.contractId.startsWith('ctr-')) {
+    publishConnectionEvent({
+      attemptId: contract.contractId, kind: 'refused', orbId: contract.sourceItemId, portId: contract.targetSocketId,
+      presentedContract: contract.contractReference, resolvedContractId: contract.contractReference?.id,
+      resolvedContractVersion: contract.contractReference?.version,
+      profileId: contract.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract.resolvedProfileVersion,
+      reasonCode: failureFacts?.alternatives?.length ? 'RESOURCE_SHORTFALL_WITH_ALTERNATIVES'
+        : step === 7 || step === 8 ? 'RESOURCE_SHORTFALL'
+          : step === 3 ? 'CONTRACT_REFUSED' : 'HANDSHAKE_REFUSED',
+      message: reason,
+      alternatives: failureFacts?.alternatives,
+      resources: { requested: { memoryMB: contract.allocatedMemoryMB, threads: contract.allocatedThreads,
+        bandwidthNormal: contract.allocatedBandwidthNormalCredits ?? 0, bandwidthPeak: contract.allocatedBandwidthPeakCredits ?? 0,
+        gpu: contract.allocatedGpuAccess ?? false },
+        available: failureFacts?.available ?? { memoryMB: getAvailableBudget().memoryMB, threads: getAvailableBudget().threads,
+          bandwidthCredits: getAvailableBudget().bandwidthCredits, gpu: getAvailableBudget().gpuAccess } }
+    });
+  }
   return contract;
 }
 
@@ -186,10 +232,19 @@ function activate(contract: RuntimeContract, finalStep: number, registerElement?
     missedHeartbeats: 0,
     lastHeartbeatAt: contract.timestamp
   });
+  if (contract.contractId.startsWith('ctr-')) {
+    publishConnectionEvent({
+      attemptId: contract.contractId, kind: 'active', orbId: contract.sourceItemId, portId: contract.targetSocketId,
+      presentedContract: contract.contractReference, resolvedContractId: contract.contractReference?.id,
+      resolvedContractVersion: contract.contractReference?.version,
+      profileId: contract.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract.resolvedProfileVersion
+    });
+  }
   return contract;
 }
 
-function missingRequirements(required: string[], available: string[]): string[] {
+function missingRequirements(required: readonly string[], available: readonly string[]): string[] {
   return required.filter(requirement => !available.includes(requirement));
 }
 
@@ -204,23 +259,59 @@ export function executeUmbilicalHandshake(
   socket: SocketBinding,
   options: HandshakeOptions = {}
 ): RelationContract {
-  const request = {
-    memoryMB: element.memoryReq || 128,
-    threads: element.threadsReq || 1,
-    gpuAccess: element.requirements.some(requirement => requirement === 'gpu_acceleration' || requirement === 'gpu_enabled')
-  };
   const available = options.availableCapabilities ?? [];
-  const contract = draftContract('ctr', element, socket.id, socket.name, request.memoryMB, request.threads, element.capabilities, canonicalInvariants(options.invariants));
+  const initialMemory = element.memoryReq || 128;
+  const initialThreads = element.threadsReq || 1;
+  const contract = draftContract('ctr', element, socket.id, socket.name, initialMemory, initialThreads, 0, 0, element.capabilities, canonicalInvariants(options.invariants));
+  contract.contractReference = element.umbilicalContractRef;
+  publishConnectionEvent({
+    attemptId: contract.contractId, kind: 'attempt-started', orbId: element.id, portId: socket.id,
+    presentedContract: element.umbilicalContractRef
+  });
 
   if (options.detected === false) return fail(contract, 1, 'Element identity could not be established');
   contract.handshakeCompletedStep = 1;
   if (socket.state !== 'Vacant' || options.structuralConnectionEstablished === false) return fail(contract, 2, 'Umbilical structural connection could not be established');
   contract.handshakeCompletedStep = 2;
-  if (options.protocolSupported === false) return fail(contract, 3, 'No mutually supported protocol');
+
+  // The Orb presents a reference on drop. CORE resolves only from its own
+  // immutable library; it does not query the dropped object for contract data.
+  const resolution = resolveOrbManifest(element.umbilicalContractRef);
+  if (!resolution.ok || !resolution.manifest) return fail(contract, 3, resolution.message ?? 'The CORE could not resolve the Orb contract.');
+  const manifest = resolution.manifest;
+  if (manifest.orbId !== element.id || manifest.orbVersion !== element.version) {
+    return fail(contract, 3, 'The presented contract belongs to a different Orb identity or version.');
+  }
+  const portSupportsProfile = (profileId: UmbilicalProfileId) => !socket.supportedProfileIds || socket.supportedProfileIds.includes(profileId);
+  const selectedProfileId = options.requestedProfileId
+    ? manifest.profileIds.includes(options.requestedProfileId) && portSupportsProfile(options.requestedProfileId) ? options.requestedProfileId : undefined
+    : manifest.profileIds.find(portSupportsProfile);
+  if (!selectedProfileId) return fail(contract, 3, 'This Port does not support a profile in the Orb contract.');
+  const profile = getUmbilicalProfile(selectedProfileId);
+  const profileBandwidth = manifest.resources.bandwidth[selectedProfileId];
+  if (!profile || !profileBandwidth) return fail(contract, 3, 'The selected profile has no valid resource envelope.');
+  if (!manifest.protocolVersions.includes(PROTOCOL_VERSION) || options.protocolSupported === false) {
+    return fail(contract, 3, 'The Orb contract does not support the CORE protocol version.');
+  }
+  contract.sourceItemName = manifest.functionName;
+  contract.capabilitiesExchanged = [...manifest.capabilities];
+  contract.negotiatedProtocolVersion = PROTOCOL_VERSION;
+  contract.allocatedMemoryMB = manifest.resources.memoryMB;
+  contract.allocatedThreads = manifest.resources.threads;
+  contract.allocatedBandwidthNormalCredits = profileBandwidth.normal;
+  contract.allocatedBandwidthPeakCredits = profileBandwidth.peak;
+  contract.allocatedGpuAccess = manifest.resources.gpuRequired;
+  contract.resolvedProfileId = selectedProfileId;
+  contract.resolvedProfileVersion = profile.version;
+  publishConnectionEvent({
+    attemptId: contract.contractId, kind: 'contract-resolved', orbId: element.id, portId: socket.id,
+    presentedContract: element.umbilicalContractRef, resolvedContractId: manifest.id,
+    resolvedContractVersion: manifest.version, profileId: selectedProfileId, profileVersion: profile.version
+  });
   contract.handshakeCompletedStep = 3;
   if (options.directionAccepted === false) return fail(contract, 4, 'Connection direction was not accepted');
   contract.handshakeCompletedStep = 4;
-  const missing = missingRequirements(element.requirements, available);
+  const missing = missingRequirements(manifest.requirements, available);
   if (missing.length > 0) return fail(contract, 5, `Unsatisfied capabilities: ${missing.join(', ')}`);
   contract.handshakeCompletedStep = 6;
   const runtimeBudget = getAvailableBudget();
@@ -228,19 +319,56 @@ export function executeUmbilicalHandshake(
     ? {
         memoryMB: Math.min(runtimeBudget.memoryMB, options.availableResources.memoryMB),
         threads: Math.min(runtimeBudget.threads, options.availableResources.threads),
+        bandwidthCredits: Math.min(runtimeBudget.bandwidthCredits, options.availableResources.bandwidthCredits ?? runtimeBudget.bandwidthCredits),
         gpuAccess: runtimeBudget.gpuAccess && options.availableResources.gpuEnabled
       }
     : runtimeBudget;
+  const request = {
+    memoryMB: manifest.resources.memoryMB,
+    threads: manifest.resources.threads,
+    bandwidthNormalCredits: profileBandwidth.normal,
+    bandwidthPeakCredits: profileBandwidth.peak,
+    gpuAccess: manifest.resources.gpuRequired
+  };
+  const availableFacts = {
+    memoryMB: availableBudget.memoryMB, threads: availableBudget.threads,
+    bandwidthCredits: availableBudget.bandwidthCredits, gpu: availableBudget.gpuAccess
+  };
+  const alternatives: ConnectionAlternative[] = manifest.profileIds
+    .filter(profileId => profileId !== selectedProfileId && portSupportsProfile(profileId))
+    .flatMap(profileId => {
+      const alternateProfile = getUmbilicalProfile(profileId);
+      const alternateBandwidth = manifest.resources.bandwidth[profileId];
+      if (!alternateProfile || !alternateBandwidth || manifest.resources.memoryMB < alternateProfile.minimumMemoryMB) return [];
+      const candidate = {
+        profileId, profileVersion: alternateProfile.version, memoryMB: manifest.resources.memoryMB,
+        threads: manifest.resources.threads, bandwidthNormal: alternateBandwidth.normal,
+        bandwidthPeak: alternateBandwidth.peak, gpu: manifest.resources.gpuRequired
+      };
+      return candidate.memoryMB <= availableFacts.memoryMB && candidate.threads <= availableFacts.threads &&
+        candidate.bandwidthPeak <= availableFacts.bandwidthCredits && (!candidate.gpu || availableFacts.gpu) ? [candidate] : [];
+    });
   if (request.memoryMB < 0 || request.memoryMB > availableBudget.memoryMB) {
-    return fail(contract, 7, 'Memory requirement exceeds available CORE budget');
+    return fail(contract, 7, 'Memory requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
   }
   contract.handshakeCompletedStep = 7;
-  if (request.threads < 0 || request.threads > availableBudget.threads || (request.gpuAccess && !availableBudget.gpuAccess) || options.resourcesAvailable === false) {
+  if (request.threads < 0 || request.threads > availableBudget.threads || request.bandwidthPeakCredits > availableBudget.bandwidthCredits || (request.gpuAccess && !availableBudget.gpuAccess) || options.resourcesAvailable === false) {
     return fail(contract, 8, request.gpuAccess && !availableBudget.gpuAccess
       ? 'GPU requirement exceeds available CORE budget'
-      : 'Thread requirement exceeds available CORE budget');
+      : request.bandwidthPeakCredits > availableBudget.bandwidthCredits
+        ? 'This CORE is carrying a lot already; the connection needs more bandwidth than is available.'
+      : 'Thread requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
   }
   if (!allocateFromBudget(contract.contractId, request)) return fail(contract, 8, 'Resource allocation was refused');
+  publishConnectionEvent({
+    attemptId: contract.contractId, kind: 'resources-committed', orbId: element.id, portId: socket.id,
+    presentedContract: element.umbilicalContractRef, resolvedContractId: manifest.id,
+    resolvedContractVersion: manifest.version, profileId: selectedProfileId, profileVersion: profile.version,
+    resources: { requested: { memoryMB: request.memoryMB, threads: request.threads,
+        bandwidthNormal: request.bandwidthNormalCredits, bandwidthPeak: request.bandwidthPeakCredits, gpu: request.gpuAccess },
+      available: { memoryMB: availableBudget.memoryMB, threads: availableBudget.threads,
+        bandwidthCredits: availableBudget.bandwidthCredits, gpu: availableBudget.gpuAccess } }
+  });
   contract.handshakeCompletedStep = 8;
   const invariantReport = validateInvariants(contract);
   if (!invariantReport.valid || options.receptorAccepted === false) {
@@ -254,7 +382,7 @@ export function executeTetherHandshake(
   hostOrb: ApothecaryItem,
   options: HandshakeOptions = {}
 ): RelationContract {
-  const contract = draftContract('tether', satellite, hostOrb.id, hostOrb.name, satellite.memoryReq || 64, satellite.threadsReq || 1, satellite.capabilities, canonicalInvariants(options.invariants));
+  const contract = draftContract('tether', satellite, hostOrb.id, hostOrb.name, satellite.memoryReq || 64, satellite.threadsReq || 1, 0, 0, satellite.capabilities, canonicalInvariants(options.invariants));
   if (options.detected === false) return fail(contract, 1, 'Satellite identity could not be established');
   contract.handshakeCompletedStep = 1;
   if (options.structuralConnectionEstablished === false) return fail(contract, 2, 'Tether structural connection could not be established');
@@ -275,7 +403,7 @@ export function executeMeshHandshake(
   services: string[],
   options: HandshakeOptions = {}
 ): RelationContract {
-  const contract = draftContract('mesh', satA, satB.id, satB.name, 0, 0, services, canonicalInvariants(options.invariants));
+  const contract = draftContract('mesh', satA, satB.id, satB.name, 0, 0, 0, 0, services, canonicalInvariants(options.invariants));
   if (options.detected === false) return fail(contract, 1, 'Mesh peer could not be discovered');
   contract.handshakeCompletedStep = 1;
   const unavailable = services.filter(service => !satA.capabilities.includes(service) || !satB.capabilities.includes(service));
@@ -315,6 +443,16 @@ export function heartbeatCycle(contractOrId: RelationContract | string, health: 
     reason: healthy ? undefined : 'Heartbeat health check failed'
   };
   lifecycleLedger.set(contractId, next);
+  if (contractId.startsWith('ctr-')) {
+    publishConnectionEvent({
+      attemptId: contractId, kind: healthy ? 'active' : 'degraded', orbId: contract.sourceItemId,
+      portId: contract.targetSocketId, presentedContract: contract.contractReference,
+      resolvedContractId: contract.contractReference?.id, resolvedContractVersion: contract.contractReference?.version,
+      profileId: contract.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract.resolvedProfileVersion, reasonCode: healthy ? undefined : 'HEALTH_CHECK_FAILED',
+      message: next.reason
+    });
+  }
   return { ...next, invariantsValid: true };
 }
 
@@ -341,5 +479,21 @@ export function severConnection(
   }
   const severed: ConnectionLifecycle = { ...lifecycle, state: 'SEVERED', reason };
   lifecycleLedger.set(contractId, severed);
+  if (contractId.startsWith('ctr-')) {
+    publishConnectionEvent({
+      attemptId: contractId, kind: 'severed', orbId: contract?.sourceItemId ?? '', portId: contract?.targetSocketId ?? '',
+      presentedContract: contract?.contractReference, resolvedContractId: contract?.contractReference?.id,
+      resolvedContractVersion: contract?.contractReference?.version,
+      profileId: contract?.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract?.resolvedProfileVersion, reasonCode: authorization.fault ? 'FAULT_ISOLATION' : 'MUTUAL_DISCONNECT', message: reason
+    });
+    publishConnectionEvent({
+      attemptId: contractId, kind: 'resources-released', orbId: contract?.sourceItemId ?? '', portId: contract?.targetSocketId ?? '',
+      presentedContract: contract?.contractReference, resolvedContractId: contract?.contractReference?.id,
+      resolvedContractVersion: contract?.contractReference?.version,
+      profileId: contract?.resolvedProfileId as UmbilicalProfileId | undefined,
+      profileVersion: contract?.resolvedProfileVersion
+    });
+  }
   return { ...severed };
 }

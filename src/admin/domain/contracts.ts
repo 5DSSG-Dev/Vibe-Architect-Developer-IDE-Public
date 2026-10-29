@@ -3,7 +3,9 @@ export const TENSOR_CHANNELS = ['PEER', 'PCT', 'NCT', 'SPINE'] as const;
 export type TensorChannel = (typeof TENSOR_CHANNELS)[number];
 export type TrustState = 'draft' | 'provisional' | 'verified';
 export type SourceBoundary = 'replay_fixture' | 'live';
-export type ComponentKind = 'pod' | 'orb' | 'satellite' | 'umbilical' | 'portal';
+import type { AdminComponentKind } from '../../contracts/elementSchema';
+
+export type ComponentKind = AdminComponentKind;
 
 export interface CanonicalEvidenceContract {
   created_utc: string;
