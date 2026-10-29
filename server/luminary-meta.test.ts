@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS, SpendLedger, SpendCapError, costUsd, createMetaAskModel, parseMetaLiveEnv, parseMetaModelEnv } from './luminary-meta.js';
+import { BASETEN_MODEL, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS, SpendLedger, parseLiveSourceEnv, SpendCapError, costUsd, createMetaAskModel, parseMetaLiveEnv, parseMetaModelEnv } from './luminary-meta.js';
 
 // Every test uses a fake fetch. Meta's API is never reached.
 
@@ -147,4 +147,25 @@ test('the ceiling counts earlier calls in the same ledger, reports a running tot
   assert.equal(meta.calls.length, 1, 'a call that could pass the ceiling is never sent');
   writeFileSync(path, JSON.stringify({ entries: [{ at: 't', model: 'muse-spark-1.3', reservedUsd: 0.05, actualUsd: 0.05, inputTokens: 1, outputTokens: 1, status: 'settled' }] }));
   await assert.rejects(ask('five'), /spending ceiling is reached/);
+});
+
+test('Baseten is its own source: its own key, ceiling and ledger, Muse Spark Open at Baseten\'s address', async () => {
+  assert.throws(() => parseLiveSourceEnv('baseten', { LUMINARY_META_API_KEY: 'meta-key', LUMINARY_META_CEILING_USD: '50' }), /LUMINARY_BASETEN_API_KEY/);
+  assert.throws(() => parseLiveSourceEnv('baseten', { LUMINARY_BASETEN_API_KEY: 'b' }), /LUMINARY_BASETEN_CEILING_USD/);
+  const path = ledgerPath();
+  const live = parseLiveSourceEnv('baseten', { LUMINARY_BASETEN_API_KEY: 'baseten-key', LUMINARY_BASETEN_CEILING_USD: '75', LUMINARY_BASETEN_LEDGER_PATH: path, LUMINARY_META_CEILING_USD: '50' });
+  assert.equal(live.model, BASETEN_MODEL);
+  assert.equal(live.baseUrl, 'https://inference.baseten.co/v1');
+  assert.equal(live.ledger.capUsd, 75);
+  assert.equal(live.ledger.path, path);
+  assert.equal(parseLiveSourceEnv('baseten', { LUMINARY_BASETEN_API_KEY: 'b', LUMINARY_BASETEN_CEILING_USD: '1' }).ledger.path, '.luminary/baseten-spend.json');
+
+  const baseten = fakeMeta(() => ({ body: { model: BASETEN_MODEL, choices: [{ message: { content: 'Hello from Muse Spark Open.' } }], usage: { prompt_tokens: 100, completion_tokens: 50 } } }));
+  const ask = createMetaAskModel({ ...live, fetch: baseten.fetch });
+  assert.deepEqual(await ask('Hi'), { modelId: BASETEN_MODEL, content: 'Hello from Muse Spark Open.' });
+  assert.equal(baseten.calls[0].url, 'https://inference.baseten.co/v1/chat/completions');
+  assert.equal(baseten.calls[0].body.model, 'meta-models/muse-spark-open');
+  assert.equal((baseten.calls[0].init.headers as Record<string, string>).authorization, 'Bearer baseten-key');
+  assert.equal(live.ledger.summary().calls, 1);
+  assert.ok(Math.abs(live.ledger.summary().spentUsd - (100 * 1.25 + 50 * 4.25) / 1_000_000) < 1e-12);
 });

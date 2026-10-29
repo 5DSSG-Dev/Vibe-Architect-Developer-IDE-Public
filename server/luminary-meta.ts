@@ -36,7 +36,13 @@ export const DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS = 8_000;
 export const META_PRICING_USD_PER_MILLION: Readonly<Record<string, { input: number; output: number }>> = {
   'muse-spark-1.3': { input: 1.25, output: 4.25 },
   'muse-spark-1.1': { input: 1.25, output: 4.25 },
+  // Muse Spark Open, the open-weights model, served by Baseten (P22) at its list rate.
+  'meta-models/muse-spark-open': { input: 1.25, output: 4.25 },
 };
+
+export const BASETEN_BASE_URL = 'https://inference.baseten.co/v1';
+export const BASETEN_MODEL = 'meta-models/muse-spark-open';
+export const DEFAULT_BASETEN_LEDGER_PATH = '.luminary/baseten-spend.json';
 
 /** Characters per token assumed for the up-front input estimate. Real text runs nearer 4; 2 over-charges. */
 const ESTIMATE_CHARS_PER_TOKEN = 2;
@@ -270,16 +276,26 @@ export function parseMetaModelEnv(env: NodeJS.ProcessEnv): Omit<MetaAskModelOpti
   };
 }
 
+/** The two live sources: Meta's own Model API (P21) and Baseten's Muse Spark Open (P22). */
+export type LiveSource = 'meta' | 'baseten';
+
+const LIVE_SETTINGS: Record<LiveSource, { prefix: string; baseUrl: string; model: string; ledgerPath: string }> = {
+  meta: { prefix: 'LUMINARY_META', baseUrl: DEFAULT_META_BASE_URL, model: DEFAULT_META_MODEL, ledgerPath: DEFAULT_META_LEDGER_PATH },
+  baseten: { prefix: 'LUMINARY_BASETEN', baseUrl: BASETEN_BASE_URL, model: BASETEN_MODEL, ledgerPath: DEFAULT_BASETEN_LEDGER_PATH },
+};
+
 /**
- * Read the live Meta reply source settings (P21). The key and the Architect's ceiling are both
+ * Read a live reply source's settings (P21, P22). The key and the Architect's ceiling are both
  * required: without a ceiling the spend could not be bounded, so the gateway refuses to start.
+ * Each source has its own key, ceiling and ledger, because each spends its own credits.
  */
-export function parseMetaLiveEnv(env: NodeJS.ProcessEnv): Omit<MetaAskModelOptions, 'fetch' | 'systemPrompt'> {
-  const apiKey = env.LUMINARY_META_API_KEY?.trim();
-  if (!apiKey) throw new Error('LUMINARY_REPLY_SOURCE=meta needs LUMINARY_META_API_KEY in .env');
-  const rawCeiling = env.LUMINARY_META_CEILING_USD?.trim();
+export function parseLiveSourceEnv(source: LiveSource, env: NodeJS.ProcessEnv): Omit<MetaAskModelOptions, 'fetch' | 'systemPrompt'> {
+  const { prefix, baseUrl, model, ledgerPath } = LIVE_SETTINGS[source];
+  const apiKey = env[`${prefix}_API_KEY`]?.trim();
+  if (!apiKey) throw new Error(`LUMINARY_REPLY_SOURCE=${source} needs ${prefix}_API_KEY in .env`);
+  const rawCeiling = env[`${prefix}_CEILING_USD`]?.trim();
   const ceiling = rawCeiling ? Number(rawCeiling) : NaN;
-  if (!Number.isFinite(ceiling) || ceiling <= 0) throw new Error('LUMINARY_REPLY_SOURCE=meta needs LUMINARY_META_CEILING_USD, the Architect\'s spending ceiling in dollars');
+  if (!Number.isFinite(ceiling) || ceiling <= 0) throw new Error(`LUMINARY_REPLY_SOURCE=${source} needs ${prefix}_CEILING_USD, the Architect's spending ceiling in dollars`);
   const positiveInteger = (name: string, fallback: number) => {
     const raw = env[name]?.trim();
     const value = raw ? Number(raw) : fallback;
@@ -288,10 +304,13 @@ export function parseMetaLiveEnv(env: NodeJS.ProcessEnv): Omit<MetaAskModelOptio
   };
   return {
     apiKey,
-    model: env.LUMINARY_META_MODEL?.trim() || DEFAULT_META_MODEL,
-    baseUrl: env.LUMINARY_META_BASE_URL?.trim() || DEFAULT_META_BASE_URL,
-    maxOutputTokens: positiveInteger('LUMINARY_META_MAX_OUTPUT_TOKENS', DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS),
-    timeoutMs: positiveInteger('LUMINARY_META_TIMEOUT_MS', DEFAULT_META_TIMEOUT_MS),
-    ledger: new SpendLedger(env.LUMINARY_META_LEDGER_PATH?.trim() || DEFAULT_META_LEDGER_PATH, ceiling, Number.POSITIVE_INFINITY),
+    model: env[`${prefix}_MODEL`]?.trim() || model,
+    baseUrl: env[`${prefix}_BASE_URL`]?.trim() || baseUrl,
+    maxOutputTokens: positiveInteger(`${prefix}_MAX_OUTPUT_TOKENS`, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS),
+    timeoutMs: positiveInteger(`${prefix}_TIMEOUT_MS`, DEFAULT_META_TIMEOUT_MS),
+    ledger: new SpendLedger(env[`${prefix}_LEDGER_PATH`]?.trim() || ledgerPath, ceiling, Number.POSITIVE_INFINITY),
   };
 }
+
+/** The live Meta Model API settings (P21). */
+export const parseMetaLiveEnv = (env: NodeJS.ProcessEnv) => parseLiveSourceEnv('meta', env);

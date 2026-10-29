@@ -35,8 +35,8 @@ export interface GatewayConfig {
   luminaryDemoKey?: string;
   /** The embedded gauge model for the Luminary reply pipeline (STP-0002 P18). Absent = not configured. */
   luminaryGauge?: { endpoint: string; model: string; timeoutMs: number; thresholds: VirtueThresholds };
-  /** The Luminary's reply source: the labelled rehearsal stand-in (P19) or the Meta model (P21); absent = not configured. */
-  luminaryReplySource?: 'rehearsal' | 'meta';
+  /** The Luminary's reply source: the labelled rehearsal stand-in (P19), Meta's Model API (P21) or Baseten's Muse Spark Open (P22); absent = not configured. */
+  luminaryReplySource?: 'rehearsal' | 'meta' | 'baseten';
   /** The Luminary's code-production executor (P19). Off unless LUMINARY_EXECUTOR=on. */
   luminaryExecutor?: boolean;
   stellarCapabilities?: StellarCapabilityConfig;
@@ -109,8 +109,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
   const luminaryDemoKey = env.LUMINARY_DEMO_KEY?.trim() || undefined;
   const luminaryGauge = parseLuminaryGauge(env);
   const replySource = env.LUMINARY_REPLY_SOURCE?.trim().toLowerCase();
-  if (replySource && replySource !== 'rehearsal' && replySource !== 'meta') throw new Error('LUMINARY_REPLY_SOURCE must be rehearsal, meta or unset');
-  const luminaryReplySource = replySource === 'rehearsal' || replySource === 'meta' ? replySource : undefined;
+  if (replySource && replySource !== 'rehearsal' && replySource !== 'meta' && replySource !== 'baseten') throw new Error('LUMINARY_REPLY_SOURCE must be rehearsal, meta, baseten or unset');
+  const luminaryReplySource = replySource === 'rehearsal' || replySource === 'meta' || replySource === 'baseten' ? replySource : undefined;
   const executorFlag = env.LUMINARY_EXECUTOR?.trim().toLowerCase();
   if (executorFlag && executorFlag !== 'on' && executorFlag !== 'off') throw new Error('LUMINARY_EXECUTOR must be on, off or unset');
   const luminaryExecutor = executorFlag === 'on';
