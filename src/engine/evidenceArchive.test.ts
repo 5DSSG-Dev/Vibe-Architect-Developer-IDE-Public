@@ -11,6 +11,7 @@ import {
   type EvidenceStorage
 } from './evidenceArchive';
 import { executeUmbilicalHandshake, severConnection } from './connectionRuntime';
+import { registerCustomOrbManifest } from '../contracts/orbManifest';
 import { createWorkRequest, executeWorkRequest } from './workRequestRuntime';
 import type { ApothecaryItem, SocketBinding } from './relationEngine';
 
@@ -21,10 +22,22 @@ class MemoryStorage implements EvidenceStorage {
 }
 
 function item(): ApothecaryItem {
-  return {
+  const orb: ApothecaryItem = {
     id: 'evidence-orb', name: 'Evidence Orb', category: 'Orbs', trust: 'Canonical',
     description: 'Evidence fixture', version: '1.0.0', memoryReq: 64, threadsReq: 1,
     capabilities: ['evidence'], requirements: []
+  };
+  return {
+    ...orb,
+    umbilicalContractRef: registerCustomOrbManifest({
+      id: orb.id,
+      name: orb.name,
+      version: orb.version,
+      memoryReq: orb.memoryReq,
+      threadsReq: orb.threadsReq,
+      capabilities: orb.capabilities,
+      requirements: orb.requirements
+    }, 'Interface')
   };
 }
 

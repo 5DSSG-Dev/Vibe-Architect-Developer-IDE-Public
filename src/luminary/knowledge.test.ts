@@ -7,7 +7,8 @@ import { APOTHECARY_BEGIN, APOTHECARY_END, KNOWLEDGE_PACK_PATH, apothecaryKnowle
 
 test('the Knowledge Pack matches the Apothecary (run scripts/luminary-knowledge.ts after changing the catalog)', () => {
   const pack = readFileSync(KNOWLEDGE_PACK_PATH, 'utf8');
-  assert.equal(pack, withApothecarySection(pack, apothecaryKnowledge(DEFAULT_APOTHECARY_CATALOG)));
+  const regenerated = withApothecarySection(pack, apothecaryKnowledge(DEFAULT_APOTHECARY_CATALOG));
+  assert.equal(pack.replace(/\r\n/g, '\n'), regenerated.replace(/\r\n/g, '\n'));
 });
 
 test('every Apothecary Element is described, with its children named', () => {

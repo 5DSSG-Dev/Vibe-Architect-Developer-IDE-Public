@@ -57,3 +57,10 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-29 | M3 to Luminary coordination
 - Connection contract/event implementation PRs #12, #13 and #15 are merged. Verus lane now records that Luminary consumption can proceed against the read-only event feed; suspended production and app-level test coverage remain open. See STP-0003 N9. No M3 acceptance inferred.
+
+## 2026-10-29 | Luminary Knowledge Pack test portability
+- The catalog-generated Knowledge Pack content was current; the equality check failed because a Windows checkout used CRLF while generated text used LF. The test now normalizes line endings before comparison; catalog-content drift still fails. The generated document itself is unchanged.
+- `npm run test:app` passes 341/341 on this Windows checkout.
+
+## 2026-10-29 | App-suite verification follow-up
+- The Knowledge Pack portability check passes in its targeted suite. A fresh full app run has an unrelated identity deterministic-rebuild failure (340/341); the identity test file passes alone (37/37).

@@ -120,3 +120,36 @@
 ## 2026-10-29 | codex | M3 claims released and Luminary handoff
 - Confirmed PR #12/#13/#15 merged (34a7899, d68379d, fe52077). Appended RELEASE rows for stale M3 claims; Verus may work against the merged contract/event API. Shared claim closeout and handoff details are in STP-0003 N9 and the Verus lane.
 - Current verified seam: read-only event subscription/history is present; suspended has no runtime producer. Luminary consumer and application tests remain open. No M3 acceptance is inferred.
+
+## 2026-10-29 | Architect | Debugging Annex design marker
+- Architect observes that the original POD Annex concept does not directly fit the Vibe Architect IDE's assisted-development environment, and proposes a semi-autonomous debugging Annex as a distinct IDE feature. It could use the Luminary's Meta Model API path to investigate code errors.
+- Initial design direction: use actual IDE Element/code and connection context plus reproducible diagnostics; return source-linked findings, confidence/uncertainty, and a proposed repair. Keep any code changes behind an explicit Architect-approved work order and bounded verification. Diagnostic access must not imply repair authority.
+- Preserve the original POD Annex concept and its QuarterMaster/Orchestrator/Dispatch/Probe/Triage/Builder custody chain as a separate architecture. This marker does not approve implementation, define final authority/security contracts, or change M3 proposals. Future STP/design review should define scope, evidence, isolation, data sent to Meta, cost limits, repair authorization, and test boundaries. Preserved from `codex-annex-note-2026-10-29b.patch` (SHA256 `17FCFB350EDC2224619F8953885459302518BFA9E9A8FB1C172E73BE5E3310E0`).
+
+## 2026-10-29 | codex | Historical heading encoding correction
+- Commit `4a82b68` changed four historical heading separators from the parent blob's Windows-1252 em dash byte (`0x97`) to U+FFFD. Append-only history is preserved; this correction records the recoverable headings:
+  - `2026-10-20 Codex follow-up — Verus audit located and reviewed`
+  - `2026-10-20 — Hackathon direction and Vibe Luminary inclusion`
+  - `2026-10-20 — Coordinated product/repository rename and STP lane`
+  - `2026-10-20 — Local rename verified after workspace reopening`
+
+## 2026-10-29 | codex | Luminary connection-event display input (recommendation pending Architect decision)
+- Source-backed Umbilical events emitted now: `attempt-started`, `contract-resolved`, `resources-committed`, `refused`, `active` (including heartbeat recovery), `degraded`, `severed`, and `resources-released`. `suspended` is declared in the type but has no runtime producer. These do not establish equivalent coverage for Tether/Mesh.
+- Recommendation: define `suspended` as a CORE-paused, temporarily non-routable connection whose identity remains for possible recovery; show it only after a real producer exists. Whether resources remain reserved or are released must be explicit in runtime events, never inferred by the Luminary.
+- Architect-facing summaries should map allowlisted `reasonCode` values to plain language. Never display credentials/API keys, model prompts or replies, Tumbler challenge/lock/proof material, raw exception text, or contract digests in the normal view; do not render arbitrary `message` strings without sanitization. Event identifiers can stay in the technical detail view.
+- This is Codex input for the Architect's decision, not an adopted STP-0002 policy or approval to build the Luminary consumer.
+
+## 2026-10-29 | codex | M3 test-fixture follow-up
+- Test Orb fixtures now register CORE-recognized custom contract references, so the handshake tests exercise negotiation, allocation, rollback, heartbeat and severance instead of failing at the missing-reference guard. The Relation Contract evidence fixture presents the same valid test contract.
+- The Knowledge Pack drift assertion now normalizes CRLF/LF before comparing generated content; this avoids a Windows checkout line-ending false failure while still detecting catalog-content drift. No generated pack content changed.
+- Verification: targeted runtime/evidence/Knowledge Pack tests 20/20 pass; `npm run test:app` 341/341 pass. No production runtime code changed.
+
+## 2026-10-29 | codex | Full-suite Windows gateway-test shortfall
+- `npm run test:app` passes 341/341 and `npm run build` passes (existing large-chunk warning). Full `npm test` has 146/147 gateway tests passing; the remaining `server/luminary-executor.test.ts:50` failure compares `hello\r\n` from the Git worktree with expected `hello\n`.
+- The failure is in the active Verus-owned `server/**` claim. Codex made no changes to that path; sent for owner coordination separately.
+
+## 2026-10-29 | codex | Follow-up verification correction
+- A fresh rerun found an unrelated app-suite failure: `src/identity/identity.test.ts:443` deterministic rebuild compared different kernel hashes (340/341 overall). The same identity file passes by itself (37/37); the targeted M3 runtime/evidence/Knowledge Pack tests pass 20/20. Do not read the earlier 341/341 note as current suite status.
+- `npm test` gateway phase is 146/147; the remaining Verus-owned `server/luminary-executor.test.ts:50` assertion expects LF but reads CRLF. No changes were made under `server/**`. Production build passes with the existing large-chunk warning; STP-0003 validation and `git diff --check` pass.
+## 2026-10-29 | codex | Verus coordination handoff
+- Sent Verus the PR #16 follow-up verification, M3 and identity-suite outcomes, event-policy proposal boundaries, and request for owner coordination on the CRLF gateway test. Exchange: `H:\AEGIS_CENTRAL_CODEX\TIER-9-AUDIT-AND-OPERATIONS\exchange\from-codex\2026-10-29T130610Z-m3-follow-up-verification-and-gateway-ownership-coordination.md` (SHA256 `E92966865E7A3C09FB086BE00943107E00394092428BA8010ADA79C86578D3ED`).
