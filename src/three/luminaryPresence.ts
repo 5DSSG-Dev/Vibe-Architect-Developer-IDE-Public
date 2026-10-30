@@ -16,6 +16,7 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
  * Architect marked). The Full Form opens beside it (LuminaryHost). It sits this far from the
  * camera, in front of the mechanism.
  */
+// Keep in step with the backdrop window in src/index.css, which keeps the Presence visible beside open pages.
 export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;

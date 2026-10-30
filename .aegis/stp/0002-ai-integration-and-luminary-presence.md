@@ -2264,3 +2264,13 @@ Evidence: N53; DataQuad t3112; src/index.css; src/components/LuminaryHost.tsx
 Channel: cloud
 
 The N53 check confirmed the breathing works (computed luminaryBreathe; 36px to 38.9px). Two placement issues remain, now changed: (1) The scene controls' bottom row is 284px wide, so right-24 put the icon on SNAP OFF. The icon now sits at the right edge directly above the control stack (right-4, bottom 272px). (2) With a page open, the Full Form at the right edge still covered the Code Frame's own Ask send button and, at 1280x720, the info card's View Code, because both pages keep their action buttons along the bottom. While a page is open the Full Form now moves to the top right corner (top and right 0.75rem). Client only. App 325/325; gateway 148/148 on three reruns (one earlier run had a single unrelated gateway failure that did not repeat); build clean.
+
+### 2026-10-30T08:55:00.000Z | claude | note N55
+Chain-Prev: 0dfea00333c016ec256bc0232ca8e81ce159f041909e78b822d7f196db9554cb
+Chain-Hash: 179262ccda48cd81940762cfa4b486ebc10184b59a7b97f8bd2f4bbd088d24a1
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T08:44Z; src/index.css; src/three/luminaryPresence.ts
+Channel: cloud
+
+Tracey: 'still no Luminary in the space' on an Element's info page, circling where the 3D figure stands. Findings from the RC session: the 3014/3015 gateways had stopped again when that session ended, and were restarted; the Presence was still rendered, but each page's backdrop (black 80 to 85% with a 16px blur) hid it. Change: one CSS rule cuts a soft oval window (170x230px, fading from 55%) in every aria-modal page's backdrop, centred on PRESENCE_SCREEN_OFFSET (right 190px, bottom 450px), so the figure stands lit beside an open page. Only the backdrop is masked, never the page. Pages whose dim sits on the Dialog itself (CORE Matrix, Handshake) are unchanged. A press inside the window still closes the page, as the backdrop does elsewhere. App 325/325 on rerun (one run had the known identity-timing flake), gateway 148/148, build clean.
