@@ -2138,3 +2138,48 @@ Evidence: P25; src/luminary/elementCode.ts; src/luminary/elementCode.test.ts; sr
 Channel: cloud
 
 P25 built as approved. (1) src/luminary/elementCode.ts: composeElementCodePrompt sends only the Element's description (describeElement, as the P23 chip), its code frame (language, file, entrypoint, current editor source) and the Architect's request, with a marker asking for a plain explanation and exactly one fenced block. readElementCodeProposal accepts exactly one non-empty code block; none, several or an empty one gives a plain reason and no proposal. lineDiff marks added and removed lines. (2) CodeEditorOverlayModal gains an 'Ask the Luminary' box with Stop. It uses the ordinary governed /ask with the demo key and explanation level the Architect set in the Luminary panel. The proposal is shown above the editor with the Luminary's explanation, a marked diff against the current source and the model id. Accept puts the code in the editor and says to press Save Code Frame; Decline changes nothing. The editor's Save, with its JSON check, remains the only thing that changes the Element. The record keeps asked, replied (or shortfall or stopped) and offering_accepted or offering_declined, each with the Element id and file name, and the proposal's hash. (3) The rehearsal stand-in answers an Element code request with the current source plus one marked comment line, so the flow can be rehearsed with no model and no spend. (4) No repository file is written and the coding-task branch is unused. STP-0005 (PR #21, drafted on Tracey's PC at their request) records that its P1 and P2 are delivered by this P25, and its P3 (rehearsal plan, fallback take) stays open there. Tests: 4 app (prompt contents, one-block rule, refusals, diff), 1 gateway (rehearsal); app 320/320, gateway 148/148, typecheck, server build and client build clean.
+
+### 2026-10-30T02:55:00.010Z | claude | gap G25
+Chain-Prev: 1b1768f824a2bf92d4e69541faf84e6beb8c5a5a24241508c16abf863afb4339
+Chain-Hash: 826ae63edcb4220ebbe723a9498c17e95c30c4e8600eee0ee80e56fbc1b47c66
+Stage: Proposal
+Kind: gap
+Evidence: Architect messages 2026-10-30T02:45:33Z and 02:47:41Z; src/three/luminaryPresence.ts; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The Luminary speaks only inside its panel. The 3D Presence in the workspace shows no words, and there is no spoken conversation. The Architect wants a dialogue bubble beside the Luminary and a Voice option, with the Architect choosing how the Luminary communicates, as part of a modern 3D IDE using technology that is available today and easily employed.
+
+### 2026-10-30T02:55:00.020Z | claude | change P26
+Chain-Prev: 826ae63edcb4220ebbe723a9498c17e95c30c4e8600eee0ee80e56fbc1b47c66
+Chain-Hash: e7cd2ca8d7b244f5761e286da447ad4627abcb7150710e24eca6725e9ec144b2
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G25; P19; P24; D4.2
+Closes: G25 (in part)
+Channel: cloud
+
+A dialogue bubble beside the Luminary. While the Architect has the Luminary open, its newest words (a reply's opening sentences, or a P24 connection moment) appear in a bubble next to the 3D Presence, styled in the IDE's glass and gold, fading after a while; a click opens the full panel. Code and long replies show only their first sentences, with 'more in the panel'. At rest there is no bubble (D4.2). Only replies that passed the gauge, and moments already shown, appear. Motion off keeps the bubble still. A setting next to Plain, Guided and Technical lets the Architect choose where the Luminary speaks: Panel, Bubble, or both (default both). Browser-only, no new cost. Verification: tests (what goes in the bubble, nothing at rest, setting kept), typecheck, build, a look on the Architect's PC.
+
+### 2026-10-30T02:55:00.030Z | claude | change P27
+Chain-Prev: e7cd2ca8d7b244f5761e286da447ad4627abcb7150710e24eca6725e9ec144b2
+Chain-Hash: 16d9630088346a0766e17b43e93311e5690d09b544cbe0b440571ecda4e65e8a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G25; P26; D4.2
+Closes: G25 (in part)
+Channel: cloud
+
+Voice, as a second step after P26. (1) The Luminary speaking: with Voice chosen, each reply that passed the gauge is read aloud with the browser's own speech (free, on the Architect's PC), with a voice and speed the Architect picks and a Stop. (2) The Architect speaking: a hold-to-talk button; the microphone is on only while held, never in the background (D4.2), and the words appear as text the Architect can check before sending. Browser speech-to-text in Chrome and Edge sends the audio to Google or Microsoft to transcribe; a local speech model would keep it on the PC but needs setup. Which to use is the Architect's choice. (3) Everything said either way is kept as text in the record. Verification: tests where the browser allows, then a try on the Architect's PC.
+
+### 2026-10-30T02:55:00.040Z | claude | status
+Chain-Prev: 16d9630088346a0766e17b43e93311e5690d09b544cbe0b440571ecda4e65e8a
+Chain-Hash: 3976af939142368ec0a6b3f66e37a804a8ef3201727dc3cd9a44f2920351461d
+Stage: Proposal
+Kind: status
+Item: P26
+Status: Presented
+Channel: cloud
+
+P26 → Presented. P27 stays Drafted until P26 is decided.
