@@ -471,6 +471,33 @@ export function heartbeatCycle(contractOrId: RelationContract | string, health: 
   return { ...next, invariantsValid: true };
 }
 
+/**
+ * The Architect removes a docked Orb: the connection is closed by agreement of both sides. A
+ * connection made in this session goes through severConnection. One the CORE started with, or one
+ * restored from a saved workspace, has no live lifecycle here, so its reservation is released and
+ * the same 'severed' and 'resources-released' moments are recorded from the CORE's own contract.
+ * Either way the removal is in the record; nothing is closed silently.
+ */
+export function closeConnectionByAgreement(contractId: string, coreContract: RelationContract | undefined, reason: string): void {
+  if (lifecycleLedger.has(contractId)) {
+    severConnection(contractId, reason, { initiatorConsent: true, receptorConsent: true });
+    return;
+  }
+  releaseAllocation(contractId);
+  if (getContract(contractId)) voidContract(contractId);
+  if (coreContract) unregisterCapabilities(coreContract.sourceItemId);
+  lifecycleLedger.set(contractId, { contractId, state: 'SEVERED', missedHeartbeats: 0, reason });
+  const facts = {
+    attemptId: contractId, orbId: coreContract?.sourceItemId ?? '', portId: coreContract?.targetSocketId ?? '',
+    presentedContract: coreContract?.contractReference, resolvedContractId: coreContract?.contractReference?.id,
+    resolvedContractVersion: coreContract?.contractReference?.version,
+    profileId: coreContract?.resolvedProfileId as UmbilicalProfileId | undefined,
+    profileVersion: coreContract?.resolvedProfileVersion
+  };
+  publishConnectionEvent({ ...facts, kind: 'severed', reasonCode: 'MUTUAL_DISCONNECT', message: reason });
+  publishConnectionEvent({ ...facts, kind: 'resources-released' });
+}
+
 export function severConnection(
   contractId: string,
   reason: string,

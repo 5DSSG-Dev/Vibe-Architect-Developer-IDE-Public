@@ -21,11 +21,20 @@ test('a new CORE has room for all 8 sockets, even with the heaviest sample Orb i
   assert.deepEqual(createInitialCoreManifest().hardwareBudget, DEFAULT_CORE_BUDGET);
 });
 
-test('a saved CORE on an earlier starting budget moves to today\'s; a hand-set budget is kept', () => {
-  const old = { memoryMB: 4096, threads: 16, bandwidthCredits: 256, gpuEnabled: false };
-  assert.deepEqual(upgradeStartingBudget(old), { ...old, memoryMB: 8192, threads: 32 });
-  assert.deepEqual(upgradeStartingBudget({ ...old, threads: 8 }), { ...old, memoryMB: 8192, threads: 32 });
-  const handSet = { memoryMB: 6144, threads: 16, bandwidthCredits: 256, gpuEnabled: true };
-  assert.deepEqual(upgradeStartingBudget(handSet), handSet);
-  assert.deepEqual(upgradeStartingBudget({ ...handSet, threads: 8 }), { ...handSet, threads: 16 });
+test('a saved budget moves up only when it was an earlier starting budget; the Architect\'s choice is kept', () => {
+  const legacy = { memoryMB: 4096, threads: 16, bandwidthCredits: 256, gpuEnabled: false };
+  assert.deepEqual(upgradeStartingBudget(legacy), { ...legacy, memoryMB: 8192, threads: 32, origin: 'starting' });
+  assert.deepEqual(upgradeStartingBudget({ ...legacy, threads: 8 }), { ...legacy, memoryMB: 8192, threads: 32, origin: 'starting' });
+
+  // Chosen in the CORE Matrix, even when it matches an earlier starting budget.
+  const chosen = { ...legacy, origin: 'architect' as const };
+  assert.deepEqual(upgradeStartingBudget(chosen), chosen);
+  assert.deepEqual(upgradeStartingBudget({ ...chosen, threads: 8 }), { ...chosen, threads: 8 });
+
+  // Unmarked but not a starting budget: kept as it is, including 8 threads, and marked as chosen.
+  const custom = { memoryMB: 6144, threads: 8, bandwidthCredits: 256, gpuEnabled: true };
+  assert.deepEqual(upgradeStartingBudget(custom), { ...custom, origin: 'architect' });
+
+  const current = createInitialCoreManifest().hardwareBudget;
+  assert.deepEqual(upgradeStartingBudget(current), current);
 });

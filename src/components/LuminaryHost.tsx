@@ -21,7 +21,7 @@ import { PRESENCE_SCREEN_OFFSET, PRESENCE_WINDOW_RADIUS } from '../three/luminar
 import { recordExchange, textEvidence } from '../luminary/record';
 import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } from '../luminary/connectionMoments';
 import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
-import { VOICE_RATES, canListen, canSpeak, listen, readVoiceSettings, saveVoiceSettings, speak, speakableText, stopSpeaking, voicesAvailable, type Recognition, type VoiceSettings } from '../luminary/voice';
+import { VOICE_RATES, canListen, canSpeak, listen, pickVoice, readVoiceSettings, saveVoiceSettings, speak, speakableText, stopSpeaking, voicesAvailable, type Recognition, type VoiceSettings } from '../luminary/voice';
 import { SPEAK_IN_LABELS, SPEAK_IN_OPTIONS, bubbleText, clearBubble, readSpeakIn, saveSpeakIn, sayInBubble, type SpeakIn } from '../luminary/bubble';
 import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
@@ -307,16 +307,20 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   // with x keeps it off for that focus; the Architect still decides what is sent.
   const dismissedFocusRef = useRef<string | null>(null);
   const focusKey = selection?.key;
+  const focusLabel = selection?.label;
+  const focusText = selection?.text;
   useEffect(() => {
     if (dismissedFocusRef.current !== focusKey) dismissedFocusRef.current = null;
     setChips((current) => {
       const others = current.filter((chip) => !chip.focusKey);
-      if (!selection || dismissedFocusRef.current === selection.key) return others;
-      return [{ id: newId(), label: selection.label, text: selection.text, focusKey: selection.key }, ...others];
+      if (!focusKey || focusLabel === undefined || focusText === undefined || dismissedFocusRef.current === focusKey) return others;
+      // Same focus with new words (the Element was edited and saved): the chip keeps its place and
+      // takes the new words, so the Luminary never answers about the old version.
+      const held = current.find((chip) => chip.focusKey === focusKey);
+      if (held) return current.map((chip) => (chip === held ? { ...chip, label: focusLabel, text: focusText } : chip));
+      return [{ id: newId(), label: focusLabel, text: focusText, focusKey }, ...others];
     });
-    // The selection's words follow its key, so the key alone decides when the chip changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusKey]);
+  }, [focusKey, focusLabel, focusText]);
 
   const removeChip = (chip: ContextChip) => {
     if (chip.focusKey) dismissedFocusRef.current = chip.focusKey;
@@ -621,9 +625,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                     aria-label="The Luminary's voice"
                     className="max-w-[9rem] bg-slate-900/90 border border-slate-700 rounded px-1 py-0.5 text-[9px] text-slate-200"
                   >
-                    <option value="">Browser default</option>
+                    <option value="">A voice on this PC</option>
                     {voices.map((entry) => (
-                      <option key={entry.name} value={entry.name}>{entry.name}</option>
+                      <option key={entry.name} value={entry.name}>{entry.localService ? entry.name : `${entry.name} (online)`}</option>
                     ))}
                   </select>
                 </label>
@@ -643,6 +647,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                 </div>
                 <button type="button" onClick={() => stopSpeaking()} className="hover:text-amber-200">Stop speaking</button>
               </div>
+              {(pickVoice(voices, voice.voiceName) ?? voices.find((entry) => entry.default))?.localService === false && (
+                <p className="text-amber-200/80">This voice is online: the reply text is sent to the browser's speech service to be spoken.</p>
+              )}
               {canListen() && (
                 <p>Hold the microphone to talk; your words appear in the box to check before you send. Your browser sends the sound to its speech service to turn it into text.</p>
               )}

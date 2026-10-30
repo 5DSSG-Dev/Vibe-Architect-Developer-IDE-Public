@@ -364,6 +364,11 @@ export interface HardwareBudget {
   /** Provisional CORE bandwidth credits, not a measured throughput claim. */
   bandwidthCredits?: number;
   gpuEnabled: boolean;
+  /**
+   * Where the budget came from: the CORE's starting budget, or the Architect's own choice in the
+   * CORE Matrix. Missing on workspaces saved before 2026-10-30.
+   */
+  origin?: 'starting' | 'architect';
 }
 
 export interface ActiveDaemons {
@@ -803,21 +808,26 @@ export const DEFAULT_CORE_BUDGET: HardwareBudget = {
   memoryMB: 8192,
   threads: 32,
   bandwidthCredits: 256,
-  gpuEnabled: true
+  gpuEnabled: true,
+  origin: 'starting'
 };
 
-// The budget every CORE started with before 2026-10-30; it filled up after about four Orbs.
-const PREVIOUS_DEFAULT_CORE_BUDGET = { memoryMB: 4096, threads: 16 } as const;
+// The starting budgets a CORE had before 2026-10-30: 4096 MB with 8 threads, then with 16. Both
+// filled up after about four Orbs.
+const EARLIER_STARTING_BUDGETS = [{ memoryMB: 4096, threads: 8 }, { memoryMB: 4096, threads: 16 }] as const;
 
 /**
- * A saved CORE still on an earlier starting budget (4096 MB with 16, or the older 8, threads)
- * moves to today's, which fits all 8 sockets. A budget the Architect set by hand is kept.
+ * Bring a saved budget up to date without overriding the Architect. A budget marked as the
+ * Architect's choice is never changed. A budget saved before budgets carried their origin is
+ * moved to today's starting budget only when it is exactly one of the earlier starting budgets
+ * (the Architect's decision of 2026-10-30, STP-0002 N63); any other unmarked budget is kept and
+ * marked as the Architect's.
  */
 export function upgradeStartingBudget(budget: HardwareBudget): HardwareBudget {
-  const isEarlierDefault = budget.memoryMB === PREVIOUS_DEFAULT_CORE_BUDGET.memoryMB &&
-    (budget.threads === PREVIOUS_DEFAULT_CORE_BUDGET.threads || budget.threads === 8);
-  if (isEarlierDefault) return { ...budget, memoryMB: DEFAULT_CORE_BUDGET.memoryMB, threads: DEFAULT_CORE_BUDGET.threads };
-  return budget.threads === 8 ? { ...budget, threads: 16 } : budget;
+  if (budget.origin) return budget;
+  const wasStarting = EARLIER_STARTING_BUDGETS.some((earlier) => earlier.memoryMB === budget.memoryMB && earlier.threads === budget.threads);
+  if (wasStarting) return { ...budget, memoryMB: DEFAULT_CORE_BUDGET.memoryMB, threads: DEFAULT_CORE_BUDGET.threads, origin: 'starting' };
+  return { ...budget, origin: 'architect' };
 }
 
 export function createInitialCoreManifest(): CoreManifest {

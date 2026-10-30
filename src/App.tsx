@@ -20,7 +20,7 @@ import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
 import { luminaryFocus } from './luminary/focus';
-import { severConnection } from './engine/connectionRuntime';
+import { closeConnectionByAgreement } from './engine/connectionRuntime';
 import { LuminaryBubble } from './components/LuminaryBubble';
 import {
   ApothecaryItem,
@@ -388,7 +388,7 @@ export function App() {
   const handleUpdateHardwareBudget = (budget: HardwareBudget) => {
     setCoreManifest((prev) => ({
       ...prev,
-      hardwareBudget: budget
+      hardwareBudget: { ...budget, origin: 'architect' }
     }));
   };
 
@@ -491,12 +491,8 @@ export function App() {
     if (!inspectingSocket || !inspectingItem || !placedRemoval) return;
     const socketId = inspectingSocket.id;
     if (placedRemoval.contractId) {
-      try {
-        severConnection(placedRemoval.contractId, 'Removed by the Architect', { initiatorConsent: true, receptorConsent: true });
-      } catch {
-        // A connection restored from a saved workspace has no live lifecycle to close; the
-        // socket update below still frees its room.
-      }
+      const contractId = placedRemoval.contractId;
+      closeConnectionByAgreement(contractId, coreManifest.contracts.find((entry) => entry.contractId === contractId), 'Removed by the Architect');
     }
     setCoreManifest((prev) => removeElementFromManifest(prev, socketId, inspectingItem.id));
     // A resume point or open Environment inside a removed Element would lead nowhere; it stops

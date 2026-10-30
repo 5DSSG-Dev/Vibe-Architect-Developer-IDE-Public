@@ -5,6 +5,7 @@ import { getCapabilityProviders } from './capabilityRegistry';
 import { registerCustomOrbManifest } from '../contracts/orbManifest';
 import { getConnectionEvents } from '../contracts/connectionEvents';
 import {
+  closeConnectionByAgreement,
   computeContractChecksum,
   executeMeshHandshake,
   executeTetherHandshake,
@@ -214,4 +215,20 @@ test('a step-5 refusal names the missing capabilities as structured event data',
   const refused = getConnectionEvents().slice(before).find((event) => event.kind === 'refused');
   assert.equal(refused?.reasonCode, 'CAPABILITY_UNSATISFIED');
   assert.deepEqual(refused?.missingCapabilities, ['capability_nobody_offers']);
+});
+
+test('removing an Orb records the severance, even for a connection the CORE started with', () => {
+  const live = executeUmbilicalHandshake(item('orb-remove-live'), socket('socket-remove-live'));
+  closeConnectionByAgreement(live.contractId, live, 'Removed by the Architect');
+  assert.equal(getConnectionLifecycle(live.contractId)?.state, 'SEVERED');
+
+  const restored = { ...live, contractId: 'ctr-restored-remove', sourceItemId: 'orb-restored', targetSocketId: 'socket-restored' };
+  const before = getConnectionEvents().length;
+  closeConnectionByAgreement(restored.contractId, restored, 'Removed by the Architect');
+  const recorded = getConnectionEvents().slice(before);
+  assert.deepEqual(recorded.map((event) => [event.kind, event.reasonCode, event.orbId, event.portId]), [
+    ['severed', 'MUTUAL_DISCONNECT', 'orb-restored', 'socket-restored'],
+    ['resources-released', undefined, 'orb-restored', 'socket-restored'],
+  ]);
+  assert.equal(getConnectionLifecycle(restored.contractId)?.state, 'SEVERED');
 });

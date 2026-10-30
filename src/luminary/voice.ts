@@ -1,6 +1,8 @@
 // The Luminary's Voice (STP-0002 P27). With Voice on, each reply that passed the gauge is read aloud
-// with the browser's own speech, which runs on the Architect's PC, with the voice and speed the
-// Architect picks. The Architect can also hold a button to talk: the microphone is on only while
+// with the browser's own speech, with the voice and speed the Architect picks. Some browser voices
+// run on the Architect's PC and some are online (localService false). Online voices are marked, and
+// unless the Architect picks one, a voice on the PC is used. If the browser has no voice on the PC,
+// the panel says that the reply text goes to its online speech service. The Architect can also hold a button to talk: the microphone is on only while
 // the button is held, never in the background (D4.2), and the words land in the question box to
 // check before sending. Chrome and Edge send that audio to Google or Microsoft to turn it into
 // text, which the panel says plainly. Everything said either way stays as text in the record.
@@ -9,7 +11,7 @@ const VOICE_STORAGE = 'vibe-luminary-voice';
 
 export interface VoiceSettings {
   on: boolean;
-  /** The browser voice's name; empty uses the browser's default voice. */
+  /** The browser voice's name; empty uses a voice on the Architect's PC (see pickVoice). */
   voiceName: string;
   /** 0.8 (slower) to 1.3 (faster); 1 is normal. */
   rate: number;
@@ -83,13 +85,26 @@ export function voicesAvailable(): SpeechSynthesisVoice[] {
   return synth()?.getVoices() ?? [];
 }
 
+type VoiceChoice = Pick<SpeechSynthesisVoice, 'name' | 'localService' | 'default'>;
+
+/**
+ * The voice to speak with: the one the Architect picked, even if it is online (the panel says so);
+ * otherwise the browser's default if it runs on the PC, or else the first voice on the PC. Undefined
+ * when the browser lists no voice on the PC, and then the browser's own default is used.
+ */
+export function pickVoice<V extends VoiceChoice>(voices: readonly V[], voiceName: string): V | undefined {
+  const chosen = voiceName ? voices.find((entry) => entry.name === voiceName) : undefined;
+  if (chosen) return chosen;
+  return voices.find((entry) => entry.default && entry.localService) ?? voices.find((entry) => entry.localService);
+}
+
 /** Read words aloud, replacing anything still being read. */
 export function speak(text: string, settings: VoiceSettings): void {
   const engine = synth();
   if (!engine || !text.trim()) return;
   engine.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  const voice = engine.getVoices().find((entry) => entry.name === settings.voiceName);
+  const voice = pickVoice(engine.getVoices(), settings.voiceName);
   if (voice) utterance.voice = voice;
   utterance.rate = settings.rate;
   engine.speak(utterance);
