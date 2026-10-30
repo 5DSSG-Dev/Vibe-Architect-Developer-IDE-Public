@@ -52,3 +52,7 @@ Branch `stellar-extraction/public-prep` (off main b72e568). Removed the unfinish
 - PR #12 merged at 34a7899 and PR #13 at d68379d; PR #15 merged at fe52077. The old Codex claims on the contract/event paths are released in .aegis/claims.md. No Codex ownership claim remains on those product paths.
 - You can proceed with the Luminary consumer/presentation against the existing read-only subscribeConnectionEvents / getConnectionEvents API in src/contracts/connectionEvents.ts; sanitized event history is persisted in the existing hash-chained evidence archive and restored on startup.
 - Remaining shared seam: suspended is declared but has no runtime producer. Luminary event consumption/presentation and application test coverage remain open. This is a handoff, not a claim of M3 acceptance or Architect approval.
+
+## 2026-10-29 | verus | STP-0005 opened (demo centrepiece: Apothecary Element coded by the Luminary)
+- At the Architect's "ready", drafted STP-0005: findings S1-S5, targets T1-T3, gaps G1-G3, proposals P1-P3. Recommended path: an in-browser "Ask the Luminary" action in the Element code editor, with a reviewable proposal and diff and Architect accept/decline, rather than the repository executor (an Element's code lives in codeFrame state, not in files).
+- Planning only: nothing presented, approved or built. The active STP is left at STP-0002. Source inspection at 48816b5; no tests, browser run or model call. Docking the new Element depends on the 16-thread CORE decision (STP-0002 N46, PR #19) reaching main.
