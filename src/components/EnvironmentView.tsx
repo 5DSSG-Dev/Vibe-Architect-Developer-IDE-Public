@@ -14,7 +14,10 @@ import { easeInOutCubic } from '../utils/cameraNav';
 import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 const ENVIRONMENT_ENTRY_TWEEN_SECONDS = 0.58;
-const ENVIRONMENT_ENTRY_DISTANCE_RATIO = 0.45;
+// The child ring spans 4.5 world units; keep enough camera distance to see it
+// around the focused module, including after several drill-downs.
+const ENVIRONMENT_ENTRY_DISTANCE_RATIO = 0.78;
+const ENVIRONMENT_ENTRY_MIN_DISTANCE = 9.5;
 const ENVIRONMENT_CENTER_SETTLE_SECONDS = 0.48;
 
 interface EnvironmentViewProps {
@@ -24,6 +27,8 @@ interface EnvironmentViewProps {
   children: ApothecaryItem[];
   /** Drill one level deeper by clicking a child Element. */
   onEnterChild: (item: ApothecaryItem, entryView?: EnvironmentEntryView) => void;
+  /** Open the information popup for a centred or child Element. */
+  onInspectElement?: (item: ApothecaryItem) => void;
   /** Camera framing from the outgoing scene, used to continue its zoom. */
   entryView?: EnvironmentEntryView | null;
 }
@@ -34,10 +39,12 @@ interface EnvironmentViewProps {
  * (CORE → Orb → Satellite → Actuator). Rendering geometry comes from the shared
  * buildElementEnvironment builder; each Element carries its Element Totem.
  */
-export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, children, onEnterChild, entryView }) => {
+export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, children, onEnterChild, onInspectElement, entryView }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const onEnterChildRef = useRef(onEnterChild);
   onEnterChildRef.current = onEnterChild;
+  const onInspectElementRef = useRef(onInspectElement);
+  onInspectElementRef.current = onInspectElement;
 
   // Rebuild whenever the centred Element or its child set changes.
   const childKey = children.map((c) => c.id).join(',');
@@ -164,8 +171,28 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    const handleContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+      if (!onInspectElementRef.current) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(envRoot.children, true);
+      for (const hit of hits) {
+        let node: THREE.Object3D | null = hit.object;
+        while (node) {
+          const item = node.userData?.childItem ?? node.userData?.centerItem;
+          if (item) {
+            onInspectElementRef.current(item as ApothecaryItem);
+            return;
+          }
+          node = node.parent;
+        }
+      }
+    };
     const handlePointerDown = (event: MouseEvent) => {
-      if (navigationPending) return;
+      if (event.button !== 0 || navigationPending) return;
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -184,7 +211,10 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
           node.getWorldPosition(target);
           const direction = camera.position.clone().sub(controls.target).normalize();
           if (direction.lengthSq() === 0) direction.set(0, 0.2, 1).normalize();
-          const distance = camera.position.distanceTo(controls.target) * ENVIRONMENT_ENTRY_DISTANCE_RATIO;
+          const distance = Math.max(
+            camera.position.distanceTo(controls.target) * ENVIRONMENT_ENTRY_DISTANCE_RATIO,
+            ENVIRONMENT_ENTRY_MIN_DISTANCE
+          );
           const toPosition = target.clone().addScaledVector(direction, distance);
           const startedAt = performance.now();
           const duration = prefersReducedMotion() ? 0 : ENVIRONMENT_ENTRY_TWEEN_SECONDS * 1000;
@@ -213,6 +243,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       }
     };
     renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+    renderer.domElement.addEventListener('contextmenu', handleContextMenu);
 
     let frameId: number;
     const clock = new THREE.Clock();
@@ -251,6 +282,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
+      renderer.domElement.removeEventListener('contextmenu', handleContextMenu);
       cancelAnimationFrame(frameId);
       cancelAnimationFrame(navigationFrame);
       disposeEnv();
