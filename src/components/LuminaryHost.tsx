@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { ClipboardPaste, Code2, KeyRound, Minimize2, Paperclip, Send, Square, X } from 'lucide-react';
+import { ClipboardPaste, Code2, KeyRound, Mic, Minimize2, Paperclip, Send, Square, Volume2, X } from 'lucide-react';
 import { composePrompt, EXPLANATION_LABELS, EXPLANATION_LEVELS, type ExplanationLevel } from '../luminary/blocks';
 import {
   describeShortfall,
@@ -21,6 +21,7 @@ import { PRESENCE_SCREEN_OFFSET, PRESENCE_WINDOW_RADIUS } from '../three/luminar
 import { recordExchange, textEvidence } from '../luminary/record';
 import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } from '../luminary/connectionMoments';
 import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
+import { VOICE_RATES, canListen, canSpeak, listen, readVoiceSettings, saveVoiceSettings, speak, speakableText, stopSpeaking, voicesAvailable, type Recognition, type VoiceSettings } from '../luminary/voice';
 import { SPEAK_IN_LABELS, SPEAK_IN_OPTIONS, bubbleText, clearBubble, readSpeakIn, saveSpeakIn, sayInBubble, type SpeakIn } from '../luminary/bubble';
 import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
@@ -126,6 +127,49 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     if (next === 'panel') clearBubble();
   };
   const transcriptVisible = speakIn !== 'bubble' || showConversation;
+
+  // Voice (P27): replies read aloud with the browser's speech, and hold-to-talk for questions.
+  const [voice, setVoiceState] = useState<VoiceSettings>(readVoiceSettings);
+  const voiceRef = useRef(voice);
+  voiceRef.current = voice;
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(voicesAvailable);
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<Recognition | null>(null);
+  const spokenBaseRef = useRef('');
+  const updateVoice = (next: Partial<VoiceSettings>) => {
+    const merged = { ...voiceRef.current, ...next };
+    setVoiceState(merged);
+    saveVoiceSettings(merged);
+    if (!merged.on) stopSpeaking();
+  };
+  const speakReply = (content: string) => {
+    if (voiceRef.current.on) speak(speakableText(content), voiceRef.current);
+  };
+  useEffect(() => {
+    if (!canSpeak()) return;
+    const refresh = () => setVoices(voicesAvailable());
+    window.speechSynthesis.addEventListener('voiceschanged', refresh);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', refresh);
+  }, []);
+  // The microphone is on only while the talk button is held (D4.2).
+  const startListening = () => {
+    if (recognitionRef.current || busy) return;
+    stopSpeaking();
+    spokenBaseRef.current = message.trim();
+    recognitionRef.current = listen(
+      (words) => setMessage([spokenBaseRef.current, words].filter(Boolean).join(' ')),
+      (reason) => { if (reason) push({ id: newId(), kind: 'note', text: reason }); },
+      () => { recognitionRef.current = null; setListening(false); }
+    );
+    setListening(recognitionRef.current !== null);
+  };
+  const stopListening = () => recognitionRef.current?.stop();
+  // At rest the Luminary neither speaks nor listens (D4.2).
+  useEffect(() => {
+    if (isEngaged) return;
+    stopSpeaking();
+    recognitionRef.current?.abort();
+  }, [isEngaged]);
 
   useEffect(() => {
     if (isEngaged) {
@@ -306,6 +350,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
           const { task } = result.value;
           push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel, forTask: true });
           say(bubbleText(result.value.reply.content));
+          speakReply(result.value.reply.content);
           push({ id: newId(), kind: 'task', task, level: askLevel });
           setActivity('resting');
           await keepReply(result.value.reply, result.value.lineage, { taskId: task.id });
@@ -324,6 +369,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
       if (result.ok) {
         push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel });
         say(bubbleText(result.value.reply.content));
+        speakReply(result.value.reply.content);
         setActivity('resting');
         await keepReply(result.value.reply, result.value.lineage);
       } else {
@@ -443,6 +489,17 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                 </button>
               ))}
             </div>
+            {canSpeak() && (
+              <button
+                type="button"
+                aria-pressed={voice.on}
+                onClick={() => updateVoice({ on: !voice.on })}
+                title={voice.on ? 'Voice is on: replies are read aloud' : 'Voice: have replies read aloud and talk to the Luminary'}
+                className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border ${voice.on ? 'border-amber-400/60 bg-amber-500/25 text-amber-100' : 'border-slate-700 text-slate-400 hover:text-slate-200'}`}
+              >
+                <Volume2 className="w-2.5 h-2.5" />Voice
+              </button>
+            )}
             <div role="radiogroup" aria-label="Explanation level" className="flex rounded-md border border-slate-700 overflow-hidden">
               {EXPLANATION_LEVELS.map((option) => (
                 <button
@@ -550,6 +607,45 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             })}
           </div>
 
+          {voice.on && (
+            <div className="space-y-1 text-[9px] text-slate-400">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <label className="flex items-center gap-1">
+                  Voice
+                  <select
+                    value={voice.voiceName}
+                    onChange={(e) => updateVoice({ voiceName: e.target.value })}
+                    aria-label="The Luminary's voice"
+                    className="max-w-[9rem] bg-slate-900/90 border border-slate-700 rounded px-1 py-0.5 text-[9px] text-slate-200"
+                  >
+                    <option value="">Browser default</option>
+                    {voices.map((entry) => (
+                      <option key={entry.name} value={entry.name}>{entry.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <div role="radiogroup" aria-label="Speaking speed" className="flex rounded-md border border-slate-700 overflow-hidden">
+                  {VOICE_RATES.map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      role="radio"
+                      aria-checked={voice.rate === option.rate}
+                      onClick={() => updateVoice({ rate: option.rate })}
+                      className={`px-1.5 py-0.5 ${voice.rate === option.rate ? 'bg-amber-500/25 text-amber-100' : 'text-slate-400 hover:text-slate-200'}`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                <button type="button" onClick={() => stopSpeaking()} className="hover:text-amber-200">Stop speaking</button>
+              </div>
+              {canListen() && (
+                <p>Hold the microphone to talk; your words appear in the box to check before you send. Your browser sends the sound to its speech service to turn it into text.</p>
+              )}
+            </div>
+          )}
+
           {chips.length > 0 && (
             <ul className="flex flex-wrap gap-1" aria-label="Context to send">
               {chips.map((chip) => (
@@ -603,6 +699,22 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               aria-label={taskMode ? 'Coding task goal' : 'Message to the Luminary'}
               className="flex-1 min-w-0 bg-slate-900/90 border border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-200 resize-none focus:outline-none focus:border-amber-400/60"
             />
+            {voice.on && canListen() && !busy && (
+              <button
+                type="button"
+                aria-label={listening ? 'Listening: release to stop' : 'Hold to talk'}
+                aria-pressed={listening}
+                title={listening ? 'Listening: release to stop' : 'Hold to talk'}
+                onPointerDown={(e) => { e.preventDefault(); startListening(); }}
+                onPointerUp={stopListening}
+                onPointerLeave={stopListening}
+                onKeyDown={(e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); startListening(); } }}
+                onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') stopListening(); }}
+                className={`p-2 rounded-lg border ${listening ? 'border-rose-400/70 bg-rose-900/40 text-rose-100 motion-safe:animate-pulse' : 'border-amber-400/50 text-amber-100 hover:bg-amber-900/30'}`}
+              >
+                <Mic className="w-3.5 h-3.5" />
+              </button>
+            )}
             {busy ? (
               <button type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop" title="Stop" className="p-2 rounded-lg border border-rose-400/50 text-rose-200 hover:bg-rose-900/40">
                 <Square className="w-3.5 h-3.5" />

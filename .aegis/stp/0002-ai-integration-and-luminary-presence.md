@@ -2314,3 +2314,24 @@ Evidence: Tracey 2026-10-30T12:05Z; P25; N57; N58
 Channel: cloud
 
 First live P25 run on Tracey's PC (3015, Baseten): Tracey asked the Luminary, from the Relational Database Engine's Code Frame, to write its code (suggested request: a pool of up to 10 reused connections that waits when all are busy). Tracey reports: 'That worked nicely.' Before the run, the RC session restarted 3014 and 3015 from c907c96, after Tracey stopped 15 stale gateway processes from earlier sessions. The RC session's permission check would not stop them on relayed approval, so Tracey ran a PowerShell line themselves. On 3014, the focus was confirmed in the real page ('You are looking at Relational Database Engine...'; 'You are inside...'). An untracked start-live-3015.cmd in the try-out worktree lets Tracey start the live gateway in a window of their own for the demo. Whether Tracey accepted or declined the proposal, and the spend, are not yet recorded.
+
+### 2026-10-30T12:05:58.000Z | claude | status
+Chain-Prev: bfec3eefa9cfb0a1ef1da4b1ebe1bfa9ffb0a65abf4910ade9c6aa74591923b3
+Chain-Hash: da2a8225cf36c3f1285e678a3890cb5b07a3ab44eeb373f631b331065504f8eb
+Stage: Proposal
+Kind: status
+Item: P27
+Status: Approved
+Channel: cloud
+
+Approved P27 on the thread's decision card "Add a Voice option so you can talk with the Luminary?", option chosen 2026-10-30T12:05:58Z: "Yes, build Voice". The card said the feature is free and runs in the browser. One point the card left out: in Chrome and Edge, the browser's speech-to-text sends the audio to Google or Microsoft to transcribe. It is built that way and put plainly to the Architect, who can keep hold-to-talk or turn it off; read-aloud stays on the PC. Recorded from the cloud thread by claude.
+
+### 2026-10-30T12:30:00.000Z | claude | note N60
+Chain-Prev: da2a8225cf36c3f1285e678a3890cb5b07a3ab44eeb373f631b331065504f8eb
+Chain-Hash: 164ce9b6726f6aa4f2476ba5f43660ecc939403ebb3bd100e8e171af278bf6bc
+Stage: Execution
+Kind: note
+Evidence: P27; src/luminary/voice.ts; src/luminary/voice.test.ts; src/components/LuminaryHost.tsx
+Channel: cloud
+
+P27 built as approved. A 'Voice' toggle sits beside Panel / Bubble / Both (off by default, kept per browser). With Voice on, each reply that passed the gauge (asks and coding tasks) is read aloud with the browser's own speech on the Architect's PC. Code is never read; it is pointed to the panel. Markdown marks are dropped, and a very long reply stops at a sentence and points to the panel. The Architect picks the voice (from the browser's list) and the speed (Slower / Normal / Faster), and 'Stop speaking' stops it. Hold-to-talk: a microphone button beside Send (only with Voice on and where the browser can listen). The microphone runs only while the button is held, by pointer or by Space/Enter. The words appear in the question box to check before sending, and a plain note says the browser sends the sound to its speech service to turn it into text. At rest the Luminary neither speaks nor listens (D4.2): disengaging stops both. Everything said either way stays as text in the transcript and record. Errors (microphone refused, nothing heard, no network) are shown in plain words. Tests: 5 new. App 334/334, gateway 151/151, typecheck and build clean.
