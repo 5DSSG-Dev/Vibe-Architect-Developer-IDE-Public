@@ -95,3 +95,12 @@ Record conventions, ownership, risks, and useful reference information for this 
 - 2026-10-29 | Codex | Wider Element Environment framing
 - Architect review: the continuous zoom works, but the focused Element is too close and the attached Elements should remain visible. CORE-to-Element entry now uses 42% of the starting camera distance (was 28%). Environment drill-down uses 78% (was 45%) with a 9.5-unit minimum to keep the 4.5-unit child ring in frame across deeper levels.
 - Production build and `git diff --check` pass; existing Vite chunk-size warning remains. Tests were not run. Change is local and uncommitted.
+- 2026-10-29 | Codex | Element-level hover, drag, and context interaction
+- In EnvironmentView, removed detached Totem marker dots and anchored hover information at the Element itself. WebGL mesh hit-testing now drives hover details and right-click inspection. Left-drag moves the selected center/child Element and refits its tethers; OrbitControls rotation/pan are disabled so the camera does not orbit with the drag. Click without movement still drills into a child.
+- Production build and `git diff --check` pass; tests were not run. Changes are local and uncommitted.
+
+## 2026-10-29 | Codex | Environment click and hover repair
+- Marker dots no longer intercept the CORE scene's Orb and Satellite interactions. Their information Totems are marker-free and anchored at Element origins; CORE scene hover uses the matching Element pick proxy.
+- Selection runs on the completed click event after drag classification. Element pick proxies take priority over the Luminary's overlapping decorative pick proxy, repairing Orb drill-in.
+- Browser verified Orb hover, Orb click to its Environment, Satellite hover, and Satellite click to its child Environment. Browser workspace returned to CORE with empty navigation stack and original socket relations intact. The browser showed 33 failed GLB assets; procedural fallback visuals were used.
+- Production build and `git diff --check` pass with the existing chunk-size warning. Tests not run; no commit or push.

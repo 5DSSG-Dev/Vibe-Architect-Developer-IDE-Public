@@ -31,7 +31,8 @@ export interface TotemDescriptor {
   capabilities: string[];
 }
 
-export function buildTotem(descriptor: TotemDescriptor): CSS2DObject {
+export function buildTotem(descriptor: TotemDescriptor, options: { showMarker?: boolean } = {}): CSS2DObject {
+  const showMarker = options.showMarker ?? true;
   const accent = `#${descriptor.color.toString(16).padStart(6, '0')}`;
   const kind = descriptor.kind;
 
@@ -47,7 +48,7 @@ export function buildTotem(descriptor: TotemDescriptor): CSS2DObject {
   const root = document.createElement('div');
   root.className = 'element-totem';
   root.style.cssText = [
-    'pointer-events:auto',
+    `pointer-events:${showMarker ? 'auto' : 'none'}`,
     'cursor:default',
     'position:relative',
     'display:flex',
@@ -141,7 +142,8 @@ export function buildTotem(descriptor: TotemDescriptor): CSS2DObject {
     popup.append(capLabel, capWrap);
   }
 
-  root.append(plaque, popup);
+  if (showMarker) root.append(plaque);
+  root.append(popup);
 
   const reveal = () => {
     nameEl.style.display = 'inline';
@@ -162,6 +164,9 @@ export function buildTotem(descriptor: TotemDescriptor): CSS2DObject {
 
   const totem = new CSS2DObject(root);
   totem.userData.isElementTotem = true;
+  totem.userData.popupRoot = root;
+  totem.userData.showElementPopup = reveal;
+  totem.userData.hideElementPopup = hide;
   // CSS2D billboards sort by DOM order, not depth; keep them above the canvas
   // chrome but let true HUD overlays (preloader, CORE selector) win.
   totem.center.set(0.5, 0);
@@ -169,7 +174,7 @@ export function buildTotem(descriptor: TotemDescriptor): CSS2DObject {
 }
 
 /** Element Totem for a docked Orb, tethered Satellite, or Actuator. */
-export function createElementTotem(item: ApothecaryItem): CSS2DObject {
+export function createElementTotem(item: ApothecaryItem, options: { showMarker?: boolean } = {}): CSS2DObject {
   const kind = item.category === 'Actuators'
     ? 'actuator'
     : isSatelliteItem(item)
@@ -177,14 +182,16 @@ export function createElementTotem(item: ApothecaryItem): CSS2DObject {
       : item.category === 'Orbs' || item.category === 'Formulas' || item.category === 'Cores'
         ? 'orb'
         : item.category.toLowerCase();
-  return buildTotem({
+  const totem = buildTotem({
     kind,
     name: item.name,
     color: getItem3DTaxonomy(item).color,
     meta: `${item.category} · ${item.trust} · v${item.version}`,
     description: item.description,
     capabilities: item.capabilities,
-  });
+  }, options);
+  totem.userData.elementItemId = item.id;
+  return totem;
 }
 
 /**

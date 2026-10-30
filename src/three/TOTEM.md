@@ -24,3 +24,16 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Archive has no designated current model, so existing geometry fallback remains; no asset mapping was invented. Production build passes; no application tests run. See STP-0003 N2/N3.
 - Profile identity remains attached to the socket through redraw/reload. Both scene paths compile with profile-based model/thickness selection; geometry parity and Archive asset selection remain open (STP-0003 N4).
 - 2026-10-29 | M4 UI note: fixed CORE root immobility is enforced by the LegacyThreeCanvas owning path; the experimental ThreeRuntime scene creates CORE at origin and exposes no object drag controls. Orb environment entry in that opt-in path waits for the current camera focus duration. Satellite selection is not registered in that path yet.
+- 2026-10-29 | Codex | Environment Element popup markers
+- `createElementTotem` now supports hiding the collapsed marker while preserving its hover popup controller. EnvironmentView anchors the marker-free popup at each Element's position and reveals it from the actual mesh hover hit, so the dot no longer acts as the target or intercepts right-click.
+- Production build and `git diff --check` pass; tests were not run.
+
+### 2026-10-29 — Browser verification shortfall
+- The app build is clean, and the browser completed an API Orb's Interface handshake successfully.
+- Browser reported 33 failed 3D assets, preventing reliable mesh targeting. Hover popup, right-click inspection, object-only dragging/tether update, and click-to-drill remain unconfirmed by browser interaction.
+- The temporary test Orb was removed from Beta and the browser reloaded. Changes remain uncommitted pending a usable browser verification.
+
+## 2026-10-29 | Codex | Element-origin hover and completed-click navigation
+- CORE Orb and Satellite Totems are marker-free and anchored to their Elements. The main scene reveals their information popups from the Element pick proxy, avoiding detached CSS pointer targets.
+- Completed click now resolves element pick proxies before the Luminary proxy. Browser verification entered the Orb Environment and then the Satellite child Environment; hover on both Element types revealed their popups.
+- Verification used procedural fallbacks because the local browser reported 33 failed GLB assets. Build and diff check pass; tests not run. The browser workspace was returned to CORE. Code remains uncommitted and unpushed.
