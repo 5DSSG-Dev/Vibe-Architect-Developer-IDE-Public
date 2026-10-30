@@ -131,8 +131,15 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     wasEngaged.current = isEngaged;
   }, [isEngaged]);
 
+  // A new reply opens at its first line, so a long answer reads from the top. Anything else
+  // (the Architect's own words, notes, moments) keeps the newest line in view.
   useEffect(() => {
-    transcriptRef.current?.scrollTo({ top: transcriptRef.current.scrollHeight });
+    const transcript = transcriptRef.current;
+    if (!transcript) return;
+    const last = entries[entries.length - 1];
+    const reply = last?.kind === 'reply' ? transcript.querySelector<HTMLElement>(`[data-entry-id="${last.id}"]`) : null;
+    const top = reply ? reply.getBoundingClientRect().top - transcript.getBoundingClientRect().top + transcript.scrollTop - 8 : transcript.scrollHeight;
+    transcript.scrollTo({ top });
   }, [entries]);
 
   const push = (entry: Entry) => setEntries((current) => [...current, entry]);
@@ -452,7 +459,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                   );
                 case 'reply':
                   return (
-                    <div key={entry.id} className="space-y-1">
+                    <div key={entry.id} data-entry-id={entry.id} className="space-y-1">
                       <ReplyView content={entry.reply.content} modelId={entry.reply.modelId} lineage={entry.lineage} level={entry.level} forTask={entry.forTask} />
                       <button type="button" disabled={busy} onClick={() => explainMore(entry)} className="text-[9px] text-amber-300 hover:text-amber-100 disabled:opacity-50">Explain more</button>
                     </div>

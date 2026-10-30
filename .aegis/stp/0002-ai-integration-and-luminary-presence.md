@@ -2224,3 +2224,13 @@ Evidence: N49; src/components/LuminaryBubble.tsx; DataQuad t3101
 Channel: cloud
 
 Re-check of N49 on Tracey's PC: the cap did not apply, because 'block' overrode the -webkit-box display that line-clamp needs. 'block' removed. Measured with that change in the page: at 1280x720 the bubble's top is at y 70.5 (89.5px tall), below the 64px top bar and clear of the CORE Matrix button; at 1440x900 its top is at y 250.5, just above the figure. The panel stays clear at both sizes.
+
+### 2026-10-30T05:05:00.000Z | claude | note N51
+Chain-Prev: 189bc497083218a8d194e1494c3ce60b60c1f349c554bd5485fea323ebc818c0
+Chain-Hash: d64508ee13dda7c7c6d3dbd6d731a9fa7ccdea6690dbbcab72c56deb9fa11932
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T04:55Z; src/components/LuminaryHost.tsx
+Channel: cloud
+
+First live use on Tracey's PC (3015, Baseten): Tracey reports it works and the explanations are more thorough than they envisioned. One issue: a long answer opened at its last line, so the Architect had to scroll back up. Fix: when a reply arrives, the conversation scrolls so the reply's first line sits at the top of the box. The Architect's own words, notes and connection moments still bring the newest line into view. Client only, no cost change. App 325/325, gateway 148/148, build clean. Spend so far, as the RC session reports: 6 live calls, about $0.09 of the $75 ceiling.
