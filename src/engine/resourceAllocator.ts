@@ -21,7 +21,8 @@ export interface CommittedResourceReservation extends ResourceRequest {
   readonly contractId: string;
 }
 
-const coreBudget = { memoryMB: 4096, threads: 16, bandwidthCredits: 256, gpuAccess: true };
+// Matches DEFAULT_CORE_BUDGET in relationEngine.ts until the CORE's own budget is synchronized.
+const coreBudget = { memoryMB: 8192, threads: 32, bandwidthCredits: 256, gpuAccess: true };
 const allocations = new Map<string, ResourceAllocation>();
 
 /** Replace allocator state from the authoritative CORE manifest snapshot. */

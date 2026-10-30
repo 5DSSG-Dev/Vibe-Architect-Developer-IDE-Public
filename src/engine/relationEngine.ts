@@ -132,6 +132,46 @@ export function isActuatorItem(item: ApothecaryItem): boolean {
  *   - a Satellite yields the ApothecaryItems named in `actuators`;
  *   - anything else yields [].
  */
+export interface ElementRemoval {
+  /** The Element taken off the workspace, and any Satellites that came off with it. */
+  removed: ApothecaryItem[];
+  /** The Orb's connection contract to close, when an Orb leaves its socket. */
+  contractId?: string;
+}
+
+/**
+ * What removing a placed Element would take with it: an Orb leaves its socket with every
+ * Satellite tethered to it; a Satellite leaves its host alone. Undefined when the Element is
+ * not placed at that socket.
+ */
+export function planElementRemoval(socket: SocketBinding, itemId: string): ElementRemoval | undefined {
+  if (socket.connectedItem?.id === itemId) {
+    return { removed: [socket.connectedItem, ...(socket.attachedSatellites ?? [])], contractId: socket.contractId };
+  }
+  const satellite = socket.attachedSatellites?.find((entry) => entry.id === itemId);
+  return satellite ? { removed: [satellite] } : undefined;
+}
+
+/**
+ * Take a placed Element off the workspace. An Orb's socket goes back to Vacant (a planned
+ * removal, not the broken-Umbilical fault), so the CORE's memory and threads come back; the
+ * connection's history stays in the evidence record.
+ */
+export function removeElementFromManifest(manifest: CoreManifest, socketId: string, itemId: string): CoreManifest {
+  return {
+    ...manifest,
+    sockets: manifest.sockets.map((socket) => {
+      if (socket.id !== socketId) return socket;
+      if (socket.connectedItem?.id === itemId) {
+        return { id: socket.id, name: socket.name, angleDeg: socket.angleDeg, radius: socket.radius, state: 'Vacant' as const,
+          ...(socket.supportedProfileIds ? { supportedProfileIds: socket.supportedProfileIds } : {}) };
+      }
+      if (!socket.attachedSatellites?.some((entry) => entry.id === itemId)) return socket;
+      return { ...socket, attachedSatellites: socket.attachedSatellites.filter((entry) => entry.id !== itemId) };
+    })
+  };
+}
+
 export function getElementChildren(item: ApothecaryItem, catalog: ApothecaryItem[]): ApothecaryItem[] {
   const resolveIds = (ids?: string[]): ApothecaryItem[] =>
     (ids ?? [])
@@ -324,6 +364,11 @@ export interface HardwareBudget {
   /** Provisional CORE bandwidth credits, not a measured throughput claim. */
   bandwidthCredits?: number;
   gpuEnabled: boolean;
+  /**
+   * Where the budget came from: the CORE's starting budget, or the Architect's own choice in the
+   * CORE Matrix. Missing on workspaces saved before 2026-10-30.
+   */
+  origin?: 'starting' | 'architect';
 }
 
 export interface ActiveDaemons {
@@ -757,6 +802,34 @@ export const INITIAL_SOCKET_BINDINGS: SocketBinding[] = [
   { id: 'socket-theta', name: 'Theta Socket (NW)', angleDeg: 315, radius: 4, state: 'Vacant' },
 ];
 
+// A new CORE starts with room for all 8 sockets, even if each holds the heaviest sample Orb
+// (the Relational Database Engine: 1024 MB, 4 threads). The Architect can change it in the CORE Matrix.
+export const DEFAULT_CORE_BUDGET: HardwareBudget = {
+  memoryMB: 8192,
+  threads: 32,
+  bandwidthCredits: 256,
+  gpuEnabled: true,
+  origin: 'starting'
+};
+
+// The starting budgets a CORE had before 2026-10-30: 4096 MB with 8 threads, then with 16. Both
+// filled up after about four Orbs.
+const EARLIER_STARTING_BUDGETS = [{ memoryMB: 4096, threads: 8 }, { memoryMB: 4096, threads: 16 }] as const;
+
+/**
+ * Bring a saved budget up to date without overriding the Architect. A budget marked as the
+ * Architect's choice is never changed. A budget saved before budgets carried their origin is
+ * moved to today's starting budget only when it is exactly one of the earlier starting budgets
+ * (the Architect's decision of 2026-10-30, STP-0002 N63); any other unmarked budget is kept and
+ * marked as the Architect's.
+ */
+export function upgradeStartingBudget(budget: HardwareBudget): HardwareBudget {
+  if (budget.origin) return budget;
+  const wasStarting = EARLIER_STARTING_BUDGETS.some((earlier) => earlier.memoryMB === budget.memoryMB && earlier.threads === budget.threads);
+  if (wasStarting) return { ...budget, memoryMB: DEFAULT_CORE_BUDGET.memoryMB, threads: DEFAULT_CORE_BUDGET.threads, origin: 'starting' };
+  return { ...budget, origin: 'architect' };
+}
+
 export function createInitialCoreManifest(): CoreManifest {
   const initialContracts: RelationContract[] = [
     {
@@ -811,12 +884,7 @@ export function createInitialCoreManifest(): CoreManifest {
     version: '1.0.0-RELATIONAL',
     createdAt: new Date().toISOString(),
     formlessCoreState: 'UNSERIALIZED_PRISTINE',
-    hardwareBudget: {
-      memoryMB: 4096,
-      threads: 16,
-      bandwidthCredits: 256,
-      gpuEnabled: true
-    },
+    hardwareBudget: { ...DEFAULT_CORE_BUDGET },
     activeDaemons: {
       steward: true,
       advocate: true,

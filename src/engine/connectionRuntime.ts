@@ -176,7 +176,7 @@ function fail(
   step: number,
   reason: string,
   allocated = false,
-  failureFacts?: { available?: { memoryMB: number; threads: number; bandwidthCredits: number; gpu: boolean }; alternatives?: readonly ConnectionAlternative[] }
+  failureFacts?: { available?: { memoryMB: number; threads: number; bandwidthCredits: number; gpu: boolean }; alternatives?: readonly ConnectionAlternative[]; missingCapabilities?: readonly string[] }
 ): RelationContract {
   if (allocated) {
     releaseAllocation(contract.contractId);
@@ -210,8 +210,10 @@ function fail(
       profileVersion: contract.resolvedProfileVersion,
       reasonCode: failureFacts?.alternatives?.length ? 'RESOURCE_SHORTFALL_WITH_ALTERNATIVES'
         : step === 7 || step === 8 ? 'RESOURCE_SHORTFALL'
-          : step === 3 ? 'CONTRACT_REFUSED' : 'HANDSHAKE_REFUSED',
+          : step === 3 ? 'CONTRACT_REFUSED'
+            : failureFacts?.missingCapabilities?.length ? 'CAPABILITY_UNSATISFIED' : 'HANDSHAKE_REFUSED',
       message: reason,
+      missingCapabilities: failureFacts?.missingCapabilities,
       alternatives: failureFacts?.alternatives,
       resources: { requested: { memoryMB: contract.allocatedMemoryMB, threads: contract.allocatedThreads,
         bandwidthNormal: contract.allocatedBandwidthNormalCredits ?? 0, bandwidthPeak: contract.allocatedBandwidthPeakCredits ?? 0,
@@ -323,7 +325,7 @@ export function executeUmbilicalHandshake(
   if (options.directionAccepted === false) return fail(contract, 4, 'Connection direction was not accepted');
   contract.handshakeCompletedStep = 4;
   const missing = missingRequirements(manifest.requirements, available);
-  if (missing.length > 0) return fail(contract, 5, `Unsatisfied capabilities: ${missing.join(', ')}`);
+  if (missing.length > 0) return fail(contract, 5, `Unsatisfied capabilities: ${missing.join(', ')}`, false, { missingCapabilities: missing });
   contract.handshakeCompletedStep = 6;
   const runtimeBudget = getAvailableBudget();
   const availableBudget = options.availableResources
@@ -360,15 +362,17 @@ export function executeUmbilicalHandshake(
         candidate.bandwidthPeak <= availableFacts.bandwidthCredits && (!candidate.gpu || availableFacts.gpu) ? [candidate] : [];
     });
   if (request.memoryMB < 0 || request.memoryMB > availableBudget.memoryMB) {
-    return fail(contract, 7, 'Memory requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
+    return fail(contract, 7, `The CORE is out of memory for this Orb: it needs ${request.memoryMB} MB and ${availableBudget.memoryMB} MB is left. Raise the memory in the CORE Matrix, or disconnect an Orb.`, false, { available: availableFacts, alternatives });
   }
   contract.handshakeCompletedStep = 7;
   if (request.threads < 0 || request.threads > availableBudget.threads || request.bandwidthPeakCredits > availableBudget.bandwidthCredits || (request.gpuAccess && !availableBudget.gpuAccess) || options.resourcesAvailable === false) {
     return fail(contract, 8, request.gpuAccess && !availableBudget.gpuAccess
-      ? 'GPU requirement exceeds available CORE budget'
+      ? 'This Orb needs the GPU, and the CORE has it switched off. Switch it on in the CORE Matrix.'
       : request.bandwidthPeakCredits > availableBudget.bandwidthCredits
         ? 'This CORE is carrying a lot already; the connection needs more bandwidth than is available.'
-      : 'Thread requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
+      : request.threads > availableBudget.threads
+        ? `The CORE is out of threads for this Orb: it needs ${request.threads} and ${availableBudget.threads} ${availableBudget.threads === 1 ? 'is' : 'are'} left. Raise the threads in the CORE Matrix, or disconnect an Orb.`
+      : 'The CORE could not reserve room for this Orb.', false, { available: availableFacts, alternatives });
   }
   if (!allocateFromBudget(contract.contractId, request)) return fail(contract, 8, 'Resource allocation was refused');
   publishConnectionEvent({
@@ -465,6 +469,33 @@ export function heartbeatCycle(contractOrId: RelationContract | string, health: 
     });
   }
   return { ...next, invariantsValid: true };
+}
+
+/**
+ * The Architect removes a docked Orb: the connection is closed by agreement of both sides. A
+ * connection made in this session goes through severConnection. One the CORE started with, or one
+ * restored from a saved workspace, has no live lifecycle here, so its reservation is released and
+ * the same 'severed' and 'resources-released' moments are recorded from the CORE's own contract.
+ * Either way the removal is in the record; nothing is closed silently.
+ */
+export function closeConnectionByAgreement(contractId: string, coreContract: RelationContract | undefined, reason: string): void {
+  if (lifecycleLedger.has(contractId)) {
+    severConnection(contractId, reason, { initiatorConsent: true, receptorConsent: true });
+    return;
+  }
+  releaseAllocation(contractId);
+  if (getContract(contractId)) voidContract(contractId);
+  if (coreContract) unregisterCapabilities(coreContract.sourceItemId);
+  lifecycleLedger.set(contractId, { contractId, state: 'SEVERED', missedHeartbeats: 0, reason });
+  const facts = {
+    attemptId: contractId, orbId: coreContract?.sourceItemId ?? '', portId: coreContract?.targetSocketId ?? '',
+    presentedContract: coreContract?.contractReference, resolvedContractId: coreContract?.contractReference?.id,
+    resolvedContractVersion: coreContract?.contractReference?.version,
+    profileId: coreContract?.resolvedProfileId as UmbilicalProfileId | undefined,
+    profileVersion: coreContract?.resolvedProfileVersion
+  };
+  publishConnectionEvent({ ...facts, kind: 'severed', reasonCode: 'MUTUAL_DISCONNECT', message: reason });
+  publishConnectionEvent({ ...facts, kind: 'resources-released' });
 }
 
 export function severConnection(

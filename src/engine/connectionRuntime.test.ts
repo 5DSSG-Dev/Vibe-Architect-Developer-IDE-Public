@@ -3,7 +3,9 @@ import test from 'node:test';
 
 import { getCapabilityProviders } from './capabilityRegistry';
 import { registerCustomOrbManifest } from '../contracts/orbManifest';
+import { getConnectionEvents } from '../contracts/connectionEvents';
 import {
+  closeConnectionByAgreement,
   computeContractChecksum,
   executeMeshHandshake,
   executeTetherHandshake,
@@ -74,6 +76,7 @@ test('umbilical budget failure stops at the failing step and leaks no state', ()
 
   assert.equal(contract.handshakeStatus, 'FAILED');
   assert.equal(contract.handshakeCompletedStep, 7);
+  assert.match(contract.failureReason ?? '', /out of memory .* Raise the memory in the CORE Matrix/);
   assert.equal(getContract(contract.contractId), undefined);
   assert.deepEqual(getAvailableBudget(), before);
   assert.deepEqual(getCapabilityProviders('observe').includes(element.id), false);
@@ -89,6 +92,7 @@ test('umbilical thread exhaustion fails specifically at processing validation', 
 
   assert.equal(contract.handshakeStatus, 'FAILED');
   assert.equal(contract.handshakeCompletedStep, 8);
+  assert.match(contract.failureReason ?? '', /out of threads .* Raise the threads in the CORE Matrix/);
   assert.deepEqual(getAvailableBudget(), before);
 });
 
@@ -182,7 +186,7 @@ test('heartbeat degrades, recovers, and severs immediately on invariant violatio
   assert.equal(heartbeatCycle(contract.contractId, { healthy: true }).state, 'ACTIVE');
   contract.negativeSpaceInvariants.never_persists_prompts = false;
   assert.equal(heartbeatCycle(contract.contractId).state, 'SEVERED');
-  assert.equal(getAvailableBudget().memoryMB, 4096);
+  assert.equal(getAvailableBudget().memoryMB, 8192);
   assert.equal(getContract(contract.contractId)?.handshakeStatus, 'FAILED');
 });
 
@@ -201,4 +205,30 @@ test('graceful sever requires mutual consent and releases resources and capabili
   assert.equal(getAvailableBudget().memoryMB, during.memoryMB + contract.allocatedMemoryMB);
   assert.equal(getCapabilityProviders('observe').includes('orb-sever'), false);
   assert.throws(() => heartbeatCycle(contract.contractId), /terminal/i);
+});
+
+test('a step-5 refusal names the missing capabilities as structured event data', () => {
+  const before = getConnectionEvents().length;
+  const element = item('orb-needs-pool', { requirements: ['capability_nobody_offers'] });
+  const contract = executeUmbilicalHandshake(element, socket('socket-cap'), { availableCapabilities: [] });
+  assert.equal(contract.handshakeStatus, 'FAILED');
+  const refused = getConnectionEvents().slice(before).find((event) => event.kind === 'refused');
+  assert.equal(refused?.reasonCode, 'CAPABILITY_UNSATISFIED');
+  assert.deepEqual(refused?.missingCapabilities, ['capability_nobody_offers']);
+});
+
+test('removing an Orb records the severance, even for a connection the CORE started with', () => {
+  const live = executeUmbilicalHandshake(item('orb-remove-live'), socket('socket-remove-live'));
+  closeConnectionByAgreement(live.contractId, live, 'Removed by the Architect');
+  assert.equal(getConnectionLifecycle(live.contractId)?.state, 'SEVERED');
+
+  const restored = { ...live, contractId: 'ctr-restored-remove', sourceItemId: 'orb-restored', targetSocketId: 'socket-restored' };
+  const before = getConnectionEvents().length;
+  closeConnectionByAgreement(restored.contractId, restored, 'Removed by the Architect');
+  const recorded = getConnectionEvents().slice(before);
+  assert.deepEqual(recorded.map((event) => [event.kind, event.reasonCode, event.orbId, event.portId]), [
+    ['severed', 'MUTUAL_DISCONNECT', 'orb-restored', 'socket-restored'],
+    ['resources-released', undefined, 'orb-restored', 'socket-restored'],
+  ]);
+  assert.equal(getConnectionLifecycle(restored.contractId)?.state, 'SEVERED');
 });

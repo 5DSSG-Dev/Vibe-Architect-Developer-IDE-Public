@@ -179,6 +179,7 @@ test('security headers constrain framing, content types, referrers, and browser 
   assert.match(response.headers.get('content-security-policy') ?? '', /frame-ancestors 'none'/);
   assert.match(response.headers.get('content-security-policy') ?? '', /https:\/\/fonts\.googleapis\.com/);
   assert.match(response.headers.get('permissions-policy') ?? '', /camera=\(\)/);
+  assert.match(response.headers.get('permissions-policy') ?? '', /microphone=\(self\)/);
 });
 
 test('Draco decoding uses byte-identical self-hosted assets from the installed Three.js package', async () => {

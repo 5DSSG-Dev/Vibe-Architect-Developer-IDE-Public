@@ -8,10 +8,12 @@
 //   "outage" / "shortfall"           -> throws, so the panel shows an honest upstream Shortfall
 //   a [Task] frame (coding task)     -> a luminary-change block, inside the allowed files only
 //   "draft" / "note" / "offer"       -> a luminary-offering block (a Markdown artifact)
+//   an Element code request (P25)    -> the Element's current source with a small, marked addition
 //   "code" / "snippet" / "function"  -> a code snippet, explained at the chosen level
 //   anything else                    -> an explanation of the current mode
 
 import { readPromptFrame, type ExplanationLevel } from '../src/luminary/blocks.js';
+import { ELEMENT_CODE_MARKER } from '../src/luminary/elementCode.js';
 import type { AskModel } from './luminary-reply-router.js';
 
 export const REHEARSAL_MODEL_ID = 'rehearsal-stand-in';
@@ -87,6 +89,24 @@ function change(allowedFiles: string[], message: string, level: ExplanationLevel
   return [explanation, '', '```luminary-change', JSON.stringify(block, null, 2), '```'].join('\n');
 }
 
+/** Rehearse P25 without a model: return the current source, unchanged except for one marked line. */
+function elementCode(prompt: string, message: string): string {
+  const frame = /\[Context: Element code frame\]\nLanguage: (.+)\nFile: (.+)\nEntrypoint: .+\nCurrent source:\n```([A-Za-z0-9_-]*)\n([\s\S]*?)\n```/.exec(prompt);
+  if (!frame) return 'I could not find the Element\'s code in the request, so I have not written any.';
+  const [, language, fileName, fence, source] = frame;
+  const comment = language === 'Python' ? '#' : language === 'JSON' ? null : '//';
+  const request = message.split('\n')[0].slice(0, 120);
+  const code = comment ? `${comment} Rehearsal: the Luminary would change this for "${request}".\n${source}` : source;
+  return [`This is a rehearsal of writing ${fileName}: I have kept your code and marked where my change would go. A real model would write the change itself.`, '', `\`\`\`${fence}`, code, '```'].join('\n');
+}
+
+/** Names the Element the Luminary's focus attached (N57), so a rehearsal shows the focus arriving. */
+function focusNote(prompt: string): string {
+  const focus = /\[Context: (Looking at|Inside): (.+)\]/.exec(prompt);
+  if (!focus) return '';
+  return focus[1] === 'Inside' ? `You are inside ${focus[2]}, and my answer is about it. ` : `You are looking at ${focus[2]}, and my answer is about it. `;
+}
+
 /** The rehearsal reply source. It never calls a model and never spends credits. */
 export const rehearsalAskModel: AskModel = async (prompt) => {
   const { mode, level, allowedFiles, message } = readPromptFrame(prompt);
@@ -95,9 +115,10 @@ export const rehearsalAskModel: AskModel = async (prompt) => {
 
   let body: string;
   if (allowedFiles) body = change(allowedFiles, message, level);
+  else if (message.includes(ELEMENT_CODE_MARKER)) body = elementCode(prompt, message);
   else if (/\b(draft|note|offer)\b/.test(lower)) body = offering();
   else if (/\b(code|snippet|function)\b/.test(lower)) body = explainSnippet(level);
-  else body = `${MODE_NOTES[mode] ?? MODE_NOTES.DESIGN} Ask me to explain anything on screen, to write code, or to draft a note.`;
+  else body = `${focusNote(prompt)}${MODE_NOTES[mode] ?? MODE_NOTES.DESIGN} Ask me to explain anything on screen, to write code, or to draft a note.`;
 
   return { modelId: REHEARSAL_MODEL_ID, content: `${NOTICE}\n\n${body}` };
 };

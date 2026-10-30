@@ -127,7 +127,9 @@ export async function createGateway(options: CreateGatewayOptions) {
     referrerPolicy: { policy: 'no-referrer' },
   }));
   app.use((_req, res, next) => {
-    res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(), payment=(), usb=()');
+    // The IDE's own page may use the microphone, for the Luminary's hold-to-talk (STP-0002 P27);
+    // nothing else may, and the rest stays off.
+    res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()');
     next();
   });
   app.use(express.json({ limit: '32kb' }));

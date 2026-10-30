@@ -2000,3 +2000,398 @@ Evidence: P23; N41; ledger C:\Users\TraceyPrutch\.luminary\baseten-spend.json (3
 Channel: cloud
 
 P23 live check PASSED, with the Architect's go (decision card 2026-10-29T09:03:19Z, "Yes, ask all three"). Worktree at b1adb02; status before: 'Muse Spark Open · Baseten', gauge configured, $0.0529 of $75 over 2 calls, knowledge v0.1 sha256 7bcdecf9bea125381f77e66a85b7cb72cad980e72e8323f901235fe20bbdc16c, 31,308 bytes. Exactly one /ask each, no retries; all HTTP 200 from meta-models/muse-spark-open-1026, lineage structural, PIM, IRG coherent, RBC, Prism; no gauge reading below threshold. (a) 'What is an Orb, and which Orbs are in the Apothecary today?' (8.3 s): named the Element model as source (only Element that docks to the CORE, through an Umbilical handshake) and listed the six Apothecary Orbs correctly. Gauge Honesty 71.9, Respect 62.2, Attention 57.0, Affection 55.9, Loyalty 54.5, Trust 60.5, Communication 72.8. 10,183 in, 1,027 out, $0.0171. (b) 'What does a Validation-class Satellite do? Give an example from the Apothecary.' (6.2 s): cited Part 1 and Part 2, gave Request Validator with its capabilities, requirement and Actuator, and noted the Catalog lists six Validation Satellites of which only this one is in the Apothecary. Gauge 80.3, 81.2, 78.3, 57.7, 72.4, 82.7, 75.1. 10,178 in, 1,175 out, $0.0177. (c) 'What is a Circuit in the Vibe Architect IDE?' (9.2 s): said Circuit is named in the Instructions but described in none of the sources, stated it as a Shortfall citing Part 3, invented nothing, and offered to draft a definition with the Architect. Gauge 85.2, 74.0, 69.5, 64.0, 71.9, 73.4, 78.2. 10,171 in, 2,164 out, $0.0219. After: $0.1097 of $75 over 5 calls; this check cost $0.0568. About 10,200 input tokens and about 2 cents per question with the pack. Gateway stopped, worktree .env deleted, main folder untouched.
+
+### 2026-10-29T13:35:00.010Z | claude | gap G23
+Chain-Prev: ff2bdf7ab4d5cae0425685ddb78c5ba990af8b24a4ff1040cc26f56f4957a63d
+Chain-Hash: efb8cd29488bc3af9edcaa8327e3e71ba42fdd65333ceb818c5f5d5dc50f3bab
+Stage: Proposal
+Kind: gap
+Evidence: src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts; STP-0003 N9; exchange/from-codex/2026-10-29T130610Z-m3-follow-up-verification-and-gateway-ownership-coordination.md (sha256 E92966865E7A3C09FB086BE00943107E00394092428BA8010ADA79C86578D3ED)
+Channel: cloud
+
+The IDE records each Umbilical connection moment (subscribeConnectionEvents / getConnectionEvents), but nothing tells the Architect what happened in plain words. A refused or weakened handshake shows only as the 3D model and an Inspector line, so the Architect has to read reason codes to learn why. The Luminary does not see these moments at all.
+
+### 2026-10-29T13:35:00.020Z | claude | change P24
+Chain-Prev: efb8cd29488bc3af9edcaa8327e3e71ba42fdd65333ceb818c5f5d5dc50f3bab
+Chain-Hash: c239e47e667034e96660f6c1f88df07f4eea376d72bdbed1f8290d29ef58ed35
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G23; P19; P23; STP-0003 N9; Codex recommendations of 2026-10-29T13:06:10Z
+Closes: G23
+Channel: cloud
+
+The Luminary tells the Architect when an Umbilical connection changes (M1.d, second part). (1) Which moments: the eight that the runtime reliably produces today: attempt-started, contract-resolved, resources-committed, refused, active (including recovery), degraded, severed and resources-released. Each becomes one plain sentence naming the Orb, the port and what happened, for example 'Your Auth & Session Service was refused: its contract did not match the CORE.' A refusal for resources also says what was asked, what was free, and any profile the CORE offered instead. (2) The sentence is made inside the IDE from a fixed wording table, not by the model, so it costs nothing, works offline and cannot invent. Routine steps (attempt-started, contract-resolved, resources-committed, resources-released) are grouped into one line per handshake; refused, degraded, severed and active-after-recovery are shown on their own. (3) Where: a quiet notice by the Luminary Presence (a gentle pulse, never a spin) and a line in the Luminary record. The Architect can open the record to see the moments in order. (4) An 'Ask why' chip adds that one moment, in its plain form, to a question for the Luminary, so the model explains only what the Architect asks about. (5) Never shown, and never sent to the model: credentials or keys, prompts or replies, Tumbler proof material, raw error text (the event's message field), and any value not on a fixed allow-list. The allow-list is: moment kind, time, Orb name and id, port id, contract name and version, Umbilical profile and version, reason code (as plain words), and resource numbers. (6) Not in this step: 'suspended' (no producer yet; Codex suggests it mean CORE-paused, not routable, identity kept, with whether resources stay reserved stated in the event; this needs the Architect's definition), Tether and Mesh moments (not covered by the runtime yet), and any Luminary action on a connection (it explains and does not act). Verification: tests (each of the eight kinds gives the expected sentence; grouping; the allow-list strips every other field, including message; the 'Ask why' chip carries only allowed fields; no model call is made for a notice), typecheck and build; then the Architect docks, refuses and severs an Orb on their PC and reads the notices. No live model call is needed unless the Architect taps 'Ask why'.
+
+### 2026-10-29T13:35:00.030Z | claude | status
+Chain-Prev: c239e47e667034e96660f6c1f88df07f4eea376d72bdbed1f8290d29ef58ed35
+Chain-Hash: f76f396822c83bf69991c34fb40cd32cc8e6cccad061791499c2fa503c4adbcf
+Stage: Proposal
+Kind: status
+Item: P24
+Status: Presented
+Channel: cloud
+
+P24 → Presented.
+
+### 2026-10-29T13:40:00.000Z | claude | note N43
+Chain-Prev: f76f396822c83bf69991c34fb40cd32cc8e6cccad061791499c2fa503c4adbcf
+Chain-Hash: b01f090ed4c6fa5b2e6cb6877790ab6dbfa5012e92f274ed02381bbec67e6420
+Stage: Proposal
+Kind: note
+Evidence: P24; P19; docs/VIBE_LUMINARY_PRESENCE_AND_ROLES_v0.1.md (At rest: never raises itself, observes nothing, D4.2); docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md rule 2
+Channel: cloud
+
+P24 revised before approval: point (3) conflicted with D4.2. At rest the Luminary never raises itself and observes nothing, so a notice or pulse while it is at rest is not allowed. Revised (3): connection moments are shown only while the Architect has the Luminary open. While at rest it reads nothing and shows nothing; the Presence does not pulse for connections. When the Architect opens it, it reads the IDE's own record and offers one line, 'N connection moments since you last opened me. Show them?', and shows them only if the Architect taps it. Moments that happen while it is open appear as lines in the conversation. All other points of P24 are unchanged.
+
+### 2026-10-29T13:33:59.000Z | claude | status
+Chain-Prev: b01f090ed4c6fa5b2e6cb6877790ab6dbfa5012e92f274ed02381bbec67e6420
+Chain-Hash: 3eb3f5af1c0621e76f59c702c4321ecae3256c6cc65c365ea8be476339fa58b7
+Stage: Proposal
+Kind: status
+Item: P24
+Status: Approved
+Channel: cloud
+
+Approved P24 as revised in N43, on the thread's decision card "Teach the Luminary to explain connections this way?", option chosen 2026-10-29T13:33:59Z: "Yes, build it". The card stated the N43 revision: silent at rest with no pulse, and an offer to show moments when opened. Recorded from the cloud thread by claude.
+
+### 2026-10-29T13:55:00.000Z | claude | note N44
+Chain-Prev: 3eb3f5af1c0621e76f59c702c4321ecae3256c6cc65c365ea8be476339fa58b7
+Chain-Hash: b28ed24b661bc0295e5019ba8dec1702d50fe6848c63968a14ba6ca4090ae630
+Stage: Execution
+Kind: note
+Evidence: P24; N43; src/luminary/connectionMoments.ts; src/luminary/connectionMoments.test.ts; src/components/LuminaryHost.tsx; src/App.tsx
+Channel: cloud
+
+P24 built as approved (with N43). (1) src/luminary/connectionMoments.ts: toMoment copies only allow-listed fields (kind, time, Orb id and name, port, contract id and version, Umbilical profile and version, reason code, requested and free memory and threads, offered profiles); the event's message, the contract digest and every other field are dropped. 'suspended' returns nothing. momentLines makes one sentence per line from a fixed wording table; consecutive routine steps of one handshake share a line, while refused, degraded, severed and active stand alone, and active after degraded reads as a recovery. Unknown reason codes are named, never guessed. describeForQuestion gives the 'Ask why' text. (2) LuminaryHost: at rest, no read and no display (D4.2). On opening, if there are moments not yet shown, it offers one line 'N connection moments since you last opened me. Show them'; while open, each new moment appears as a line. 'Ask why' adds a chip with that line only and suggests a question; the Architect still sends it. No model call is made for a moment. Orb names come from the Apothecary (App passes nameOf). No change to the 3D Presence, evidenceArchive or the runtime. Tests: 6 new (eight sentences, grouping and refusal with offered profile, recovery, suspended and unknown code, allow-list strips message, digest and extra fields, Ask why text); app 314/314 (one earlier run hit the known identity timing flake); gateway 147/147; typecheck and build clean. Next: the Architect docks, refuses and cuts off an Orb on their PC.
+
+### 2026-10-29T13:55:00.000Z | claude | note N45
+Chain-Prev: b28ed24b661bc0295e5019ba8dec1702d50fe6848c63968a14ba6ca4090ae630
+Chain-Hash: ef0670575cc9ae5cd50b35a7fb2b0ea1c75ae89fd791f0d25992d660a3992fbb
+Stage: Verification
+Kind: note
+Evidence: P24; N44; Architect screenshots 2026-10-29T13:43Z and 13:44Z; src/engine/coreCapabilities.ts; src/engine/resourceAllocator.ts; src/contracts/connectionEvents.ts; src/engine/connectionRuntime.ts
+Channel: cloud
+
+Architect try-out on their PC (worktree vibe-ide-p24-try, localhost:3003). Docking a Relational Database Engine was refused at handshake step 5 (missing thread_pool), and the Luminary showed 'its handshake did not complete. It asked for 1024 MB and 4 threads; 4096 MB and 16 threads were free.' That line was vague and contradicted the refusal. Cause, older than P24: the CORE keeps two resource views. The step-5 capability check (coreCapabilities.ts) uses the CORE manifest's 8 threads, all used by the two Orbs docked at start. The allocator (resourceAllocator.ts) keeps its own default 4096 MB / 16 threads, never set to the CORE's budget and never told about the starting Orbs. Fix in P24's scope: the runtime now gives a step-5 refusal the reason code CAPABILITY_UNSATISFIED and a structured missingCapabilities list (claimed by verus in .aegis/claims.md). The Luminary names what is missing and why the CORE may lack it (thread_pool: offered only while a thread is free), and leaves out the allocator's 'free' figures for this kind of refusal. Root fix (one resource view) is referred to Codex. Tests: runtime test for the structured refusal, moments test for the sentence; app 316/316, typecheck and build clean.
+
+### 2026-10-29T13:58:24.000Z | claude | note N46
+Chain-Prev: ef0670575cc9ae5cd50b35a7fb2b0ea1c75ae89fd791f0d25992d660a3992fbb
+Chain-Hash: fe5efa0353edcb60f6cc66d60ab7019492f7b96d6dc1b4541afc1d4434592a55
+Stage: Proposal
+Kind: note
+Evidence: N45; decision card 'Should a third Orb fit in the CORE without cutting one off?'; src/engine/coreCapabilities.ts; src/engine/resourceAllocator.ts
+Channel: cloud
+
+Architect decision, 2026-10-29T13:58:24Z, option chosen: 'Give the CORE 16 threads' (not 'count only what's in use', not 'keep it full'). The CORE's thread budget becomes 16, so the two Orbs docked at start (4 threads each) leave room for two more such Orbs, and the CORE's two resource views agree. It is to be settled in one place, as part of Codex's work to merge the two views (N45), which is in the STP-0003 runtime area. Referred to Codex on PR #19. Recorded from the cloud thread by claude.
+
+### 2026-10-29T14:15:00.010Z | claude | gap G24
+Chain-Prev: fe5efa0353edcb60f6cc66d60ab7019492f7b96d6dc1b4541afc1d4434592a55
+Chain-Hash: e80847fe307ffba802689628348c3b7c10f9a48bde9d3e28e572e4e403662ca0
+Stage: Proposal
+Kind: gap
+Evidence: Architect message 2026-10-29T14:03:48Z (demo idea); src/components/CodeEditorOverlayModal.tsx; src/components/OrbBuilderModal.tsx; src/engine/relationEngine.ts (ElementCodeFrame); src/luminary/blocks.ts; server/luminary-executor.ts
+Channel: cloud
+
+The Architect wants the demo to show an Element being created in the Apothecary and coded by the Luminary. Both halves exist but are not joined. An Element's code is its code frame (language, file name, entrypoint, source), kept with the Element in the Apothecary and edited in the Element Code Editor. The Luminary's coding task writes repository files on its own branch, so it cannot write an Element's code frame, and the Element Code Editor has no way to ask the Luminary.
+
+### 2026-10-29T14:15:00.020Z | claude | change P25
+Chain-Prev: e80847fe307ffba802689628348c3b7c10f9a48bde9d3e28e572e4e403662ca0
+Chain-Hash: 0df6592a87cd440cbc478e0c3122291df40185f721ae9a9ba50563d224e5ebe3
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G24; P19; P23; P24; N46
+Closes: G24
+Channel: cloud
+
+The Luminary writes an Element's code, inside the Element Code Editor (M1.d, demo centrepiece). (1) An 'Ask the Luminary' box in the Element Code Editor: the Architect says in plain words what the Element should do. The Luminary receives the Element's description (as in P23's 'This Element' chip: category, capabilities, requirements, Satellites or Actuators), its language, file name and entrypoint, the current source, and the request. It replies through the normal governed pipeline (gauge, record), with an explanation at the Architect's level and the new source in one fenced block. (2) The proposal is shown beside the current code, with the changed lines marked and the Luminary's plain explanation. Nothing changes until the Architect presses Accept; Decline leaves the code as it was. After Accept the code still goes through the editor's own Save and its checks (for example, JSON must parse), so the Architect's Save stays the only thing that changes the Element. (3) The record keeps the request, the reply's hash and the Accept or Decline, using the existing offering_accepted and offering_declined events. (4) It changes no repository file and does not use the coding-task branch, since an Element's code lives with the Element; the Luminary's coding tasks are unchanged. (5) The demo arc it enables: the Architect creates a new Orb in the Orb Builder, opens its code, asks the Luminary, accepts, saves, then docks it on the CORE while the Luminary explains each connection moment (P24). It depends on N46 (CORE gets 16 threads, Codex) so the new Orb has room. Not in this step: the Luminary filling in the Orb Builder itself, running the Element's code, and any change to how Elements are stored. Verification: tests (what is sent: description, frame, request, no other data; one fenced block becomes the proposal; no block or more than one gives a plain Shortfall; Accept fills the editor and does not save; Decline changes nothing; record events), typecheck and build; then, with the Architect's go, a rehearsal on their PC with one small Element (for example a greeter or a rate limiter) on Baseten, about 2 to 3 cents a run.
+
+### 2026-10-29T14:15:00.030Z | claude | status
+Chain-Prev: 0df6592a87cd440cbc478e0c3122291df40185f721ae9a9ba50563d224e5ebe3
+Chain-Hash: 82441205cbee75933a2748dcdb2624628e32cbb15a66864775dda8984640f656
+Stage: Proposal
+Kind: status
+Item: P25
+Status: Presented
+Channel: cloud
+
+P25 → Presented.
+
+### 2026-10-29T14:08:10.000Z | claude | status
+Chain-Prev: 82441205cbee75933a2748dcdb2624628e32cbb15a66864775dda8984640f656
+Chain-Hash: b82e78acebc8e34c86c4f7c39b4c4309904a8b97a190f34aa21ff6e30ed11622
+Stage: Proposal
+Kind: status
+Item: P25
+Status: Approved
+Channel: cloud
+
+Approved P25 on the thread's decision card "Have the Luminary write an Element's code this way?", option chosen 2026-10-29T14:08:10Z: "Yes, build it". Recorded from the cloud thread by claude.
+
+### 2026-10-29T14:30:00.000Z | claude | note N47
+Chain-Prev: b82e78acebc8e34c86c4f7c39b4c4309904a8b97a190f34aa21ff6e30ed11622
+Chain-Hash: 1b1768f824a2bf92d4e69541faf84e6beb8c5a5a24241508c16abf863afb4339
+Stage: Execution
+Kind: note
+Evidence: P25; src/luminary/elementCode.ts; src/luminary/elementCode.test.ts; src/components/CodeEditorOverlayModal.tsx; src/App.tsx; server/luminary-rehearsal.ts; server/luminary-p25.test.ts; STP-0005 N2 (PR #21)
+Channel: cloud
+
+P25 built as approved. (1) src/luminary/elementCode.ts: composeElementCodePrompt sends only the Element's description (describeElement, as the P23 chip), its code frame (language, file, entrypoint, current editor source) and the Architect's request, with a marker asking for a plain explanation and exactly one fenced block. readElementCodeProposal accepts exactly one non-empty code block; none, several or an empty one gives a plain reason and no proposal. lineDiff marks added and removed lines. (2) CodeEditorOverlayModal gains an 'Ask the Luminary' box with Stop. It uses the ordinary governed /ask with the demo key and explanation level the Architect set in the Luminary panel. The proposal is shown above the editor with the Luminary's explanation, a marked diff against the current source and the model id. Accept puts the code in the editor and says to press Save Code Frame; Decline changes nothing. The editor's Save, with its JSON check, remains the only thing that changes the Element. The record keeps asked, replied (or shortfall or stopped) and offering_accepted or offering_declined, each with the Element id and file name, and the proposal's hash. (3) The rehearsal stand-in answers an Element code request with the current source plus one marked comment line, so the flow can be rehearsed with no model and no spend. (4) No repository file is written and the coding-task branch is unused. STP-0005 (PR #21, drafted on Tracey's PC at their request) records that its P1 and P2 are delivered by this P25, and its P3 (rehearsal plan, fallback take) stays open there. Tests: 4 app (prompt contents, one-block rule, refusals, diff), 1 gateway (rehearsal); app 320/320, gateway 148/148, typecheck, server build and client build clean.
+
+### 2026-10-30T02:55:00.010Z | claude | gap G25
+Chain-Prev: 1b1768f824a2bf92d4e69541faf84e6beb8c5a5a24241508c16abf863afb4339
+Chain-Hash: 826ae63edcb4220ebbe723a9498c17e95c30c4e8600eee0ee80e56fbc1b47c66
+Stage: Proposal
+Kind: gap
+Evidence: Architect messages 2026-10-30T02:45:33Z and 02:47:41Z; src/three/luminaryPresence.ts; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The Luminary speaks only inside its panel. The 3D Presence in the workspace shows no words, and there is no spoken conversation. The Architect wants a dialogue bubble beside the Luminary and a Voice option, with the Architect choosing how the Luminary communicates, as part of a modern 3D IDE using technology that is available today and easily employed.
+
+### 2026-10-30T02:55:00.020Z | claude | change P26
+Chain-Prev: 826ae63edcb4220ebbe723a9498c17e95c30c4e8600eee0ee80e56fbc1b47c66
+Chain-Hash: e7cd2ca8d7b244f5761e286da447ad4627abcb7150710e24eca6725e9ec144b2
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G25; P19; P24; D4.2
+Closes: G25 (in part)
+Channel: cloud
+
+A dialogue bubble beside the Luminary. While the Architect has the Luminary open, its newest words (a reply's opening sentences, or a P24 connection moment) appear in a bubble next to the 3D Presence, styled in the IDE's glass and gold, fading after a while; a click opens the full panel. Code and long replies show only their first sentences, with 'more in the panel'. At rest there is no bubble (D4.2). Only replies that passed the gauge, and moments already shown, appear. Motion off keeps the bubble still. A setting next to Plain, Guided and Technical lets the Architect choose where the Luminary speaks: Panel, Bubble, or both (default both). Browser-only, no new cost. Verification: tests (what goes in the bubble, nothing at rest, setting kept), typecheck, build, a look on the Architect's PC.
+
+### 2026-10-30T02:55:00.030Z | claude | change P27
+Chain-Prev: e7cd2ca8d7b244f5761e286da447ad4627abcb7150710e24eca6725e9ec144b2
+Chain-Hash: 16d9630088346a0766e17b43e93311e5690d09b544cbe0b440571ecda4e65e8a
+Stage: Proposal
+Kind: change
+Status: Drafted
+Evidence: G25; P26; D4.2
+Closes: G25 (in part)
+Channel: cloud
+
+Voice, as a second step after P26. (1) The Luminary speaking: with Voice chosen, each reply that passed the gauge is read aloud with the browser's own speech (free, on the Architect's PC), with a voice and speed the Architect picks and a Stop. (2) The Architect speaking: a hold-to-talk button; the microphone is on only while held, never in the background (D4.2), and the words appear as text the Architect can check before sending. Browser speech-to-text in Chrome and Edge sends the audio to Google or Microsoft to transcribe; a local speech model would keep it on the PC but needs setup. Which to use is the Architect's choice. (3) Everything said either way is kept as text in the record. Verification: tests where the browser allows, then a try on the Architect's PC.
+
+### 2026-10-30T02:55:00.040Z | claude | status
+Chain-Prev: 16d9630088346a0766e17b43e93311e5690d09b544cbe0b440571ecda4e65e8a
+Chain-Hash: 3976af939142368ec0a6b3f66e37a804a8ef3201727dc3cd9a44f2920351461d
+Stage: Proposal
+Kind: status
+Item: P26
+Status: Presented
+Channel: cloud
+
+P26 → Presented. P27 stays Drafted until P26 is decided.
+
+### 2026-10-30T02:48:14.000Z | claude | status
+Chain-Prev: 3976af939142368ec0a6b3f66e37a804a8ef3201727dc3cd9a44f2920351461d
+Chain-Hash: 7bea704c2e6e71443d1ecbfbee32f5aa99722a559b764f254f19ba9b209fefa9
+Stage: Proposal
+Kind: status
+Item: P26
+Status: Approved
+Channel: cloud
+
+Approved P26 on the thread's decision card "Add a speech bubble beside the Luminary?", option chosen 2026-10-30T02:48:14Z: "Yes, build the bubble". P27 (voice) remains Drafted for a later decision. Recorded from the cloud thread by claude.
+
+### 2026-10-30T03:05:00.000Z | claude | note N48
+Chain-Prev: 7bea704c2e6e71443d1ecbfbee32f5aa99722a559b764f254f19ba9b209fefa9
+Chain-Hash: 8adc039f1f067cf5b3afd6dc8fc53d3a5c408abb469cfb8ee98a1ed689144e0e
+Stage: Execution
+Kind: note
+Evidence: P26; src/luminary/bubble.ts; src/luminary/bubble.test.ts; src/components/LuminaryBubble.tsx; src/components/LuminaryHost.tsx; src/App.tsx
+Channel: cloud
+
+P26 built as approved. (1) src/luminary/bubble.ts: bubbleText leaves out code blocks and keeps the first sentences up to 220 characters, adding '(More in the panel.)' when anything is left out, or 'I wrote some code. It is in the panel.' for a code-only reply. A small shared store holds the newest bubble line. Where the Luminary speaks (Panel, Bubble, Both; default Both) is kept per browser. (2) LuminaryBubble: a glass-and-gold bubble above the 3D Presence in the lower right (right 60px, bottom 560px, clear of the Full Form), shown only while the Luminary is engaged. It fades after 14 seconds (still when the OS asks for reduced motion), is dismissed on press, and is cleared at rest (D4.2). Hidden on narrow screens. (3) LuminaryHost: a reply that passed the gauge (asks and coding tasks) and each live connection moment are said in the bubble unless the setting is Panel. A 'Panel / Bubble / Both' choice sits next to Plain, Guided and Technical. With Bubble alone, the conversation is tucked away behind 'Show the conversation', and the input stays. Shortfalls are not put in the bubble; they stay in the panel. Tests: 5 new (short reply whole, long reply shortened with pointer, code left out, store, default). App 325/325, typecheck and build clean.
+
+### 2026-10-30T03:40:00.000Z | claude | note N49
+Chain-Prev: 8adc039f1f067cf5b3afd6dc8fc53d3a5c408abb469cfb8ee98a1ed689144e0e
+Chain-Hash: a4c454302474458ff191845b2467fa826dbce1dbcbc9ec2c7e80f41057fa80e0
+Stage: Execution
+Kind: note
+Evidence: P26; N48; src/components/LuminaryBubble.tsx
+Channel: cloud
+
+Placement check of the P26 bubble on Tracey's PC: at 1440x900 it fits; at 1280x720 a full 220-character bubble (about 143px tall) reached the 64px top bar and covered the CORE Matrix button. Fix: the bubble's words are capped at four lines (about 90px) with line-clamp, so it stays below the top bar. The full words are always in the panel, which the bubble already points to. App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T04:00:00.000Z | claude | note N50
+Chain-Prev: a4c454302474458ff191845b2467fa826dbce1dbcbc9ec2c7e80f41057fa80e0
+Chain-Hash: 189bc497083218a8d194e1494c3ce60b60c1f349c554bd5485fea323ebc818c0
+Stage: Execution
+Kind: note
+Evidence: N49; src/components/LuminaryBubble.tsx; DataQuad t3101
+Channel: cloud
+
+Re-check of N49 on Tracey's PC: the cap did not apply, because 'block' overrode the -webkit-box display that line-clamp needs. 'block' removed. Measured with that change in the page: at 1280x720 the bubble's top is at y 70.5 (89.5px tall), below the 64px top bar and clear of the CORE Matrix button; at 1440x900 its top is at y 250.5, just above the figure. The panel stays clear at both sizes.
+
+### 2026-10-30T05:05:00.000Z | claude | note N51
+Chain-Prev: 189bc497083218a8d194e1494c3ce60b60c1f349c554bd5485fea323ebc818c0
+Chain-Hash: d64508ee13dda7c7c6d3dbd6d731a9fa7ccdea6690dbbcab72c56deb9fa11932
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T04:55Z; src/components/LuminaryHost.tsx
+Channel: cloud
+
+First live use on Tracey's PC (3015, Baseten): Tracey reports it works and the explanations are more thorough than they envisioned. One issue: a long answer opened at its last line, so the Architect had to scroll back up. Fix: when a reply arrives, the conversation scrolls so the reply's first line sits at the top of the box. The Architect's own words, notes and connection moments still bring the newest line into view. Client only, no cost change. App 325/325, gateway 148/148, build clean. Spend so far, as the RC session reports: 6 live calls, about $0.09 of the $75 ceiling.
+
+### 2026-10-30T05:20:00.000Z | claude | note N52
+Chain-Prev: d64508ee13dda7c7c6d3dbd6d731a9fa7ccdea6690dbbcab72c56deb9fa11932
+Chain-Hash: 4b9744af36e94e3f601762f980f964400d30436fb5d963dae204c2504884ab48
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T05:09Z; src/components/LuminaryHost.tsx; src/components/LuminaryBubble.tsx; src/index.css
+Channel: cloud
+
+Tracey: on an Element's info page the Luminary was missing; it must always be there, and when paused its small icon belongs in the bottom right corner, pulsing like the Luminary. Cause: every IDE overlay (Dialog, z-50 / z-[60]) covered the Luminary (z-30) and the bubble (z-20). Change: the Luminary's panel, Paused Icon and bubble now sit at z-[70], above every overlay. The Paused Icon moved from the status bar's left corner to the lower right, just above the status bar (clear of Export CORE), and breathes (scale 1 to 1.08 with an amber glow, 3.5 s, matching the Presence; never spins; steady when the OS asks for reduced motion). Escape inside the Luminary still closes only the Luminary (its handler stops the event before the Dialog's). The 3D Presence itself stays in the scene behind overlays; on an Element's pages the icon and panel stand for it. App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T05:30:00.000Z | claude | note N53
+Chain-Prev: 4b9744af36e94e3f601762f980f964400d30436fb5d963dae204c2504884ab48
+Chain-Hash: 9e3b1e9c57927c35a9e83d084a4330591b8c853cf79685b24140c12d519c12af
+Stage: Execution
+Kind: note
+Evidence: N52; DataQuad t3111; tailwind.config.js; src/index.css; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N52 check on Tracey's PC (rehearsal, 1440x900 and 1280x720) confirmed that the Luminary shows above an Element's info page and Code Frame, and that Escape closes only the Luminary. It found three issues, now fixed: (1) The breathing did not run, because a motion-safe variant needs a Tailwind animation; it now lives in tailwind.config.js (luminaryBreathe) instead of plain CSS. (2) The Paused Icon sat on the scene controls' RESET button; it now sits left of the controls (right-24 bottom-24), still in the lower right corner. (3) With a page open, the Full Form covered the page's Edit and View Code buttons; while any aria-modal page is open, it now moves to the right edge (.luminary-form via body:has in index.css). App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T05:40:00.000Z | claude | note N54
+Chain-Prev: 9e3b1e9c57927c35a9e83d084a4330591b8c853cf79685b24140c12d519c12af
+Chain-Hash: 0dfea00333c016ec256bc0232ca8e81ce159f041909e78b822d7f196db9554cb
+Stage: Execution
+Kind: note
+Evidence: N53; DataQuad t3112; src/index.css; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N53 check confirmed the breathing works (computed luminaryBreathe; 36px to 38.9px). Two placement issues remain, now changed: (1) The scene controls' bottom row is 284px wide, so right-24 put the icon on SNAP OFF. The icon now sits at the right edge directly above the control stack (right-4, bottom 272px). (2) With a page open, the Full Form at the right edge still covered the Code Frame's own Ask send button and, at 1280x720, the info card's View Code, because both pages keep their action buttons along the bottom. While a page is open the Full Form now moves to the top right corner (top and right 0.75rem). Client only. App 325/325; gateway 148/148 on three reruns (one earlier run had a single unrelated gateway failure that did not repeat); build clean.
+
+### 2026-10-30T08:55:00.000Z | claude | note N55
+Chain-Prev: 0dfea00333c016ec256bc0232ca8e81ce159f041909e78b822d7f196db9554cb
+Chain-Hash: 179262ccda48cd81940762cfa4b486ebc10184b59a7b97f8bd2f4bbd088d24a1
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T08:44Z; src/index.css; src/three/luminaryPresence.ts
+Channel: cloud
+
+Tracey: 'still no Luminary in the space' on an Element's info page, circling where the 3D figure stands. Findings from the RC session: the 3014/3015 gateways had stopped again when that session ended, and were restarted; the Presence was still rendered, but each page's backdrop (black 80 to 85% with a 16px blur) hid it. Change: one CSS rule cuts a soft oval window (170x230px, fading from 55%) in every aria-modal page's backdrop, centred on PRESENCE_SCREEN_OFFSET (right 190px, bottom 450px), so the figure stands lit beside an open page. Only the backdrop is masked, never the page. Pages whose dim sits on the Dialog itself (CORE Matrix, Handshake) are unchanged. A press inside the window still closes the page, as the backdrop does elsewhere. App 325/325 on rerun (one run had the known identity-timing flake), gateway 148/148, build clean.
+
+### 2026-10-30T09:05:00.000Z | claude | note N56
+Chain-Prev: 179262ccda48cd81940762cfa4b486ebc10184b59a7b97f8bd2f4bbd088d24a1
+Chain-Hash: 7c51a752cbeb0b69871d2867c3986f29a9f067691e9721db9296ec6bc459afb2
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T08:54Z; N55; src/components/LuminaryHost.tsx; src/index.css; ViewContentsModal, CodeEditorOverlayModal, EditObjectModal, OrbBuilderModal, AlchemistReliquaryModal
+Channel: cloud
+
+Tracey: pressing the 3D Luminary beside an Element's page closed the page, because the press landed on the page's backdrop, which closed on press. Tracey's idea, built: (1) An IDE page now closes only when the Architect chooses to: its Close button, its X, or Escape. The press-outside-to-close is removed from the five page backdrops (Element info, Code Frame, Edit, Orb builder, Alchemist's Reliquary). This also protects unsaved code in the Code Frame. The Built-In Browser keeps its own light backdrop as it was. (2) While a page is open, an invisible press target sits over the 3D Presence (160x240px, centred on PRESENCE_SCREEN_OFFSET; shown only via body:has in index.css). Pressing the figure engages or pauses the Luminary, as it does in the scene, and the page stays open. It stays out of the tab order; the Paused Icon is the keyboard way in. Also answered for Tracey: while an Element's page is open, the Luminary's context is that Element (the 'Selected: <name>' chip comes from the same inspected item as the page). App 325/325, gateway 148/148, typecheck and build clean.
+
+### 2026-10-30T09:15:00.000Z | claude | note N57
+Chain-Prev: 7c51a752cbeb0b69871d2867c3986f29a9f067691e9721db9296ec6bc459afb2
+Chain-Hash: 1a80d55199d81744d09e7a94fcc2f1d7d6ac362249ad86294fa69649f8c8a976
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T08:56Z and 09:01Z; N56; src/luminary/focus.ts; src/luminary/focus.test.ts; src/App.tsx; src/components/LuminaryHost.tsx; src/three/luminaryPresence.ts
+Channel: cloud
+
+Two changes. (1) The Luminary's focus follows what is open, by Tracey's decision (09:01Z: an auto feature 'that will be important'; without it the Luminary would answer about the workspace and be lost). This revises the earlier rule that context is offered and never sent on its own: the focus is now attached by itself as a chip the Architect can remove. src/luminary/focus.ts picks the focus: an open Element page (info, Edit, Code Frame) first, then the Environment the Architect is inside, then an Element being attached. The panel attaches it as 'Looking at: <name>' or 'Inside: <name>'. It stays across follow-up questions, moves when the focus moves, and goes when nothing is open. Removing it with x keeps it off for that focus; 'Add selection' brings it back. This also fixes a fault found by the RC session: inspectingItem outlived its page, so the old selection kept naming the last Element viewed, even inside another Environment. 4 new tests. (2) The N56 press target over the Presence covered the right edge of the Code Frame's code at 1280x720. It is replaced by a document click listener: a press counts only when it lands on a page backdrop inside the clear part of its window (PRESENCE_WINDOW_RADIUS 94x127, beside PRESENCE_SCREEN_OFFSET), so the page's own content always wins. App 329/329, gateway 148/148 (one run had the intermittent P1.5 verification-suite failure, which passed on rerun), typecheck and build clean.
+
+### 2026-10-30T09:25:00.000Z | claude | note N58
+Chain-Prev: 1a80d55199d81744d09e7a94fcc2f1d7d6ac362249ad86294fa69649f8c8a976
+Chain-Hash: 73114b376d85cff8c9163058c817ced771c5b3993d9f3ec9d8495317d762d9fc
+Stage: Execution
+Kind: note
+Evidence: N57; DataQuad check of d943246; server/luminary-rehearsal.ts; server/luminary-focus.test.ts
+Channel: cloud
+
+The N57 check on Tracey's PC passed at 1673x871 and 1280x720: the focus chip attaches, stays across questions, moves from page to Environment, clears when the page closes, and x and Add selection work. In the Code Frame, the code now always takes a press at its edge. One gap for rehearsals: the stand-in's general reply ignored the focus, so a rehearsal looked 'lost' even though the focus was sent. The stand-in now names it ('You are looking at <name>, and my answer is about it.' or 'You are inside <name>...'). Known and left as is: the focus chip carries the Element's description, not the Code Frame's code (the Code Frame's own Ask sends the code); the chip's words do not refresh after an Edit save until the focus moves. 3 new gateway tests. App 329/329, gateway 151/151.
+
+### 2026-10-30T12:06:00.000Z | claude | note N59
+Chain-Prev: 73114b376d85cff8c9163058c817ced771c5b3993d9f3ec9d8495317d762d9fc
+Chain-Hash: bfec3eefa9cfb0a1ef1da4b1ebe1bfa9ffb0a65abf4910ade9c6aa74591923b3
+Stage: Verification
+Kind: note
+Evidence: Tracey 2026-10-30T12:05Z; P25; N57; N58
+Channel: cloud
+
+First live P25 run on Tracey's PC (3015, Baseten): Tracey asked the Luminary, from the Relational Database Engine's Code Frame, to write its code (suggested request: a pool of up to 10 reused connections that waits when all are busy). Tracey reports: 'That worked nicely.' Before the run, the RC session restarted 3014 and 3015 from c907c96, after Tracey stopped 15 stale gateway processes from earlier sessions. The RC session's permission check would not stop them on relayed approval, so Tracey ran a PowerShell line themselves. On 3014, the focus was confirmed in the real page ('You are looking at Relational Database Engine...'; 'You are inside...'). An untracked start-live-3015.cmd in the try-out worktree lets Tracey start the live gateway in a window of their own for the demo. Whether Tracey accepted or declined the proposal, and the spend, are not yet recorded.
+
+### 2026-10-30T12:05:58.000Z | claude | status
+Chain-Prev: bfec3eefa9cfb0a1ef1da4b1ebe1bfa9ffb0a65abf4910ade9c6aa74591923b3
+Chain-Hash: da2a8225cf36c3f1285e678a3890cb5b07a3ab44eeb373f631b331065504f8eb
+Stage: Proposal
+Kind: status
+Item: P27
+Status: Approved
+Channel: cloud
+
+Approved P27 on the thread's decision card "Add a Voice option so you can talk with the Luminary?", option chosen 2026-10-30T12:05:58Z: "Yes, build Voice". The card said the feature is free and runs in the browser. One point the card left out: in Chrome and Edge, the browser's speech-to-text sends the audio to Google or Microsoft to transcribe. It is built that way and put plainly to the Architect, who can keep hold-to-talk or turn it off; read-aloud stays on the PC. Recorded from the cloud thread by claude.
+
+### 2026-10-30T12:30:00.000Z | claude | note N60
+Chain-Prev: da2a8225cf36c3f1285e678a3890cb5b07a3ab44eeb373f631b331065504f8eb
+Chain-Hash: 164ce9b6726f6aa4f2476ba5f43660ecc939403ebb3bd100e8e171af278bf6bc
+Stage: Execution
+Kind: note
+Evidence: P27; src/luminary/voice.ts; src/luminary/voice.test.ts; src/components/LuminaryHost.tsx
+Channel: cloud
+
+P27 built as approved. A 'Voice' toggle sits beside Panel / Bubble / Both (off by default, kept per browser). With Voice on, each reply that passed the gauge (asks and coding tasks) is read aloud with the browser's own speech on the Architect's PC. Code is never read; it is pointed to the panel. Markdown marks are dropped, and a very long reply stops at a sentence and points to the panel. The Architect picks the voice (from the browser's list) and the speed (Slower / Normal / Faster), and 'Stop speaking' stops it. Hold-to-talk: a microphone button beside Send (only with Voice on and where the browser can listen). The microphone runs only while the button is held, by pointer or by Space/Enter. The words appear in the question box to check before sending, and a plain note says the browser sends the sound to its speech service to turn it into text. At rest the Luminary neither speaks nor listens (D4.2): disengaging stops both. Everything said either way stays as text in the transcript and record. Errors (microphone refused, nothing heard, no network) are shown in plain words. Tests: 5 new. App 334/334, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T12:40:00.000Z | claude | note N61
+Chain-Prev: 164ce9b6726f6aa4f2476ba5f43660ecc939403ebb3bd100e8e171af278bf6bc
+Chain-Hash: fc7a7f8055f053e0e203fe89179ab2fef90558361ef9150c87cf869238259138
+Stage: Execution
+Kind: note
+Evidence: N60; DataQuad t3130; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N60 check on Tracey's PC (rehearsal) confirmed that replies are read aloud (speaking about 3 s after sending), that Stop speaking and pausing the Luminary both stop speech at once, and that the mic button shows. Two fixes: (1) The voice list showed only 'Browser default', because the browser's voices load after the page and the change event can come before the listener. The list is now read when the listener is set and again when Voice is switched on. (2) The Voice button squeezed the status label onto two or three lines; the label now stays on one line, and the toggles wrap onto a second row when space runs short. App 334/334, gateway 151/151, build clean.
+
+### 2026-10-30T12:40:30.000Z | claude | note N62
+Chain-Prev: fc7a7f8055f053e0e203fe89179ab2fef90558361ef9150c87cf869238259138
+Chain-Hash: 5c9ec5d379a1891ea2e6daf19800ce9d89c209e56066f443f13e42d269f1b8c1
+Stage: Execution
+Kind: note
+Evidence: P27; N61; DataQuad t3135; server/app.ts; server/app.test.ts; src/luminary/voice.ts
+Channel: cloud
+
+Hold-to-talk failed on Tracey's PC in Chrome and Edge with 'not-allowed', although the site permission, Windows microphone privacy, online speech recognition and the headset all allowed it. Root cause, found by the RC session: the gateway's Permissions-Policy header said microphone=(), which predates Voice and forbids every page the microphone, whatever the settings. It is now microphone=(self): the IDE's own page may use it, and nothing else may; camera, geolocation, payment and USB stay off. The header test now also checks microphone=(self). Along the way, the microphone error texts were split so each refusal names its own cause (9db3dd9). Server change: the gateways need a restart. Gateway 151/151.
+
+### 2026-10-30T13:05:00.000Z | claude | note N63
+Chain-Prev: 5c9ec5d379a1891ea2e6daf19800ce9d89c209e56066f443f13e42d269f1b8c1
+Chain-Hash: 845b21b02619d576348c0f8c171f0a1d3b8c2f5a90a52dd050ffc1f62f5a3101
+Stage: Execution
+Kind: note
+Evidence: Tracey's decision card 2026-10-30T12:55Z ('Bigger start plus a live meter'); DataQuad t3141; src/engine/relationEngine.ts; src/engine/resourceAllocator.ts; src/engine/connectionRuntime.ts; src/components/Header.tsx; src/App.tsx; src/engine/coreBudget.test.ts
+Channel: cloud
+
+Tracey asked why the workspace shows 8 Orb sockets but the CORE's memory was used up by about 4 Orbs. There is no socket limit: the CORE's starting budget (4096 MB, 16 threads) ran out, usually threads first. Tracey chose on a card: a bigger start plus a live meter. Built: (1) A new CORE starts with 8192 MB and 32 threads (bandwidth 256, GPU on), enough for all 8 sockets even with the heaviest sample Orb in each; a test checks this against every sample Orb's contract. A saved workspace still on an earlier starting budget (4096 MB with 16 or 8 threads) moves to the new one; a budget set by hand in the CORE Matrix is kept. (2) The header's RAM and Threads now show used / total with a small bar that turns amber when a quarter or less is left and rose when none is; before, it showed only the configured total. (3) A connection refused for lack of room now says plainly what ran out, how much is needed and left, and to raise it in the CORE Matrix or disconnect an Orb; a GPU refusal says to switch the GPU on. App 336/336, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T13:45:00.000Z | claude | note N64
+Chain-Prev: 845b21b02619d576348c0f8c171f0a1d3b8c2f5a90a52dd050ffc1f62f5a3101
+Chain-Hash: 64fe54cb7f3f1278fe6b13394d1345ab03844310f78cf2c9d13fc85b906631c5
+Stage: Execution
+Kind: note
+Evidence: Tracey's decision card 2026-10-30T13:30Z ('Yes, Remove with a confirm'); src/engine/relationEngine.ts; src/components/ViewContentsModal.tsx; src/App.tsx; src/engine/elementRemoval.test.ts
+Channel: cloud
+
+Tracey found that no Element info page offers Delete. Nothing in the IDE could take a placed Element off the workspace; only Cancel during a handshake existed. Tracey chose on a card: a Remove button with a confirmation (deleting custom Elements from the Apothecary is left for later). Built: the info page of a placed Element (an Orb in a socket, or a Satellite on its host) shows Remove. It asks first in plain words and names any tethered Satellites that come off with an Orb; 'Keep it' backs out. Removing an Orb closes its connection by agreement of both sides (severConnection with Architect and CORE consent, reason MUTUAL_DISCONNECT), which releases its reservation and records a 'severed' moment that the Luminary words as 'disconnected on purpose'. The socket goes back to Vacant, not Severed, so a planned removal does not show the broken Umbilical. A Satellite comes off its host alone. The Element stays in the Apothecary, and the connection's history stays in the evidence record. Pages opened from the Element rail (not placed) show no Remove. Tests: 3 new. App 339/339, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T13:55:00.000Z | claude | note N65
+Chain-Prev: 64fe54cb7f3f1278fe6b13394d1345ab03844310f78cf2c9d13fc85b906631c5
+Chain-Hash: 1073ea58cfd34575118f4bc958ce4db8d61165ac5e94c8a6b870a1698fa295f4
+Stage: Execution
+Kind: note
+Evidence: PR #19 Codex review comment 6524032266 (P24); N64; DataQuad t3147; src/luminary/connectionMoments.ts; src/luminary/connectionMoments.test.ts; src/App.tsx
+Channel: cloud
+
+Two follow-ups. (1) Lumin's P24 review found that every resource refusal was worded with requested and free memory and threads, although the runtime uses one reason code for memory, thread, bandwidth, GPU and reservation refusals. A GPU-off or bandwidth refusal could therefore read as a memory or thread problem. Fixed: toMoment now works out what was short from the event's own requested and free figures (memory, threads, peak bandwidth, GPU) and keeps it as an allow-listed 'shortfall' field. A refusal names only what was short ('It needs 64 bandwidth credits at peak (40 free)', 'It needs the GPU, which is switched off'), and a refusal with no short figure shows none. The 'Ask why' text for a refusal gives the same 'ran short of' facts instead of the full asked and free figures. Tests: 1 new (GPU, bandwidth, reservation), plus the updated refusal wording. (2) The N64 check on Tracey's PC passed: Remove showed the confirmation, the Orb and its Umbilical left, the socket went empty with no broken Umbilical, and the meter dropped from 1536/8192 MB and 8/32 threads to 512/8192 MB and 4/32. It also found that the 'Left off at' resume banner still pointed at the removed Orb. Now a resume point or open Environment inside a removed Element stops just before it. App 340/340, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T14:10:00.000Z | claude | note N66
+Chain-Prev: 1073ea58cfd34575118f4bc958ce4db8d61165ac5e94c8a6b870a1698fa295f4
+Chain-Hash: b56270ec5a61e99eefc38c471a7b57e39bbf6897bd5c9b80a97ec0eeaa9718c8
+Stage: Execution
+Kind: note
+Evidence: PR #19 Codex follow-up review comment 6524517505; N63; N64; N57; P27; src/engine/relationEngine.ts; src/engine/connectionRuntime.ts; src/components/LuminaryHost.tsx; src/luminary/voice.ts; src/App.tsx
+Channel: cloud
+
+Lumin's follow-up review of the rest of PR #19 found four points; all are addressed. (1) Budget migration could overwrite an Architect's choice: a budget now carries its origin ('starting' or 'architect'), set to 'architect' whenever the CORE Matrix changes it. A marked budget is never changed. An unmarked (older) budget moves to today's start only when it is exactly an earlier starting budget (4096 MB with 8 or 16 threads), as the Architect decided in N63. Any other unmarked budget, including custom 8-thread ones, is kept and marked as the Architect's; the old blanket 8-to-16 thread rule is gone. Shortfall: an older workspace where the Architect had chosen exactly 4096/16 by hand cannot be told apart and still moves up, per N63. (2) The focus chip went stale after an edit: it now takes the new words when the focused Element changes under the same focus, and a dismissed focus stays dismissed. (3) Remove could clear an Orb the CORE started with, or one restored from a save, without any record, because that connection had no live lifecycle. New closeConnectionByAgreement: a live connection goes through severConnection with both sides' consent; otherwise the reservation is released and the same 'severed' (MUTUAL_DISCONNECT) and 'resources-released' moments are recorded from the CORE's own contract. (4) Voice said speech runs on the PC, but some browser voices are online: online voices are now marked '(online)'. Without a choice, a voice on the PC is used, and the panel says plainly when the voice in use is online and the reply text goes to the browser's speech service. Tests: 3 new or updated. App 342/342, gateway 151/151, typecheck and build clean.

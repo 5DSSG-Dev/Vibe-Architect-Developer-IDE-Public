@@ -17,7 +17,9 @@ import { EnvironmentView } from './components/EnvironmentView';
 import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
-import { describeElement } from './luminary/knowledge';
+import { luminaryFocus } from './luminary/focus';
+import { closeConnectionByAgreement } from './engine/connectionRuntime';
+import { LuminaryBubble } from './components/LuminaryBubble';
 import {
   ApothecaryItem,
   SocketBinding,
@@ -27,6 +29,9 @@ import {
   ActiveDaemons,
   DEFAULT_APOTHECARY_CATALOG,
   createInitialCoreManifest,
+  planElementRemoval,
+  removeElementFromManifest,
+  upgradeStartingBudget,
   ensureElementCodeFrame,
   nextFreePortalAngle,
   getElementChildren,
@@ -158,12 +163,12 @@ export function App() {
       if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
       // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
       // Architect never added. Portals now appear only once added, so that one is left out.
+      // Workspaces still on an earlier starting budget move to today's, which fits all 8 sockets;
+      // a budget the Architect set by hand in the CORE Matrix is kept.
       const restored = restoredWorkspace.coreManifest;
       return {
         ...restored,
-        hardwareBudget: restored.hardwareBudget.threads === 8
-          ? { ...restored.hardwareBudget, threads: 16 }
-          : restored.hardwareBudget,
+        hardwareBudget: upgradeStartingBudget(restored.hardwareBudget),
         portals: restored.portals.filter((portal) => portal.id !== 'portal-primary')
       };
     }
@@ -231,15 +236,14 @@ export function App() {
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
   const [inspectingSocket, setInspectingSocket] = useState<SocketBinding | null>(null);
 
-  // What the Architect may add to the Luminary as context with one click. Offered, never sent on its own.
-  const selectedForLuminary = inspectingItem ?? currentEnvironment ?? attachingItem ?? undefined;
-  const luminarySelection = selectedForLuminary
-    ? {
-        label: `Selected: ${selectedForLuminary.name}`,
-        // The same wording as the Knowledge Pack (P23), with its Satellites or Actuators named.
-        text: describeElement(selectedForLuminary, apothecaryCatalog),
-      }
-    : undefined;
+  // The Luminary's focus follows what is on screen (STP-0002 N57): an open Element page first,
+  // then the Environment the Architect is inside. inspectingItem outlives its page, so it counts
+  // only while one of its pages is open.
+  const elementPageOpen = activeOverlay === 'INSPECT_MANIFEST' || activeOverlay === 'INSPECT_PROPERTIES' || activeOverlay === 'INSPECT_CODE';
+  const luminarySelection = luminaryFocus(
+    { openPageItem: elementPageOpen ? inspectingItem : null, currentEnvironment: currentEnvironment ?? null, attachingItem: attachingItem ?? null },
+    apothecaryCatalog
+  );
 
   const [saveStatus, setSaveStatus] = useState<WorkspaceSaveStatus>({ state: 'pending' });
 
@@ -340,7 +344,7 @@ export function App() {
   const handleUpdateHardwareBudget = (budget: HardwareBudget) => {
     setCoreManifest((prev) => ({
       ...prev,
-      hardwareBudget: budget
+      hardwareBudget: { ...budget, origin: 'architect' }
     }));
   };
 
@@ -422,6 +426,32 @@ export function App() {
     setInspectingSocket(socket || null);
     setInspectingItem(item || socket?.connectedItem || null);
     openOverlay('INSPECT_MANIFEST');
+  };
+
+  // Take a placed Element off the workspace. An Orb's connection is closed by agreement of
+  // both sides (the Architect asked; the CORE accepts), which gives its room back and records
+  // a 'severed' moment; its tethered Satellites come off with it.
+  const placedRemoval = inspectingSocket && inspectingItem ? planElementRemoval(inspectingSocket, inspectingItem.id) : undefined;
+  const handleRemoveInspectedElement = () => {
+    if (!inspectingSocket || !inspectingItem || !placedRemoval) return;
+    const socketId = inspectingSocket.id;
+    if (placedRemoval.contractId) {
+      const contractId = placedRemoval.contractId;
+      closeConnectionByAgreement(contractId, coreManifest.contracts.find((entry) => entry.contractId === contractId), 'Removed by the Architect');
+    }
+    setCoreManifest((prev) => removeElementFromManifest(prev, socketId, inspectingItem.id));
+    // A resume point or open Environment inside a removed Element would lead nowhere; it stops
+    // just before that Element (at the CORE when it was the first step).
+    const removedIds = new Set(placedRemoval.removed.map((entry) => entry.id));
+    const beforeRemoved = (stack: ApothecaryItem[]) => {
+      const cut = stack.findIndex((entry) => removedIds.has(entry.id));
+      return cut === -1 ? stack : stack.slice(0, cut);
+    };
+    setResumeStack(beforeRemoved);
+    setEnvironmentStack(beforeRemoved);
+    setInspectingItem(null);
+    setInspectingSocket(null);
+    closeOverlay('INSPECT_MANIFEST');
   };
 
   // Save updated element properties / manifest JSON
@@ -514,6 +544,7 @@ export function App() {
       {/* 2. UI Overlay Controls */}
       <Header
         hardwareBudget={coreManifest.hardwareBudget}
+        availableResources={getAvailableCoreResources(coreManifest)}
         onOpenCoreMatrix={() => openOverlay('CORE_MATRIX')}
       />
 
@@ -651,7 +682,8 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
-      <LuminaryHost mode="DESIGN" selection={luminarySelection} />
+      <LuminaryBubble />
+      <LuminaryHost mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
@@ -713,6 +745,11 @@ export function App() {
           onClose={() => closeOverlay('INSPECT_MANIFEST')}
           onOpenEditProperties={() => openOverlay('INSPECT_PROPERTIES')}
           onOpenCodeEditor={() => openOverlay('INSPECT_CODE')}
+          removal={placedRemoval ? {
+            hostName: inspectingSocket?.connectedItem?.id !== inspectingItem?.id ? inspectingSocket?.connectedItem?.name : undefined,
+            tethered: placedRemoval.removed.slice(1).map((entry) => entry.name),
+            onRemove: handleRemoveInspectedElement
+          } : undefined}
         />
       )}
 
@@ -734,6 +771,7 @@ export function App() {
           item={inspectingItem || undefined}
           socket={inspectingSocket || undefined}
           onClose={() => closeOverlay('INSPECT_CODE')}
+          catalog={apothecaryCatalog}
           onSaveCodeFrame={(updated) => {
             handleSaveInspectedCodeFrame(updated);
           }}

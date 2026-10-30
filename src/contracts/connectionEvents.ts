@@ -28,6 +28,8 @@ export interface ConnectionEvent {
   readonly profileId?: UmbilicalProfileId;
   readonly profileVersion?: string;
   readonly reasonCode?: string;
+  /** Capabilities the CORE could not provide at step 5 (reasonCode CAPABILITY_UNSATISFIED). */
+  readonly missingCapabilities?: readonly string[];
   readonly message?: string;
   /** CORE-validated profile choices that fit the reported fresh resource snapshot. */
   readonly alternatives?: readonly ConnectionAlternative[];
@@ -46,6 +48,7 @@ function freezeConnectionEvent(event: ConnectionEvent): ConnectionEvent {
   return Object.freeze({
     ...event,
     presentedContract: event.presentedContract ? Object.freeze({ ...event.presentedContract }) : undefined,
+    missingCapabilities: event.missingCapabilities ? Object.freeze([...event.missingCapabilities]) : undefined,
     alternatives: event.alternatives ? Object.freeze(event.alternatives.map(alternative => Object.freeze({ ...alternative }))) : undefined,
     resources: event.resources ? Object.freeze({
       requested: event.resources.requested ? Object.freeze({ ...event.resources.requested }) : undefined,
