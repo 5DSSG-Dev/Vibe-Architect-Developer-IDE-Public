@@ -14,7 +14,7 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { composePrompt, findChange, EXPLANATION_LEVELS, type ExplanationLevel } from '../src/luminary/blocks.js';
 import { ExecutorShortfall, LuminaryExecutor } from './luminary-executor.js';
-import { shortfallStatus, type GovernedAskResult } from './luminary-reply-router.js';
+import { evidence, shortfallStatus, type GovernedAskResult } from './luminary-reply-router.js';
 
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
@@ -118,7 +118,7 @@ export function createLuminaryTaskRouter(executor: LuminaryExecutor, governedAsk
 
     const result = await governedAsk(composePrompt({ mode, level, context, message: goal, task: { allowedFiles } }));
     if (!result.ok) {
-      res.status(shortfallStatus(result.shortfall.code)).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...(result.lineage ? { lineage: result.lineage } : {}) });
+      res.status(shortfallStatus(result.shortfall.code)).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...evidence(result) });
       return;
     }
 

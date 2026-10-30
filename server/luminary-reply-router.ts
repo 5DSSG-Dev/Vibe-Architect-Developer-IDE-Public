@@ -17,8 +17,10 @@ import {
   type Shortfall,
   type ShortfallCode,
 } from './luminary-governance.js';
-import { composeRevisionPrompt } from './luminary-pipeline/ids.js';
-import { runReplyPipeline, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
+import { gateArchitectMessage, type ArchitectFlag } from './luminary-pipeline/architect-gate.js';
+import { createCallLog, tagged, type CallCounts, type CallLog } from './luminary-pipeline/call-log.js';
+import { composeRevisionPrompt, type IdsObservation } from './luminary-pipeline/ids.js';
+import { runReplyPipeline, type Gauge, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
 
 /**
  * Produces a candidate reply for a prompt. Its result is untrusted: it is handed straight
@@ -56,10 +58,14 @@ export interface LuminaryReplyRouterOptions {
 }
 
 /** An upstream failure is itself a named Shortfall, keeping the honest floor total. */
-export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode | 'spend_ceiling';
+export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode | 'spend_ceiling' | 'returned_to_sender';
 
 export interface ReplyShortfall extends Omit<Shortfall, 'code'> {
   code: ReplyShortfallCode;
+  /** On returned_to_sender: the check that flagged the Architect's message. */
+  flaggedBy?: ArchitectFlag;
+  /** On returned_to_sender: the IDS response returned to the Architect. */
+  observation?: IdsObservation;
 }
 
 /** The HTTP status each Shortfall maps to. 502 = the model path failed its contract. */
@@ -73,11 +79,28 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   incoherent_after_ids: 502,
   // The Architect's spending ceiling (P21) was reached: the gateway is working, it is refusing to spend.
   spend_ceiling: 503,
+  // The Architect's own message was incoherent (STP-0005 P1): returned through IDS, never sent on.
+  returned_to_sender: 422,
 };
 
+/** The gate's evidence for one turn: the Architect message's checks and the tagged call counts. */
+interface TurnEvidence {
+  architectLineage?: LineageEntry[];
+  calls?: CallCounts;
+}
+
 export type GovernedAskResult =
-  | { ok: true; reply: GovernedReply; lineage?: LineageEntry[] }
-  | { ok: false; shortfall: ReplyShortfall; lineage?: LineageEntry[] };
+  | ({ ok: true; reply: GovernedReply; lineage?: LineageEntry[] } & TurnEvidence)
+  | ({ ok: false; shortfall: ReplyShortfall; lineage?: LineageEntry[] } & TurnEvidence);
+
+/** The gauge with each call tagged: IRG reads as gauge, IDS observations as ids_model. */
+function taggedGauge(gauge: Gauge, log: CallLog): Gauge {
+  return {
+    ...gauge,
+    read: tagged(log, 'gauge', gauge.read),
+    ...(gauge.observe ? { observe: tagged(log, 'ids_model', gauge.observe) } : {}),
+  };
+}
 
 /** The HTTP status for a Shortfall, shared with the coding-task route. */
 export function shortfallStatus(code: ReplyShortfallCode): number {
@@ -92,22 +115,54 @@ export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRout
   return async (prompt: string): Promise<GovernedAskResult> => {
     // A refusal by the spend ledger, on the first call or a revision, is named as the ceiling.
     let ceiling: SpendCapError | null = null;
+    const log = createCallLog();
+    const respond = tagged(log, 'luminary_response', askModel);
     const ask: AskModel = async (text) => {
       try {
-        return await askModel(text);
+        return await respond(text);
       } catch (error) {
         if (error instanceof SpendCapError) ceiling = error;
         throw error;
       }
     };
-    const result = await governedTurn(ask, prompt, options);
+    const turnOptions = options.pipeline ? { ...options, pipeline: { ...options.pipeline, gauge: taggedGauge(options.pipeline.gauge, log) } } : options;
+    const result = await governedTurn(ask, prompt, turnOptions);
+    if (result.ok) log.record('architect_delivery');
     const reached = ceiling as SpendCapError | null;
-    if (!result.ok && reached) return { ok: false, shortfall: { code: 'spend_ceiling', message: reached.message, modelId: null }, lineage: result.lineage };
-    return result;
+    if (!result.ok && reached) return { ok: false, shortfall: { code: 'spend_ceiling', message: reached.message, modelId: null }, lineage: result.lineage, architectLineage: result.architectLineage, ...(options.pipeline ? { calls: log.counts() } : {}) };
+    return options.pipeline ? { ...result, calls: log.counts() } : result;
   };
 }
 
 async function governedTurn(askModel: AskModel, prompt: string, options: LuminaryReplyRouterOptions): Promise<GovernedAskResult> {
+  // Governance in both directions (STP-0005 P1): the Architect's message is checked before the
+  // Luminary response path is called at all. An incoherent message goes back through IDS.
+  let architectLineage: LineageEntry[] | undefined;
+  if (options.pipeline) {
+    const gate = await gateArchitectMessage(prompt, {
+      gauge: options.pipeline.gauge,
+      threshold: options.pipeline.threshold,
+      maxContentBytes: (options.pipeline.governance ?? options.governance)?.maxContentBytes,
+    });
+    architectLineage = gate.lineage;
+    if (gate.outcome === 'gauge_error') {
+      return { ok: false, shortfall: { code: 'gauge_error', message: gate.message, modelId: null }, architectLineage };
+    }
+    if (gate.outcome === 'returned') {
+      return {
+        ok: false,
+        shortfall: {
+          code: 'returned_to_sender',
+          message: 'Your message was not sent to the Luminary. It was returned through IDS.',
+          modelId: null,
+          flaggedBy: gate.flaggedBy,
+          observation: gate.observation,
+        },
+        architectLineage,
+      };
+    }
+  }
+
   let candidate: unknown;
   try {
     candidate = await askModel(prompt);
@@ -120,6 +175,7 @@ async function governedTurn(askModel: AskModel, prompt: string, options: Luminar
         message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
         modelId: null,
       },
+      architectLineage,
     };
   }
 
@@ -130,11 +186,20 @@ async function governedTurn(askModel: AskModel, prompt: string, options: Luminar
       (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
       pipeline,
     );
-    return result.ok ? { ok: true, reply: result.reply, lineage: result.lineage } : { ok: false, shortfall: result.shortfall, lineage: result.lineage };
+    return result.ok ? { ok: true, reply: result.reply, lineage: result.lineage, architectLineage } : { ok: false, shortfall: result.shortfall, lineage: result.lineage, architectLineage };
   }
 
   const governed = governReply(candidate, options.governance);
   return governed.ok ? { ok: true, reply: governed.reply } : { ok: false, shortfall: governed.shortfall };
+}
+
+/** The lineage and gate evidence a response carries, when the pipeline produced them. */
+export function evidence(result: GovernedAskResult): Record<string, unknown> {
+  return {
+    ...(result.lineage ? { lineage: result.lineage } : {}),
+    ...(result.architectLineage ? { architectLineage: result.architectLineage } : {}),
+    ...(result.calls ? { calls: result.calls } : {}),
+  };
 }
 
 function readPrompt(body: unknown): string | null {
@@ -170,10 +235,10 @@ export function createLuminaryReplyRouter(
 
     const result = await governedAsk(prompt);
     if (!result.ok) {
-      res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...(result.lineage ? { lineage: result.lineage } : {}) });
+      res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...evidence(result) });
       return;
     }
-    res.status(200).json({ reply: result.reply, ...(result.lineage ? { lineage: result.lineage } : {}) });
+    res.status(200).json({ reply: result.reply, ...evidence(result) });
   });
 
   return router;
