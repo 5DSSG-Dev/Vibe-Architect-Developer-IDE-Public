@@ -41,7 +41,7 @@ export const LuminaryBubble: React.FC = () => {
       className={`hidden md:block fixed z-20 right-[60px] bottom-[560px] w-56 text-left font-mono rounded-2xl panel-glass legible-glass border border-amber-400/50 shadow-[0_0_30px_rgba(252,211,77,0.2)] px-3 py-2 text-[11px] leading-relaxed text-amber-50 motion-safe:animate-modal-zoom motion-safe:transition-opacity motion-safe:duration-1000 ${fading ? 'opacity-0' : 'opacity-100'}`}
     >
       {/* At most four lines (about 90px), so on a short screen the bubble stays below the top bar. */}
-      <span className="block line-clamp-4">{line.text}</span>
+      <span className="line-clamp-4">{line.text}</span>
       <span aria-hidden="true" className="absolute -bottom-2 right-24 w-4 h-4 rotate-45 bg-slate-900/90 border-r border-b border-amber-400/50" />
     </button>
   );

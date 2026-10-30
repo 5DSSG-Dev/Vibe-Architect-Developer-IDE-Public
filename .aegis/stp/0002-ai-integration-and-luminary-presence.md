@@ -2214,3 +2214,13 @@ Evidence: P26; N48; src/components/LuminaryBubble.tsx
 Channel: cloud
 
 Placement check of the P26 bubble on Tracey's PC: at 1440x900 it fits; at 1280x720 a full 220-character bubble (about 143px tall) reached the 64px top bar and covered the CORE Matrix button. Fix: the bubble's words are capped at four lines (about 90px) with line-clamp, so it stays below the top bar. The full words are always in the panel, which the bubble already points to. App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T04:00:00.000Z | claude | note N50
+Chain-Prev: a4c454302474458ff191845b2467fa826dbce1dbcbc9ec2c7e80f41057fa80e0
+Chain-Hash: 189bc497083218a8d194e1494c3ce60b60c1f349c554bd5485fea323ebc818c0
+Stage: Execution
+Kind: note
+Evidence: N49; src/components/LuminaryBubble.tsx; DataQuad t3101
+Channel: cloud
+
+Re-check of N49 on Tracey's PC: the cap did not apply, because 'block' overrode the -webkit-box display that line-clamp needs. 'block' removed. Measured with that change in the page: at 1280x720 the bubble's top is at y 70.5 (89.5px tall), below the 64px top bar and clear of the CORE Matrix button; at 1440x900 its top is at y 250.5, just above the figure. The panel stays clear at both sizes.
