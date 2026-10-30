@@ -222,3 +222,15 @@ body {
 .animate-modal-zoom * {
   text-shadow: var(--pinstripe);
 }
+
+/*
+ * The Luminary's Paused Icon breathes like the 3D Presence (src/three/luminaryPresence.ts: about
+ * one breath every 3.5 s). It pulses gently and never spins, as the Architect asked.
+ */
+@keyframes luminary-breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(252, 211, 77, 0.15); }
+  50% { transform: scale(1.08); box-shadow: 0 0 16px rgba(252, 211, 77, 0.45); }
+}
+.animate-luminary-breathe {
+  animation: luminary-breathe 3.5s ease-in-out infinite;
+}

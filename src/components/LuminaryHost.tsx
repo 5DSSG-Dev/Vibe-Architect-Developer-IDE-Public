@@ -336,10 +336,12 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const codingTasksOn = status?.codingTasks === 'on';
 
   return (
-    // The Paused Icon sits in the status bar's left corner. The Full Form opens beside the
-    // Presence in the lower right of the workspace (src/three/luminaryPresence.ts), as the
-    // Architect drew it, and falls back toward the left edge on a narrow screen.
-    <div className="fixed left-3 bottom-5 z-30 font-mono">
+    // The Paused Icon sits in the lower right corner, just above the status bar, and breathes like
+    // the Presence. The Full Form opens beside the Presence in the lower right of the workspace
+    // (src/three/luminaryPresence.ts), as the Architect drew it, and falls back toward the left
+    // edge on a narrow screen. Both stay above every IDE overlay (z-[70]; the highest overlay is
+    // z-[60]), so the Luminary is there on an Element's pages too.
+    <div className="fixed right-4 bottom-24 z-[70] font-mono">
       {isEngaged ? (
         <section
           ref={formRef}
@@ -595,7 +597,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
           aria-label="Engage the Vibe Luminary"
           aria-expanded={false}
           title="Vibe Luminary (paused)"
-          className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-950/80 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+          className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-950/80 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 motion-safe:animate-luminary-breathe"
         >
           {core('w-7 h-7')}
         </button>

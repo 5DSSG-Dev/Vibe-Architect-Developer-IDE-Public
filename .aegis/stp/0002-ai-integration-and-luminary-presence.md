@@ -2234,3 +2234,13 @@ Evidence: Tracey 2026-10-30T04:55Z; src/components/LuminaryHost.tsx
 Channel: cloud
 
 First live use on Tracey's PC (3015, Baseten): Tracey reports it works and the explanations are more thorough than they envisioned. One issue: a long answer opened at its last line, so the Architect had to scroll back up. Fix: when a reply arrives, the conversation scrolls so the reply's first line sits at the top of the box. The Architect's own words, notes and connection moments still bring the newest line into view. Client only, no cost change. App 325/325, gateway 148/148, build clean. Spend so far, as the RC session reports: 6 live calls, about $0.09 of the $75 ceiling.
+
+### 2026-10-30T05:20:00.000Z | claude | note N52
+Chain-Prev: d64508ee13dda7c7c6d3dbd6d731a9fa7ccdea6690dbbcab72c56deb9fa11932
+Chain-Hash: 4b9744af36e94e3f601762f980f964400d30436fb5d963dae204c2504884ab48
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T05:09Z; src/components/LuminaryHost.tsx; src/components/LuminaryBubble.tsx; src/index.css
+Channel: cloud
+
+Tracey: on an Element's info page the Luminary was missing; it must always be there, and when paused its small icon belongs in the bottom right corner, pulsing like the Luminary. Cause: every IDE overlay (Dialog, z-50 / z-[60]) covered the Luminary (z-30) and the bubble (z-20). Change: the Luminary's panel, Paused Icon and bubble now sit at z-[70], above every overlay. The Paused Icon moved from the status bar's left corner to the lower right, just above the status bar (clear of Export CORE), and breathes (scale 1 to 1.08 with an amber glow, 3.5 s, matching the Presence; never spins; steady when the OS asks for reduced motion). Escape inside the Luminary still closes only the Luminary (its handler stops the event before the Dialog's). The 3D Presence itself stays in the scene behind overlays; on an Element's pages the icon and panel stand for it. App 325/325, gateway 148/148, build clean.
