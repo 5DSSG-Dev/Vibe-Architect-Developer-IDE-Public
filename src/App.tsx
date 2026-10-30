@@ -20,6 +20,7 @@ import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
 import { luminaryFocus } from './luminary/focus';
+import { severConnection } from './engine/connectionRuntime';
 import { LuminaryBubble } from './components/LuminaryBubble';
 import {
   ApothecaryItem,
@@ -30,6 +31,8 @@ import {
   ActiveDaemons,
   DEFAULT_APOTHECARY_CATALOG,
   createInitialCoreManifest,
+  planElementRemoval,
+  removeElementFromManifest,
   upgradeStartingBudget,
   ensureElementCodeFrame,
   nextFreePortalAngle,
@@ -480,6 +483,28 @@ export function App() {
     openOverlay('INSPECT_MANIFEST');
   };
 
+  // Take a placed Element off the workspace. An Orb's connection is closed by agreement of
+  // both sides (the Architect asked; the CORE accepts), which gives its room back and records
+  // a 'severed' moment; its tethered Satellites come off with it.
+  const placedRemoval = inspectingSocket && inspectingItem ? planElementRemoval(inspectingSocket, inspectingItem.id) : undefined;
+  const handleRemoveInspectedElement = () => {
+    if (!inspectingSocket || !inspectingItem || !placedRemoval) return;
+    const socketId = inspectingSocket.id;
+    if (placedRemoval.contractId) {
+      try {
+        severConnection(placedRemoval.contractId, 'Removed by the Architect', { initiatorConsent: true, receptorConsent: true });
+      } catch {
+        // A connection restored from a saved workspace has no live lifecycle to close; the
+        // socket update below still frees its room.
+      }
+    }
+    setCoreManifest((prev) => removeElementFromManifest(prev, socketId, inspectingItem.id));
+    globalSimulationEngine.addLog('SUCCESS', `[ELEMENT REMOVED] ${placedRemoval.removed.map((entry) => entry.name).join(', ')} taken off ${socketId} by the Architect`);
+    setInspectingItem(null);
+    setInspectingSocket(null);
+    closeOverlay('INSPECT_MANIFEST');
+  };
+
   // Save updated element properties / manifest JSON
   const handleSaveInspectedItem = (updatedItem: ApothecaryItem) => {
     setCoreManifest((prev) => {
@@ -800,6 +825,11 @@ export function App() {
           onClose={() => closeOverlay('INSPECT_MANIFEST')}
           onOpenEditProperties={() => openOverlay('INSPECT_PROPERTIES')}
           onOpenCodeEditor={() => openOverlay('INSPECT_CODE')}
+          removal={placedRemoval ? {
+            hostName: inspectingSocket?.connectedItem?.id !== inspectingItem?.id ? inspectingSocket?.connectedItem?.name : undefined,
+            tethered: placedRemoval.removed.slice(1).map((entry) => entry.name),
+            onRemove: handleRemoveInspectedElement
+          } : undefined}
         />
       )}
 

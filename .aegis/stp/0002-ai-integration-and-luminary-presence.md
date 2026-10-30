@@ -2365,3 +2365,13 @@ Evidence: Tracey's decision card 2026-10-30T12:55Z ('Bigger start plus a live me
 Channel: cloud
 
 Tracey asked why the workspace shows 8 Orb sockets but the CORE's memory was used up by about 4 Orbs. There is no socket limit: the CORE's starting budget (4096 MB, 16 threads) ran out, usually threads first. Tracey chose on a card: a bigger start plus a live meter. Built: (1) A new CORE starts with 8192 MB and 32 threads (bandwidth 256, GPU on), enough for all 8 sockets even with the heaviest sample Orb in each; a test checks this against every sample Orb's contract. A saved workspace still on an earlier starting budget (4096 MB with 16 or 8 threads) moves to the new one; a budget set by hand in the CORE Matrix is kept. (2) The header's RAM and Threads now show used / total with a small bar that turns amber when a quarter or less is left and rose when none is; before, it showed only the configured total. (3) A connection refused for lack of room now says plainly what ran out, how much is needed and left, and to raise it in the CORE Matrix or disconnect an Orb; a GPU refusal says to switch the GPU on. App 336/336, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T13:45:00.000Z | claude | note N64
+Chain-Prev: 845b21b02619d576348c0f8c171f0a1d3b8c2f5a90a52dd050ffc1f62f5a3101
+Chain-Hash: 64fe54cb7f3f1278fe6b13394d1345ab03844310f78cf2c9d13fc85b906631c5
+Stage: Execution
+Kind: note
+Evidence: Tracey's decision card 2026-10-30T13:30Z ('Yes, Remove with a confirm'); src/engine/relationEngine.ts; src/components/ViewContentsModal.tsx; src/App.tsx; src/engine/elementRemoval.test.ts
+Channel: cloud
+
+Tracey found that no Element info page offers Delete. Nothing in the IDE could take a placed Element off the workspace; only Cancel during a handshake existed. Tracey chose on a card: a Remove button with a confirmation (deleting custom Elements from the Apothecary is left for later). Built: the info page of a placed Element (an Orb in a socket, or a Satellite on its host) shows Remove. It asks first in plain words and names any tethered Satellites that come off with an Orb; 'Keep it' backs out. Removing an Orb closes its connection by agreement of both sides (severConnection with Architect and CORE consent, reason MUTUAL_DISCONNECT), which releases its reservation and records a 'severed' moment that the Luminary words as 'disconnected on purpose'. The socket goes back to Vacant, not Severed, so a planned removal does not show the broken Umbilical. A Satellite comes off its host alone. The Element stays in the Apothecary, and the connection's history stays in the evidence record. Pages opened from the Element rail (not placed) show no Remove. Tests: 3 new. App 339/339, gateway 151/151, typecheck and build clean.

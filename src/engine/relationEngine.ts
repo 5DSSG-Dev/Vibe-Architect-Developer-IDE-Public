@@ -132,6 +132,46 @@ export function isActuatorItem(item: ApothecaryItem): boolean {
  *   - a Satellite yields the ApothecaryItems named in `actuators`;
  *   - anything else yields [].
  */
+export interface ElementRemoval {
+  /** The Element taken off the workspace, and any Satellites that came off with it. */
+  removed: ApothecaryItem[];
+  /** The Orb's connection contract to close, when an Orb leaves its socket. */
+  contractId?: string;
+}
+
+/**
+ * What removing a placed Element would take with it: an Orb leaves its socket with every
+ * Satellite tethered to it; a Satellite leaves its host alone. Undefined when the Element is
+ * not placed at that socket.
+ */
+export function planElementRemoval(socket: SocketBinding, itemId: string): ElementRemoval | undefined {
+  if (socket.connectedItem?.id === itemId) {
+    return { removed: [socket.connectedItem, ...(socket.attachedSatellites ?? [])], contractId: socket.contractId };
+  }
+  const satellite = socket.attachedSatellites?.find((entry) => entry.id === itemId);
+  return satellite ? { removed: [satellite] } : undefined;
+}
+
+/**
+ * Take a placed Element off the workspace. An Orb's socket goes back to Vacant (a planned
+ * removal, not the broken-Umbilical fault), so the CORE's memory and threads come back; the
+ * connection's history stays in the evidence record.
+ */
+export function removeElementFromManifest(manifest: CoreManifest, socketId: string, itemId: string): CoreManifest {
+  return {
+    ...manifest,
+    sockets: manifest.sockets.map((socket) => {
+      if (socket.id !== socketId) return socket;
+      if (socket.connectedItem?.id === itemId) {
+        return { id: socket.id, name: socket.name, angleDeg: socket.angleDeg, radius: socket.radius, state: 'Vacant' as const,
+          ...(socket.supportedProfileIds ? { supportedProfileIds: socket.supportedProfileIds } : {}) };
+      }
+      if (!socket.attachedSatellites?.some((entry) => entry.id === itemId)) return socket;
+      return { ...socket, attachedSatellites: socket.attachedSatellites.filter((entry) => entry.id !== itemId) };
+    })
+  };
+}
+
 export function getElementChildren(item: ApothecaryItem, catalog: ApothecaryItem[]): ApothecaryItem[] {
   const resolveIds = (ids?: string[]): ApothecaryItem[] =>
     (ids ?? [])

@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Cpu, HardDrive, Edit3, Code, Zap, Layers } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Cpu, HardDrive, Edit3, Code, Zap, Layers, Trash2 } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, ensureElementCodeFrame } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
 
@@ -9,6 +9,8 @@ interface ViewContentsModalProps {
   onClose: () => void;
   onOpenEditProperties: () => void;
   onOpenCodeEditor: () => void;
+  /** Present only when the Element is placed on the workspace and can be taken off it. */
+  removal?: { hostName?: string; tethered: string[]; onRemove: () => void };
 }
 
 export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
@@ -16,8 +18,10 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
   socket,
   onClose,
   onOpenEditProperties,
-  onOpenCodeEditor
+  onOpenCodeEditor,
+  removal
 }) => {
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
   const targetItem = ensureElementCodeFrame(item || socket?.connectedItem || {
     id: socket?.id || 'socket-alpha',
     name: socket?.name || 'Umbilical Socket',
@@ -124,6 +128,33 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
           </div>
         </div>
 
+        {/* Remove asks first, in plain words, and names everything that comes off with it */}
+        {removal && confirmingRemove && (
+          <div className="px-5 py-4 border-t border-rose-500/40 bg-rose-950/30 text-xs space-y-3" role="alert">
+            <p className="text-rose-100 leading-relaxed">
+              {removal.hostName
+                ? `Remove ${name} from ${removal.hostName}?`
+                : `Remove ${name} from the CORE? Its connection is closed properly, and its memory and threads go back to the CORE.`}
+              {removal.tethered.length > 0 && ` ${removal.tethered.join(', ')} ${removal.tethered.length === 1 ? 'is' : 'are'} tethered to it and will come off too.`}
+            </p>
+            <p className="text-[10px] text-slate-400">It stays in the Apothecary, so you can place it again. Its connection history stays in the record.</p>
+            <div className="flex items-center justify-end space-x-2">
+              <button
+                onClick={() => setConfirmingRemove(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-orbitron transition-colors"
+              >
+                Keep it
+              </button>
+              <button
+                onClick={removal.onRemove}
+                className="px-4 py-2 rounded-xl bg-rose-600/30 hover:bg-rose-600/50 border border-rose-400/60 text-rose-100 text-xs font-orbitron font-bold transition-colors"
+              >
+                Yes, remove
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Footer Action Buttons */}
         <div className="p-4 border-t border-cyan-500/30 flex items-center justify-between bg-slate-950/80">
           <button
@@ -132,6 +163,16 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
           >
             Close
           </button>
+
+          {removal && !confirmingRemove && (
+            <button
+              onClick={() => setConfirmingRemove(true)}
+              className="ml-2 mr-auto px-4 py-2 rounded-xl bg-slate-900 border border-rose-500/40 hover:bg-rose-950/50 text-rose-300 text-xs font-orbitron flex items-center space-x-1.5 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Remove</span>
+            </button>
+          )}
 
           <div className="flex items-center space-x-2">
             <button
