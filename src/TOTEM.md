@@ -108,3 +108,15 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-10-29 | Codex | Publication status correction
 - Supersedes earlier pending/uncommitted notes: Element-origin hover and completed-click navigation are committed as `6792987` and pushed to `codex/m4-element-inspection-framing`.
 - Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24). PR #23 was already merged before this follow-up was published.
+
+## 2026-10-30 | Codex | Retire unsupported SIMULATE and DEPLOY modes
+- The Architect agreed to remove the synthetic Simulate dashboard and declaration-only Deploy/audit screen from the IDE. The audience is people bringing system architecture and design ability without requiring coding experience or engineering credentials; interface language must explain purpose in everyday terms and keep technical depth available when useful.
+- Source removes both modes from the visible workspace and drops their screen/engine modules. The old saved `activeMode` field is ignored, so existing workspaces reopen in the authoring workspace. CORE manifest export remains and is labeled `Export workspace`.
+- Removed the synthetic pressure controls and fixed `CPU Load: Medium` display. Changed the sidebar heading from `Telemetry Deck` to `Workspace status`; visible CORE connection counts come from the manifest.
+- M5 remains future work: a real bounded scenario runner and deployment flow can return only when they perform real target-specific work and report evidence. This UI removal does not mark M5 complete or change its proposal status.
+- No tests or build were run in this change.
+
+## 2026-10-30 | Codex | Verification and review publication
+- Supersedes the earlier pending-verification note: `npm run build` passed, including TypeScript checks; Vite reports the existing large-chunk warning. `git diff --check` passed. Tests were not run.
+- Fresh browser inspection confirmed the Simulate/Deploy tabs and screens are absent, authoring workspace loads, and the export action is labeled `Export workspace`. Port 3015 had no listener, so Vite was briefly started on 3016 for this check and then stopped.
+- Commit `9b5fa25` is pushed to `codex/remove-demo-modes`; PR #25 is open for Architect review: https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. STP-0004 decision D1 records the UI direction; no proposal or M5 completion is claimed.

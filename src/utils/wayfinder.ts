@@ -1,9 +1,6 @@
 import { ApothecaryItem, isActuatorItem, isOrbItem } from '../engine/relationEngine';
 
-export type IdeMode = 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY';
-
 export interface WayfinderState {
-  mode: IdeMode;
   /** Drill-down path from the CORE: Orb, then Satellite, then Actuator. */
   environmentStack: Pick<ApothecaryItem, 'name' | 'category'>[];
   /** Children of the current Environment (what the user can enter next). */
@@ -17,17 +14,6 @@ export interface WayfinderState {
  * next. Shown in the Wayfinder so no screen is a dead end.
  */
 export function describeCurrentTask(state: WayfinderState): string {
-  switch (state.mode) {
-    case 'CODE':
-      return 'Edit a Stellar program, then Check or Run it.';
-    case 'SIMULATE':
-      return 'Raise the load or inject a fault, then watch containment hold.';
-    case 'DEPLOY':
-      return 'Review the invariant audit, then export the signed package.';
-    case 'DESIGN':
-      break;
-  }
-
   const current = state.environmentStack[state.environmentStack.length - 1];
   if (!current) {
     return state.dockedOrbCount > 0

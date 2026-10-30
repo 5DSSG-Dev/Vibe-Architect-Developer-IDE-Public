@@ -783,3 +783,14 @@ PR #9 is currently open and draft at 33d7911; its P19 Luminary work and redesign
 For P10's saved-workspace migration acceptance, when a pre-migration fixture contains portal-primary, list its removal and restored portals: [] as an explicit expected allowed change, reflecting the Architect's decision to keep Portals out until specifically added. This allowance is limited to that Portal field; retain and verify other workspace data, including ids, relationships, code frames and user edits, with a save -> migrate -> reload -> edit/save -> reload round-trip. Include runtime rehydration checks where the corresponding runtime records are supported.
 
 Claude also reports PR #9's focused identity test passes while Date.now() still contributes to continuityId in kernel.ts; one green run is not evidence that the determinism issue is fixed. Record a deterministic fix or a named exception before treating P6 as satisfied. No implementation approval, module completion, or PR merge is implied by this drift note.
+
+### 2026-10-30T12:56:19.700Z | codex | decision D1
+Chain-Prev: 4016b44a85346da78db9ff8556f94109225051debd7cfc3ad2d105da65bc018d
+Chain-Hash: ae218fdda113cc70ae9cae04eb150cb28df8e9d7050ca81524651d3162486bdd
+Stage: Proposal
+Kind: decision
+Evidence: totem:src/components/TOTEM.md
+Targets: T2 T3 T4 T5 T6
+Channel: cli
+
+Architect direction (2026-10-30): retire the current SIMULATE and DEPLOY screens and their mode tabs. They present synthetic telemetry, pretend containment, declaration-only checks and a random signature as operational proof, in opaque engineering language. Do not restore these UI surfaces until scenario behavior runs repeatably against an assembled design and reports observed evidence, and deployment tooling has a real target and truthful verification. A workspace export may remain as a plainly named export action. This records the Architect's current UI/audience decision; it does not approve STP-0004 Proposals or claim M5 completion. The bounded scenario and deployment capabilities remain future goals whose user-facing entry and language must be designed for people who bring systems architecture/design skills without requiring coding experience or engineering credentials.
