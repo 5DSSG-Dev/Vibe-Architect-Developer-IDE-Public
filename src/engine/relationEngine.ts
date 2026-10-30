@@ -757,6 +757,29 @@ export const INITIAL_SOCKET_BINDINGS: SocketBinding[] = [
   { id: 'socket-theta', name: 'Theta Socket (NW)', angleDeg: 315, radius: 4, state: 'Vacant' },
 ];
 
+// A new CORE starts with room for all 8 sockets, even if each holds the heaviest sample Orb
+// (the Relational Database Engine: 1024 MB, 4 threads). The Architect can change it in the CORE Matrix.
+export const DEFAULT_CORE_BUDGET: HardwareBudget = {
+  memoryMB: 8192,
+  threads: 32,
+  bandwidthCredits: 256,
+  gpuEnabled: true
+};
+
+// The budget every CORE started with before 2026-10-30; it filled up after about four Orbs.
+const PREVIOUS_DEFAULT_CORE_BUDGET = { memoryMB: 4096, threads: 16 } as const;
+
+/**
+ * A saved CORE still on an earlier starting budget (4096 MB with 16, or the older 8, threads)
+ * moves to today's, which fits all 8 sockets. A budget the Architect set by hand is kept.
+ */
+export function upgradeStartingBudget(budget: HardwareBudget): HardwareBudget {
+  const isEarlierDefault = budget.memoryMB === PREVIOUS_DEFAULT_CORE_BUDGET.memoryMB &&
+    (budget.threads === PREVIOUS_DEFAULT_CORE_BUDGET.threads || budget.threads === 8);
+  if (isEarlierDefault) return { ...budget, memoryMB: DEFAULT_CORE_BUDGET.memoryMB, threads: DEFAULT_CORE_BUDGET.threads };
+  return budget.threads === 8 ? { ...budget, threads: 16 } : budget;
+}
+
 export function createInitialCoreManifest(): CoreManifest {
   const initialContracts: RelationContract[] = [
     {
@@ -811,12 +834,7 @@ export function createInitialCoreManifest(): CoreManifest {
     version: '1.0.0-RELATIONAL',
     createdAt: new Date().toISOString(),
     formlessCoreState: 'UNSERIALIZED_PRISTINE',
-    hardwareBudget: {
-      memoryMB: 4096,
-      threads: 16,
-      bandwidthCredits: 256,
-      gpuEnabled: true
-    },
+    hardwareBudget: { ...DEFAULT_CORE_BUDGET },
     activeDaemons: {
       steward: true,
       advocate: true,

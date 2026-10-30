@@ -75,6 +75,7 @@ test('umbilical budget failure stops at the failing step and leaks no state', ()
 
   assert.equal(contract.handshakeStatus, 'FAILED');
   assert.equal(contract.handshakeCompletedStep, 7);
+  assert.match(contract.failureReason ?? '', /out of memory .* Raise the memory in the CORE Matrix/);
   assert.equal(getContract(contract.contractId), undefined);
   assert.deepEqual(getAvailableBudget(), before);
   assert.deepEqual(getCapabilityProviders('observe').includes(element.id), false);
@@ -90,6 +91,7 @@ test('umbilical thread exhaustion fails specifically at processing validation', 
 
   assert.equal(contract.handshakeStatus, 'FAILED');
   assert.equal(contract.handshakeCompletedStep, 8);
+  assert.match(contract.failureReason ?? '', /out of threads .* Raise the threads in the CORE Matrix/);
   assert.deepEqual(getAvailableBudget(), before);
 });
 
@@ -183,7 +185,7 @@ test('heartbeat degrades, recovers, and severs immediately on invariant violatio
   assert.equal(heartbeatCycle(contract.contractId, { healthy: true }).state, 'ACTIVE');
   contract.negativeSpaceInvariants.never_persists_prompts = false;
   assert.equal(heartbeatCycle(contract.contractId).state, 'SEVERED');
-  assert.equal(getAvailableBudget().memoryMB, 4096);
+  assert.equal(getAvailableBudget().memoryMB, 8192);
   assert.equal(getContract(contract.contractId)?.handshakeStatus, 'FAILED');
 });
 

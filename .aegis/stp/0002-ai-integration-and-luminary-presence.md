@@ -2355,3 +2355,13 @@ Evidence: P27; N61; DataQuad t3135; server/app.ts; server/app.test.ts; src/lumin
 Channel: cloud
 
 Hold-to-talk failed on Tracey's PC in Chrome and Edge with 'not-allowed', although the site permission, Windows microphone privacy, online speech recognition and the headset all allowed it. Root cause, found by the RC session: the gateway's Permissions-Policy header said microphone=(), which predates Voice and forbids every page the microphone, whatever the settings. It is now microphone=(self): the IDE's own page may use it, and nothing else may; camera, geolocation, payment and USB stay off. The header test now also checks microphone=(self). Along the way, the microphone error texts were split so each refusal names its own cause (9db3dd9). Server change: the gateways need a restart. Gateway 151/151.
+
+### 2026-10-30T13:05:00.000Z | claude | note N63
+Chain-Prev: 5c9ec5d379a1891ea2e6daf19800ce9d89c209e56066f443f13e42d269f1b8c1
+Chain-Hash: 845b21b02619d576348c0f8c171f0a1d3b8c2f5a90a52dd050ffc1f62f5a3101
+Stage: Execution
+Kind: note
+Evidence: Tracey's decision card 2026-10-30T12:55Z ('Bigger start plus a live meter'); DataQuad t3141; src/engine/relationEngine.ts; src/engine/resourceAllocator.ts; src/engine/connectionRuntime.ts; src/components/Header.tsx; src/App.tsx; src/engine/coreBudget.test.ts
+Channel: cloud
+
+Tracey asked why the workspace shows 8 Orb sockets but the CORE's memory was used up by about 4 Orbs. There is no socket limit: the CORE's starting budget (4096 MB, 16 threads) ran out, usually threads first. Tracey chose on a card: a bigger start plus a live meter. Built: (1) A new CORE starts with 8192 MB and 32 threads (bandwidth 256, GPU on), enough for all 8 sockets even with the heaviest sample Orb in each; a test checks this against every sample Orb's contract. A saved workspace still on an earlier starting budget (4096 MB with 16 or 8 threads) moves to the new one; a budget set by hand in the CORE Matrix is kept. (2) The header's RAM and Threads now show used / total with a small bar that turns amber when a quarter or less is left and rose when none is; before, it showed only the configured total. (3) A connection refused for lack of room now says plainly what ran out, how much is needed and left, and to raise it in the CORE Matrix or disconnect an Orb; a GPU refusal says to switch the GPU on. App 336/336, gateway 151/151, typecheck and build clean.

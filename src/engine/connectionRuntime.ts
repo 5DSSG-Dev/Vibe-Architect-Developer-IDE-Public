@@ -362,15 +362,17 @@ export function executeUmbilicalHandshake(
         candidate.bandwidthPeak <= availableFacts.bandwidthCredits && (!candidate.gpu || availableFacts.gpu) ? [candidate] : [];
     });
   if (request.memoryMB < 0 || request.memoryMB > availableBudget.memoryMB) {
-    return fail(contract, 7, 'Memory requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
+    return fail(contract, 7, `The CORE is out of memory for this Orb: it needs ${request.memoryMB} MB and ${availableBudget.memoryMB} MB is left. Raise the memory in the CORE Matrix, or disconnect an Orb.`, false, { available: availableFacts, alternatives });
   }
   contract.handshakeCompletedStep = 7;
   if (request.threads < 0 || request.threads > availableBudget.threads || request.bandwidthPeakCredits > availableBudget.bandwidthCredits || (request.gpuAccess && !availableBudget.gpuAccess) || options.resourcesAvailable === false) {
     return fail(contract, 8, request.gpuAccess && !availableBudget.gpuAccess
-      ? 'GPU requirement exceeds available CORE budget'
+      ? 'This Orb needs the GPU, and the CORE has it switched off. Switch it on in the CORE Matrix.'
       : request.bandwidthPeakCredits > availableBudget.bandwidthCredits
         ? 'This CORE is carrying a lot already; the connection needs more bandwidth than is available.'
-      : 'Thread requirement exceeds available CORE budget', false, { available: availableFacts, alternatives });
+      : request.threads > availableBudget.threads
+        ? `The CORE is out of threads for this Orb: it needs ${request.threads} and ${availableBudget.threads} ${availableBudget.threads === 1 ? 'is' : 'are'} left. Raise the threads in the CORE Matrix, or disconnect an Orb.`
+      : 'The CORE could not reserve room for this Orb.', false, { available: availableFacts, alternatives });
   }
   if (!allocateFromBudget(contract.contractId, request)) return fail(contract, 8, 'Resource allocation was refused');
   publishConnectionEvent({

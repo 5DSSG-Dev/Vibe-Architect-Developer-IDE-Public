@@ -30,6 +30,7 @@ import {
   ActiveDaemons,
   DEFAULT_APOTHECARY_CATALOG,
   createInitialCoreManifest,
+  upgradeStartingBudget,
   ensureElementCodeFrame,
   nextFreePortalAngle,
   getElementChildren,
@@ -169,12 +170,12 @@ export function App() {
       if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
       // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
       // Architect never added. Portals now appear only once added, so that one is left out.
+      // Workspaces still on an earlier starting budget move to today's, which fits all 8 sockets;
+      // a budget the Architect set by hand in the CORE Matrix is kept.
       const restored = restoredWorkspace.coreManifest;
       return {
         ...restored,
-        hardwareBudget: restored.hardwareBudget.threads === 8
-          ? { ...restored.hardwareBudget, threads: 16 }
-          : restored.hardwareBudget,
+        hardwareBudget: upgradeStartingBudget(restored.hardwareBudget),
         portals: restored.portals.filter((portal) => portal.id !== 'portal-primary')
       };
     }
@@ -576,6 +577,7 @@ export function App() {
         activeMode={activeMode}
         onSelectMode={(mode) => setActiveMode(mode)}
         hardwareBudget={coreManifest.hardwareBudget}
+        availableResources={getAvailableCoreResources(coreManifest)}
         onOpenCoreMatrix={() => openOverlay('CORE_MATRIX')}
       />
 

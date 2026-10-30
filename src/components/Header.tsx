@@ -6,15 +6,39 @@ interface HeaderProps {
   activeMode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY';
   onSelectMode: (mode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY') => void;
   hardwareBudget: HardwareBudget;
+  /** What is still free after the connected Orbs take their share. */
+  availableResources: HardwareBudget;
   onOpenCoreMatrix: () => void;
 }
+
+// A small used/total meter. It warms to amber when a quarter or less is left and to rose when
+// nothing is left, so a full CORE is visible before a connection is refused.
+const BudgetMeter: React.FC<{ used: number; total: number; unit: string; barClass: string; textClass: string }> = ({
+  used, total, unit, barClass, textClass
+}) => {
+  const share = total > 0 ? Math.min(1, used / total) : 1;
+  const left = Math.max(0, total - used);
+  const tone = left === 0 ? 'text-rose-300' : left <= total / 4 ? 'text-amber-300' : textClass;
+  const fill = left === 0 ? 'bg-rose-400' : left <= total / 4 ? 'bg-amber-400' : barClass;
+  return (
+    <span className="flex items-center space-x-1.5">
+      <span className={`${tone} font-semibold`}>{used} / {total}{unit}</span>
+      <span className="w-10 h-1.5 rounded-full bg-slate-800 overflow-hidden" aria-hidden="true">
+        <span className={`block h-full ${fill} transition-all duration-500`} style={{ width: `${share * 100}%` }} />
+      </span>
+    </span>
+  );
+};
 
 export const Header: React.FC<HeaderProps> = ({
   activeMode,
   onSelectMode,
   hardwareBudget,
+  availableResources,
   onOpenCoreMatrix
 }) => {
+  const usedMemory = Math.max(0, hardwareBudget.memoryMB - availableResources.memoryMB);
+  const usedThreads = Math.max(0, hardwareBudget.threads - availableResources.threads);
   return (
     <header className="fixed top-0 left-0 right-0 z-20 h-16 panel-glass-header px-4 flex items-center justify-between">
       {/* Branding & Logo */}
@@ -78,15 +102,15 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Telemetry Meters & Actions */}
       <div className="flex items-center space-x-4">
-        {/* Configured CORE budget (set in the CORE Matrix); not live usage */}
+        {/* Live CORE budget: what the connected Orbs use out of what the CORE Matrix allows */}
         <div
           className="hidden lg:flex items-center space-x-4 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800 text-xs font-mono"
-          title="Configured CORE budget from the CORE Matrix, not live usage"
+          title={`The connected Orbs use ${usedMemory} of ${hardwareBudget.memoryMB} MB and ${usedThreads} of ${hardwareBudget.threads} threads. ${availableResources.memoryMB} MB and ${availableResources.threads} threads are left. Raise the budget in the CORE Matrix.`}
         >
           <div className="flex items-center space-x-1.5 text-slate-300">
             <HardDrive className="w-3.5 h-3.5 text-cyan-400" />
             <span>RAM:</span>
-            <span className="text-cyan-300 font-semibold">{hardwareBudget.memoryMB} MB</span>
+            <BudgetMeter used={usedMemory} total={hardwareBudget.memoryMB} unit=" MB" barClass="bg-cyan-400" textClass="text-cyan-300" />
           </div>
 
           <div className="w-px h-3.5 bg-slate-700" />
@@ -94,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-1.5 text-slate-300">
             <Cpu className="w-3.5 h-3.5 text-purple-400" />
             <span>Threads:</span>
-            <span className="text-purple-300 font-semibold">{hardwareBudget.threads}</span>
+            <BudgetMeter used={usedThreads} total={hardwareBudget.threads} unit="" barClass="bg-purple-400" textClass="text-purple-300" />
           </div>
 
           <div className="w-px h-3.5 bg-slate-700" />
