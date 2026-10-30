@@ -162,3 +162,9 @@
 - 2026-10-29 | Codex | M4 continuous Orb/Satellite drill-down
 - Follow-up for jumpy scene handoffs: carry the outgoing camera offset into the newly mounted Environment and animate its center from matched apparent scale to full focus scale. Legacy CORE/Orb and Environment child navigation now share the framing; the opt-in ThreeRuntime path also passes its completed camera pose and now respects OS reduced motion.
 - Production build and `git diff --check` pass with the existing Vite chunk-size warning. Tests were not run. Updating the existing PR #20 branch `codex/m4-core-motion-transitions`.
+- 2026-10-29 | Codex | M4 right-click Element information
+- Extended CORE scene right-click hit-testing to resolve docked Orbs and their attached Satellites; EnvironmentView now resolves its center and child Elements. Both use the existing information inspector. Simplified that inspector, relabeled actions to `Edit` and `View Code`, and removed its unsupported hard-coded `100% PASSED` audit claims and inline source dump.
+- `npm run build` and `git diff --check` pass (existing Vite large-chunk warning); tests not run. Changes are currently local on `codex/m4-continuous-zoom`, which has PR #22 open for the separate zoom handoff. This right-click enhancement has not been committed or pushed.
+- 2026-10-29 | Codex | M4 zoom framing adjustment
+- Architect feedback: the smoother zoom now goes too close; preserve view of the module and attached Elements. Widened CORE entry camera distance from 28% to 42% of its starting distance, and Environment drill-down from 45% to 78%, with a 9.5-unit minimum distance sized around the 4.5-unit child ring.
+- `npm run build` and `git diff --check` pass; tests not run. Current right-click and zoom-framing edits are local and uncommitted on `codex/m4-continuous-zoom`; PR #22 remains open for its prior zoom handoff commit.
