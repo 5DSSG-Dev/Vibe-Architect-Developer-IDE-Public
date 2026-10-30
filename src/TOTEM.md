@@ -115,3 +115,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Removed the synthetic pressure controls and fixed `CPU Load: Medium` display. Changed the sidebar heading from `Telemetry Deck` to `Workspace status`; visible CORE connection counts come from the manifest.
 - M5 remains future work: a real bounded scenario runner and deployment flow can return only when they perform real target-specific work and report evidence. This UI removal does not mark M5 complete or change its proposal status.
 - No tests or build were run in this change.
+
+## 2026-10-30 | Codex | Verification and review publication
+- Supersedes the earlier pending-verification note: `npm run build` passed, including TypeScript checks; Vite reports the existing large-chunk warning. `git diff --check` passed. Tests were not run.
+- Fresh browser inspection confirmed the Simulate/Deploy tabs and screens are absent, authoring workspace loads, and the export action is labeled `Export workspace`. Port 3015 had no listener, so Vite was briefly started on 3016 for this check and then stopped.
+- Commit `9b5fa25` is pushed to `codex/remove-demo-modes`; PR #25 is open for Architect review: https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. STP-0004 decision D1 records the UI direction; no proposal or M5 completion is claimed.

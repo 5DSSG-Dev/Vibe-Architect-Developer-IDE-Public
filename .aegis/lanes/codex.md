@@ -191,3 +191,8 @@
 - Architect agreed that Simulate and Deploy should leave the main IDE until they perform real, understandable work. The intended Architect may have system architecture and design ability without prior coding experience or engineering credentials. Lead with purpose and cause/effect in familiar language; make deeper technical information available in context.
 - On `codex/remove-demo-modes`, removed the dashboard/audit screens, synthetic pressure controls, fake CPU load, declaration-only audit and random pseudo-signature. Existing saved mode values reopen the authoring workspace. Preserved the real CORE workspace JSON export under plain wording. Current M5 scenario/deployment targets remain future work and are not complete.
 - No tests/build run yet. Continue with source-level review and `git diff --check`; report the build/test shortfall accurately.
+
+## 2026-10-30 | codex | Simulate/Deploy removal verified and published
+- PR #25 is open at https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. Commit `9b5fa25` removes the unsupported modes and preserves workspace export.
+- Browser confirmation passed on temporary localhost:3016; requested 3015 had no listener. The temporary Vite server was stopped. `npm run build` and `git diff --check` pass; tests were not run. Existing chunk-size warning remains.
+- STP-0004 D1 captures the Architect's mode-removal/audience decision; Proposals remain Presented and M5 is not marked complete.
