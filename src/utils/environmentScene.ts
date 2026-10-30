@@ -210,7 +210,7 @@ export function buildElementEnvironment(options: EnvironmentSceneOptions): THREE
     const childMesh = createElementVisual(child, CHILD_MODEL_SCALE, CHILD_FALLBACK_RADIUS);
     childMesh.name = `env-child-${index}`;
     childMesh.position.copy(position);
-    childMesh.userData = { ...childMesh.userData, isEnvChild: true, childItem: child };
+    childMesh.userData = { ...childMesh.userData, isEnvChild: true, childItem: child, envChildIndex: index };
     root.add(childMesh);
 
     const taxonomy = getItem3DTaxonomy(child);
@@ -221,8 +221,28 @@ export function buildElementEnvironment(options: EnvironmentSceneOptions): THREE
       tether = createAdditiveTetherFallback(surfacePoint, position, taxonomy.color);
     }
     tether.name = `env-tether-${index}`;
+    tether.userData = { isEnvTether: true, envChildIndex: index };
     root.add(tether);
   });
 
   return root;
+}
+
+/** Refit a straight environment tether after an Element is repositioned. */
+export function updateElementEnvironmentTether(root: THREE.Group, childIndex: number): void {
+  const center = root.children.find((node) => node.userData?.isEnvCenter);
+  const child = root.children.find((node) => node.userData?.envChildIndex === childIndex);
+  const tether = root.children.find((node) => node.userData?.envChildIndex === childIndex && node.userData?.isEnvTether);
+  if (!center || !child || !tether) return;
+
+  const mesh = tether.children.find((node) => (node as THREE.Mesh).isMesh) as THREE.Mesh | undefined;
+  if (!mesh) return;
+
+  const direction = new THREE.Vector3().subVectors(child.position, center.position);
+  const length = direction.length();
+  if (length < 1e-4) return;
+  const start = center.position.clone().addScaledVector(direction.normalize(), CENTER_FALLBACK_RADIUS + 0.15);
+  const nextGeometry = new THREE.TubeGeometry(new THREE.LineCurve3(start, child.position), 8, 0.04, 6, false);
+  mesh.geometry.dispose();
+  mesh.geometry = nextGeometry;
 }

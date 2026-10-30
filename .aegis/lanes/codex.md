@@ -168,3 +168,21 @@
 - 2026-10-29 | Codex | M4 zoom framing adjustment
 - Architect feedback: the smoother zoom now goes too close; preserve view of the module and attached Elements. Widened CORE entry camera distance from 28% to 42% of its starting distance, and Environment drill-down from 45% to 78%, with a 9.5-unit minimum distance sized around the 4.5-unit child ring.
 - `npm run build` and `git diff --check` pass; tests not run. Current right-click and zoom-framing edits are local and uncommitted on `codex/m4-continuous-zoom`; PR #22 remains open for its prior zoom handoff commit.
+- 2026-10-29 | Codex | M4 direct Element interaction in focused Environment
+- Architect clarifies the marker dots are unnecessary; hover information should sit on the Element, right-click must inspect the Element, and drag should move the Element rather than orbit the camera. Environment Totems are now marker-free and positioned on their Element; mesh hover reveals the popup, while right-click raycasts the same actual Element mesh. A click-drag moves the Element and refits attached tethers; OrbitControls rotate/pan are disabled, while click still drills down.
+- `npm run build` and `git diff --check` pass (existing large-chunk warning); tests not run. Changes remain uncommitted on `codex/m4-element-inspection-framing`, PR #23 remains open.
+
+### 2026-10-29 — Browser confirmation shortfall for Environment interaction
+- Browser check confirmed the API Orb's 9-step Umbilical handshake succeeded with the Interface profile and selected contract.
+- The browser page reported 33 failed 3D assets. Browser automation could not reliably target the Orb mesh to confirm Environment hover, right-click inspection, object drag/tether movement, or click-to-drill.
+- Restored the temporary Beta socket test Orb to Vacant and reloaded the app. No code commit or push was made; Environment behavior remains unconfirmed in browser.
+
+### 2026-10-29 — Environment click and hover follow-up
+- Removed pointer-intercepting Element marker dots from the CORE scene and attached Orb/Satellite information Totems at their Element origins. CORE hover now reveals the matching popup from the Element pick proxy.
+- Main-scene selection now runs on the completed click event after drag classification. The click handler checks Element pick proxies before the Luminary proxy; the browser showed those hit areas overlap on the API Orb, which explained why left-click entered neither Environment.
+- Browser verified hover popups on an Orb and a Satellite, Orb click into its Environment, and Satellite click into its next Environment. Returned to CORE and verified the test navigation stack is empty and the original sockets/contracts remain.
+- `npm run build` and `git diff --check` pass; build retains the existing Vite large-chunk warning. Browser reports 33 failed GLB assets, so these interactions were checked against procedural fallback visuals. Tests not run; changes remain uncommitted and unpushed.
+
+### 2026-10-29 — Publication status correction
+- Supersedes the pending publication status above: commit `6792987 fix(ui): target element hover and drill-in` is pushed to `codex/m4-element-inspection-framing`.
+- Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24); PR #23 had already merged before this follow-up was published.

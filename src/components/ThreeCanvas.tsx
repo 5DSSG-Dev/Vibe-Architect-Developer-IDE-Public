@@ -552,6 +552,7 @@ function createDockedOrbGroup(item: ApothecaryItem, attached: ApothecaryItem[] =
   allSatellites.forEach((sat, index) => {
     const satMesh = createSatelliteMesh(sat.cls);
     satMesh.userData = { isSatellite: true, satelliteItem: sat.item };
+    satMesh.add(createElementTotem(sat.item, { showMarker: false }));
     const angle = (index / allSatellites.length) * Math.PI * 2;
     // Widened from 0.95: the Orb is now ~1.3 in radius, so the old orbit sat
     // inside it. Held to 2.0 rather than a full 4x — arms are ~5.1 apart along
@@ -981,9 +982,9 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
             orbPickTarget.userData.ownedMaterial = true;
             dockedGroup.add(orbPickTarget);
 
-            const totem = createElementTotem(socket.connectedItem);
-            totem.position.set(0, 2.4, dockedGroup.position.z);
-            armGroup.add(totem);
+            const totem = createElementTotem(socket.connectedItem, { showMarker: false });
+            totem.position.set(0, 0, 0);
+            dockedGroup.add(totem);
 
             activeRuntime.registry.register({
               id: `orb:${socket.id}`,
@@ -1878,12 +1879,12 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         dockedGroup.userData = { socketId: s.id, isDockedOrb: true };
         armGroup.add(dockedGroup);
 
-        // Element Totem plaque floats above the docked Orb. It is attached to
-        // the arm (not the tumbling orb group) so it holds a steady position
-        // and reads as a label rather than swinging with the Orb's spin.
-        const totem = createElementTotem(s.connectedItem);
-        totem.position.set(0, 2.4, ORB_DOCK_Z);
-        armGroup.add(totem);
+        // Attach the marker-free information popup to the Orb's own origin.
+        // Mesh hover and selection both use the Orb's pick proxy, so the label
+        // no longer adds a separate pointer target above the model.
+        const totem = createElementTotem(s.connectedItem, { showMarker: false });
+        totem.position.set(0, 0, 0);
+        dockedGroup.add(totem);
       }
 
       attachPickProxies(armGroup, s.id);
@@ -2142,6 +2143,56 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const mouse = new THREE.Vector2();
 
     let navigationPending = false;
+    let scenePointerStart: { x: number; y: number } | null = null;
+    let scenePointerMoved = false;
+    let hoveredElementTotem: THREE.Object3D | null = null;
+    const setHoveredElementTotem = (itemId?: string) => {
+      const next = itemId
+        ? socketMeshesGroup.children
+          .flatMap((arm) => {
+            const matches: THREE.Object3D[] = [];
+            arm.traverse((node) => {
+              if (node.userData?.isElementTotem && node.userData?.elementItemId === itemId) matches.push(node);
+            });
+            return matches;
+          })[0] ?? null
+        : null;
+      if (next === hoveredElementTotem) return;
+      const hide = hoveredElementTotem?.userData?.hideElementPopup;
+      if (typeof hide === 'function') hide();
+      hoveredElementTotem = next;
+      const show = hoveredElementTotem?.userData?.showElementPopup;
+      if (typeof show === 'function') show();
+    };
+    const updateHoveredElementTotem = (event: MouseEvent) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hit = raycaster.intersectObjects(pickProxiesRef.current, false)[0];
+      const pick = hit?.object.userData?.pick as
+        | { kind: 'satellite'; item: ApothecaryItem }
+        | { kind: 'socketNode'; socketId: string }
+        | undefined;
+      if (pick?.kind === 'satellite') {
+        setHoveredElementTotem(pick.item.id);
+        renderer.domElement.style.cursor = 'grab';
+        return;
+      }
+      if (pick?.kind === 'socketNode') {
+        const socket = socketsRef.current.find((entry) => entry.id === pick.socketId);
+        setHoveredElementTotem(socket?.connectedItem?.id);
+        renderer.domElement.style.cursor = socket?.connectedItem ? 'grab' : 'default';
+        return;
+      }
+      const popup = hoveredElementTotem?.userData?.popupRoot as HTMLElement | undefined;
+      const bounds = popup?.getBoundingClientRect();
+      if (!bounds || event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+        setHoveredElementTotem();
+      }
+      renderer.domElement.style.cursor = 'default';
+    };
+
     const enterAfterCameraFocus = (item: ApothecaryItem, object: THREE.Object3D) => {
       if (!onEnterElement || navigationPending) return;
       navigationPending = true;
@@ -2157,56 +2208,27 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       }, () => onEnterElement(item, { cameraOffset, centerScale: 0.52 }));
     };
 
-    const handlePointerDown = (event: MouseEvent) => {
-      if (event.button !== 0) return; // left button only; right-click → context menu
-      rotateArmed = false;
-
+    const setPointerRay = (event: MouseEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
       raycaster.setFromCamera(mouse, camera);
-      // Clicking the Luminary engages or pauses it, as its corner icon does.
-      if (raycaster.intersectObject(luminaryPresence.pickProxy, false).length > 0) {
-        setLuminaryEngaged(!isLuminaryEngaged());
-        return;
-      }
-      // Selection raycasts the dedicated invisible pick proxies only — a flat set
-      // of coarse spheres — not the detailed GLB subtree. The nearest proxy hit
-      // resolves selection directly from its userData.pick, with natural depth
-      // ordering giving a satellite (its proxy sits outside the orb) precedence
-      // over the orb behind it.
-      const intersects = raycaster.intersectObjects(pickProxiesRef.current, false);
+    };
 
-      if (intersects.length > 0) {
-        const pick = intersects[0].object.userData?.pick as
-          | { kind: 'satellite'; item: ApothecaryItem }
-          | { kind: 'socketNode'; socketId: string }
-          | undefined;
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return; // left button only; right-click → context menu
+      rotateArmed = false;
+      scenePointerStart = { x: event.clientX, y: event.clientY };
+      scenePointerMoved = false;
 
-        if (pick?.kind === 'satellite') {
-          // Focus the selected Satellite before opening its Actuator Environment.
-          if (onEnterElement) enterAfterCameraFocus(pick.item, intersects[0].object);
-          else if (onSelectSatellite) onSelectSatellite(pick.item);
-          return;
-        }
-
-        if (pick?.kind === 'socketNode') {
-          const found = socketsRef.current.find(s => s.id === pick.socketId);
-          if (found) {
-            // A docked Orb drills into its Environment; a vacant socket opens the
-            // builder to dock something.
-            if (found.connectedItem && onEnterElement) {
-              enterAfterCameraFocus(found.connectedItem, intersects[0].object);
-            } else {
-              onSelectSocket(found, found.connectedItem);
-            }
-          }
-        }
-      } else if (!viewLockedRef.current && raycaster.intersectObject(coreGroup, true).length === 0) {
+      setPointerRay(event);
+      const hasElementTarget = raycaster.intersectObject(luminaryPresence.pickProxy, false).length > 0
+        || raycaster.intersectObjects(pickProxiesRef.current, false).length > 0
+        || raycaster.intersectObject(coreGroup, true).length > 0;
+      if (!hasElementTarget && !viewLockedRef.current) {
         // Empty space arms the turntable so a drag spins the
-        // assembly. A DragControls object-drag flips objectDragActive and stands
-        // this down; a plain click never moves, so nothing rotates.
+        // assembly. Element selection is handled by the browser's completed
+        // click event below, after DragControls has had a chance to claim a drag.
         rotateArmed = true;
         rotateLastX = event.clientX;
       }
@@ -2214,7 +2236,13 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
     // Turntable rotation: a left-drag on empty space spins the assembly pivot
     // around Y only (single plane), leaving the camera and Portals fixed.
-    const handlePointerMove = (event: MouseEvent) => {
+    const handlePointerMove = (event: PointerEvent) => {
+      if (scenePointerStart && (event.buttons & 1) !== 0) {
+        const dx = event.clientX - scenePointerStart.x;
+        const dy = event.clientY - scenePointerStart.y;
+        if (dx * dx + dy * dy >= 25) scenePointerMoved = true;
+      }
+      updateHoveredElementTotem(event);
       if (!rotateArmed || objectDragActive) return;
       if ((event.buttons & 1) === 0) return; // left button no longer held
       const dx = event.clientX - rotateLastX;
@@ -2222,10 +2250,50 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       assemblyPivot.rotation.y += dx * 0.005;
     };
 
+    const handleClick = (event: MouseEvent) => {
+      const moved = scenePointerMoved;
+      scenePointerStart = null;
+      scenePointerMoved = false;
+      // The click event occurs after DragControls finishes the pointer
+      // sequence. Use movement as the click-vs-drag boundary so a dragstart on
+      // an Orb cannot swallow an otherwise stationary click.
+      if (moved || navigationPending) return;
+      setPointerRay(event);
+      const hit = raycaster.intersectObjects(pickProxiesRef.current, false)[0];
+      const pick = hit?.object.userData?.pick as
+        | { kind: 'satellite'; item: ApothecaryItem }
+        | { kind: 'socketNode'; socketId: string }
+        | undefined;
+      if (pick?.kind === 'satellite') {
+        // Focus the selected Satellite before opening its Actuator Environment.
+        if (onEnterElement) enterAfterCameraFocus(pick.item, hit.object);
+        else if (onSelectSatellite) onSelectSatellite(pick.item);
+        return;
+      }
+      if (pick?.kind === 'socketNode') {
+        const socket = socketsRef.current.find((entry) => entry.id === pick.socketId);
+        if (!socket) return;
+        if (socket.connectedItem && onEnterElement) {
+          enterAfterCameraFocus(socket.connectedItem, hit.object);
+        } else {
+          onSelectSocket(socket, socket.connectedItem);
+        }
+        return;
+      }
+      // Give an actual Element the click when its selection proxy overlaps the
+      // Luminary's larger decorative pick target.
+      if (raycaster.intersectObject(luminaryPresence.pickProxy, false).length > 0) {
+        setLuminaryEngaged(!isLuminaryEngaged());
+      }
+    };
+
+    const handlePointerLeave = () => setHoveredElementTotem();
     const handlePointerUp = () => { rotateArmed = false; };
 
     renderer.domElement.addEventListener('pointerdown', handlePointerDown);
     renderer.domElement.addEventListener('pointermove', handlePointerMove);
+    renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
+    renderer.domElement.addEventListener('click', handleClick);
     window.addEventListener('pointerup', handlePointerUp);
 
     // 8. Animation Loop
@@ -2359,6 +2427,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       renderer.domElement.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+      renderer.domElement.removeEventListener('pointerleave', handlePointerLeave);
+      renderer.domElement.removeEventListener('click', handleClick);
       renderer.domElement.removeEventListener('webglcontextlost', handleContextLost);
       renderer.domElement.removeEventListener('webglcontextrestored', handleContextRestored);
       cancelAnimationFrame(animationFrameId);

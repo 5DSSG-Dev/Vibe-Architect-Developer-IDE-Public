@@ -6,7 +6,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { ApothecaryItem } from '../engine/relationEngine';
-import { buildElementEnvironment } from '../utils/environmentScene';
+import { buildElementEnvironment, updateElementEnvironmentTether } from '../utils/environmentScene';
 import { createElementTotem } from '../three/elementTotem';
 import { preloadAllGltfModels } from '../utils/gltfLoaderService';
 import { prefersReducedMotion } from '../utils/viewQuality';
@@ -84,6 +84,8 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     controls.dampingFactor = 0.05;
     controls.maxDistance = 30;
     controls.minDistance = 3;
+    controls.enableRotate = false;
+    controls.enablePan = false;
 
     // Lighting — neutral so each Element shows its own material.
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -111,17 +113,21 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     scene.add(envRoot);
     let centerSettleStartedAt: number | null = entryView ? performance.now() : null;
 
-    // Attaches the centre + child Element Totems above their meshes.
+    // Information popups are anchored directly on each Element. Their marker
+    // dots are hidden; mesh hover reveals the popup instead.
     const addTotems = () => {
-      envRoot.children.forEach((node) => {
+      const elements = [...envRoot.children];
+      elements.forEach((node) => {
         if (node.userData?.isEnvCenter && node.userData.centerItem) {
-          const totem = createElementTotem(node.userData.centerItem as ApothecaryItem);
-          totem.position.set(node.position.x, node.position.y + 3.4, node.position.z);
+          const item = node.userData.centerItem as ApothecaryItem;
+          const totem = createElementTotem(item, { showMarker: false });
+          totem.position.copy(node.position);
           envRoot.add(totem);
         }
         if (node.userData?.isEnvChild && node.userData.childItem) {
-          const totem = createElementTotem(node.userData.childItem as ApothecaryItem);
-          totem.position.set(node.position.x, node.position.y + 1.6, node.position.z);
+          const item = node.userData.childItem as ApothecaryItem;
+          const totem = createElementTotem(item, { showMarker: false });
+          totem.position.copy(node.position);
           envRoot.add(totem);
         }
       });
@@ -171,78 +177,226 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    const handleContextMenu = (event: MouseEvent) => {
-      event.preventDefault();
-      if (!onInspectElementRef.current) return;
+    type ElementHit = { node: THREE.Object3D; item: ApothecaryItem };
+    type PendingInteraction = {
+      hit: ElementHit;
+      pointerId: number;
+      startX: number;
+      startY: number;
+      startLocalZ: number;
+      dragged: boolean;
+      plane?: THREE.Plane;
+      offset?: THREE.Vector3;
+    };
+    let pendingInteraction: PendingInteraction | null = null;
+    let hoveredTotem: THREE.Object3D | null = null;
+    let suppressedDragClick: { x: number; y: number } | null = null;
+
+    const findElementHit = (clientX: number, clientY: number): ElementHit | null => {
       const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      scene.updateMatrixWorld(true);
       raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(envRoot.children, true);
+      const elementRoots = envRoot.children.filter((node) => node.userData?.isEnvCenter || node.userData?.isEnvChild);
+      const hits = raycaster.intersectObjects(elementRoots, true);
       for (const hit of hits) {
         let node: THREE.Object3D | null = hit.object;
         while (node) {
-          const item = node.userData?.childItem ?? node.userData?.centerItem;
-          if (item) {
-            onInspectElementRef.current(item as ApothecaryItem);
-            return;
+          if (node.userData?.isEnvCenter && node.userData.centerItem) {
+            return { node, item: node.userData.centerItem as ApothecaryItem };
+          }
+          if (node.userData?.isEnvChild && node.userData.childItem) {
+            return { node, item: node.userData.childItem as ApothecaryItem };
           }
           node = node.parent;
         }
       }
+      return null;
     };
-    const handlePointerDown = (event: MouseEvent) => {
-      if (event.button !== 0 || navigationPending) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(envRoot.children, true);
-      if (hits.length === 0) return;
-      let node: THREE.Object3D | null = hits[0].object;
-      while (node) {
-        if (node.userData?.isEnvChild && node.userData.childItem) {
-          const item = node.userData.childItem as ApothecaryItem;
-          navigationPending = true;
-          controls.enabled = false;
-          const fromPosition = camera.position.clone();
-          const fromTarget = controls.target.clone();
-          const target = new THREE.Vector3();
-          node.getWorldPosition(target);
-          const direction = camera.position.clone().sub(controls.target).normalize();
-          if (direction.lengthSq() === 0) direction.set(0, 0.2, 1).normalize();
-          const distance = Math.max(
-            camera.position.distanceTo(controls.target) * ENVIRONMENT_ENTRY_DISTANCE_RATIO,
-            ENVIRONMENT_ENTRY_MIN_DISTANCE
-          );
-          const toPosition = target.clone().addScaledVector(direction, distance);
-          const startedAt = performance.now();
-          const duration = prefersReducedMotion() ? 0 : ENVIRONMENT_ENTRY_TWEEN_SECONDS * 1000;
-          const animateEntry = (now: number) => {
-            const progress = duration === 0 ? 1 : Math.min(1, (now - startedAt) / duration);
-            const eased = easeInOutCubic(progress);
-            camera.position.lerpVectors(fromPosition, toPosition, eased);
-            controls.target.lerpVectors(fromTarget, target, eased);
-            controls.update();
-            if (progress >= 1) {
-              navigationPending = false;
-              const cameraOffset: [number, number, number] = [
-                toPosition.x - target.x,
-                toPosition.y - target.y,
-                toPosition.z - target.z,
-              ];
-              onEnterChildRef.current(item, { cameraOffset, centerScale: 0.85 / 1.9 });
-              return;
-            }
-            navigationFrame = requestAnimationFrame(animateEntry);
-          };
-          navigationFrame = requestAnimationFrame(animateEntry);
+
+    const setHoveredElement = (item?: ApothecaryItem) => {
+      const next = item
+        ? envRoot.children.find((node) => node.userData?.elementItemId === item.id) ?? null
+        : null;
+      if (next === hoveredTotem) return;
+      const previousHide = hoveredTotem?.userData?.hideElementPopup;
+      if (typeof previousHide === 'function') previousHide();
+      hoveredTotem = next;
+      const nextShow = hoveredTotem?.userData?.showElementPopup;
+      if (typeof nextShow === 'function') nextShow();
+    };
+
+    const handleContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+      const hit = findElementHit(event.clientX, event.clientY);
+      if (hit) onInspectElementRef.current?.(hit.item);
+    };
+    const enterChild = (hit: ElementHit) => {
+      if (!hit.node.userData?.isEnvChild) return;
+      const item = hit.item;
+      navigationPending = true;
+      controls.enabled = false;
+      const fromPosition = camera.position.clone();
+      const fromTarget = controls.target.clone();
+      const target = new THREE.Vector3();
+      hit.node.getWorldPosition(target);
+      const direction = camera.position.clone().sub(controls.target).normalize();
+      if (direction.lengthSq() === 0) direction.set(0, 0.2, 1).normalize();
+      const distance = Math.max(
+        camera.position.distanceTo(controls.target) * ENVIRONMENT_ENTRY_DISTANCE_RATIO,
+        ENVIRONMENT_ENTRY_MIN_DISTANCE
+      );
+      const toPosition = target.clone().addScaledVector(direction, distance);
+      const startedAt = performance.now();
+      const duration = prefersReducedMotion() ? 0 : ENVIRONMENT_ENTRY_TWEEN_SECONDS * 1000;
+      const animateEntry = (now: number) => {
+        const progress = duration === 0 ? 1 : Math.min(1, (now - startedAt) / duration);
+        const eased = easeInOutCubic(progress);
+        camera.position.lerpVectors(fromPosition, toPosition, eased);
+        controls.target.lerpVectors(fromTarget, target, eased);
+        controls.update();
+        if (progress >= 1) {
+          navigationPending = false;
+          const cameraOffset: [number, number, number] = [
+            toPosition.x - target.x,
+            toPosition.y - target.y,
+            toPosition.z - target.z,
+          ];
+          onEnterChildRef.current(item, { cameraOffset, centerScale: 0.85 / 1.9 });
           return;
         }
-        node = node.parent;
+        navigationFrame = requestAnimationFrame(animateEntry);
+      };
+      navigationFrame = requestAnimationFrame(animateEntry);
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.button !== 0 || navigationPending) return;
+      suppressedDragClick = null;
+      const hit = findElementHit(event.clientX, event.clientY);
+      if (!hit) return;
+      pendingInteraction = {
+        hit,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        startLocalZ: hit.node.position.z,
+        dragged: false,
+      };
+      renderer.domElement.setPointerCapture(event.pointerId);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!pendingInteraction) {
+        const hit = findElementHit(event.clientX, event.clientY);
+        if (hit) {
+          setHoveredElement(hit.item);
+          renderer.domElement.style.cursor = 'grab';
+          return;
+        }
+        const popupRoot = hoveredTotem?.userData?.popupRoot as HTMLElement | undefined;
+        const bounds = popupRoot?.getBoundingClientRect();
+        if (!bounds || event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          setHoveredElement();
+        }
+        renderer.domElement.style.cursor = 'default';
+        return;
+      }
+
+      const interaction = pendingInteraction;
+      if (interaction.pointerId !== event.pointerId) return;
+      const deltaX = event.clientX - interaction.startX;
+      const deltaY = event.clientY - interaction.startY;
+      if (!interaction.dragged && deltaX * deltaX + deltaY * deltaY < 25) return;
+
+      if (!interaction.dragged) {
+        interaction.dragged = true;
+        controls.enabled = false;
+        setHoveredElement();
+        const worldPosition = interaction.hit.node.getWorldPosition(new THREE.Vector3());
+        const normal = camera.position.clone().sub(controls.target).normalize();
+        interaction.plane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, worldPosition);
+        raycaster.setFromCamera(mouse.set(
+          ((interaction.startX - renderer.domElement.getBoundingClientRect().left) / renderer.domElement.getBoundingClientRect().width) * 2 - 1,
+          -((interaction.startY - renderer.domElement.getBoundingClientRect().top) / renderer.domElement.getBoundingClientRect().height) * 2 + 1
+        ), camera);
+        const startPoint = raycaster.ray.intersectPlane(interaction.plane, new THREE.Vector3()) ?? worldPosition;
+        interaction.offset = worldPosition.sub(startPoint);
+        renderer.domElement.style.cursor = 'grabbing';
+      }
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
+      raycaster.setFromCamera(mouse, camera);
+      const point = interaction.plane && raycaster.ray.intersectPlane(interaction.plane, new THREE.Vector3());
+      if (!point) return;
+      const worldPosition = point.add(interaction.offset ?? new THREE.Vector3());
+      scene.updateMatrixWorld(true);
+      const localPosition = envRoot.worldToLocal(worldPosition);
+      localPosition.z = interaction.startLocalZ;
+      interaction.hit.node.position.copy(localPosition);
+      const centerMoved = !!interaction.hit.node.userData?.isEnvCenter;
+      const childIndex = interaction.hit.node.userData?.envChildIndex as number | undefined;
+      if (centerMoved) {
+        envRoot.children
+          .filter((node) => typeof node.userData?.envChildIndex === 'number' && node.userData?.isEnvTether)
+          .forEach((node) => updateElementEnvironmentTether(envRoot, node.userData.envChildIndex as number));
+      } else if (childIndex !== undefined) {
+        updateElementEnvironmentTether(envRoot, childIndex);
+      }
+      const totem = envRoot.children.find((node) => node.userData?.elementItemId === interaction.hit.item.id);
+      if (totem) totem.position.copy(localPosition);
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      const interaction = pendingInteraction;
+      if (!interaction || interaction.pointerId !== event.pointerId) return;
+      pendingInteraction = null;
+      controls.enabled = true;
+      renderer.domElement.style.cursor = 'default';
+      if (renderer.domElement.hasPointerCapture(event.pointerId)) renderer.domElement.releasePointerCapture(event.pointerId);
+      if (interaction.dragged) {
+        suppressedDragClick = { x: event.clientX, y: event.clientY };
+        const hit = findElementHit(event.clientX, event.clientY);
+        setHoveredElement(hit?.item);
       }
     };
+
+    const handleClick = (event: MouseEvent) => {
+      if (suppressedDragClick) {
+        const dx = event.clientX - suppressedDragClick.x;
+        const dy = event.clientY - suppressedDragClick.y;
+        const isDragClick = dx * dx + dy * dy < 25;
+        suppressedDragClick = null;
+        if (isDragClick) return;
+      }
+      if (navigationPending) {
+        return;
+      }
+      const hit = findElementHit(event.clientX, event.clientY);
+      if (hit) enterChild(hit);
+    };
+
+    const handlePointerCancel = (event: PointerEvent) => {
+      if (pendingInteraction?.pointerId !== event.pointerId) return;
+      pendingInteraction = null;
+      controls.enabled = true;
+      renderer.domElement.style.cursor = 'default';
+    };
+
+    const handlePointerLeave = () => {
+      if (pendingInteraction) return;
+      setHoveredElement();
+      renderer.domElement.style.cursor = 'default';
+    };
+
     renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+    renderer.domElement.addEventListener('pointermove', handlePointerMove);
+    renderer.domElement.addEventListener('pointerup', handlePointerUp);
+    renderer.domElement.addEventListener('pointercancel', handlePointerCancel);
+    renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
+    renderer.domElement.addEventListener('click', handleClick);
     renderer.domElement.addEventListener('contextmenu', handleContextMenu);
 
     let frameId: number;
@@ -282,6 +436,11 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
+      renderer.domElement.removeEventListener('pointermove', handlePointerMove);
+      renderer.domElement.removeEventListener('pointerup', handlePointerUp);
+      renderer.domElement.removeEventListener('pointercancel', handlePointerCancel);
+      renderer.domElement.removeEventListener('pointerleave', handlePointerLeave);
+      renderer.domElement.removeEventListener('click', handleClick);
       renderer.domElement.removeEventListener('contextmenu', handleContextMenu);
       cancelAnimationFrame(frameId);
       cancelAnimationFrame(navigationFrame);
@@ -296,5 +455,5 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center.id, childKey]);
 
-  return <div ref={containerRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing legible-glass" />;
+  return <div ref={containerRef} className="absolute inset-0 w-full h-full cursor-default legible-glass" />;
 };
