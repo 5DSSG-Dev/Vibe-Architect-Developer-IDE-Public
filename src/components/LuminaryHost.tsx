@@ -20,6 +20,7 @@ import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from 
 import { recordExchange, textEvidence } from '../luminary/record';
 import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } from '../luminary/connectionMoments';
 import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
+import { SPEAK_IN_LABELS, SPEAK_IN_OPTIONS, bubbleText, clearBubble, readSpeakIn, saveSpeakIn, sayInBubble, type SpeakIn } from '../luminary/bubble';
 import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
 /**
@@ -106,6 +107,20 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const [pasteDraft, setPasteDraft] = useState('');
   const [taskMode, setTaskMode] = useState(false);
   const [allowedFiles, setAllowedFiles] = useState('');
+  // Where the Luminary speaks (P26): the panel, the bubble by the Presence, or both.
+  const [speakIn, setSpeakInState] = useState<SpeakIn>(readSpeakIn);
+  const [showConversation, setShowConversation] = useState(false);
+  const speakInRef = useRef(speakIn);
+  speakInRef.current = speakIn;
+  const say = (text: string) => {
+    if (speakInRef.current !== 'panel') sayInBubble(text);
+  };
+  const setSpeakIn = (next: SpeakIn) => {
+    setSpeakInState(next);
+    saveSpeakIn(next);
+    if (next === 'panel') clearBubble();
+  };
+  const transcriptVisible = speakIn !== 'bubble' || showConversation;
 
   useEffect(() => {
     if (isEngaged) {
@@ -161,6 +176,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
       const moment = momentOf(event);
       if (!moment) return;
       seenMoments.add(event.eventId);
+      say(momentLines([moment])[0].text);
       setEntries((current) => {
         const last = current[current.length - 1];
         if (last?.kind === 'moments') return [...current.slice(0, -1), { ...last, moments: [...last.moments, moment] }];
@@ -240,6 +256,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
         if (result.ok) {
           const { task } = result.value;
           push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel, forTask: true });
+          say(bubbleText(result.value.reply.content));
           push({ id: newId(), kind: 'task', task, level: askLevel });
           setActivity('resting');
           await keepReply(result.value.reply, result.value.lineage, { taskId: task.id });
@@ -257,6 +274,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
       setActivity('answering');
       if (result.ok) {
         push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel });
+        say(bubbleText(result.value.reply.content));
         setActivity('resting');
         await keepReply(result.value.reply, result.value.lineage);
       } else {
@@ -360,6 +378,19 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             {level !== 'plain' && (
               <button type="button" onClick={() => { saveLevel(null); setLevelState('plain'); }} title="Clear the saved level" className="text-slate-500 hover:text-slate-300">reset</button>
             )}
+            <div role="radiogroup" aria-label="Where the Luminary speaks" title="Where the Luminary speaks" className="flex rounded-md border border-slate-700 overflow-hidden">
+              {SPEAK_IN_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  role="radio"
+                  aria-checked={speakIn === option}
+                  onClick={() => setSpeakIn(option)}
+                  className={`px-1.5 py-0.5 ${speakIn === option ? 'bg-amber-500/25 text-amber-100' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  {SPEAK_IN_LABELS[option]}
+                </button>
+              ))}
+            </div>
             <div role="radiogroup" aria-label="Explanation level" className="flex rounded-md border border-slate-700 overflow-hidden">
               {EXPLANATION_LEVELS.map((option) => (
                 <button
@@ -399,7 +430,12 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             </form>
           )}
 
-          <div ref={transcriptRef} className="flex-1 min-h-[6rem] overflow-y-auto space-y-2 pr-1" aria-label="Conversation">
+          {speakIn === 'bubble' && (
+            <button type="button" onClick={() => setShowConversation((value) => !value)} className="self-start text-[9px] text-amber-300 hover:text-amber-100">
+              {showConversation ? 'Hide the conversation' : 'Show the conversation'}
+            </button>
+          )}
+          <div ref={transcriptRef} hidden={!transcriptVisible} className="flex-1 min-h-[6rem] overflow-y-auto space-y-2 pr-1" aria-label="Conversation">
             {entries.length === 0 && (
               <p className="text-[10px] text-slate-400 leading-relaxed">
                 Ask me to explain anything on screen, write code, or draft a note. I suggest and write; nothing joins the project unless you accept it.

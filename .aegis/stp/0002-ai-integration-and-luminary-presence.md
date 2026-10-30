@@ -2183,3 +2183,24 @@ Status: Presented
 Channel: cloud
 
 P26 → Presented. P27 stays Drafted until P26 is decided.
+
+### 2026-10-30T02:48:14.000Z | claude | status
+Chain-Prev: 3976af939142368ec0a6b3f66e37a804a8ef3201727dc3cd9a44f2920351461d
+Chain-Hash: 7bea704c2e6e71443d1ecbfbee32f5aa99722a559b764f254f19ba9b209fefa9
+Stage: Proposal
+Kind: status
+Item: P26
+Status: Approved
+Channel: cloud
+
+Approved P26 on the thread's decision card "Add a speech bubble beside the Luminary?", option chosen 2026-10-30T02:48:14Z: "Yes, build the bubble". P27 (voice) remains Drafted for a later decision. Recorded from the cloud thread by claude.
+
+### 2026-10-30T03:05:00.000Z | claude | note N48
+Chain-Prev: 7bea704c2e6e71443d1ecbfbee32f5aa99722a559b764f254f19ba9b209fefa9
+Chain-Hash: 8adc039f1f067cf5b3afd6dc8fc53d3a5c408abb469cfb8ee98a1ed689144e0e
+Stage: Execution
+Kind: note
+Evidence: P26; src/luminary/bubble.ts; src/luminary/bubble.test.ts; src/components/LuminaryBubble.tsx; src/components/LuminaryHost.tsx; src/App.tsx
+Channel: cloud
+
+P26 built as approved. (1) src/luminary/bubble.ts: bubbleText leaves out code blocks and keeps the first sentences up to 220 characters, adding '(More in the panel.)' when anything is left out, or 'I wrote some code. It is in the panel.' for a code-only reply. A small shared store holds the newest bubble line. Where the Luminary speaks (Panel, Bubble, Both; default Both) is kept per browser. (2) LuminaryBubble: a glass-and-gold bubble above the 3D Presence in the lower right (right 60px, bottom 560px, clear of the Full Form), shown only while the Luminary is engaged. It fades after 14 seconds (still when the OS asks for reduced motion), is dismissed on press, and is cleared at rest (D4.2). Hidden on narrow screens. (3) LuminaryHost: a reply that passed the gauge (asks and coding tasks) and each live connection moment are said in the bubble unless the setting is Panel. A 'Panel / Bubble / Both' choice sits next to Plain, Guided and Technical. With Bubble alone, the conversation is tucked away behind 'Show the conversation', and the input stays. Shortfalls are not put in the bubble; they stay in the panel. Tests: 5 new (short reply whole, long reply shortened with pointer, code left out, store, default). App 325/325, typecheck and build clean.

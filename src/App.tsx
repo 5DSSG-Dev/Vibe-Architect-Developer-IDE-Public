@@ -19,6 +19,7 @@ import { EnvironmentView } from './components/EnvironmentView';
 import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
+import { LuminaryBubble } from './components/LuminaryBubble';
 import { describeElement } from './luminary/knowledge';
 import {
   ApothecaryItem,
@@ -734,6 +735,7 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
+      <LuminaryBubble />
       <LuminaryHost mode={activeMode} selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {/* 3. Interactive Modals */}
