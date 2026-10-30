@@ -583,6 +583,8 @@ const SAVED_VIEWS_STORAGE_KEY = 'aegis-vibe-architect.savedViews.v1';
 // a saved/framed camera move.
 const SPATIAL_SNAP_GRID = 1.0;
 const VIEW_TWEEN_SECONDS = 0.65;
+// Leave room around an Element when its focused Environment replaces the CORE view.
+const CORE_ELEMENT_ENTRY_DISTANCE_RATIO = 0.42;
 const THREE_RUNTIME_MAIN_VIEW_P0_FLAG = 'aegis-vibe-architect.threeRuntimeMainViewP0';
 
 function loadSpatialEdits(): SpatialEdits {
@@ -2147,7 +2149,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       object.getWorldPosition(target);
       const direction = camera.position.clone().sub(controls.target).normalize();
       if (direction.lengthSq() === 0) direction.set(0, 0.35, 1).normalize();
-      const distance = Math.max(2.5, camera.position.distanceTo(controls.target) * 0.28);
+      const distance = Math.max(2.5, camera.position.distanceTo(controls.target) * CORE_ELEMENT_ENTRY_DISTANCE_RATIO);
       const cameraOffset: [number, number, number] = [direction.x * distance, direction.y * distance, direction.z * distance];
       startCameraTween({
         position: [target.x + cameraOffset[0], target.y + cameraOffset[1], target.z + cameraOffset[2]],
@@ -2764,19 +2766,24 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     raycaster.setFromCamera(new THREE.Vector2(x, y), cameraRef.current);
     const intersects = raycaster.intersectObjects(sceneRef.current.children, true);
 
-    if (intersects.length > 0) {
-      let currentObj: THREE.Object3D | null = intersects[0].object;
-      while (currentObj && !currentObj.userData?.socketId && currentObj.parent) {
-        currentObj = currentObj.parent;
-      }
+    if (intersects.length === 0 || !onRightClickElement) return;
 
-      if (currentObj && currentObj.userData?.socketId) {
-        const sId = currentObj.userData.socketId;
-        const foundSocket = socketsRef.current.find(s => s.id === sId);
-        if (foundSocket && onRightClickElement) {
-          onRightClickElement(foundSocket, foundSocket.connectedItem);
-        }
+    let currentObj: THREE.Object3D | null = intersects[0].object;
+    let satellite: ApothecaryItem | undefined;
+    let socketId: string | undefined;
+    while (currentObj) {
+      if (!satellite && currentObj.userData?.satelliteItem) {
+        satellite = currentObj.userData.satelliteItem as ApothecaryItem;
       }
+      if (!socketId && typeof currentObj.userData?.socketId === 'string') {
+        socketId = currentObj.userData.socketId as string;
+      }
+      currentObj = currentObj.parent;
+    }
+
+    const foundSocket = socketId ? socketsRef.current.find((socket) => socket.id === socketId) : undefined;
+    if (satellite || foundSocket?.connectedItem) {
+      onRightClickElement(foundSocket, satellite ?? foundSocket?.connectedItem);
     }
   };
 

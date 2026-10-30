@@ -89,3 +89,9 @@ Record conventions, ownership, risks, and useful reference information for this 
 - 2026-10-29 | codex | Continuous drill-down zoom handoff
 - Drill-down now passes the completed camera offset from the outgoing CORE/Environment view into the incoming Environment. The incoming center starts at a scale matched to the selected Orb/Satellite and eases to its normal focus scale, extending the zoom across scene replacement instead of resetting to the default camera. The experimental ThreeRuntime path now honors OS reduced-motion preference instead of forcing it on.
 - `npm run build` and `git diff --check` pass; the existing Vite large-chunk warning remains. Tests were not run.
+- 2026-10-29 | Codex | Direct Element information on right-click
+- Right-clicking a docked Orb or its attached Satellite in the CORE view, and the center or a child in an Environment, now opens the Element information inspector. The Element library already routed right-click to this inspector and continues to do so. The inspector now presents clearer resource labels and direct `Edit` and `View Code` actions; removed the hard-coded invariant audit result and inline code dump so the popup stays focused on information.
+- Production `npm run build` and `git diff --check` pass with the existing Vite chunk-size warning. Tests were not run.
+- 2026-10-29 | Codex | Wider Element Environment framing
+- Architect review: the continuous zoom works, but the focused Element is too close and the attached Elements should remain visible. CORE-to-Element entry now uses 42% of the starting camera distance (was 28%). Environment drill-down uses 78% (was 45%) with a 9.5-unit minimum to keep the 4.5-unit child ring in frame across deeper levels.
+- Production build and `git diff --check` pass; existing Vite chunk-size warning remains. Tests were not run. Change is local and uncommitted.
