@@ -2335,3 +2335,13 @@ Evidence: P27; src/luminary/voice.ts; src/luminary/voice.test.ts; src/components
 Channel: cloud
 
 P27 built as approved. A 'Voice' toggle sits beside Panel / Bubble / Both (off by default, kept per browser). With Voice on, each reply that passed the gauge (asks and coding tasks) is read aloud with the browser's own speech on the Architect's PC. Code is never read; it is pointed to the panel. Markdown marks are dropped, and a very long reply stops at a sentence and points to the panel. The Architect picks the voice (from the browser's list) and the speed (Slower / Normal / Faster), and 'Stop speaking' stops it. Hold-to-talk: a microphone button beside Send (only with Voice on and where the browser can listen). The microphone runs only while the button is held, by pointer or by Space/Enter. The words appear in the question box to check before sending, and a plain note says the browser sends the sound to its speech service to turn it into text. At rest the Luminary neither speaks nor listens (D4.2): disengaging stops both. Everything said either way stays as text in the transcript and record. Errors (microphone refused, nothing heard, no network) are shown in plain words. Tests: 5 new. App 334/334, gateway 151/151, typecheck and build clean.
+
+### 2026-10-30T12:40:00.000Z | claude | note N61
+Chain-Prev: 164ce9b6726f6aa4f2476ba5f43660ecc939403ebb3bd100e8e171af278bf6bc
+Chain-Hash: fc7a7f8055f053e0e203fe89179ab2fef90558361ef9150c87cf869238259138
+Stage: Execution
+Kind: note
+Evidence: N60; DataQuad t3130; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N60 check on Tracey's PC (rehearsal) confirmed that replies are read aloud (speaking about 3 s after sending), that Stop speaking and pausing the Luminary both stop speech at once, and that the mic button shows. Two fixes: (1) The voice list showed only 'Browser default', because the browser's voices load after the page and the change event can come before the listener. The list is now read when the listener is set and again when Voice is switched on. (2) The Voice button squeezed the status label onto two or three lines; the label now stays on one line, and the toggles wrap onto a second row when space runs short. App 334/334, gateway 151/151, build clean.

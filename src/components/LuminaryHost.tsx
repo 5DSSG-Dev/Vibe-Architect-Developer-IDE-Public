@@ -141,13 +141,16 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     setVoiceState(merged);
     saveVoiceSettings(merged);
     if (!merged.on) stopSpeaking();
+    else setVoices(voicesAvailable());
   };
   const speakReply = (content: string) => {
     if (voiceRef.current.on) speak(speakableText(content), voiceRef.current);
   };
   useEffect(() => {
     if (!canSpeak()) return;
+    // The browser loads its voices a moment after the page, so read them again when they arrive.
     const refresh = () => setVoices(voicesAvailable());
+    refresh();
     window.speechSynthesis.addEventListener('voiceschanged', refresh);
     return () => window.speechSynthesis.removeEventListener('voiceschanged', refresh);
   }, []);
@@ -470,9 +473,9 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             </button>
           </header>
 
-          <div className="flex items-center justify-between gap-2 text-[9px]">
-            <span role="status" aria-live="polite" className={activity === 'unavailable' ? 'text-rose-300' : 'text-slate-300'}>{ACTIVITY_LABEL[activity]} · {mode}</span>
-            <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[9px]">
+            <span role="status" aria-live="polite" className={`shrink-0 whitespace-nowrap ${activity === 'unavailable' ? 'text-rose-300' : 'text-slate-300'}`}>{ACTIVITY_LABEL[activity]} · {mode}</span>
+            <div className="flex flex-wrap items-center justify-end gap-1">
             {level !== 'plain' && (
               <button type="button" onClick={() => { saveLevel(null); setLevelState('plain'); }} title="Clear the saved level" className="text-slate-500 hover:text-slate-300">reset</button>
             )}
