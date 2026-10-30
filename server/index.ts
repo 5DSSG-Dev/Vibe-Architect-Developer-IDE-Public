@@ -7,6 +7,7 @@ import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
 import { createLocalIdsWriter } from './luminary-pipeline/ids-local.js';
+import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
@@ -23,6 +24,9 @@ const knowledge = meta ? loadLuminaryKnowledge() : undefined;
 const metaAskModel = meta && knowledge
   ? createMetaAskModel({ ...meta, systemPrompt: systemPromptWithKnowledge(readFileSync(new URL('../docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md', import.meta.url), 'utf8'), knowledge) })
   : undefined;
+// The review areas (STP-0005 P3): private, in the Architect's own profile unless set otherwise.
+const record = await ReviewRecord.open({ dir: config.governanceRecordDir, backupDir: config.governanceBackupDir });
+if (record.closed) console.warn(`Governance is closed until the Architect sees the review record check: ${record.problems.map((p) => p.detail).join(' ')}`);
 const evidenceStore = config.redisUrl
   ? await RedisEvidenceStore.connect(config.redisUrl)
   : new InMemoryEvidenceStore();
@@ -45,6 +49,7 @@ try {
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
     // The IDS embedded model runs on the gauge's local runtime and model (STP-0005 P2).
+    record,
     gauge: config.luminaryGauge
       ? { ...createLocalGauge(config.luminaryGauge), ids: createLocalIdsWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
       : undefined,

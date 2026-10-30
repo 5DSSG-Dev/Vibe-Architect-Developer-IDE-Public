@@ -73,9 +73,13 @@ export interface PipelineShortfall {
   readings?: VirtueReadings | null;
 }
 
+/**
+ * `passes` holds every structurally valid candidate in full, in order, for the review record
+ * (STP-0005 P3). It is never sent to the Architect.
+ */
 export type PipelineResult =
-  | { ok: true; reply: GovernedReply; lineage: LineageEntry[] }
-  | { ok: false; shortfall: PipelineShortfall; lineage: LineageEntry[] };
+  | { ok: true; reply: GovernedReply; lineage: LineageEntry[]; passes: string[] }
+  | { ok: false; shortfall: PipelineShortfall; lineage: LineageEntry[]; passes: string[] };
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
@@ -100,15 +104,17 @@ export async function runReplyPipeline(
   const threshold = options.threshold ?? options.gauge.thresholds ?? IRG_THRESHOLD;
   const maxIdsPasses = options.maxIdsPasses ?? DEFAULT_MAX_IDS_PASSES;
   const lineage: LineageEntry[] = [];
+  const passes: string[] = [];
 
   for (let pass = 1; ; pass += 1) {
     const governed = governReply(candidate, options.governance);
     if (!governed.ok) {
       lineage.push({ pass, stage: 'structural', ok: false, code: governed.shortfall.code });
-      return { ok: false, shortfall: governed.shortfall, lineage };
+      return { ok: false, shortfall: governed.shortfall, lineage, passes };
     }
     lineage.push({ pass, stage: 'structural', ok: true });
     const reply = governed.reply;
+    passes.push(reply.content);
 
     const pimFindings = screenPim(reply.content);
     lineage.push({ pass, stage: 'pim', findings: pimFindings });
@@ -122,6 +128,7 @@ export async function runReplyPipeline(
           ok: false,
           shortfall: { code: 'gauge_error', message: errorMessage(error, 'The gauge could not read the reply.'), modelId: reply.modelId },
           lineage,
+          passes,
         };
       }
       lineage.push({ pass, stage: 'irg', coherent: irg.coherent, readings: irg.readings, belowThreshold: irg.belowThreshold, threshold: irg.threshold });
@@ -130,7 +137,7 @@ export async function runReplyPipeline(
       lineage.push({ pass, stage: 'rbc', route });
       if (route === 'prism') {
         lineage.push({ pass, stage: 'prism' });
-        return { ok: true, reply, lineage };
+        return { ok: true, reply, lineage, passes };
       }
     }
 
@@ -138,7 +145,7 @@ export async function runReplyPipeline(
     const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
     if (!ids.ok) {
       lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
-      return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage };
+      return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
     }
     const observation = ids.observation;
     lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
@@ -154,6 +161,7 @@ export async function runReplyPipeline(
           readings: irg ? irg.readings : null,
         },
         lineage,
+        passes,
       };
     }
 
@@ -164,6 +172,7 @@ export async function runReplyPipeline(
         ok: false,
         shortfall: { code: 'upstream_error', message: errorMessage(error, 'The model path failed while re-forming the reply.'), modelId: reply.modelId },
         lineage,
+        passes,
       };
     }
   }

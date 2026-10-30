@@ -26,3 +26,14 @@ test('a withheld Suggest shows its note, and no wording says "held back"', () =>
     assert.ok(!describeShortfall({ code, message: 'm' }).includes('held back'), code);
   }
 });
+
+test('anchors go into the evidence record as detail and come back as the newest pointer per area', async () => {
+  const { anchorDetail, latestAnchors } = await import('./client');
+  const h = (c: string) => c.repeat(64);
+  const first = anchorDetail({ architectEntryId: 'a', state: 'sent', loop: 0, anchors: [{ area: 'architect', seq: 1, hash: h('a') }, { area: 'luminary', seq: 1, hash: h('b') }] });
+  const second = anchorDetail({ architectEntryId: 'b', state: 'returned', loop: 0, anchors: [{ area: 'architect', seq: 2, hash: h('c') }] });
+  assert.deepEqual(latestAnchors([first, second, { unrelated: true }]), [
+    { area: 'architect', seq: 2, hash: h('c') },
+    { area: 'luminary', seq: 1, hash: h('b') },
+  ]);
+});

@@ -36,6 +36,57 @@ export interface Shortfall {
   observation?: IdsResponse;
 }
 
+/** A pointer to the newest entry in one review area, kept in the evidence archive (STP-0005 P3). */
+export interface Anchor {
+  area: 'architect' | 'luminary';
+  seq: number;
+  hash: string;
+}
+
+/** Where the gateway wrote this turn in the review record. */
+export interface TurnRecord {
+  architectEntryId: string;
+  state: 'sent' | 'returned' | 'saved_for_review' | 'gauge_error' | 'ids_error';
+  loop: number;
+  anchors: Anchor[];
+}
+
+export interface ReviewItem {
+  seq: number;
+  at: string;
+  entry:
+    | { kind: 'architect_message'; id: string; message: string; loop: number; state: string; observation?: IdsResponse }
+    | { kind: 'luminary_reply'; id: string; passes: string[]; state: string; shortfallCode?: string };
+}
+
+export interface ReviewStatus {
+  closed: boolean;
+  problems: Array<{ area: string; code: string; detail: string }>;
+  items: { architect: ReviewItem[]; luminary: ReviewItem[] };
+}
+
+/** The anchors as evidence-record detail, so the IDE holds the second pointer to each area's head. */
+export function anchorDetail(record: TurnRecord | undefined): Record<string, string> {
+  const detail: Record<string, string> = {};
+  for (const anchor of record?.anchors ?? []) detail[anchor.area === 'architect' ? 'anchorArchitect' : 'anchorLuminary'] = `${anchor.seq}:${anchor.hash}`;
+  return detail;
+}
+
+/** The newest anchor for each area found in the evidence record's Luminary exchanges. */
+export function latestAnchors(details: ReadonlyArray<Record<string, unknown>>): Anchor[] {
+  const latest = new Map<Anchor['area'], Anchor>();
+  for (const detail of details) {
+    for (const [key, area] of [['anchorArchitect', 'architect'], ['anchorLuminary', 'luminary']] as const) {
+      const raw = detail[key];
+      const match = typeof raw === 'string' ? /^(\d+):([0-9a-f]{64})$/.exec(raw) : null;
+      if (!match) continue;
+      const seq = Number(match[1]);
+      if (seq > (latest.get(area)?.seq ?? 0)) latest.set(area, { area, seq, hash: match[2] });
+    }
+  }
+  return [...latest.values()];
+}
+
 const FLAGGED_BY: Record<NonNullable<Shortfall['flaggedBy']>, string> = {
   structural: 'the structural check',
   pim: 'the pattern screen (PIM)',
@@ -97,7 +148,7 @@ export function describeSpend(spend: NonNullable<LuminaryStatus['spend']>): { te
 /** Every call resolves to one of these; nothing throws past the client except an abort. */
 export type CallResult<T> =
   | { ok: true; value: T }
-  | { ok: false; kind: 'key_required' | 'not_configured' | 'unreachable' | 'shortfall'; shortfall: Shortfall; reply?: GovernedReply; lineage?: LineageEntry[] };
+  | { ok: false; kind: 'key_required' | 'not_configured' | 'unreachable' | 'shortfall'; shortfall: Shortfall; reply?: GovernedReply; lineage?: LineageEntry[]; record?: TurnRecord };
 
 export function readDemoKey(): string {
   try {
@@ -158,15 +209,19 @@ async function call<T>(path: string, key: string, init: { method?: string; body?
   }
   if (!response.ok) {
     const shortfall = (body.shortfall as Shortfall | undefined) ?? { code: String(body.error ?? response.status), message: `The gateway answered ${response.status}.` };
-    return { ok: false, kind: 'shortfall', shortfall, reply: body.reply as GovernedReply | undefined, lineage: body.lineage as LineageEntry[] | undefined };
+    return { ok: false, kind: 'shortfall', shortfall, reply: body.reply as GovernedReply | undefined, lineage: body.lineage as LineageEntry[] | undefined, record: body.record as TurnRecord | undefined };
   }
   return { ok: true, value: body as T };
 }
 
 export const luminaryApi = {
   status: (key: string) => call<LuminaryStatus>('/api/luminary/status', key),
-  ask: (key: string, prompt: string, signal?: AbortSignal) =>
-    call<{ reply: GovernedReply; lineage?: LineageEntry[] }>('/api/luminary/ask', key, { method: 'POST', body: { prompt }, signal }),
+  ask: (key: string, prompt: string, signal?: AbortSignal, link: { revisionOf?: string; resubmit?: boolean } = {}) =>
+    call<{ reply: GovernedReply; lineage?: LineageEntry[]; record?: TurnRecord }>('/api/luminary/ask', key, { method: 'POST', body: { prompt, ...link }, signal }),
+  review: (key: string) => call<ReviewStatus>('/api/luminary/review', key),
+  checkAnchors: (key: string, anchors: Anchor[]) =>
+    call<{ ok: boolean; closed: boolean }>('/api/luminary/review/anchors', key, { method: 'POST', body: { anchors } }),
+  acknowledge: (key: string) => call<{ closed: boolean }>('/api/luminary/review/acknowledge', key, { method: 'POST', body: {} }),
   assign: (key: string, task: { goal: string; allowedFiles: string[]; level: ExplanationLevel; mode: string; context: { label: string; text: string }[] }, signal?: AbortSignal) =>
     call<{ reply: GovernedReply; lineage?: LineageEntry[]; task: CodingTask }>('/api/luminary/tasks', key, { method: 'POST', body: task, signal }),
   accept: (key: string, id: string) => call<{ task: CodingTask }>(`/api/luminary/tasks/${encodeURIComponent(id)}/accept`, key, { method: 'POST', body: {} }),
@@ -181,6 +236,9 @@ export function describeShortfall(shortfall: Shortfall): string {
     case 'returned_to_sender': return describeIdsResponse(shortfall);
     case 'gauge_error': return 'Nothing was sent, because the gauge that checks every message is not running.';
     case 'ids_error': return 'The message was not sent, and IDS could not respond.';
+    case 'governance_closed': return 'Nothing was sent. Governance is closed until you have seen the review record check above.';
+    case 'record_error': return shortfall.message;
+    case 'saved_for_review': return 'That message is saved for review. Resubmitting it starts a new entry with a fresh count.';
     case 'incoherent_after_ids': return 'The reply was returned through IDS twice and still did not read as coherent, so it is not shown.';
     case 'empty_reply': return 'The model sent an empty reply, so nothing is shown.';
     case 'malformed_reply': return 'The model sent a reply the IDE could not read, so nothing is shown.';

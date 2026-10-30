@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore }
 import { ClipboardPaste, Code2, KeyRound, Mic, Minimize2, Paperclip, Send, Square, Volume2, X } from 'lucide-react';
 import { composePrompt, EXPLANATION_LABELS, EXPLANATION_LEVELS, type ExplanationLevel } from '../luminary/blocks';
 import {
+  anchorDetail,
   describeShortfall,
   describeSpend,
+  latestAnchors,
   luminaryApi,
   readDemoKey,
   readLevel,
@@ -14,6 +16,8 @@ import {
   type GovernedReply,
   type LineageEntry,
   type LuminaryStatus,
+  type ReviewStatus,
+  type TurnRecord,
 } from '../luminary/client';
 import { ReplyView, TaskCard } from './LuminaryCards';
 import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
@@ -23,7 +27,7 @@ import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } fro
 import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
 import { VOICE_RATES, canListen, canSpeak, listen, pickVoice, readVoiceSettings, saveVoiceSettings, speak, speakableText, stopSpeaking, voicesAvailable, type Recognition, type VoiceSettings } from '../luminary/voice';
 import { SPEAK_IN_LABELS, SPEAK_IN_OPTIONS, bubbleText, clearBubble, readSpeakIn, saveSpeakIn, sayInBubble, type SpeakIn } from '../luminary/bubble';
-import type { LuminaryExchange, LuminaryExchangeEvent } from '../engine/evidenceArchive';
+import { readEvidenceArchive, type LuminaryExchange, type LuminaryExchangeEvent } from '../engine/evidenceArchive';
 
 /**
  * App-level presence host for the Vibe Luminary, mounted outside the mode views so it is present
@@ -107,6 +111,10 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const [activity, setActivity] = useState<Activity>('resting');
   const [level, setLevelState] = useState<ExplanationLevel>(readLevel);
   const [entries, setEntries] = useState<Entry[]>([]);
+  // Governance in both directions (STP-0005 P3): the returned message the next one revises, and the review record.
+  const [revising, setRevising] = useState<{ id: string; loop: number } | null>(null);
+  const [review, setReview] = useState<ReviewStatus | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const [chips, setChips] = useState<ContextChip[]>([]);
   const [message, setMessage] = useState('');
   const [pasting, setPasting] = useState(false);
@@ -211,6 +219,29 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
 
   const push = (entry: Entry) => setEntries((current) => [...current, entry]);
 
+  // The second anchor (F4): the evidence record holds the newest pointer to each review area,
+  // and the gateway checks its logs against them. Then the review record is read.
+  const refreshReview = async () => {
+    const next = await luminaryApi.review(demoKey);
+    setReview(next.ok ? next.value : null);
+  };
+  const checkRecord = async () => {
+    try {
+      const records = await readEvidenceArchive();
+      const anchors = latestAnchors(records.filter((record) => record.kind === 'LUMINARY_EXCHANGE').map((record) => (record.payload as LuminaryExchange).detail));
+      if (anchors.length > 0) await luminaryApi.checkAnchors(demoKey, anchors);
+    } catch {
+      // An unreadable evidence record is reported where it is written; the gateway's own check still runs.
+    }
+    await refreshReview();
+  };
+  const afterTurn = (record: TurnRecord | undefined, code?: string) => {
+    if (code === 'governance_closed') void refreshReview();
+    if (!record) return;
+    setRevising(record.state === 'returned' ? { id: record.architectEntryId, loop: record.loop } : null);
+    if (record.state === 'saved_for_review') void refreshReview();
+  };
+
   // Every request, result, accept and decline goes into the IDE's evidence record (P19). If a write
   // fails, the conversation says so rather than implying a record exists.
   const keep = async (event: LuminaryExchangeEvent, detail: LuminaryExchange['detail']) => {
@@ -281,6 +312,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
         setStatus(result.value);
         setNeedsKey(false);
         setActivity('resting');
+        void checkRecord();
       } else {
         setStatus(null);
         setNeedsKey(result.kind === 'key_required');
@@ -371,17 +403,19 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
         return;
       }
       const prompt = composePrompt({ mode, level: askLevel, context: sentChips.map(({ label, text: body }) => ({ label, text: body })), message: trimmed });
-      const result = await luminaryApi.ask(demoKey, prompt, controller.signal);
+      const result = await luminaryApi.ask(demoKey, prompt, controller.signal, revising ? { revisionOf: revising.id } : {});
       setActivity('answering');
       if (result.ok) {
+        afterTurn(result.value.record);
         push({ id: newId(), kind: 'reply', reply: result.value.reply, lineage: result.value.lineage, level: askLevel });
         say(bubbleText(result.value.reply.content));
         speakReply(result.value.reply.content);
         setActivity('resting');
-        await keepReply(result.value.reply, result.value.lineage);
+        await keepReply(result.value.reply, result.value.lineage, anchorDetail(result.value.record));
       } else {
+        afterTurn(result.record, result.shortfall.code);
         handleFailure(result);
-        await keepFailure(result);
+        await keepFailure(result, anchorDetail(result.record));
       }
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
@@ -522,6 +556,35 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             </div>
             </div>
           </div>
+
+          {review?.closed && (
+            <div role="alert" className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-2 space-y-1 text-[10px] text-rose-200">
+              <p>Governance is closed. The review record check found:</p>
+              <ul className="list-disc pl-4">
+                {review.problems.map((problem, index) => <li key={index}>{problem.detail}</li>)}
+              </ul>
+              <button type="button" onClick={() => { void luminaryApi.acknowledge(demoKey).then(refreshReview); }} className="px-2 py-0.5 rounded-md border border-rose-400/50 text-rose-100">I have seen this</button>
+            </div>
+          )}
+
+          {review && (review.items.architect.length > 0 || review.items.luminary.length > 0) && (
+            <div className="text-[9px]">
+              <button type="button" aria-expanded={reviewOpen} onClick={() => setReviewOpen((open) => !open)} className="text-amber-300 hover:text-amber-100">
+                Review ({review.items.architect.length + review.items.luminary.length} saved)
+              </button>
+              {reviewOpen && (
+                <ul aria-label="Saved for review" className="mt-1 max-h-40 overflow-y-auto space-y-1">
+                  {[...review.items.architect, ...review.items.luminary].map((item) => (
+                    <li key={item.entry.id} className="rounded-md border border-slate-700 bg-slate-900/50 p-1.5 text-slate-300 whitespace-pre-wrap">
+                      {item.entry.kind === 'architect_message'
+                        ? `Your message, saved after two revision loops (${item.at.slice(0, 16).replace('T', ' ')}):\n${item.entry.message}`
+                        : `A Luminary reply, saved after two IDS passes (${item.at.slice(0, 16).replace('T', ' ')}):\n${item.entry.passes[item.entry.passes.length - 1] ?? ''}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
 
           {needsKey && (
             <form
@@ -686,6 +749,13 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               aria-label="Files the Luminary may change"
               className="w-full bg-slate-900/90 border border-cyan-700/60 rounded-md px-2 py-1 text-[10px] text-slate-200"
             />
+          )}
+
+          {revising && !taskMode && (
+            <p className="text-[9px] text-amber-200/90">
+              Your next message revises the one returned through IDS (revision {revising.loop + 1} of 2).{' '}
+              <button type="button" onClick={() => setRevising(null)} className="underline hover:text-amber-100">Start fresh instead</button>
+            </p>
           )}
 
           <form

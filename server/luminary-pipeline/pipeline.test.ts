@@ -164,7 +164,8 @@ test('the IDS embedded model writes the response; with none configured, or an un
     assert.equal(failed.ok, false);
     if (failed.ok) return;
     assert.equal(failed.shortfall.code, 'ids_error');
-    assert.ok(!JSON.stringify(failed).includes('"first"'), 'none of the reply text is returned');
+    assert.ok(!JSON.stringify({ shortfall: failed.shortfall, lineage: failed.lineage }).includes('"first"'), 'none of the reply text is returned');
+    assert.deepEqual(failed.passes, ['first'], 'the reply is kept in full for the review record');
     assert.equal(failed.lineage.at(-1)?.stage, 'ids_error');
   }
 });
