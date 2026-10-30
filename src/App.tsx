@@ -638,6 +638,7 @@ export function App() {
             center={currentEnvironment}
             children={getElementChildren(currentEnvironment, apothecaryCatalog)}
             onEnterChild={handleEnterElement}
+            onInspectElement={(item) => handleRightClickElement(undefined, item)}
             entryView={environmentEntryView}
           />
 

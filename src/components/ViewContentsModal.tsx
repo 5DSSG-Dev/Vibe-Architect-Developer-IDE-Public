@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ShieldCheck, Cpu, HardDrive, Terminal, Edit3, Code, CheckCircle2, Zap, Layers } from 'lucide-react';
+import { X, Cpu, HardDrive, Edit3, Code, Zap, Layers } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, ensureElementCodeFrame } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
 
@@ -40,7 +40,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
   const codeFrame = targetItem.codeFrame;
 
   return (
-    <Dialog label="Element Manifest" onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 font-mono select-none">
+    <Dialog label="Element information" onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 font-mono select-none">
       <div className="absolute inset-0 bg-black/80 animate-backdrop-fade" onClick={onClose} />
       <div className="relative w-full max-w-2xl panel-glass rounded-3xl border border-cyan-500/40 shadow-[0_0_50px_rgba(0,243,255,0.2)] overflow-hidden flex flex-col max-h-[85vh] animate-modal-zoom">
         {/* Header */}
@@ -58,7 +58,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
                   {category}
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400">MANIFEST SPECS & INVARIANT AUDIT</p>
+              <p className="text-[10px] text-slate-400">Element information</p>
             </div>
           </div>
 
@@ -87,7 +87,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
             <div className="bg-slate-950/70 p-3 rounded-xl border border-cyan-500/20 space-y-1">
               <div className="flex items-center space-x-1.5 text-slate-400 text-[10px]">
                 <HardDrive className="w-3.5 h-3.5 text-cyan-400" />
-                <span>MEMORY ALLOCATION</span>
+                <span>MEMORY NEEDED</span>
               </div>
               <p className="text-sm font-bold text-cyan-300 font-orbitron">{memoryReq} MB</p>
             </div>
@@ -95,7 +95,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
             <div className="bg-slate-950/70 p-3 rounded-xl border border-purple-500/20 space-y-1">
               <div className="flex items-center space-x-1.5 text-slate-400 text-[10px]">
                 <Cpu className="w-3.5 h-3.5 text-purple-400" />
-                <span>CPU THREAD BUDGET</span>
+                <span>PROCESSING THREADS</span>
               </div>
               <p className="text-sm font-bold text-purple-300 font-orbitron">{threadsReq} Cores</p>
             </div>
@@ -103,7 +103,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
 
           {/* Capabilities */}
           <div className="space-y-1.5">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Capabilities Schema</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">What this Element can do</span>
             <div className="flex flex-wrap gap-1.5">
               {capabilities.map((cap) => (
                 <span
@@ -117,53 +117,10 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
             </div>
           </div>
 
-          {/* Contained Functional Code Frame */}
-          <div className="bg-slate-950/80 p-3 rounded-xl border border-cyan-500/30 space-y-2">
-            <div className="flex items-center justify-between border-b border-cyan-500/20 pb-1.5">
-              <span className="text-[10px] font-bold text-cyan-300 flex items-center space-x-1.5">
-                <Code className="w-3.5 h-3.5 text-cyan-400" />
-                <span>CONTAINED FUNCTIONAL CODE FRAME</span>
-              </span>
-              <span className="text-[9px] text-slate-400 font-mono">
-                {codeFrame.language} • {codeFrame.fileName}
-              </span>
-            </div>
-
-            <pre className="max-h-32 overflow-auto bg-black/50 p-2 rounded-lg border border-slate-800 text-[10px] leading-4 text-cyan-200/90">
-              {codeFrame.source}
-            </pre>
-          </div>
-
-          {/* Negative-Space Invariant Audit */}
-          <div className="bg-slate-950/80 p-3 rounded-xl border border-emerald-500/30 space-y-2">
-            <div className="flex items-center justify-between border-b border-emerald-500/20 pb-1.5">
-              <span className="text-[10px] font-bold text-emerald-300 flex items-center space-x-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>NEGATIVE-SPACE INVARIANT VERIFICATION</span>
-              </span>
-              <span className="text-[9px] text-emerald-400 font-bold">100% PASSED</span>
-            </div>
-
-            <div className="space-y-1 text-[10px]">
-              <div className="flex justify-between text-slate-300">
-                <span>never_serializes_witness</span>
-                <span className="text-emerald-400 font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> VERIFIED
-                </span>
-              </div>
-              <div className="flex justify-between text-slate-300">
-                <span>never_persists_prompts</span>
-                <span className="text-emerald-400 font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> VERIFIED
-                </span>
-              </div>
-              <div className="flex justify-between text-slate-300">
-                <span>no_verdict_over_inner_life</span>
-                <span className="text-emerald-400 font-bold flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> VERIFIED
-                </span>
-              </div>
-            </div>
+          <div className="bg-slate-950/70 p-3 rounded-xl border border-cyan-500/20 space-y-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Code details</span>
+            <p className="text-[11px] text-slate-200">{codeFrame.fileName}</p>
+            <p className="text-[10px] text-slate-400">{codeFrame.language} · Entry point: {codeFrame.entrypoint}</p>
           </div>
         </div>
 
@@ -182,7 +139,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
               className="btn-cyber-emerald px-4 py-2 rounded-xl text-xs font-orbitron font-bold flex items-center space-x-1.5 shadow-md"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit Properties</span>
+              <span>Edit</span>
             </button>
 
             <button
@@ -190,7 +147,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
               className="btn-cyber px-4 py-2 rounded-xl text-xs font-orbitron font-bold flex items-center space-x-1.5 shadow-md"
             >
               <Code className="w-3.5 h-3.5 text-cyan-300" />
-              <span>Edit Code</span>
+              <span>View Code</span>
             </button>
           </div>
         </div>
