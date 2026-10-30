@@ -2345,3 +2345,13 @@ Evidence: N60; DataQuad t3130; src/components/LuminaryHost.tsx
 Channel: cloud
 
 The N60 check on Tracey's PC (rehearsal) confirmed that replies are read aloud (speaking about 3 s after sending), that Stop speaking and pausing the Luminary both stop speech at once, and that the mic button shows. Two fixes: (1) The voice list showed only 'Browser default', because the browser's voices load after the page and the change event can come before the listener. The list is now read when the listener is set and again when Voice is switched on. (2) The Voice button squeezed the status label onto two or three lines; the label now stays on one line, and the toggles wrap onto a second row when space runs short. App 334/334, gateway 151/151, build clean.
+
+### 2026-10-30T12:40:30.000Z | claude | note N62
+Chain-Prev: fc7a7f8055f053e0e203fe89179ab2fef90558361ef9150c87cf869238259138
+Chain-Hash: 5c9ec5d379a1891ea2e6daf19800ce9d89c209e56066f443f13e42d269f1b8c1
+Stage: Execution
+Kind: note
+Evidence: P27; N61; DataQuad t3135; server/app.ts; server/app.test.ts; src/luminary/voice.ts
+Channel: cloud
+
+Hold-to-talk failed on Tracey's PC in Chrome and Edge with 'not-allowed', although the site permission, Windows microphone privacy, online speech recognition and the headset all allowed it. Root cause, found by the RC session: the gateway's Permissions-Policy header said microphone=(), which predates Voice and forbids every page the microphone, whatever the settings. It is now microphone=(self): the IDE's own page may use it, and nothing else may; camera, geolocation, payment and USB stay off. The header test now also checks microphone=(self). Along the way, the microphone error texts were split so each refusal names its own cause (9db3dd9). Server change: the gateways need a restart. Gateway 151/151.
