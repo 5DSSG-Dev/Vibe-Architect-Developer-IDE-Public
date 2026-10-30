@@ -98,7 +98,6 @@ interface ThreeCanvasProps {
   onSelectSatellite?: (satellite: ApothecaryItem) => void;
   onAddPortal?: () => void;
   selectedSocketId?: string;
-  activeMode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY';
   // New props for dynamic lighting control
   ambientIntensity?: number;
   directionalIntensity?: number;
@@ -1240,7 +1239,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   onSelectSatellite,
   onAddPortal,
   selectedSocketId,
-  activeMode,
   ambientIntensity = 0.5,
   directionalIntensity = 1.0,
   directionalAngle = 0.9

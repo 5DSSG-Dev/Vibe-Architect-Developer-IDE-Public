@@ -2,7 +2,6 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useRetractWhenDone } from './useRetractWhenDone';
 import { Search, Sparkles, ShieldCheck, ChevronRight, ChevronLeft, ArrowRight, Activity, CheckCircle2, Terminal } from 'lucide-react';
 import { ApothecaryItem, CoreManifest } from '../engine/relationEngine';
-import { SimulationTelemetry } from '../engine/simulationEngine';
 import { ChevronDown, ChevronUp, Gauge, Code, Sun, Moon } from 'lucide-react';
 import { WorkRequestPanel } from './WorkRequestPanel';
 
@@ -11,9 +10,7 @@ interface RightPanelProps {
   onSelectAttachItem: (item: ApothecaryItem) => void;
   selectedItem?: ApothecaryItem;
   isFooterExpanded?: boolean;
-  telemetry?: SimulationTelemetry;
   coreManifest?: CoreManifest;
-  onSetPressure?: (p: number) => void;
   // New props for Aether control
   ambientIntensity?: number;
   directionalIntensity?: number;
@@ -26,9 +23,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
   onSelectAttachItem,
   selectedItem,
   isFooterExpanded = true,
-  telemetry,
   coreManifest,
-  onSetPressure,
   ambientIntensity = 0.5,
   directionalIntensity = 1.0,
   directionalAngle = 0.9,
@@ -45,7 +40,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
   const [searchedFor, setSearchedFor] = useState<string | null>(null);
   const [recommendations, setRecommendations] = useState<ApothecaryItem[]>([]);
 
-  // Accordion States for Telemetry
+  // Accordion states for workspace information
   const [showUmbilical, setShowUmbilical] = useState(false);
   const [showCoreSummary, setShowCoreSummary] = useState(false);
   const [showContract, setShowContract] = useState(false);
@@ -341,10 +336,10 @@ export const RightPanel: React.FC<RightPanelProps> = ({
               ))}
             </div>
 
-            {/* TELEMETRY ACCORDIONS */}
+            {/* Workspace status */}
             <div className="space-y-2 pt-4 border-t border-cyan-500/20 mt-4">
               <h3 className="text-[10px] font-mono text-cyan-400 font-bold tracking-wider uppercase mb-2 flex justify-between items-center">
-                <span>Telemetry Deck</span>
+                <span>Workspace status</span>
               </h3>
               
               {/* Umbilical Status Accordion */}
@@ -355,7 +350,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
                 >
                   <span className="font-orbitron text-[10px] font-bold text-slate-100 uppercase flex items-center space-x-1.5">
                     <Activity className="w-3 h-3 text-cyan-400" />
-                    <span>Umbilical Status ({connectedCount}/{totalSockets})</span>
+                    <span>CORE connections ({connectedCount}/{totalSockets})</span>
                   </span>
                   {showUmbilical ? <ChevronUp className="w-3.5 h-3.5 text-cyan-400" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-400" />}
                 </button>
@@ -400,31 +395,10 @@ export const RightPanel: React.FC<RightPanelProps> = ({
                   <div className="p-2.5 border-t border-purple-500/20 space-y-2 text-[10px]">
                     <div className="grid grid-cols-2 gap-2">
                       <div className="bg-slate-900/90 p-1.5 rounded border border-slate-800 flex flex-col">
-                        <span className="text-slate-400">Total Mem:</span>
+                        <span className="text-slate-400">Memory budget:</span>
                         <span className="text-purple-300 font-bold">{totalMemory} MB</span>
                       </div>
-                      <div className="bg-slate-900/90 p-1.5 rounded border border-slate-800 flex flex-col">
-                        <span className="text-slate-400">CPU Load:</span>
-                        <span className="text-amber-300 font-bold">Medium</span>
-                      </div>
                     </div>
-                    {telemetry && onSetPressure && (
-                      <div className="flex items-center space-x-2 text-[10px] text-slate-400 mt-2">
-                        <span>Pressure:</span>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.05"
-                          value={telemetry.environmentalPressure}
-                          onChange={(e) => onSetPressure(parseFloat(e.target.value))}
-                          className="flex-1 h-1 bg-slate-700 rounded appearance-none accent-cyan-400 cursor-pointer"
-                        />
-                        <span className="text-amber-300 font-bold w-6 text-right">
-                          {(telemetry.environmentalPressure * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>

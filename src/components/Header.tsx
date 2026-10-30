@@ -1,17 +1,13 @@
 import React from 'react';
-import { Cpu, HardDrive, Zap, Sliders, Box, Code, PlayCircle, ShieldCheck } from 'lucide-react';
+import { Cpu, HardDrive, Zap, Sliders, Box } from 'lucide-react';
 import { HardwareBudget } from '../engine/relationEngine';
 
 interface HeaderProps {
-  activeMode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY';
-  onSelectMode: (mode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY') => void;
   hardwareBudget: HardwareBudget;
   onOpenCoreMatrix: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  activeMode,
-  onSelectMode,
   hardwareBudget,
   onOpenCoreMatrix
 }) => {
@@ -32,51 +28,12 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
           <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
-            Relational Development Environment — Non-Interfering Witness
+            Shape your app by arranging and connecting elements
           </p>
         </div>
       </div>
 
-      {/* Mode Switcher */}
-      <div className="flex items-center bg-slate-900/80 p-1 rounded-xl border border-cyan-500/20 shadow-inner">
-        <button
-          onClick={() => onSelectMode('DESIGN')}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron transition-all ${
-            activeMode === 'DESIGN'
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,243,255,0.3)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-          }`}
-        >
-          <Box className="w-3.5 h-3.5" />
-          <span>DESIGN</span>
-        </button>
-
-        <button
-          onClick={() => onSelectMode('SIMULATE')}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron transition-all ${
-            activeMode === 'SIMULATE'
-              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 shadow-[0_0_10px_rgba(0,255,157,0.3)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-          }`}
-        >
-          <PlayCircle className="w-3.5 h-3.5" />
-          <span>SIMULATE</span>
-        </button>
-
-        <button
-          onClick={() => onSelectMode('DEPLOY')}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron transition-all ${
-            activeMode === 'DEPLOY'
-              ? 'bg-purple-500/20 text-purple-300 border border-purple-400/50 shadow-[0_0_10px_rgba(168,85,247,0.3)]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-          }`}
-        >
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>DEPLOY</span>
-        </button>
-      </div>
-
-      {/* Telemetry Meters & Actions */}
+      {/* Configured CORE resources and settings */}
       <div className="flex items-center space-x-4">
         {/* Configured CORE budget (set in the CORE Matrix); not live usage */}
         <div

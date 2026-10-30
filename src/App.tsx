@@ -13,8 +13,6 @@ import { CodeEditorOverlayModal } from './components/CodeEditorOverlayModal';
 import { OrbBuilderModal } from './components/OrbBuilderModal';
 import { AlchemistReliquaryModal } from './components/AlchemistReliquaryModal.tsx';
 import { BuiltInBrowserModal } from './components/BuiltInBrowserModal';
-import { SimulateModeView } from './components/SimulateModeView';
-import { DeployModeView } from './components/DeployModeView';
 import { EnvironmentView } from './components/EnvironmentView';
 import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
@@ -36,8 +34,6 @@ import {
 } from './engine/relationEngine';
 import { getAvailableCoreResources, getCoreRuntimeCapabilities } from './engine/coreCapabilities';
 import { MODEL_CATALOG } from './engine/modelCatalog';
-import { globalSimulationEngine, SimulationTelemetry } from './engine/simulationEngine';
-import { runComprehensiveCoreAudit } from './engine/auditEngine';
 import { appendConnectionEventEvidence, appendRelationContractEvidence, readEvidenceArchive } from './engine/evidenceArchive';
 import { describeCurrentTask } from './utils/wayfinder';
 import { NavigationPosition, readNavigationPosition, resolveEnvironmentStack } from './utils/navigationSnapshot';
@@ -61,7 +57,6 @@ type OverlayId =
 
 interface PersistedWorkspace {
   version: 2;
-  activeMode: 'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY';
   coreManifest: CoreManifest;
   apothecaryCatalog: ApothecaryItem[];
   /** Added in version 2. A version 1 snapshot migrates to the CORE root. */
@@ -146,7 +141,6 @@ function loadPersistedWorkspace(): PersistedWorkspace | null {
 
     return {
       version: 2,
-      activeMode: parsed.activeMode ?? 'DESIGN',
       coreManifest: ensureManifestCodeFrames(parsed.coreManifest),
       apothecaryCatalog: mergeCatalog(parsed.apothecaryCatalog),
       navigation: readNavigationPosition(parsed.version === 2 ? parsed.navigation : undefined)
@@ -159,10 +153,6 @@ function loadPersistedWorkspace(): PersistedWorkspace | null {
 
 export function App() {
   const [restoredWorkspace] = useState<PersistedWorkspace | null>(() => loadPersistedWorkspace());
-
-  const [activeMode, setActiveMode] = useState<'DESIGN' | 'CODE' | 'SIMULATE' | 'DEPLOY'>(
-    () => restoredWorkspace?.activeMode ?? 'DESIGN'
-  );
   const [coreManifest, setCoreManifest] = useState<CoreManifest>(
     () => {
       if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
@@ -178,7 +168,6 @@ export function App() {
       };
     }
   );
-  const [telemetry, setTelemetry] = useState<SimulationTelemetry>(() => globalSimulationEngine.getState());
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
   // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
   const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
@@ -234,7 +223,6 @@ export function App() {
       : []
   );
   const handleResume = () => {
-    setActiveMode('DESIGN');
     setEnvironmentStack(resumeStack);
     setResumeStack([]);
   };
@@ -263,7 +251,6 @@ export function App() {
 
     const snapshot: PersistedWorkspace = {
       version: 2,
-      activeMode,
       coreManifest,
       apothecaryCatalog,
       navigation: {
@@ -281,7 +268,7 @@ export function App() {
       console.warn('[WORKSPACE] Workspace could not be persisted.', error);
       setSaveStatus({ state: 'failed' });
     }
-  }, [activeMode, coreManifest, apothecaryCatalog, environmentStack, resumeStack, selectedSocketId]);
+  }, [coreManifest, apothecaryCatalog, environmentStack, resumeStack, selectedSocketId]);
 
   // Persist sanitized connection events to the append-only evidence archive and
   // restore their read-only history after the archive has been verified on load.
@@ -289,7 +276,7 @@ export function App() {
     let active = true;
     const unsubscribe = subscribeConnectionEvents((event) => {
       void appendConnectionEventEvidence(event).catch((error) => {
-        globalSimulationEngine.addLog('ERROR', `[CONNECTION EVENT SHORTFALL] ${error instanceof Error ? error.message : 'Event could not be archived'}`);
+        console.error('[CONNECTION EVENT] Could not archive the event.', error);
       });
     });
     readEvidenceArchive()
@@ -300,33 +287,11 @@ export function App() {
             .map((record) => record.payload as ConnectionEvent);
           restoreConnectionEvents(events);
         }
-        if (active && records.length > 0) {
-          const eventCount = records.filter((record) => record.kind === 'CONNECTION_EVENT').length;
-          globalSimulationEngine.addLog('SUCCESS', `[EVIDENCE REPLAY VERIFIED] ${records.length} record(s), ${eventCount} connection event(s)`);
-        }
       })
       .catch((error) => {
-        if (active) {
-          globalSimulationEngine.addLog('ERROR', `[EVIDENCE INTEGRITY SHORTFALL] ${error instanceof Error ? error.message : 'Archive verification failed'}`);
-        }
+        if (active) console.error('[EVIDENCE ARCHIVE] Could not restore connection history.', error);
       });
     return () => { active = false; unsubscribe(); };
-  }, []);
-
-  // Subscribe to simulation tick clock & telemetry updates
-  useEffect(() => {
-    const unsubscribe = globalSimulationEngine.subscribe((newTelemetry) => {
-      setTelemetry(newTelemetry);
-    });
-
-    const tickInterval = setInterval(() => {
-      globalSimulationEngine.tick();
-    }, 1000);
-
-    return () => {
-      unsubscribe();
-      clearInterval(tickInterval);
-    };
   }, []);
 
   // Handshake Commit Handler
@@ -339,10 +304,6 @@ export function App() {
     // only an Orb may ever be bound to a socket. This is the universal bind
     // chokepoint, so the invariant holds no matter which path opened the modal.
     if (!isOrbItem(item)) {
-      globalSimulationEngine.addLog(
-        'WARN',
-        `[UMBILICAL] ${item.name} is a ${item.category}, not an Orb — only Orbs carry the handshake code for the Umbilical.`
-      );
       setAttachingItem(null);
       closeOverlay('HANDSHAKE');
       return;
@@ -371,11 +332,6 @@ export function App() {
         contracts: [contract, ...prev.contracts]
       };
     });
-
-    globalSimulationEngine.addLog(
-      'SUCCESS',
-      `[UMBILICAL HANDSHAKE SUCCESS] Bound ${item.name} to ${targetSocketId} via contract ${contract.contractId}`
-    );
 
     setAttachingItem(null);
     closeOverlay('HANDSHAKE');
@@ -410,10 +366,6 @@ export function App() {
   // the modal.
   const handleDropAttachItem = (item: ApothecaryItem, targetSocketId: string) => {
     if (!isOrbItem(item)) {
-      globalSimulationEngine.addLog(
-        'WARN',
-        `[UMBILICAL] ${item.name} is a ${item.category}, not an Orb — only Orbs handshake with the Umbilical.`
-      );
       return;
     }
     setSelectedSocketId(targetSocketId);
@@ -436,10 +388,6 @@ export function App() {
       })
     }));
 
-    globalSimulationEngine.addLog(
-      'SUCCESS',
-      `[SATELLITE TETHERED] ${satelliteWithCodeFrame.name} attached to host orb at ${hostSocketId}`
-    );
   };
 
   // Click a Satellite -> opens the same 3-tier inspector used for Orbs, so a
@@ -460,14 +408,11 @@ export function App() {
     setCoreManifest((prev) => {
       const angle = nextFreePortalAngle(prev.portals);
       if (angle === null) {
-        globalSimulationEngine.addLog('WARN', '[PORTAL] All 8 boundary slots occupied.');
         return prev;
       }
-      const id = `portal-${Date.now().toString(36)}`;
-      globalSimulationEngine.addLog('SUCCESS', `[PORTAL PLACED] Gateway ${id} at ${angle} degrees`);
       return {
         ...prev,
-        portals: [...prev.portals, { id, name: 'Prismatic Iris Portal', angleDeg: angle }]
+        portals: [...prev.portals, { id: `portal-${Date.now().toString(36)}`, name: 'Prismatic Iris Portal', angleDeg: angle }]
       };
     });
   };
@@ -490,7 +435,6 @@ export function App() {
 
     setApothecaryCatalog((prev) => prev.map((catalogItem) => replaceElementById(catalogItem, updatedItem)));
     setInspectingItem(updatedItem);
-    globalSimulationEngine.addLog('SUCCESS', `[MANIFEST RE-VALIDATION SUCCESS] Updated ${updatedItem.name} specs & contracts.`);
   };
 
   const handleSaveInspectedCodeFrame = (updatedItem: ApothecaryItem) => {
@@ -501,7 +445,6 @@ export function App() {
 
     setApothecaryCatalog((prev) => prev.map((catalogItem) => replaceElementById(catalogItem, updatedItem)));
     setInspectingItem(updatedItem);
-    globalSimulationEngine.addLog('SUCCESS', `[CODE FRAME SAVED] Updated functional source for ${updatedItem.name}.`);
   };
 
   const ensureCustomOrbContract = (item: ApothecaryItem): ApothecaryItem => {
@@ -537,14 +480,12 @@ export function App() {
     });
 
     closeOverlay('ORB_BUILDER');
-    globalSimulationEngine.addLog('SUCCESS', `[APOTHECARY CATALOG] Saved custom Orb [${customItemWithCodeFrame.name}] to palette.`);
   };
 
   const handleSynthesizeOrb = (customItem: ApothecaryItem) => {
     const customItemWithCodeFrame = ensureCustomOrbContract(customItem);
     setApothecaryCatalog((prev) => [customItemWithCodeFrame, ...prev]);
     closeOverlay('RELIQUARY');
-    globalSimulationEngine.addLog('SUCCESS', `[ALCHEMIST SYNTHESIS] Created new custom orb: ${customItemWithCodeFrame.name}`);
   };
 
   // Explicit Handshake Initiation from Apothecary Studio
@@ -560,7 +501,6 @@ export function App() {
       <ThreeCanvas
         sockets={coreManifest.sockets}
         selectedSocketId={selectedSocketId}
-        activeMode={activeMode}
         onSelectSocket={handleSelectSocket}
         onEnterElement={handleEnterElement}
         onDropAttachItem={handleDropAttachItem}
@@ -573,14 +513,12 @@ export function App() {
 
       {/* 2. UI Overlay Controls */}
       <Header
-        activeMode={activeMode}
-        onSelectMode={(mode) => setActiveMode(mode)}
         hardwareBudget={coreManifest.hardwareBudget}
         onOpenCoreMatrix={() => openOverlay('CORE_MATRIX')}
       />
 
-      {/* Mode View overlays or side drawers */}
-      {activeMode === 'DESIGN' && environmentStack.length === 0 && (
+      {/* Workspace tools and drawers */}
+      {environmentStack.length === 0 && (
         <>
           <ElementRail
             catalog={apothecaryCatalog}
@@ -618,9 +556,7 @@ export function App() {
           <RightPanel
             catalog={apothecaryCatalog}
             isFooterExpanded={isFooterExpanded}
-            telemetry={telemetry}
             coreManifest={coreManifest}
-            onSetPressure={(p) => globalSimulationEngine.setEnvironmentalPressure(p)}
             onSelectAttachItem={(item) => {
               setOrbBuilderTargetItem(item);
               openOverlay('ORB_BUILDER');
@@ -631,7 +567,7 @@ export function App() {
       )}
 
       {/* Drill-down Element Environment (Orb → Satellites, Satellite → Actuators) */}
-      {activeMode === 'DESIGN' && currentEnvironment && (
+      {currentEnvironment && (
         <div className="absolute inset-0 z-10 bg-[#05070c]">
           <EnvironmentView
             center={currentEnvironment}
@@ -654,31 +590,14 @@ export function App() {
         </div>
       )}
 
-      {activeMode === 'SIMULATE' && (
-        <SimulateModeView
-          telemetry={telemetry}
-          onSetPressure={(p) => globalSimulationEngine.setEnvironmentalPressure(p)}
-          onInjectSatelliteFault={() => globalSimulationEngine.injectSatelliteFailure()}
-          onInjectHostOrbCrash={() => globalSimulationEngine.injectHostOrbCrash()}
-          onClearFaults={() => globalSimulationEngine.clearFaults()}
-        />
-      )}
-
-      {activeMode === 'DEPLOY' && (
-        <DeployModeView manifest={coreManifest} />
-      )}
-
       {/* Footer HUD */}
       <Footer
-        telemetry={telemetry}
         coreManifest={coreManifest}
         saveStatus={saveStatus}
         wayfinder={
           <Wayfinder
-            mode={activeMode}
             path={environmentStack.map((el) => el.name)}
             task={describeCurrentTask({
-              mode: activeMode,
               environmentStack,
               childCount: currentEnvironment ? getElementChildren(currentEnvironment, apothecaryCatalog).length : 0,
               dockedOrbCount: coreManifest.sockets.filter((s) => s.connectedItem).length
@@ -686,15 +605,12 @@ export function App() {
             onNavigate={popEnvironmentTo}
           />
         }
-        onSetPressure={(p) => globalSimulationEngine.setEnvironmentalPressure(p)}
-        onValidateCore={() => runComprehensiveCoreAudit(coreManifest)}
         showTelemetryDeck={isFooterExpanded}
         onToggleTelemetryDeck={() => setIsFooterExpanded(!isFooterExpanded)}
-        isApothecaryOpen={isApothecaryOpen && activeMode === 'DESIGN' && environmentStack.length === 0}
+        isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
         onToggleApothecary={() => {
-          if (activeMode !== 'DESIGN') setActiveMode('DESIGN');
           if (environmentStack.length > 0) popEnvironmentTo(0);
-          setIsApothecaryOpen((open) => !(open && activeMode === 'DESIGN' && environmentStack.length === 0));
+          setIsApothecaryOpen((open) => !(open && environmentStack.length === 0));
         }}
         onOpenReliquary={() => openOverlay('RELIQUARY')}
         onOpenBrowser={() => {
@@ -735,7 +651,7 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
-      <LuminaryHost mode={activeMode} selection={luminarySelection} />
+      <LuminaryHost mode="DESIGN" selection={luminarySelection} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
