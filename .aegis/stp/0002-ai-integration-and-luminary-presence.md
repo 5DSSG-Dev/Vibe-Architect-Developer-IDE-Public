@@ -2204,3 +2204,13 @@ Evidence: P26; src/luminary/bubble.ts; src/luminary/bubble.test.ts; src/componen
 Channel: cloud
 
 P26 built as approved. (1) src/luminary/bubble.ts: bubbleText leaves out code blocks and keeps the first sentences up to 220 characters, adding '(More in the panel.)' when anything is left out, or 'I wrote some code. It is in the panel.' for a code-only reply. A small shared store holds the newest bubble line. Where the Luminary speaks (Panel, Bubble, Both; default Both) is kept per browser. (2) LuminaryBubble: a glass-and-gold bubble above the 3D Presence in the lower right (right 60px, bottom 560px, clear of the Full Form), shown only while the Luminary is engaged. It fades after 14 seconds (still when the OS asks for reduced motion), is dismissed on press, and is cleared at rest (D4.2). Hidden on narrow screens. (3) LuminaryHost: a reply that passed the gauge (asks and coding tasks) and each live connection moment are said in the bubble unless the setting is Panel. A 'Panel / Bubble / Both' choice sits next to Plain, Guided and Technical. With Bubble alone, the conversation is tucked away behind 'Show the conversation', and the input stays. Shortfalls are not put in the bubble; they stay in the panel. Tests: 5 new (short reply whole, long reply shortened with pointer, code left out, store, default). App 325/325, typecheck and build clean.
+
+### 2026-10-30T03:40:00.000Z | claude | note N49
+Chain-Prev: 8adc039f1f067cf5b3afd6dc8fc53d3a5c408abb469cfb8ee98a1ed689144e0e
+Chain-Hash: a4c454302474458ff191845b2467fa826dbce1dbcbc9ec2c7e80f41057fa80e0
+Stage: Execution
+Kind: note
+Evidence: P26; N48; src/components/LuminaryBubble.tsx
+Channel: cloud
+
+Placement check of the P26 bubble on Tracey's PC: at 1440x900 it fits; at 1280x720 a full 220-character bubble (about 143px tall) reached the 64px top bar and covered the CORE Matrix button. Fix: the bubble's words are capped at four lines (about 90px) with line-clamp, so it stays below the top bar. The full words are always in the panel, which the bubble already points to. App 325/325, gateway 148/148, build clean.
