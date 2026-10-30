@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical } from 'lucide-react';
-import { SimulationTelemetry } from '../engine/simulationEngine';
 import { CoreManifest } from '../engine/relationEngine';
 
 export interface WorkspaceSaveStatus {
@@ -10,14 +9,11 @@ export interface WorkspaceSaveStatus {
 }
 
 interface FooterProps {
-  telemetry: SimulationTelemetry;
   coreManifest?: CoreManifest;
   /** App-level location and task line, shown at the left of the status bar. */
   wayfinder?: React.ReactNode;
   /** Result of the last workspace save to browser storage. */
   saveStatus?: WorkspaceSaveStatus;
-  onSetPressure: (pressure: number) => void;
-  onValidateCore?: () => void;
   onExportCore?: () => void;
   showTelemetryDeck?: boolean;
   onToggleTelemetryDeck?: () => void;
@@ -29,12 +25,9 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  telemetry,
   coreManifest,
   wayfinder,
   saveStatus,
-  onSetPressure,
-  onValidateCore,
   onExportCore,
   showTelemetryDeck: propShowTelemetryDeck,
   onToggleTelemetryDeck,
@@ -47,7 +40,6 @@ export const Footer: React.FC<FooterProps> = ({
   const showTelemetryDeck = propShowTelemetryDeck !== undefined ? propShowTelemetryDeck : localShowDeck;
   const handleToggleDeck = onToggleTelemetryDeck || (() => setLocalShowDeck(!localShowDeck));
 
-  const [showLogs, setShowLogs] = useState(false);
   const [coreName, setCoreName] = useState(coreManifest?.name || 'My AEGIS CORE');
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
@@ -155,7 +147,7 @@ export const Footer: React.FC<FooterProps> = ({
           <button
             onClick={handleToggleDeck}
             className="p-1 text-slate-400 hover:text-cyan-300 transition-colors"
-            title={showTelemetryDeck ? 'Hide Telemetry Deck' : 'Show Telemetry Deck'}
+            title={showTelemetryDeck ? 'Hide view controls' : 'Show view controls'}
           >
             {showTelemetryDeck ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4 text-cyan-400" />}
           </button>
@@ -165,7 +157,7 @@ export const Footer: React.FC<FooterProps> = ({
             className="btn-cyber px-2.5 py-1 rounded-lg text-[10px] font-orbitron font-bold flex items-center space-x-1"
           >
             <Download className="w-3 h-3 text-cyan-300" />
-            <span>EXPORT CORE</span>
+            <span>Export workspace</span>
           </button>
         </div>
       </div>

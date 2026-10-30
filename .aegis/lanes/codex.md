@@ -186,3 +186,8 @@
 ### 2026-10-29 — Publication status correction
 - Supersedes the pending publication status above: commit `6792987 fix(ui): target element hover and drill-in` is pushed to `codex/m4-element-inspection-framing`.
 - Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24); PR #23 had already merged before this follow-up was published.
+
+## 2026-10-30 | codex | Architect audience and retirement of unsupported modes
+- Architect agreed that Simulate and Deploy should leave the main IDE until they perform real, understandable work. The intended Architect may have system architecture and design ability without prior coding experience or engineering credentials. Lead with purpose and cause/effect in familiar language; make deeper technical information available in context.
+- On `codex/remove-demo-modes`, removed the dashboard/audit screens, synthetic pressure controls, fake CPU load, declaration-only audit and random pseudo-signature. Existing saved mode values reopen the authoring workspace. Preserved the real CORE workspace JSON export under plain wording. Current M5 scenario/deployment targets remain future work and are not complete.
+- No tests/build run yet. Continue with source-level review and `git diff --check`; report the build/test shortfall accurately.
