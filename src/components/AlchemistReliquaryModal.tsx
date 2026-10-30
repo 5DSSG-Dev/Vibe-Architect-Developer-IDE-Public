@@ -80,7 +80,7 @@ export const AlchemistReliquaryModal: React.FC<AlchemistReliquaryModalProps> = (
 
   return (
     <Dialog label="The Alchemist's Reliquary" onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 select-none">
-      <div className="absolute inset-0 bg-[#080b10]/95 animate-backdrop-fade" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#080b10]/95 animate-backdrop-fade" />
       
       <div className="relative w-full max-w-6xl h-full max-h-[800px] flex flex-col bg-slate-950/90 border border-purple-500/30 rounded-2xl shadow-[0_0_50px_rgba(168,85,247,0.15)] overflow-hidden animate-modal-zoom">
         

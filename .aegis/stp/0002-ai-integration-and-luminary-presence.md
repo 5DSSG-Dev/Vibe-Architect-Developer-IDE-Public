@@ -2274,3 +2274,13 @@ Evidence: Tracey 2026-10-30T08:44Z; src/index.css; src/three/luminaryPresence.ts
 Channel: cloud
 
 Tracey: 'still no Luminary in the space' on an Element's info page, circling where the 3D figure stands. Findings from the RC session: the 3014/3015 gateways had stopped again when that session ended, and were restarted; the Presence was still rendered, but each page's backdrop (black 80 to 85% with a 16px blur) hid it. Change: one CSS rule cuts a soft oval window (170x230px, fading from 55%) in every aria-modal page's backdrop, centred on PRESENCE_SCREEN_OFFSET (right 190px, bottom 450px), so the figure stands lit beside an open page. Only the backdrop is masked, never the page. Pages whose dim sits on the Dialog itself (CORE Matrix, Handshake) are unchanged. A press inside the window still closes the page, as the backdrop does elsewhere. App 325/325 on rerun (one run had the known identity-timing flake), gateway 148/148, build clean.
+
+### 2026-10-30T09:05:00.000Z | claude | note N56
+Chain-Prev: 179262ccda48cd81940762cfa4b486ebc10184b59a7b97f8bd2f4bbd088d24a1
+Chain-Hash: 7c51a752cbeb0b69871d2867c3986f29a9f067691e9721db9296ec6bc459afb2
+Stage: Execution
+Kind: note
+Evidence: Tracey 2026-10-30T08:54Z; N55; src/components/LuminaryHost.tsx; src/index.css; ViewContentsModal, CodeEditorOverlayModal, EditObjectModal, OrbBuilderModal, AlchemistReliquaryModal
+Channel: cloud
+
+Tracey: pressing the 3D Luminary beside an Element's page closed the page, because the press landed on the page's backdrop, which closed on press. Tracey's idea, built: (1) An IDE page now closes only when the Architect chooses to: its Close button, its X, or Escape. The press-outside-to-close is removed from the five page backdrops (Element info, Code Frame, Edit, Orb builder, Alchemist's Reliquary). This also protects unsaved code in the Code Frame. The Built-In Browser keeps its own light backdrop as it was. (2) While a page is open, an invisible press target sits over the 3D Presence (160x240px, centred on PRESENCE_SCREEN_OFFSET; shown only via body:has in index.css). Pressing the figure engages or pauses the Luminary, as it does in the scene, and the page stays open. It stays out of the tab order; the Paused Icon is the keyboard way in. Also answered for Tracey: while an Element's page is open, the Luminary's context is that Element (the 'Selected: <name>' chip comes from the same inspected item as the page). App 325/325, gateway 148/148, typecheck and build clean.

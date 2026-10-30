@@ -343,6 +343,17 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     // the top right corner (.luminary-form in index.css). Both stay above every IDE overlay (z-[70]; the
     // highest overlay is z-[60]), so the Luminary is there on an Element's pages too.
     <div className="fixed right-4 bottom-[272px] z-[70] font-mono">
+      {/* Over the 3D Presence while an IDE page is open (shown by .luminary-hotspot in index.css):
+          pressing the figure engages or pauses the Luminary, as it does in the scene, and the page
+          stays open. The Paused Icon is the keyboard way in, so this stays out of the tab order. */}
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-hidden="true"
+        title={isEngaged ? 'Pause the Vibe Luminary' : 'Engage the Vibe Luminary'}
+        onClick={() => setIsEngaged(!isEngaged)}
+        className="luminary-hotspot fixed right-[110px] bottom-[330px] w-40 h-60 rounded-full cursor-pointer bg-transparent"
+      />
       {isEngaged ? (
         <section
           ref={formRef}

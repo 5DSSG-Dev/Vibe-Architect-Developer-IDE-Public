@@ -54,7 +54,7 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
 
   return (
     <Dialog label="Edit Element Properties" onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 font-mono select-none">
-      <div className="absolute inset-0 bg-black/80 animate-backdrop-fade" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 animate-backdrop-fade" />
       <div className="relative w-full max-w-2xl panel-glass rounded-3xl border border-emerald-500/40 shadow-[0_0_50px_rgba(0,255,157,0.2)] overflow-hidden flex flex-col max-h-[85vh] animate-modal-zoom">
         {/* Header */}
         <div className="p-4 border-b border-emerald-500/30 flex items-center justify-between bg-slate-950/70">
