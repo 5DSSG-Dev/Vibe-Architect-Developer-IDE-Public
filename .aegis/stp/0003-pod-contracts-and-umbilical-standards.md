@@ -1060,3 +1060,13 @@ Evidence: commit:34a7899bc9108d6f48e1d8ac4c91a0867f5b80e8; commit:d68379d03da648
 Channel: cli
 
 M3 handoff after merges: PR #12 (34a7899) and PR #13 (d68379d) delivered the CORE Orb-presented contract resolution, profile/resource negotiation, validated alternatives, and custom Orb library registration; PR #15 merged at fe52077 and its event-history head 68eeb74 is an ancestor of origin/main. The earlier Codex claims on the Umbilical and event-history paths are released below because their PRs are merged. Verus/Luminary may now consume the existing read-only API in src/contracts/connectionEvents.ts (subscribeConnectionEvents/getConnectionEvents) and persisted sanitized event history in the hash-chained evidence archive without waiting on Codex ownership. Current source declares suspended as an event kind but has no runtime producer; Luminary presentation/consumer and app-level test coverage remain open. This is an ownership/status handoff, not M3 acceptance or new Architect approval.
+
+### 2026-10-30T14:15:00.000Z | claude | note N10
+Chain-Prev: 64c1e44de9a6eec7486613e6fc1e8807bba38b240b013f8a62795386a1e187d6
+Chain-Hash: 9da34ef94c217d1b1f7fa8467699420d4d87491476f3989fbd703e0c1244d1f3
+Stage: Execution
+Kind: note
+Evidence: Tracey's decision card 2026-10-30T14:12:59Z ('Leave it out for now'); N9; docs/CORE_CONNECTION_STANDARD.md; src/contracts/connectionEvents.ts
+Channel: cloud
+
+Architect decision on 'suspended' (on hold): leave it out for now. M3 is to close with the connection states the runtime produces today: active, degraded and severed. 'suspended' stays declared as an event kind with no producer, and the Luminary does not explain it. It is carried over for after the hackathon. When it is taken up, the Connection Standard already gives its meaning: 'temporarily paused by mutual agreement; contract intact', so an Orb on hold keeps its contract and its reserved room and can resume without a new handshake. Also recorded for M3 status: PR #19 merged 2026-10-30 14:12Z (Luminary connection moments, wording by actual shortfall, Remove with recorded severance, CORE budget 8192 MB / 32 threads with a live meter). Still open for M3: the conformance test (P7), the status of P1, P6 and P8, and the Architect's acceptance. Recorded from the cloud thread by claude; not an acceptance.
