@@ -499,6 +499,15 @@ export function App() {
       }
     }
     setCoreManifest((prev) => removeElementFromManifest(prev, socketId, inspectingItem.id));
+    // A resume point or open Environment inside a removed Element would lead nowhere; it stops
+    // just before that Element (at the CORE when it was the first step).
+    const removedIds = new Set(placedRemoval.removed.map((entry) => entry.id));
+    const beforeRemoved = (stack: ApothecaryItem[]) => {
+      const cut = stack.findIndex((entry) => removedIds.has(entry.id));
+      return cut === -1 ? stack : stack.slice(0, cut);
+    };
+    setResumeStack(beforeRemoved);
+    setEnvironmentStack(beforeRemoved);
     globalSimulationEngine.addLog('SUCCESS', `[ELEMENT REMOVED] ${placedRemoval.removed.map((entry) => entry.name).join(', ')} taken off ${socketId} by the Architect`);
     setInspectingItem(null);
     setInspectingSocket(null);

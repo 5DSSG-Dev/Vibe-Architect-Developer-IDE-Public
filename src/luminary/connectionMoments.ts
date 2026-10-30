@@ -44,6 +44,18 @@ interface Amount {
   threads: number;
 }
 
+/**
+ * What the CORE ran short of, worked out from the event's requested and free figures. The runtime
+ * gives one reason code for memory, thread, bandwidth and GPU refusals alike, so the dimension is
+ * taken from the numbers, never assumed. Empty when no figure was short (for example a refused
+ * reservation), and then no figures are shown at all.
+ */
+export interface Shortfall {
+  dimension: 'memory' | 'threads' | 'bandwidth' | 'gpu';
+  needed: number | boolean;
+  free: number | boolean;
+}
+
 /** One moment, holding only allow-listed fields. */
 export interface ConnectionMoment {
   eventId: string;
@@ -59,7 +71,20 @@ export interface ConnectionMoment {
   missingCapabilities?: string[];
   requested?: Amount;
   available?: Amount;
+  shortfall?: Shortfall[];
   alternatives?: { profileId: string; profileVersion: string; memoryMB: number; threads: number }[];
+}
+
+function shortfallOf(event: ConnectionEvent): Shortfall[] {
+  const requested = event.resources?.requested;
+  const available = event.resources?.available;
+  if (event.kind !== 'refused' || !requested || !available) return [];
+  const short: Shortfall[] = [];
+  if (requested.memoryMB > available.memoryMB) short.push({ dimension: 'memory', needed: requested.memoryMB, free: available.memoryMB });
+  if (requested.threads > available.threads) short.push({ dimension: 'threads', needed: requested.threads, free: available.threads });
+  if (requested.bandwidthPeak > available.bandwidthCredits) short.push({ dimension: 'bandwidth', needed: requested.bandwidthPeak, free: available.bandwidthCredits });
+  if (requested.gpu && !available.gpu) short.push({ dimension: 'gpu', needed: true, free: false });
+  return short;
 }
 
 const isExplained = (kind: ConnectionEventKind): kind is ExplainedKind => (EXPLAINED_KINDS as readonly string[]).includes(kind);
@@ -74,6 +99,7 @@ export function toMoment(event: ConnectionEvent, nameOf: (orbId: string) => stri
   const contractVersion = event.resolvedContractVersion ?? event.presentedContract?.version;
   const requested = event.resources?.requested;
   const available = event.resources?.available;
+  const shortfall = shortfallOf(event);
   return {
     eventId: event.eventId,
     attemptId: event.attemptId,
@@ -88,11 +114,19 @@ export function toMoment(event: ConnectionEvent, nameOf: (orbId: string) => stri
     ...(event.missingCapabilities?.length ? { missingCapabilities: [...event.missingCapabilities] } : {}),
     ...(requested ? { requested: { memoryMB: requested.memoryMB, threads: requested.threads } } : {}),
     ...(available ? { available: { memoryMB: available.memoryMB, threads: available.threads } } : {}),
+    ...(shortfall.length ? { shortfall } : {}),
     ...(event.alternatives?.length
       ? { alternatives: event.alternatives.map(({ profileId, profileVersion, memoryMB, threads }) => ({ profileId, profileVersion, memoryMB, threads })) }
       : {}),
   };
 }
+
+const shortText = (entry: Shortfall) => {
+  if (entry.dimension === 'gpu') return 'the GPU, which is switched off';
+  if (entry.dimension === 'memory') return `${entry.needed} MB of memory (${entry.free} MB free)`;
+  if (entry.dimension === 'threads') return `${entry.needed} thread${entry.needed === 1 ? '' : 's'} (${entry.free} free)`;
+  return `${entry.needed} bandwidth credits at peak (${entry.free} free)`;
+};
 
 const amount = ({ memoryMB, threads }: Amount) => `${memoryMB} MB and ${threads} thread${threads === 1 ? '' : 's'}`;
 const port = (moment: ConnectionMoment) => (moment.portId ? ` on port ${moment.portId}` : '');
@@ -123,9 +157,10 @@ function phrase(moment: ConnectionMoment, recovered = false): string {
           return `${capability.replace(/_/g, ' ')}${hint ? ` (${hint})` : ''}`;
         }))}`;
       }
-      // At step 5 the CORE's capability check and the resource budget count threads differently, so
-      // the budget's 'free' figures are not the reason and would contradict it. They are left out.
-      if (moment.reasonCode !== 'CAPABILITY_UNSATISFIED' && moment.requested && moment.available) text += `. It asked for ${amount(moment.requested)}; ${amount(moment.available)} were free`;
+      // Only the figures that were actually short are given, so a GPU or bandwidth refusal never
+      // reads as a memory or thread problem. At step 5 (capabilities) the budget's figures are not
+      // the reason, and a refused reservation has no short figure; both show none.
+      if (moment.reasonCode !== 'CAPABILITY_UNSATISFIED' && moment.shortfall?.length) text += `. It needs ${joinPhrases(moment.shortfall.map(shortText))}`;
       if (moment.alternatives?.length) {
         const offered = moment.alternatives.map((alt) => `${alt.profileId} v${alt.profileVersion} (${amount(alt)})`).join(', ');
         text += `. The CORE offered a profile that fits instead: ${offered}`;
@@ -183,8 +218,12 @@ export function describeForQuestion(line: MomentLine): string {
     if (moment.profile) parts.push(`Umbilical profile: ${moment.profile.id}${moment.profile.version ? ` v${moment.profile.version}` : ''}`);
     if (moment.reasonCode) parts.push(`reason: ${reason(moment.reasonCode)} (${moment.reasonCode})`);
     if (moment.missingCapabilities) parts.push(`missing: ${moment.missingCapabilities.join(', ')}`);
-    if (moment.requested) parts.push(`asked for: ${amount(moment.requested)}`);
-    if (moment.available) parts.push(`free: ${amount(moment.available)}`);
+    if (moment.kind === 'refused') {
+      if (moment.reasonCode !== 'CAPABILITY_UNSATISFIED' && moment.shortfall?.length) parts.push(`ran short of: ${moment.shortfall.map(shortText).join('; ')}`);
+    } else {
+      if (moment.requested) parts.push(`asked for: ${amount(moment.requested)}`);
+      if (moment.available) parts.push(`free: ${amount(moment.available)}`);
+    }
     if (moment.alternatives?.length) parts.push(`offered instead: ${moment.alternatives.map((alt) => `${alt.profileId} v${alt.profileVersion} (${amount(alt)})`).join(', ')}`);
     return `- ${parts.join('; ')}`;
   });

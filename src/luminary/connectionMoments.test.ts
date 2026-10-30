@@ -55,7 +55,7 @@ test('routine steps of one handshake share a line; a refusal stands on its own',
   ]));
   assert.deepEqual(lines.map((line) => line.text), [
     'Auth & Session Service started its handshake with the CORE on port socket-1 and was matched to contract orb-auth v1.0.0.',
-    'Auth & Session Service was refused on port socket-1: the CORE did not have enough free resources for it. It asked for 512 MB and 4 threads; 256 MB and 2 threads were free. The CORE offered a profile that fits instead: Pulse v1.0.0 (128 MB and 1 thread).',
+    'Auth & Session Service was refused on port socket-1: the CORE did not have enough free resources for it. It needs 512 MB of memory (256 MB free) and 4 threads (2 free). The CORE offered a profile that fits instead: Pulse v1.0.0 (128 MB and 1 thread).',
     'Auth & Session Service started its handshake with the CORE on port socket-1.',
   ]);
 });
@@ -80,7 +80,7 @@ test('only allow-listed fields leave the event: the raw message and anything els
     prompt: 'private prompt', credential: 'sk-secret',
   } as ConnectionEvent;
   const moment = toMoment(raw, names)!;
-  const allowed = ['eventId', 'attemptId', 'kind', 'time', 'orbId', 'orbName', 'portId', 'contract', 'profile', 'reasonCode', 'missingCapabilities', 'requested', 'available', 'alternatives'];
+  const allowed = ['eventId', 'attemptId', 'kind', 'time', 'orbId', 'orbName', 'portId', 'contract', 'profile', 'reasonCode', 'missingCapabilities', 'requested', 'available', 'shortfall', 'alternatives'];
   for (const key of Object.keys(moment)) assert.ok(allowed.includes(key), key);
   const everything = JSON.stringify(moment) + describeForQuestion(momentLines([moment])[0]);
   for (const secret of ['sk-secret', '.env', 'private prompt', 'tumbler-proof-digest', 'Error:']) assert.ok(!everything.includes(secret), secret);
@@ -100,4 +100,22 @@ test('a missing capability is named, with why the CORE may lack it', () => {
     resources: { requested: { memoryMB: 1024, threads: 4, bandwidthNormal: 0, bandwidthPeak: 0, gpu: false }, available: { memoryMB: 2048, threads: 0, bandwidthCredits: 0, gpu: false } } })]));
   assert.equal(line.text, 'Auth & Session Service was refused on port socket-1: it needs something the CORE cannot provide right now. It needs thread pool (the CORE offers it only while it has a free thread).');
   assert.match(describeForQuestion(line), /missing: thread_pool/);
+});
+
+test('a refusal names only what was short, so a GPU or bandwidth refusal never reads as memory or threads', () => {
+  const plenty = { memoryMB: 4096, threads: 16 };
+  const [gpu, bandwidth, reservation] = momentLines(moments([
+    event({ kind: 'refused', reasonCode: 'RESOURCE_SHORTFALL',
+      resources: { requested: { memoryMB: 512, threads: 2, bandwidthNormal: 4, bandwidthPeak: 8, gpu: true }, available: { ...plenty, bandwidthCredits: 256, gpu: false } } }),
+    event({ kind: 'refused', attemptId: 'ctr-2', reasonCode: 'RESOURCE_SHORTFALL',
+      resources: { requested: { memoryMB: 512, threads: 2, bandwidthNormal: 32, bandwidthPeak: 64, gpu: false }, available: { ...plenty, bandwidthCredits: 40, gpu: true } } }),
+    event({ kind: 'refused', attemptId: 'ctr-3', reasonCode: 'RESOURCE_SHORTFALL',
+      resources: { requested: { memoryMB: 512, threads: 2, bandwidthNormal: 4, bandwidthPeak: 8, gpu: false }, available: { ...plenty, bandwidthCredits: 256, gpu: true } } }),
+  ]));
+  assert.match(gpu.text, /It needs the GPU, which is switched off\.$/);
+  assert.match(bandwidth.text, /It needs 64 bandwidth credits at peak \(40 free\)\.$/);
+  assert.doesNotMatch(gpu.text + bandwidth.text, /MB|thread/);
+  assert.doesNotMatch(reservation.text, /It needs|MB|thread/);
+  assert.match(describeForQuestion(bandwidth), /ran short of: 64 bandwidth credits at peak \(40 free\)/);
+  assert.doesNotMatch(describeForQuestion(gpu), /asked for|free: /);
 });
