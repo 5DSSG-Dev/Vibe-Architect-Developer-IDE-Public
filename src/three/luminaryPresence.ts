@@ -18,6 +18,8 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
  */
 // Keep in step with the backdrop window in src/index.css, which keeps the Presence visible beside open pages.
 export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
+/** The clear part of that backdrop window (55% of its 170x230px ellipse), where a press engages the Luminary. */
+export const PRESENCE_WINDOW_RADIUS = { x: 94, y: 127 };
 const PRESENCE_DISTANCE = 10;
 const PRESENCE_HEIGHT = 2.6;
 /** Fine turn of the figure around its own upright axis, in radians (positive turns it to its left). */

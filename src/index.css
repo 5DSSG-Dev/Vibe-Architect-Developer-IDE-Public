@@ -244,14 +244,3 @@ body:has([role="dialog"][aria-modal="true"]) .luminary-form {
   mask-image: radial-gradient(ellipse 170px 230px at calc(100% - 190px) calc(100% - 450px), transparent 55%, black 100%);
 }
 
-/*
- * The press target over the 3D Presence (LuminaryHost) exists only while an IDE page is open, when
- * the page's backdrop would otherwise take the press. Centred on PRESENCE_SCREEN_OFFSET, like the
- * backdrop window above.
- */
-.luminary-hotspot {
-  display: none;
-}
-body:has([role="dialog"][aria-modal="true"]) .luminary-hotspot {
-  display: block;
-}

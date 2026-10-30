@@ -19,8 +19,8 @@ import { EnvironmentView } from './components/EnvironmentView';
 import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
+import { luminaryFocus } from './luminary/focus';
 import { LuminaryBubble } from './components/LuminaryBubble';
-import { describeElement } from './luminary/knowledge';
 import {
   ApothecaryItem,
   SocketBinding,
@@ -244,15 +244,14 @@ export function App() {
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
   const [inspectingSocket, setInspectingSocket] = useState<SocketBinding | null>(null);
 
-  // What the Architect may add to the Luminary as context with one click. Offered, never sent on its own.
-  const selectedForLuminary = inspectingItem ?? currentEnvironment ?? attachingItem ?? undefined;
-  const luminarySelection = selectedForLuminary
-    ? {
-        label: `Selected: ${selectedForLuminary.name}`,
-        // The same wording as the Knowledge Pack (P23), with its Satellites or Actuators named.
-        text: describeElement(selectedForLuminary, apothecaryCatalog),
-      }
-    : undefined;
+  // The Luminary's focus follows what is on screen (STP-0002 N57): an open Element page first,
+  // then the Environment the Architect is inside. inspectingItem outlives its page, so it counts
+  // only while one of its pages is open.
+  const elementPageOpen = activeOverlay === 'INSPECT_MANIFEST' || activeOverlay === 'INSPECT_PROPERTIES' || activeOverlay === 'INSPECT_CODE';
+  const luminarySelection = luminaryFocus(
+    { openPageItem: elementPageOpen ? inspectingItem : null, currentEnvironment: currentEnvironment ?? null, attachingItem: attachingItem ?? null },
+    apothecaryCatalog
+  );
 
   const [saveStatus, setSaveStatus] = useState<WorkspaceSaveStatus>({ state: 'pending' });
 

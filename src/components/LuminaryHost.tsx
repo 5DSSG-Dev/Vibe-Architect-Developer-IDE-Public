@@ -17,6 +17,7 @@ import {
 } from '../luminary/client';
 import { ReplyView, TaskCard } from './LuminaryCards';
 import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
+import { PRESENCE_SCREEN_OFFSET, PRESENCE_WINDOW_RADIUS } from '../three/luminaryPresence';
 import { recordExchange, textEvidence } from '../luminary/record';
 import { describeForQuestion, momentLines, toMoment, type ConnectionMoment } from '../luminary/connectionMoments';
 import { getConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from '../contracts/connectionEvents';
@@ -44,6 +45,8 @@ interface ContextChip {
   id: string;
   label: string;
   text: string;
+  /** Set on the chip the Luminary's focus attaches by itself (N57): the focus key it stands for. */
+  focusKey?: string;
 }
 
 type Entry =
@@ -56,6 +59,8 @@ type Entry =
   | { id: string; kind: 'moments'; moments: ConnectionMoment[] };
 
 export interface LuminarySelection {
+  /** Changes whenever the focus moves (src/luminary/focus.ts). */
+  key: string;
   label: string;
   text: string;
 }
@@ -141,6 +146,21 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     const top = reply ? reply.getBoundingClientRect().top - transcript.getBoundingClientRect().top + transcript.scrollTop - 8 : transcript.scrollHeight;
     transcript.scrollTo({ top });
   }, [entries]);
+
+  // While an IDE page is open, its backdrop has a window over the 3D Presence (index.css). A press
+  // there engages or pauses the Luminary, as it does in the scene, and the page stays open. Only a
+  // press that reaches the backdrop counts, so the page's own content always wins.
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Element | null;
+      if (!target?.matches('[role="dialog"][aria-modal="true"] > .animate-backdrop-fade')) return;
+      const dx = (event.clientX - (window.innerWidth - PRESENCE_SCREEN_OFFSET.right)) / PRESENCE_WINDOW_RADIUS.x;
+      const dy = (event.clientY - (window.innerHeight - PRESENCE_SCREEN_OFFSET.bottom)) / PRESENCE_WINDOW_RADIUS.y;
+      if (dx * dx + dy * dy <= 1) setLuminaryEngaged(!isLuminaryEngaged());
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   const push = (entry: Entry) => setEntries((current) => [...current, entry]);
 
@@ -234,6 +254,28 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const overLimit = contextBytes > CONTEXT_LIMIT_BYTES;
   const busy = activity === 'thinking' || activity === 'answering';
 
+  // The Luminary's focus (N57): what the Architect has open is attached by itself as a chip, so a
+  // question about the open Element is answered about that Element. The chip stays across sends
+  // while the focus holds, moves when the focus moves, and goes when nothing is open. Removing it
+  // with x keeps it off for that focus; the Architect still decides what is sent.
+  const dismissedFocusRef = useRef<string | null>(null);
+  const focusKey = selection?.key;
+  useEffect(() => {
+    if (dismissedFocusRef.current !== focusKey) dismissedFocusRef.current = null;
+    setChips((current) => {
+      const others = current.filter((chip) => !chip.focusKey);
+      if (!selection || dismissedFocusRef.current === selection.key) return others;
+      return [{ id: newId(), label: selection.label, text: selection.text, focusKey: selection.key }, ...others];
+    });
+    // The selection's words follow its key, so the key alone decides when the chip changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusKey]);
+
+  const removeChip = (chip: ContextChip) => {
+    if (chip.focusKey) dismissedFocusRef.current = chip.focusKey;
+    setChips((current) => current.filter((c) => c.id !== chip.id));
+  };
+
   const addChip = (label: string, text: string) => {
     if (!text.trim()) return;
     setChips((current) => [...current, { id: newId(), label, text }]);
@@ -246,7 +288,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     abortRef.current = controller;
     const sentChips = chips;
     push({ id: newId(), kind: 'architect', text: trimmed, chips: sentChips.map((chip) => `${chip.label} · ${bytes(chip.text)} B`) });
-    setChips([]);
+    setChips((current) => current.filter((chip) => chip.focusKey));
     setMessage('');
     setActivity('thinking');
     const files = asTask ? allowedFiles.split(',').map((file) => file.trim()).filter(Boolean) : [];
@@ -343,17 +385,6 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
     // the top right corner (.luminary-form in index.css). Both stay above every IDE overlay (z-[70]; the
     // highest overlay is z-[60]), so the Luminary is there on an Element's pages too.
     <div className="fixed right-4 bottom-[272px] z-[70] font-mono">
-      {/* Over the 3D Presence while an IDE page is open (shown by .luminary-hotspot in index.css):
-          pressing the figure engages or pauses the Luminary, as it does in the scene, and the page
-          stays open. The Paused Icon is the keyboard way in, so this stays out of the tab order. */}
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-hidden="true"
-        title={isEngaged ? 'Pause the Vibe Luminary' : 'Engage the Vibe Luminary'}
-        onClick={() => setIsEngaged(!isEngaged)}
-        className="luminary-hotspot fixed right-[110px] bottom-[330px] w-40 h-60 rounded-full cursor-pointer bg-transparent"
-      />
       {isEngaged ? (
         <section
           ref={formRef}
@@ -524,7 +555,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               {chips.map((chip) => (
                 <li key={chip.id} className="flex items-center gap-1 rounded-full border border-slate-600 px-2 py-0.5 text-[9px] text-slate-200">
                   {chip.label} · {bytes(chip.text)} B
-                  <button type="button" aria-label={`Remove ${chip.label}`} onClick={() => setChips((current) => current.filter((c) => c.id !== chip.id))}><X className="w-2.5 h-2.5" /></button>
+                  <button type="button" aria-label={`Remove ${chip.label}`} onClick={() => removeChip(chip)}><X className="w-2.5 h-2.5" /></button>
                 </li>
               ))}
               <li className={`text-[9px] ${overLimit ? 'text-rose-300' : 'text-slate-500'}`}>{contextBytes} / {CONTEXT_LIMIT_BYTES} B</li>
@@ -584,8 +615,11 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
           </form>
 
           <div className="flex items-center gap-2 text-[9px] text-slate-400">
-            {selection && !taskMode && (
-              <button type="button" onClick={() => addChip(selection.label, selection.text)} className="flex items-center gap-1 hover:text-amber-200"><Paperclip className="w-3 h-3" />Add selection</button>
+            {selection && !taskMode && !chips.some((chip) => chip.focusKey) && (
+              <button type="button" onClick={() => {
+                dismissedFocusRef.current = null;
+                setChips((current) => [{ id: newId(), label: selection.label, text: selection.text, focusKey: selection.key }, ...current]);
+              }} className="flex items-center gap-1 hover:text-amber-200"><Paperclip className="w-3 h-3" />Add selection</button>
             )}
             {!taskMode && (
               <button type="button" onClick={() => setPasting(true)} className="flex items-center gap-1 hover:text-amber-200"><ClipboardPaste className="w-3 h-3" />Paste snippet</button>
