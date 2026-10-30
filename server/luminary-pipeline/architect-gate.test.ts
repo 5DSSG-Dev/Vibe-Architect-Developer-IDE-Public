@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { gateArchitectMessage } from './architect-gate.js';
 import { SEVEN_VIRTUES, type VirtueReadings } from './irg.js';
+import { fakeIdsWriter } from './ids.fixtures.js';
 import type { Gauge } from './pipeline.js';
 
 // Every test uses a fake gauge. No model is reached.
@@ -12,7 +13,7 @@ function readings(value: number, overrides: Partial<VirtueReadings> = {}): Virtu
 
 function countingGauge(read: (content: string) => VirtueReadings): Gauge & { reads: string[] } {
   const reads: string[] = [];
-  return { reads, read: async (content) => { reads.push(content); return read(content); } };
+  return { reads, ids: fakeIdsWriter(), read: async (content) => { reads.push(content); return read(content); } };
 }
 
 test('a coherent Architect message passes structural, PIM and IRG and is cleared to cross', async () => {
@@ -55,7 +56,7 @@ test('an empty or oversized message is returned by the structural gate with no g
 
 test('the per-virtue thresholds on the gauge apply to Architect messages', async () => {
   const thresholds = readings(20, { Communication: 35 });
-  const gauge: Gauge = { read: async () => readings(30), thresholds };
+  const gauge: Gauge = { read: async () => readings(30), thresholds, ids: fakeIdsWriter() };
   const result = await gateArchitectMessage('Hello.', { gauge });
   assert.equal(result.outcome, 'returned');
 });

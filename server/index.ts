@@ -6,6 +6,7 @@ import { InMemorySessionStore, RedisSessionStore } from './session-store.js';
 import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
+import { createLocalIdsWriter } from './luminary-pipeline/ids-local.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
@@ -43,7 +44,10 @@ try {
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
-    gauge: config.luminaryGauge ? createLocalGauge(config.luminaryGauge) : undefined,
+    // The IDS embedded model runs on the gauge's local runtime and model (STP-0005 P2).
+    gauge: config.luminaryGauge
+      ? { ...createLocalGauge(config.luminaryGauge), ids: createLocalIdsWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
+      : undefined,
     askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : metaAskModel,
     replySource: meta ? (liveSource === 'baseten' ? 'Muse Spark Open · Baseten' : `Meta · ${meta.model}`) : config.luminaryReplySource,
     spend: meta?.ledger,

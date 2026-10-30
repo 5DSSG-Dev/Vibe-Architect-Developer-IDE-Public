@@ -76,6 +76,7 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   missing_model_id: 502,
   upstream_error: 502,
   gauge_error: 502,
+  ids_error: 502,
   incoherent_after_ids: 502,
   // The Architect's spending ceiling (P21) was reached: the gateway is working, it is refusing to spend.
   spend_ceiling: 503,
@@ -93,12 +94,12 @@ export type GovernedAskResult =
   | ({ ok: true; reply: GovernedReply; lineage?: LineageEntry[] } & TurnEvidence)
   | ({ ok: false; shortfall: ReplyShortfall; lineage?: LineageEntry[] } & TurnEvidence);
 
-/** The gauge with each call tagged: IRG reads as gauge, IDS observations as ids_model. */
+/** The gauge with each call tagged: IRG reads as gauge, IDS embedded-model calls as ids_model. */
 function taggedGauge(gauge: Gauge, log: CallLog): Gauge {
   return {
     ...gauge,
     read: tagged(log, 'gauge', gauge.read),
-    ...(gauge.observe ? { observe: tagged(log, 'ids_model', gauge.observe) } : {}),
+    ...(gauge.ids ? { ids: { write: (request) => { log.record('ids_model', request.retry); return gauge.ids!.write(request); } } } : {}),
   };
 }
 
@@ -143,10 +144,11 @@ async function governedTurn(askModel: AskModel, prompt: string, options: Luminar
       gauge: options.pipeline.gauge,
       threshold: options.pipeline.threshold,
       maxContentBytes: (options.pipeline.governance ?? options.governance)?.maxContentBytes,
+      idsOptions: options.pipeline.idsOptions,
     });
     architectLineage = gate.lineage;
-    if (gate.outcome === 'gauge_error') {
-      return { ok: false, shortfall: { code: 'gauge_error', message: gate.message, modelId: null }, architectLineage };
+    if (gate.outcome === 'gauge_error' || gate.outcome === 'ids_error') {
+      return { ok: false, shortfall: { code: gate.outcome, message: gate.message, modelId: null }, architectLineage };
     }
     if (gate.outcome === 'returned') {
       return {

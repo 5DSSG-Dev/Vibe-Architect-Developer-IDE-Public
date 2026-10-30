@@ -12,7 +12,7 @@
 // fails on a message that reached IRG, nothing crosses (gauge_error, fail closed).
 
 import { DEFAULT_MAX_CONTENT_BYTES } from '../luminary-governance.js';
-import { buildIdsObservation, validateObservation, type IdsObservation } from './ids.js';
+import { runIds, type IdsObservation, type RunIdsOptions } from './ids.js';
 import { readIrg, SEVEN_VIRTUES, validateReadings, type IrgReading, type IrgThreshold, IRG_THRESHOLD } from './irg.js';
 import type { Gauge, LineageEntry } from './pipeline.js';
 import { screenPim } from './pim.js';
@@ -24,12 +24,14 @@ export interface ArchitectGateOptions {
   gauge: Gauge;
   threshold?: IrgThreshold;
   maxContentBytes?: number;
+  idsOptions?: RunIdsOptions;
 }
 
 export type ArchitectGateResult =
   | { outcome: 'coherent'; lineage: LineageEntry[] }
   | { outcome: 'returned'; flaggedBy: ArchitectFlag; observation: IdsObservation; lineage: LineageEntry[] }
-  | { outcome: 'gauge_error'; message: string; lineage: LineageEntry[] };
+  | { outcome: 'gauge_error'; message: string; lineage: LineageEntry[] }
+  | { outcome: 'ids_error'; message: string; lineage: LineageEntry[] };
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
@@ -73,20 +75,13 @@ export async function gateArchitectMessage(message: string, options: ArchitectGa
     }
   }
 
-  // IDS response. P2 replaces this with the embedded model's Identify, Define and Suggest,
-  // the IDS PIM and ids_error; until then an observer failure is still fail-closed.
-  let observation: IdsObservation;
-  try {
-    if (options.gauge.observe) {
-      const validated = validateObservation(await options.gauge.observe({ reply: message, pimFindings, irg }));
-      if (!validated) throw new Error('Gauge observation is not a well-formed IDS observation.');
-      observation = validated;
-    } else {
-      observation = buildIdsObservation({ reply: message, pimFindings, irg });
-    }
-  } catch (error) {
-    return { outcome: 'gauge_error', message: errorMessage(error, 'The gauge could not produce an IDS observation.'), lineage };
+  // IDS: the embedded model writes Identify, Define and Suggest; the IDS PIM checks Suggest.
+  // An IDS failure fails closed (F2b): nothing crosses and no partial response is returned.
+  const ids = await runIds({ reply: message, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+  if (!ids.ok) {
+    lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
+    return { outcome: 'ids_error', message: ids.message, lineage };
   }
-  lineage.push({ pass, stage: 'ids', observation });
-  return { outcome: 'returned', flaggedBy: pimFindings.length > 0 ? 'pim' : 'irg', observation, lineage };
+  lineage.push({ pass, stage: 'ids', observation: ids.observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+  return { outcome: 'returned', flaggedBy: pimFindings.length > 0 ? 'pim' : 'irg', observation: ids.observation, lineage };
 }

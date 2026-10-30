@@ -576,7 +576,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
                 case 'task':
                   return <TaskCard key={entry.id} task={entry.task} level={entry.level} onDecide={decideTask} />;
                 case 'shortfall':
-                  return <p key={entry.id} role="alert" className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-2 text-[10px] text-rose-200">{entry.text}</p>;
+                  return <p key={entry.id} role="alert" className="whitespace-pre-wrap rounded-lg border border-rose-500/40 bg-rose-950/30 p-2 text-[10px] text-rose-200">{entry.text}</p>;
                 case 'note':
                   return <p key={entry.id} className="text-[10px] text-slate-400">{entry.text}</p>;
                 case 'moments-offer': {

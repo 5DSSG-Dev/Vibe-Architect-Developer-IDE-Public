@@ -15,13 +15,44 @@ export interface GovernedReply {
 
 export interface LineageEntry {
   pass: number;
-  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'ids' | 'prism';
+  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'ids' | 'ids_error' | 'prism';
+}
+
+/** The IDS response returned to the sender of an incoherent message (STP-0005 P2). */
+export interface IdsResponse {
+  identify: string;
+  define: string[];
+  suggest: string[];
+  suggestNote?: string;
 }
 
 export interface Shortfall {
   code: string;
   message: string;
   modelId?: string | null;
+  /** On returned_to_sender: the check that flagged the message. */
+  flaggedBy?: 'structural' | 'pim' | 'irg';
+  /** On returned_to_sender: the IDS response. */
+  observation?: IdsResponse;
+}
+
+const FLAGGED_BY: Record<NonNullable<Shortfall['flaggedBy']>, string> = {
+  structural: 'the structural check',
+  pim: 'the pattern screen (PIM)',
+  irg: 'the Virtue gauge (IRG)',
+};
+
+/** The IDS response in plain lines: what the message is, what was found, and a possible point to re-examine. */
+export function describeIdsResponse(shortfall: Shortfall): string {
+  const lines = [`Your message was not sent to the Luminary. It was returned through IDS${shortfall.flaggedBy ? ` after ${FLAGGED_BY[shortfall.flaggedBy]}` : ''}.`];
+  const ids = shortfall.observation;
+  if (ids) {
+    lines.push(`Identify: ${ids.identify}`);
+    for (const item of ids.define) lines.push(`Define: ${item}`);
+    for (const item of ids.suggest) lines.push(`Suggest: ${item}`);
+    if (ids.suggestNote) lines.push(`Suggest: ${ids.suggestNote}`);
+  }
+  return lines.join('\n');
 }
 
 export interface CheckResult {
@@ -147,8 +178,10 @@ export function describeShortfall(shortfall: Shortfall): string {
   switch (shortfall.code) {
     case 'upstream_error': return `No model answered. ${shortfall.message}`;
     case 'spend_ceiling': return shortfall.message;
-    case 'gauge_error': return 'The reply was held back because the gauge that checks every reply is not running.';
-    case 'incoherent_after_ids': return 'The reply was held back: after two tries it still did not read as coherent.';
+    case 'returned_to_sender': return describeIdsResponse(shortfall);
+    case 'gauge_error': return 'Nothing was sent, because the gauge that checks every message is not running.';
+    case 'ids_error': return 'The message was not sent, and IDS could not respond.';
+    case 'incoherent_after_ids': return 'The reply was returned through IDS twice and still did not read as coherent, so it is not shown.';
     case 'empty_reply': return 'The model sent an empty reply, so nothing is shown.';
     case 'malformed_reply': return 'The model sent a reply the IDE could not read, so nothing is shown.';
     case 'oversized_reply': return 'The reply was too long to show safely.';

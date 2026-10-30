@@ -1,83 +1,231 @@
-// IDS — Identify · Define · Suggest (STP-0002 P17). Builds the observation returned to the
-// originator when a reply does not resonate: what is (Identify), where the incoherence is
-// (Define), and possible paths to coherence (Suggest). There is no Decide, Correct or
-// Enforce layer: the observation is offered, and the originator re-forms its own reply.
+// IDS — Identify · Define · Suggest (STP-0002 P17; STP-0005 P2, plan rev16 F2, F2b, F2c, F3).
+// The response returned to the sender of an incoherent message: what the message is saying
+// (Identify), the incoherence the checks recorded (Define), and a possible point the sender
+// could re-examine (Suggest). There is no Decide, Correct or Enforce layer: the response is
+// offered, and the sender chooses what to do with it.
 //
-// Per N13 the gauge model may produce the observation itself (an injected IdsObserver). When
-// none is injected, the observation is assembled here from the PIM findings and IRG readings
-// only, so it never states more than the pipeline actually measured.
+// The embedded model writes all three parts (an injected IdsWriter); it has no other role.
+// Identify and Define are IS conditions, so only Suggest is screened, by the IDS PIM
+// (ids-pim.ts). A Suggest with a finding is rewritten at most twice, then withheld. No part
+// of the response may repeat the message's own text (no echo).
+//
+// Failures fail closed. If the embedded model is unavailable, times out or returns an
+// unusable response, IDS may retry once for the whole response; after that the result is
+// ids_error and nothing partial is returned (F2b). If the IDS PIM itself fails on a draft,
+// that draft is withheld and Identify and Define return with a note (F2c). Neither uses up a
+// revision loop or a Suggest rewrite.
 
-import { SEVEN_VIRTUES, thresholdFor, type IrgReading, type Virtue } from './irg.js';
+import type { IrgReading } from './irg.js';
+import { IDS_PIM_RULESET_VERSION, screenIdsPim, type IdsPimFinding } from './ids-pim.js';
 import type { PimFinding } from './pim.js';
 
 export interface IdsObservation {
   identify: string;
   define: string[];
+  /** Empty when every Suggest draft was withheld; `suggestNote` then says why. */
   suggest: string[];
+  suggestNote?: string;
 }
 
 export interface IdsInput {
+  /** The incoherent message's text: an Architect message or a Luminary reply. */
   reply: string;
   pimFindings: PimFinding[];
-  /** Null when a PIM catch routed the reply to IDS before the IRG read it. */
+  /** Null when a PIM catch (or the structural gate) sent the message to IDS before the IRG read it. */
   irg: IrgReading | null;
 }
 
-/** Produces an observation from the gauge model. Returns `unknown` so its payload is validated. */
-export type IdsObserver = (input: IdsInput) => Promise<unknown>;
-
-function describeReadings(irg: IrgReading): string {
-  return SEVEN_VIRTUES.map((virtue: Virtue) => `${virtue} ${irg.readings[virtue]}`).join(', ');
+export interface IdsWriteRequest extends IdsInput {
+  /** True when this call is the one bounded service retry for this response. */
+  retry: boolean;
+  /** Set on a Suggest rewrite: the previous draft and the IDS PIM findings on it. */
+  rewrite?: { previousSuggest: string[]; findings: IdsPimFinding[] };
 }
 
-/** Assemble an observation from what the pipeline measured. Deterministic. */
-export function buildIdsObservation({ pimFindings, irg }: IdsInput): IdsObservation {
-  const define: string[] = [];
-  const suggest: string[] = [];
-
-  for (const finding of pimFindings) {
-    define.push(`PIM ${finding.category} (${finding.patternId}): "${finding.excerpt}".`);
-    suggest.push(`Re-form the reply without the ${finding.category.replace(/_/g, ' ')} phrasing "${finding.excerpt}".`);
-  }
-
-  if (irg) {
-    for (const virtue of irg.belowThreshold) {
-      const threshold = thresholdFor(irg.threshold, virtue);
-      define.push(`${virtue} reads ${irg.readings[virtue]}, below the threshold of ${threshold}.`);
-      suggest.push(`Re-form the reply so that ${virtue} reads at or above ${threshold}.`);
-    }
-  }
-
-  const identify = irg
-    ? `IRG readings: ${describeReadings(irg)}.`
-    : `PIM caught ${pimFindings.length} pattern(s); the IRG did not read this reply.`;
-
-  return { identify, define, suggest };
+/** The embedded model. Returns `unknown` so its payload is validated. */
+export interface IdsWriter {
+  write(request: IdsWriteRequest): Promise<unknown>;
 }
+
+export const SUGGEST_REWRITE_LIMIT = 2;
+export const IDS_TIMEOUT_MS = 60_000;
+export const IDS_RETRY_DELAY_MS = 2_000;
+export const NO_SUGGESTION_PASSED = 'No suggestion passed its checks.';
+export const NO_SUGGESTION_CHECKED = 'No suggestion could be checked.';
+
+export interface IdsDraft {
+  suggest: string[];
+  findings: IdsPimFinding[];
+  /** True only for the draft returned to the sender. Every other draft is "not shown as guidance". */
+  shown: boolean;
+  /** Set when the IDS PIM could not check this draft (F2c). */
+  idsPimError?: string;
+}
+
+export interface IdsFailure {
+  retry: boolean;
+  reason: string;
+}
+
+export type IdsResult =
+  | { ok: true; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { ok: false; message: string; failures: IdsFailure[] };
+
+export interface RunIdsOptions {
+  timeoutMs?: number;
+  retryDelayMs?: number;
+  /** Injected for tests (F2c). Defaults to the IDS PIM. */
+  screen?: (text: string) => IdsPimFinding[];
+}
+
+export const IDS_ERROR_MESSAGE = 'The message was not sent, and IDS could not respond.';
+
+class IdsUnusable extends Error {}
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
-/** Validate an untrusted observer payload. Returns null when it is not a well-formed observation. */
+const nonBlank = (items: string[]) => items.map((item) => item.trim()).filter((item) => item.length > 0);
+
+/** Validate an untrusted writer payload. Returns null when it is not a well-formed, complete observation. */
 export function validateObservation(raw: unknown): IdsObservation | null {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
   const record = raw as Record<string, unknown>;
   if (typeof record.identify !== 'string' || record.identify.trim().length === 0) return null;
   if (!isStringArray(record.define) || !isStringArray(record.suggest)) return null;
-  return { identify: record.identify, define: record.define, suggest: record.suggest };
+  const define = nonBlank(record.define);
+  const suggest = nonBlank(record.suggest);
+  if (define.length === 0 || suggest.length === 0) return null;
+  return { identify: record.identify.trim(), define, suggest };
+}
+
+function readSuggest(raw: unknown): string[] | null {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+  const suggest = (raw as Record<string, unknown>).suggest;
+  if (!isStringArray(suggest)) return null;
+  const items = nonBlank(suggest);
+  return items.length > 0 ? items : null;
+}
+
+const normalize = (text: string) => text.toLowerCase().replace(/\s+/g, ' ').trim();
+const ECHO_WORDS = 6;
+const ECHO_MIN_CHARS = 12;
+
+/**
+ * No echo: true when `text` repeats the message — the whole message (when it is at least a
+ * dozen characters), or any run of six consecutive words from it.
+ */
+export function echoes(text: string, message: string): boolean {
+  const haystack = normalize(text);
+  const needle = normalize(message);
+  if (needle.length >= ECHO_MIN_CHARS && haystack.includes(needle)) return true;
+  const words = needle.split(' ').filter(Boolean);
+  for (let i = 0; i + ECHO_WORDS <= words.length; i += 1) {
+    if (haystack.includes(words.slice(i, i + ECHO_WORDS).join(' '))) return true;
+  }
+  return false;
+}
+
+const allText = (observation: Pick<IdsObservation, 'identify' | 'define' | 'suggest'>) =>
+  [observation.identify, ...observation.define, ...observation.suggest].join('\n');
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`IDS embedded model timed out after ${ms} ms.`)), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (error) => { clearTimeout(timer); reject(error); },
+    );
+  });
+}
+
+const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Run IDS for one incoherent message. */
+export async function runIds(input: IdsInput, writer: IdsWriter | undefined, options: RunIdsOptions = {}): Promise<IdsResult> {
+  const failures: IdsFailure[] = [];
+  if (!writer) {
+    failures.push({ retry: false, reason: 'The IDS embedded model is not configured.' });
+    return { ok: false, message: IDS_ERROR_MESSAGE, failures };
+  }
+  const timeoutMs = options.timeoutMs ?? IDS_TIMEOUT_MS;
+  const retryDelayMs = options.retryDelayMs ?? IDS_RETRY_DELAY_MS;
+  const screen = options.screen ?? screenIdsPim;
+  let retryUsed = false;
+
+  // One model call, with the response's single service retry (F2b): the limit counts
+  // responses, not calls, so once the retry is used any later failure ends the response.
+  async function call<T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T): Promise<T> {
+    for (;;) {
+      const retry = failures.length > 0 && !retryUsed ? (retryUsed = true) : false;
+      try {
+        const raw = await withTimeout(writer!.write({ ...input, retry, ...(rewrite ? { rewrite } : {}) }), timeoutMs);
+        return read(raw);
+      } catch (error) {
+        failures.push({ retry, reason: error instanceof Error ? error.message : 'IDS embedded model failed.' });
+        if (retryUsed) throw error;
+        await wait(retryDelayMs);
+      }
+    }
+  }
+
+  let observation: IdsObservation;
+  try {
+    observation = await call(undefined, (raw) => {
+      const valid = validateObservation(raw);
+      if (!valid) throw new IdsUnusable('IDS embedded model returned an unusable response (missing or empty part).');
+      if (echoes(allText(valid), input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
+      return valid;
+    });
+  } catch {
+    return { ok: false, message: IDS_ERROR_MESSAGE, failures };
+  }
+
+  const drafts: IdsDraft[] = [];
+  let suggest = observation.suggest;
+  for (let rewrites = 0; ; rewrites += 1) {
+    let findings: IdsPimFinding[];
+    try {
+      findings = screen(suggest.join('\n'));
+    } catch (error) {
+      // F2c: an unchecked draft is never shown; no rewrite is asked for.
+      drafts.push({ suggest, findings: [], shown: false, idsPimError: error instanceof Error ? error.message : 'IDS PIM failed.' });
+      return { ok: true, observation: { ...observation, suggest: [], suggestNote: NO_SUGGESTION_CHECKED }, drafts, idsPimVersion: IDS_PIM_RULESET_VERSION, failures };
+    }
+    if (findings.length === 0) {
+      drafts.push({ suggest, findings, shown: true });
+      return { ok: true, observation: { ...observation, suggest }, drafts, idsPimVersion: IDS_PIM_RULESET_VERSION, failures };
+    }
+    drafts.push({ suggest, findings, shown: false });
+    if (rewrites >= SUGGEST_REWRITE_LIMIT) {
+      return { ok: true, observation: { ...observation, suggest: [], suggestNote: NO_SUGGESTION_PASSED }, drafts, idsPimVersion: IDS_PIM_RULESET_VERSION, failures };
+    }
+    const previousSuggest = suggest;
+    try {
+      suggest = await call({ previousSuggest, findings }, (raw) => {
+        const next = readSuggest(raw);
+        if (!next) throw new IdsUnusable('IDS embedded model returned an unusable Suggest rewrite.');
+        if (echoes(next.join('\n'), input.reply)) throw new IdsUnusable('IDS embedded model rewrite repeats the message text (no echo).');
+        return next;
+      });
+    } catch {
+      return { ok: false, message: IDS_ERROR_MESSAGE, failures };
+    }
+  }
 }
 
 /**
- * The prompt that returns an IDS observation to the model as context for a re-formed reply.
- * The observation is offered, not imposed: the model is asked to re-form, not to comply.
+ * The prompt that returns an IDS response to the Luminary as context for a re-formed reply.
+ * The response is offered, not imposed: the Luminary may re-examine its reply, never comply.
  */
 export function composeRevisionPrompt(originalPrompt: string, previousReply: string, observation: IdsObservation): string {
   const lines = [
-    'Your previous reply did not resonate with the Prism. An IDS observation follows.',
+    'Your previous reply was returned through IDS. Its response follows.',
     `Identify: ${observation.identify}`,
     ...observation.define.map((item) => `Define: ${item}`),
     ...observation.suggest.map((item) => `Suggest: ${item}`),
+    ...(observation.suggestNote ? [`Suggest: ${observation.suggestNote}`] : []),
     '',
     'Previous reply:',
     previousReply,
@@ -85,7 +233,7 @@ export function composeRevisionPrompt(originalPrompt: string, previousReply: str
     'Original prompt:',
     originalPrompt,
     '',
-    'Re-form your reply to the original prompt with this observation in mind.',
+    'You may re-examine your reply to the original prompt with this response in mind.',
   ];
   return lines.join('\n');
 }

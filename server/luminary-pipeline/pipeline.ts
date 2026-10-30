@@ -14,7 +14,7 @@
 // and the embedded gauge model arrives with M1.b.
 
 import { governReply, type GovernanceOptions, type GovernedReply, type ShortfallCode } from '../luminary-governance.js';
-import { buildIdsObservation, validateObservation, type IdsInput, type IdsObservation, type IdsObserver } from './ids.js';
+import { runIds, type IdsDraft, type IdsFailure, type IdsObservation, type IdsWriter, type RunIdsOptions } from './ids.js';
 import { IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type IrgReading, type IrgScorer, type IrgThreshold, type Virtue, type VirtueReadings, type VirtueThresholds } from './irg.js';
 import { screenPim, type PimFinding } from './pim.js';
 import { routeRbc, type RbcRoute } from './rbc.js';
@@ -22,8 +22,8 @@ import { routeRbc, type RbcRoute } from './rbc.js';
 /** The separate, small gauge model (N13-N15), injected. */
 export interface Gauge {
   read: IrgScorer;
-  /** Produces the IDS observation. When absent, it is assembled from the readings. */
-  observe?: IdsObserver;
+  /** The IDS embedded model (STP-0005 P2). When absent, IDS fails closed as ids_error. */
+  ids?: IdsWriter;
   /** Per-virtue thresholds selected for this gauge's scale (P18). When absent, IRG_THRESHOLD applies. */
   thresholds?: VirtueThresholds;
 }
@@ -48,6 +48,8 @@ export interface ReplyPipelineOptions {
   threshold?: IrgThreshold;
   maxIdsPasses?: number;
   governance?: GovernanceOptions;
+  /** IDS timeout, retry delay and (for tests) the IDS PIM screen. */
+  idsOptions?: RunIdsOptions;
 }
 
 export type LineageEntry =
@@ -55,10 +57,11 @@ export type LineageEntry =
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
-  | { pass: number; stage: 'ids'; observation: IdsObservation }
+  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { pass: number; stage: 'ids_error'; failures: IdsFailure[] }
   | { pass: number; stage: 'prism' };
 
-export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'incoherent_after_ids';
+export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'ids_error' | 'incoherent_after_ids';
 
 export interface PipelineShortfall {
   code: PipelineShortfallCode;
@@ -84,12 +87,6 @@ async function gaugeReading(gauge: Gauge, content: string, threshold: IrgThresho
   return readIrg(validateReadings(raw), threshold);
 }
 
-async function observe(gauge: Gauge, input: IdsInput): Promise<IdsObservation> {
-  if (!gauge.observe) return buildIdsObservation(input);
-  const observation = validateObservation(await gauge.observe(input));
-  if (!observation) throw new Error('Gauge observation is not a well-formed IDS observation.');
-  return observation;
-}
 
 /**
  * Run a candidate reply through the pipeline. `candidate` is untrusted (straight from the
@@ -137,17 +134,14 @@ export async function runReplyPipeline(
       }
     }
 
-    let observation: IdsObservation;
-    try {
-      observation = await observe(options.gauge, { reply: reply.content, pimFindings, irg });
-    } catch (error) {
-      return {
-        ok: false,
-        shortfall: { code: 'gauge_error', message: errorMessage(error, 'The gauge could not produce an IDS observation.'), modelId: reply.modelId },
-        lineage,
-      };
+    // IDS fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
+    const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+    if (!ids.ok) {
+      lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
+      return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage };
     }
-    lineage.push({ pass, stage: 'ids', observation });
+    const observation = ids.observation;
+    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
 
     if (pass > maxIdsPasses) {
       return {
