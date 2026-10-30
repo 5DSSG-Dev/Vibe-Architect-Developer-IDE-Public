@@ -2304,3 +2304,13 @@ Evidence: N57; DataQuad check of d943246; server/luminary-rehearsal.ts; server/l
 Channel: cloud
 
 The N57 check on Tracey's PC passed at 1673x871 and 1280x720: the focus chip attaches, stays across questions, moves from page to Environment, clears when the page closes, and x and Add selection work. In the Code Frame, the code now always takes a press at its edge. One gap for rehearsals: the stand-in's general reply ignored the focus, so a rehearsal looked 'lost' even though the focus was sent. The stand-in now names it ('You are looking at <name>, and my answer is about it.' or 'You are inside <name>...'). Known and left as is: the focus chip carries the Element's description, not the Code Frame's code (the Code Frame's own Ask sends the code); the chip's words do not refresh after an Edit save until the focus moves. 3 new gateway tests. App 329/329, gateway 151/151.
+
+### 2026-10-30T12:06:00.000Z | claude | note N59
+Chain-Prev: 73114b376d85cff8c9163058c817ced771c5b3993d9f3ec9d8495317d762d9fc
+Chain-Hash: bfec3eefa9cfb0a1ef1da4b1ebe1bfa9ffb0a65abf4910ade9c6aa74591923b3
+Stage: Verification
+Kind: note
+Evidence: Tracey 2026-10-30T12:05Z; P25; N57; N58
+Channel: cloud
+
+First live P25 run on Tracey's PC (3015, Baseten): Tracey asked the Luminary, from the Relational Database Engine's Code Frame, to write its code (suggested request: a pool of up to 10 reused connections that waits when all are busy). Tracey reports: 'That worked nicely.' Before the run, the RC session restarted 3014 and 3015 from c907c96, after Tracey stopped 15 stale gateway processes from earlier sessions. The RC session's permission check would not stop them on relayed approval, so Tracey ran a PowerShell line themselves. On 3014, the focus was confirmed in the real page ('You are looking at Relational Database Engine...'; 'You are inside...'). An untracked start-live-3015.cmd in the try-out worktree lets Tracey start the live gateway in a window of their own for the demo. Whether Tracey accepted or declined the proposal, and the spend, are not yet recorded.
