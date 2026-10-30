@@ -25,6 +25,7 @@ test('without a browser, Voice is off and nothing claims to speak or listen', ()
 });
 
 test('a refused microphone is explained in plain words', () => {
-  assert.match(listenErrorText('not-allowed'), /did not allow the microphone/);
+  assert.match(listenErrorText('not-allowed'), /microphone was blocked/);
+  assert.match(listenErrorText('service-not-allowed'), /Chrome and Edge/);
   assert.equal(listenErrorText('aborted'), '');
 });

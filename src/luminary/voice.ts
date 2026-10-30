@@ -148,7 +148,9 @@ export function listen(onWords: (words: string) => void, onError: (reason: strin
 }
 
 export function listenErrorText(code: string): string {
-  if (code === 'not-allowed' || code === 'service-not-allowed') return 'The browser did not allow the microphone. You can allow it from the address bar.';
+  if (code === 'not-allowed') return 'The microphone was blocked. Allow it from the address bar, and check that Windows lets apps use the microphone (Settings, Privacy & security, Microphone). Then reload the page.';
+  if (code === 'service-not-allowed') return 'This browser has its speech-to-text switched off, so I cannot hear you here. Talking works in Chrome and Edge; reading aloud works everywhere.';
+  if (code === 'audio-capture') return 'No microphone was found. Check that one is plugged in and chosen in Windows sound settings.';
   if (code === 'no-speech') return 'I did not hear anything. Hold the button while you speak.';
   if (code === 'network') return 'The browser could not reach its speech service, so nothing was heard.';
   if (code === 'aborted') return '';
