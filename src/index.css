@@ -224,13 +224,9 @@ body {
 }
 
 /*
- * The Luminary's Paused Icon breathes like the 3D Presence (src/three/luminaryPresence.ts: about
- * one breath every 3.5 s). It pulses gently and never spins, as the Architect asked.
+ * While an IDE page (any aria-modal Dialog) is open, the Luminary's Full Form moves to the right
+ * edge, clear of the page's own buttons in the middle of the screen.
  */
-@keyframes luminary-breathe {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(252, 211, 77, 0.15); }
-  50% { transform: scale(1.08); box-shadow: 0 0 16px rgba(252, 211, 77, 0.45); }
-}
-.animate-luminary-breathe {
-  animation: luminary-breathe 3.5s ease-in-out infinite;
+body:has([role="dialog"][aria-modal="true"]) .luminary-form {
+  right: 0.75rem;
 }

@@ -2244,3 +2244,13 @@ Evidence: Tracey 2026-10-30T05:09Z; src/components/LuminaryHost.tsx; src/compone
 Channel: cloud
 
 Tracey: on an Element's info page the Luminary was missing; it must always be there, and when paused its small icon belongs in the bottom right corner, pulsing like the Luminary. Cause: every IDE overlay (Dialog, z-50 / z-[60]) covered the Luminary (z-30) and the bubble (z-20). Change: the Luminary's panel, Paused Icon and bubble now sit at z-[70], above every overlay. The Paused Icon moved from the status bar's left corner to the lower right, just above the status bar (clear of Export CORE), and breathes (scale 1 to 1.08 with an amber glow, 3.5 s, matching the Presence; never spins; steady when the OS asks for reduced motion). Escape inside the Luminary still closes only the Luminary (its handler stops the event before the Dialog's). The 3D Presence itself stays in the scene behind overlays; on an Element's pages the icon and panel stand for it. App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T05:30:00.000Z | claude | note N53
+Chain-Prev: 4b9744af36e94e3f601762f980f964400d30436fb5d963dae204c2504884ab48
+Chain-Hash: 9e3b1e9c57927c35a9e83d084a4330591b8c853cf79685b24140c12d519c12af
+Stage: Execution
+Kind: note
+Evidence: N52; DataQuad t3111; tailwind.config.js; src/index.css; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N52 check on Tracey's PC (rehearsal, 1440x900 and 1280x720) confirmed that the Luminary shows above an Element's info page and Code Frame, and that Escape closes only the Luminary. It found three issues, now fixed: (1) The breathing did not run, because a motion-safe variant needs a Tailwind animation; it now lives in tailwind.config.js (luminaryBreathe) instead of plain CSS. (2) The Paused Icon sat on the scene controls' RESET button; it now sits left of the controls (right-24 bottom-24), still in the lower right corner. (3) With a page open, the Full Form covered the page's Edit and View Code buttons; while any aria-modal page is open, it now moves to the right edge (.luminary-form via body:has in index.css). App 325/325, gateway 148/148, build clean.

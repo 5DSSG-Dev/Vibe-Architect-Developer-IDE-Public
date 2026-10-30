@@ -336,12 +336,13 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const codingTasksOn = status?.codingTasks === 'on';
 
   return (
-    // The Paused Icon sits in the lower right corner, just above the status bar, and breathes like
-    // the Presence. The Full Form opens beside the Presence in the lower right of the workspace
-    // (src/three/luminaryPresence.ts), as the Architect drew it, and falls back toward the left
-    // edge on a narrow screen. Both stay above every IDE overlay (z-[70]; the highest overlay is
-    // z-[60]), so the Luminary is there on an Element's pages too.
-    <div className="fixed right-4 bottom-24 z-[70] font-mono">
+    // The Paused Icon sits in the lower right corner, just above the status bar and left of the
+    // scene controls, and breathes like the Presence. The Full Form opens beside the Presence in
+    // the lower right of the workspace (src/three/luminaryPresence.ts), as the Architect drew it,
+    // and falls back toward the left edge on a narrow screen; while an IDE page is open it moves to
+    // the right edge (.luminary-form in index.css). Both stay above every IDE overlay (z-[70]; the
+    // highest overlay is z-[60]), so the Luminary is there on an Element's pages too.
+    <div className="fixed right-24 bottom-24 z-[70] font-mono">
       {isEngaged ? (
         <section
           ref={formRef}
@@ -353,7 +354,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               setIsEngaged(false);
             }
           }}
-          className="fixed bottom-32 right-[max(0.75rem,min(310px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
+          className="luminary-form fixed bottom-32 right-[max(0.75rem,min(310px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
         >
           <header className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
