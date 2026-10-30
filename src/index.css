@@ -224,9 +224,11 @@ body {
 }
 
 /*
- * While an IDE page (any aria-modal Dialog) is open, the Luminary's Full Form moves to the right
- * edge, clear of the page's own buttons in the middle of the screen.
+ * While an IDE page (any aria-modal Dialog) is open, the Luminary's Full Form moves to the top
+ * right corner, clear of the page's own action buttons along its bottom edge.
  */
 body:has([role="dialog"][aria-modal="true"]) .luminary-form {
   right: 0.75rem;
+  top: 0.75rem;
+  bottom: auto;
 }

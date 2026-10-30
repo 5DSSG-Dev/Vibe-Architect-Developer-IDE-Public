@@ -2254,3 +2254,13 @@ Evidence: N52; DataQuad t3111; tailwind.config.js; src/index.css; src/components
 Channel: cloud
 
 The N52 check on Tracey's PC (rehearsal, 1440x900 and 1280x720) confirmed that the Luminary shows above an Element's info page and Code Frame, and that Escape closes only the Luminary. It found three issues, now fixed: (1) The breathing did not run, because a motion-safe variant needs a Tailwind animation; it now lives in tailwind.config.js (luminaryBreathe) instead of plain CSS. (2) The Paused Icon sat on the scene controls' RESET button; it now sits left of the controls (right-24 bottom-24), still in the lower right corner. (3) With a page open, the Full Form covered the page's Edit and View Code buttons; while any aria-modal page is open, it now moves to the right edge (.luminary-form via body:has in index.css). App 325/325, gateway 148/148, build clean.
+
+### 2026-10-30T05:40:00.000Z | claude | note N54
+Chain-Prev: 9e3b1e9c57927c35a9e83d084a4330591b8c853cf79685b24140c12d519c12af
+Chain-Hash: 0dfea00333c016ec256bc0232ca8e81ce159f041909e78b822d7f196db9554cb
+Stage: Execution
+Kind: note
+Evidence: N53; DataQuad t3112; src/index.css; src/components/LuminaryHost.tsx
+Channel: cloud
+
+The N53 check confirmed the breathing works (computed luminaryBreathe; 36px to 38.9px). Two placement issues remain, now changed: (1) The scene controls' bottom row is 284px wide, so right-24 put the icon on SNAP OFF. The icon now sits at the right edge directly above the control stack (right-4, bottom 272px). (2) With a page open, the Full Form at the right edge still covered the Code Frame's own Ask send button and, at 1280x720, the info card's View Code, because both pages keep their action buttons along the bottom. While a page is open the Full Form now moves to the top right corner (top and right 0.75rem). Client only. App 325/325; gateway 148/148 on three reruns (one earlier run had a single unrelated gateway failure that did not repeat); build clean.

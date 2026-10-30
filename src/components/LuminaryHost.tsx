@@ -336,13 +336,13 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
   const codingTasksOn = status?.codingTasks === 'on';
 
   return (
-    // The Paused Icon sits in the lower right corner, just above the status bar and left of the
-    // scene controls, and breathes like the Presence. The Full Form opens beside the Presence in
+    // The Paused Icon sits at the right edge, just above the scene controls in the lower right
+    // corner, and breathes like the Presence. The Full Form opens beside the Presence in
     // the lower right of the workspace (src/three/luminaryPresence.ts), as the Architect drew it,
     // and falls back toward the left edge on a narrow screen; while an IDE page is open it moves to
-    // the right edge (.luminary-form in index.css). Both stay above every IDE overlay (z-[70]; the
+    // the top right corner (.luminary-form in index.css). Both stay above every IDE overlay (z-[70]; the
     // highest overlay is z-[60]), so the Luminary is there on an Element's pages too.
-    <div className="fixed right-24 bottom-24 z-[70] font-mono">
+    <div className="fixed right-4 bottom-[272px] z-[70] font-mono">
       {isEngaged ? (
         <section
           ref={formRef}
