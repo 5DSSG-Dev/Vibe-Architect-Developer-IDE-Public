@@ -104,3 +104,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Selection runs on the completed click event after drag classification. Element pick proxies take priority over the Luminary's overlapping decorative pick proxy, repairing Orb drill-in.
 - Browser verified Orb hover, Orb click to its Environment, Satellite hover, and Satellite click to its child Environment. Browser workspace returned to CORE with empty navigation stack and original socket relations intact. The browser showed 33 failed GLB assets; procedural fallback visuals were used.
 - Production build and `git diff --check` pass with the existing chunk-size warning. Tests not run; no commit or push.
+
+## 2026-10-29 | Codex | Publication status correction
+- Supersedes earlier pending/uncommitted notes: Element-origin hover and completed-click navigation are committed as `6792987` and pushed to `codex/m4-element-inspection-framing`.
+- Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24). PR #23 was already merged before this follow-up was published.

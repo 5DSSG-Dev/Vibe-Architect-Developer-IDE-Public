@@ -182,3 +182,7 @@
 - Main-scene selection now runs on the completed click event after drag classification. The click handler checks Element pick proxies before the Luminary proxy; the browser showed those hit areas overlap on the API Orb, which explained why left-click entered neither Environment.
 - Browser verified hover popups on an Orb and a Satellite, Orb click into its Environment, and Satellite click into its next Environment. Returned to CORE and verified the test navigation stack is empty and the original sockets/contracts remain.
 - `npm run build` and `git diff --check` pass; build retains the existing Vite large-chunk warning. Browser reports 33 failed GLB assets, so these interactions were checked against procedural fallback visuals. Tests not run; changes remain uncommitted and unpushed.
+
+### 2026-10-29 — Publication status correction
+- Supersedes the pending publication status above: commit `6792987 fix(ui): target element hover and drill-in` is pushed to `codex/m4-element-inspection-framing`.
+- Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24); PR #23 had already merged before this follow-up was published.

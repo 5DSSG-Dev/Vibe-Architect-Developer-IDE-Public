@@ -37,3 +37,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 - CORE Orb and Satellite Totems are marker-free and anchored to their Elements. The main scene reveals their information popups from the Element pick proxy, avoiding detached CSS pointer targets.
 - Completed click now resolves element pick proxies before the Luminary proxy. Browser verification entered the Orb Environment and then the Satellite child Environment; hover on both Element types revealed their popups.
 - Verification used procedural fallbacks because the local browser reported 33 failed GLB assets. Build and diff check pass; tests not run. The browser workspace was returned to CORE. Code remains uncommitted and unpushed.
+
+## 2026-10-29 | Codex | Publication status correction
+- Supersedes earlier pending/uncommitted notes: Element-origin hover and completed-click navigation are committed as `6792987` and pushed to `codex/m4-element-inspection-framing`.
+- Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24). PR #23 was already merged before this follow-up was published.
