@@ -100,6 +100,13 @@ function elementCode(prompt: string, message: string): string {
   return [`This is a rehearsal of writing ${fileName}: I have kept your code and marked where my change would go. A real model would write the change itself.`, '', `\`\`\`${fence}`, code, '```'].join('\n');
 }
 
+/** Names the Element the Luminary's focus attached (N57), so a rehearsal shows the focus arriving. */
+function focusNote(prompt: string): string {
+  const focus = /\[Context: (Looking at|Inside): (.+)\]/.exec(prompt);
+  if (!focus) return '';
+  return focus[1] === 'Inside' ? `You are inside ${focus[2]}, and my answer is about it. ` : `You are looking at ${focus[2]}, and my answer is about it. `;
+}
+
 /** The rehearsal reply source. It never calls a model and never spends credits. */
 export const rehearsalAskModel: AskModel = async (prompt) => {
   const { mode, level, allowedFiles, message } = readPromptFrame(prompt);
@@ -111,7 +118,7 @@ export const rehearsalAskModel: AskModel = async (prompt) => {
   else if (message.includes(ELEMENT_CODE_MARKER)) body = elementCode(prompt, message);
   else if (/\b(draft|note|offer)\b/.test(lower)) body = offering();
   else if (/\b(code|snippet|function)\b/.test(lower)) body = explainSnippet(level);
-  else body = `${MODE_NOTES[mode] ?? MODE_NOTES.DESIGN} Ask me to explain anything on screen, to write code, or to draft a note.`;
+  else body = `${focusNote(prompt)}${MODE_NOTES[mode] ?? MODE_NOTES.DESIGN} Ask me to explain anything on screen, to write code, or to draft a note.`;
 
   return { modelId: REHEARSAL_MODEL_ID, content: `${NOTICE}\n\n${body}` };
 };

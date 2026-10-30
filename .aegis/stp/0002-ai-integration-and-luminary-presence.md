@@ -2294,3 +2294,13 @@ Evidence: Tracey 2026-10-30T08:56Z and 09:01Z; N56; src/luminary/focus.ts; src/l
 Channel: cloud
 
 Two changes. (1) The Luminary's focus follows what is open, by Tracey's decision (09:01Z: an auto feature 'that will be important'; without it the Luminary would answer about the workspace and be lost). This revises the earlier rule that context is offered and never sent on its own: the focus is now attached by itself as a chip the Architect can remove. src/luminary/focus.ts picks the focus: an open Element page (info, Edit, Code Frame) first, then the Environment the Architect is inside, then an Element being attached. The panel attaches it as 'Looking at: <name>' or 'Inside: <name>'. It stays across follow-up questions, moves when the focus moves, and goes when nothing is open. Removing it with x keeps it off for that focus; 'Add selection' brings it back. This also fixes a fault found by the RC session: inspectingItem outlived its page, so the old selection kept naming the last Element viewed, even inside another Environment. 4 new tests. (2) The N56 press target over the Presence covered the right edge of the Code Frame's code at 1280x720. It is replaced by a document click listener: a press counts only when it lands on a page backdrop inside the clear part of its window (PRESENCE_WINDOW_RADIUS 94x127, beside PRESENCE_SCREEN_OFFSET), so the page's own content always wins. App 329/329, gateway 148/148 (one run had the intermittent P1.5 verification-suite failure, which passed on rerun), typecheck and build clean.
+
+### 2026-10-30T09:25:00.000Z | claude | note N58
+Chain-Prev: 1a80d55199d81744d09e7a94fcc2f1d7d6ac362249ad86294fa69649f8c8a976
+Chain-Hash: 73114b376d85cff8c9163058c817ced771c5b3993d9f3ec9d8495317d762d9fc
+Stage: Execution
+Kind: note
+Evidence: N57; DataQuad check of d943246; server/luminary-rehearsal.ts; server/luminary-focus.test.ts
+Channel: cloud
+
+The N57 check on Tracey's PC passed at 1673x871 and 1280x720: the focus chip attaches, stays across questions, moves from page to Environment, clears when the page closes, and x and Add selection work. In the Code Frame, the code now always takes a press at its edge. One gap for rehearsals: the stand-in's general reply ignored the focus, so a rehearsal looked 'lost' even though the focus was sent. The stand-in now names it ('You are looking at <name>, and my answer is about it.' or 'You are inside <name>...'). Known and left as is: the focus chip carries the Element's description, not the Code Frame's code (the Code Frame's own Ask sends the code); the chip's words do not refresh after an Edit save until the focus moves. 3 new gateway tests. App 329/329, gateway 151/151.
