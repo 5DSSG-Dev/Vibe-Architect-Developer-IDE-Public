@@ -29,7 +29,7 @@ test('the prompt names who wrote the message, and a retry says why the last answ
   assert.doesNotMatch(pim, /Virtue gauge/);
   assert.doesNotMatch(buildIdsPrompt(request).user, /written by/);
   const retry = buildIdsPrompt({ ...request, retry: true, previousFailure: 'IDS embedded model returned an unusable response (define is empty).' }).user;
-  assert.match(retry, /Your previous answer could not be used: .*define is empty.*Answer again with all three parts/);
+  assert.match(retry, /Your previous answer could not be used: .*define is empty.*Answer again with both parts/);
 });
 
 test('a rewrite request asks for a new suggest only, naming the findings', () => {

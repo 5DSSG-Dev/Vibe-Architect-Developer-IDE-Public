@@ -4,9 +4,10 @@
 // could re-examine (Suggest). There is no Decide, Correct or Enforce layer: the response is
 // offered, and the sender chooses what to do with it.
 //
-// The embedded model writes all three parts (an injected IdsWriter); it has no other role.
-// Identify and Define are IS conditions, so only Suggest is screened, by the IDS PIM
-// (ids-pim.ts). A Suggest with a finding is rewritten at most twice, then withheld. No part
+// The embedded model writes Identify and Suggest (an injected IdsWriter); it has no other
+// role. Define is written here from what the checks recorded, so it states exactly what is
+// and can never misstate a reading or invent a fact. Identify and Define are IS conditions,
+// so only Suggest is screened, by the IDS PIM (ids-pim.ts). A Suggest with a finding is rewritten at most twice, then withheld. No part
 // of the response may repeat the message's own text (no echo).
 //
 // Failures fail closed. If the embedded model is unavailable, times out or returns an
@@ -15,7 +16,7 @@
 // that draft is withheld and Identify and Define return with a note (F2c). Neither uses up a
 // revision loop or a Suggest rewrite.
 
-import type { IrgReading } from './irg.js';
+import { thresholdFor, type IrgReading } from './irg.js';
 import { IDS_PIM_RULESET_VERSION, screenIdsPim, type IdsPimFinding } from './ids-pim.js';
 import type { PimFinding } from './pim.js';
 
@@ -93,27 +94,40 @@ function readList(value: unknown): string[] | null {
   return items.map((item) => item.trim()).filter((item) => item.length > 0);
 }
 
-/** Why an untrusted writer payload is not a complete observation, or null when it is one. Names parts, never content. */
+/** Why an untrusted writer payload is not a complete answer, or null when it is one. Names parts, never content. */
 export function unusableReason(raw: unknown): string | null {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return 'the response is not a JSON object';
   const record = raw as Record<string, unknown>;
   const problems: string[] = [];
   if (typeof record.identify !== 'string') problems.push(record.identify === undefined ? 'identify is missing' : 'identify is not text');
   else if (record.identify.trim().length === 0) problems.push('identify is empty');
-  for (const part of ['define', 'suggest'] as const) {
-    const list = readList(record[part]);
-    if (record[part] === undefined) problems.push(`${part} is missing`);
-    else if (!list) problems.push(`${part} is not a list of text`);
-    else if (list.length === 0) problems.push(`${part} is empty`);
-  }
+  const suggest = readList(record.suggest);
+  if (record.suggest === undefined) problems.push('suggest is missing');
+  else if (!suggest) problems.push('suggest is not a list of text');
+  else if (suggest.length === 0) problems.push('suggest is empty');
   return problems.length > 0 ? problems.join(', ') : null;
 }
 
-/** Validate an untrusted writer payload. Returns null when it is not a well-formed, complete observation. */
+/**
+ * Define, from what the checks recorded: the pattern screen's findings, or every virtue the
+ * gauge read below its threshold, or the structural check. No model writes it.
+ */
+export function defineFromChecks(input: Pick<IdsInput, 'pimFindings' | 'irg'>): string[] {
+  if (input.pimFindings.length > 0) {
+    return [...new Set(input.pimFindings.map((f) => `The pattern screen recorded ${f.category.replace(/_/g, ' ')}.`))];
+  }
+  if (input.irg && input.irg.belowThreshold.length > 0) {
+    const irg = input.irg;
+    return irg.belowThreshold.map((v) => `${v} reads ${Number(irg.readings[v].toFixed(1))}, below the threshold of ${thresholdFor(irg.threshold, v)}.`);
+  }
+  return ['The structural check recorded the message as not well-formed.'];
+}
+
+/** Validate an untrusted writer payload. Returns null when it is not a complete answer. Define is filled in by runIds(). */
 export function validateObservation(raw: unknown): IdsObservation | null {
   if (unusableReason(raw) !== null) return null;
   const record = raw as Record<string, unknown>;
-  return { identify: (record.identify as string).trim(), define: readList(record.define)!, suggest: readList(record.suggest)! };
+  return { identify: (record.identify as string).trim(), define: [], suggest: readList(record.suggest)! };
 }
 
 function readSuggest(raw: unknown): string[] | null {
@@ -207,7 +221,7 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
     observation = await call(undefined, (raw) => {
       const reason = unusableReason(raw);
       if (reason) throw new IdsUnusable(`IDS embedded model returned an unusable response (${reason}).`);
-      const valid = validateObservation(raw)!;
+      const valid = { ...validateObservation(raw)!, define: defineFromChecks(input) };
       if (echoes(allText(valid), input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
       if (misstatesReadings(allText(valid), input.irg)) throw new IdsUnusable('IDS embedded model response misstates a gauge reading (says a reading below its threshold was above it).');
       return valid;

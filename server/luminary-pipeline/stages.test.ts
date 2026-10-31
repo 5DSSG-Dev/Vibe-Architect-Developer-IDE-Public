@@ -78,12 +78,12 @@ test('RBC routes Coherent to the Prism and Incoherent to IDS', () => {
   assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'ids');
 });
 
-test('an IDS writer payload is validated before use: all three parts, none empty', () => {
-  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: ['s'] }), { identify: 'i', define: ['d'], suggest: ['s'] });
-  assert.equal(validateObservation({ identify: 'i', define: ['d'], suggest: [] }), null);
-  assert.equal(validateObservation({ identify: 'i', define: [' '], suggest: ['s'] }), null);
-  assert.equal(validateObservation({ identify: '', define: [], suggest: [] }), null);
-  assert.equal(validateObservation({ identify: 'i', define: 'd', suggest: [] }), null);
+test('an IDS writer payload is validated before use: Identify and Suggest, neither empty', () => {
+  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: ['s'] }), { identify: 'i', define: [], suggest: ['s'] });
+  assert.equal(validateObservation({ identify: 'i', suggest: [] }), null);
+  assert.equal(validateObservation({ identify: 'i', suggest: [' '] }), null);
+  assert.equal(validateObservation({ identify: '', suggest: ['s'] }), null);
+  assert.equal(validateObservation({ identify: 'i' }), null);
   assert.equal(validateObservation('i'), null);
 });
 
