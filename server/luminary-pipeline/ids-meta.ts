@@ -17,9 +17,10 @@ export const IDS_META_MAX_CALLS = 1_000;
 /**
  * Room for the model's reasoning, which bills as output, plus the short JSON answer. The first
  * live run (2026-10-31) spent all of 1,500 tokens reasoning and returned no answer on both tries;
- * at the published rate 6,000 output tokens cost under three cents.
+ * at the published rate 6,000 output tokens cost under three cents. The IDQRA trial, with three
+ * parts to write, ran out at 6,000 on three of seven first tries; 12,000 costs about five cents.
  */
-export const IDS_META_MAX_OUTPUT_TOKENS = 6_000;
+export const IDS_META_MAX_OUTPUT_TOKENS = 12_000;
 
 export type MetaIdsWriterOptions = Omit<MetaAskModelOptions, 'systemPrompt' | 'providerName'>;
 

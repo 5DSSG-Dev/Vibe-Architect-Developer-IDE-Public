@@ -15,7 +15,7 @@ const ledgerPath = () => join(mkdtempSync(join(tmpdir(), 'ids-meta-')), 'spend.j
 function fakeFetch(content: string | null, calls: Array<{ url: string; body: { model: string; messages: Array<{ role: string; content: string }> }; auth: string }>): typeof fetch {
   return (async (url: string, init: RequestInit) => {
     calls.push({ url, body: JSON.parse(init.body as string), auth: (init.headers as Record<string, string>).authorization });
-    return new Response(JSON.stringify({ model: IDS_META_MODEL, choices: [{ message: { content }, finish_reason: content === null ? 'length' : 'stop' }], usage: { prompt_tokens: 400, completion_tokens: content === null ? 6000 : 80 } }), { status: 200 });
+    return new Response(JSON.stringify({ model: IDS_META_MODEL, choices: [{ message: { content }, finish_reason: content === null ? 'length' : 'stop' }], usage: { prompt_tokens: 400, completion_tokens: content === null ? 12000 : 80 } }), { status: 200 });
   }) as typeof fetch;
 }
 
@@ -50,7 +50,7 @@ test('an answer cut off by the output allowance says so, and the writer asks for
   const calls: Parameters<typeof fakeFetch>[1] = [];
   const writer = createMetaIdsWriter({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 2, 10), fetch: fakeFetch(null, calls) });
   await assert.rejects(writer.write(request), /used its whole output allowance \(6000 tokens\)/);
-  assert.equal((calls[0].body as unknown as { max_tokens: number }).max_tokens, 6000);
+  assert.equal((calls[0].body as unknown as { max_tokens: number }).max_tokens, 12000);
 });
 
 test('the Meta IDS writer is used only when IDS_WRITER=meta, with defaults for the ceiling and cap', () => {
