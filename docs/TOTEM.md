@@ -64,3 +64,18 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-29 | App-suite verification follow-up
 - The Knowledge Pack portability check passes in its targeted suite. A fresh full app run has an unrelated identity deterministic-rebuild failure (340/341); the identity test file passes alone (37/37).
+## 2026-10-30 | Codex | Concept reference library
+- Started docs/reference-library with a plain-language Gap Illumination introduction, explicitly labeled project interpretations and an unchanged source copy from the Architect. Source status remains Proposed aligned Canon. SOURCES.md records provenance and SHA-256. Other topic entries await source selection; no runtime or Canon change, commit or push.
+
+
+## 2026-10-30 | Codex | Vibe Atlas documentation publication
+- Architect authorized updating and publishing the reference-library documentation separately. README now uses The Vibe Atlas, Copilot-attributed tagline, Explore and Building the Vibe, with Gap Illumination as the first source-backed reading. Planned entries and IDQRA design direction are distinguished from implemented behavior.
+- Verified local Markdown targets and source SHA-256; documentation only, no application tests needed. Source status and original source bytes preserved. Commit/push/PR publication authorized; merge remains for review.
+
+
+## 2026-10-31 | Lumin | Building the Vibe editorial drafts
+- Continued authorized Atlas writing: introduction, The Canon Behind the Build, and Illumination, Not Correction. Added labeled verbatim axiom-section excerpt and provenance; full Canon unchanged. Architect interpretation and proposed IDQRA behavior explicitly distinguished from source and implementation evidence.
+- Verified 19 local Markdown links, all 17 axiom entries against source section, and unchanged Gap doctrine hash. Documentation only; no application tests. New writing remains local for review, not committed/pushed or added to PR30 this turn.
+
+## 2026-10-31 | Lumin | Atlas readings publication authorized
+- Architect authorized commit/push and continuation of the review workflow. Publishing the three Building the Vibe readings and labeled Canon excerpt to PR30; editorial and peer review remain pending, with no merge or runtime change. Rechecked 19 local links, exact source excerpt, Gap hash and diff formatting.

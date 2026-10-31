@@ -196,3 +196,19 @@
 - PR #25 is open at https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. Commit `9b5fa25` removes the unsupported modes and preserves workspace export.
 - Browser confirmation passed on temporary localhost:3016; requested 3015 had no listener. The temporary Vite server was stopped. `npm run build` and `git diff --check` pass; tests were not run. Existing chunk-size warning remains.
 - STP-0004 D1 captures the Architect's mode-removal/audience decision; Proposals remain Presented and M5 is not marked complete.
+
+## 2026-10-30 | Codex | Concept reference library
+- Architect requested a concept library using supplied Gap Illumination doctrine. Created local README, source copy and provenance record under docs/reference-library. Status and interpretation boundaries preserved. Documentation only; not added to PR29 or published.
+
+
+## 2026-10-30 | Codex | Vibe Atlas documentation publication
+- Architect authorized updating and publishing the reference-library documentation separately. README now uses The Vibe Atlas, Copilot-attributed tagline, Explore and Building the Vibe, with Gap Illumination as the first source-backed reading. Planned entries and IDQRA design direction are distinguished from implemented behavior.
+- Verified local Markdown targets and source SHA-256; documentation only, no application tests needed. Source status and original source bytes preserved. Commit/push/PR publication authorized; merge remains for review.
+
+
+## 2026-10-31 | Lumin | Building the Vibe editorial drafts
+- Continued authorized Atlas writing: introduction, The Canon Behind the Build, and Illumination, Not Correction. Added labeled verbatim axiom-section excerpt and provenance; full Canon unchanged. Architect interpretation and proposed IDQRA behavior explicitly distinguished from source and implementation evidence.
+- Verified 19 local Markdown links, all 17 axiom entries against source section, and unchanged Gap doctrine hash. Documentation only; no application tests. New writing remains local for review, not committed/pushed or added to PR30 this turn.
+
+## 2026-10-31 | Lumin | Atlas readings publication authorized
+- Architect authorized commit/push and continuation of the review workflow. Publishing the three Building the Vibe readings and labeled Canon excerpt to PR30; editorial and peer review remain pending, with no merge or runtime change. Rechecked 19 local links, exact source excerpt, Gap hash and diff formatting.
