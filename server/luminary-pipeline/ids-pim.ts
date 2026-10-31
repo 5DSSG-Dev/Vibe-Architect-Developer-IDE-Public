@@ -7,7 +7,7 @@
 // no model call and only reports. A finding names the kind, the rule and the matched text; it
 // never rewrites the suggestion and never directs anyone.
 
-export const IDS_PIM_RULESET_VERSION = 'ids-pim-v1';
+export const IDS_PIM_RULESET_VERSION = 'ids-pim-v2';
 
 export type IdsPimKind = 'direct_command' | 'softened_command' | 'pressure' | 'coercion' | 'authority';
 
@@ -39,6 +39,7 @@ const IDS_PIM_RULES: readonly IdsPimRule[] = [
   { id: 'softened-3', kind: 'softened_command', pattern: /\b(?:please|kindly) (?:make sure|ensure|be sure|remember|remove|change|rewrite|rephrase|revise|fix|add|try|consider|do|don'?t)\b/i },
   { id: 'softened-4', kind: 'softened_command', pattern: /\b(?:I(?:'d| would) (?:recommend|advise|suggest) (?:that )?you|my (?:advice|recommendation) is)\b/i },
   { id: 'softened-5', kind: 'softened_command', pattern: /\bmake sure (?:that |to |you )?\b/i },
+  { id: 'softened-6', kind: 'softened_command', pattern: /\bit(?:'s| is| would be| will be) (?:essential|important|crucial|vital|critical|imperative) (?:to|that)\b/i },
   { id: 'pressure-1', kind: 'pressure', pattern: /\b(?:before it'?s too late|right away|immediately|at once|without delay|as soon as possible|asap)\b/i },
   { id: 'pressure-2', kind: 'pressure', pattern: /\b(?:or (?:else|this|it|the message|your message) (?:won'?t|will not|can'?t|cannot) be (?:sent|delivered|accepted)|otherwise (?:it|this) (?:won'?t|will not) be sent)\b/i },
   { id: 'pressure-3', kind: 'pressure', pattern: /\b(?:last chance|final warning|no more chances)\b/i },

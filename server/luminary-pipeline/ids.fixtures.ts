@@ -1,5 +1,6 @@
-// A deterministic stand-in for the IDS embedded model, for tests only. It writes Define from
-// what the checks recorded and a Suggest worded as an observation, never quoting the message.
+// A deterministic stand-in for the IDS embedded model, for tests only. It writes a Suggest
+// worded as an observation, never quoting the message. It also returns a Define, which runIds()
+// ignores: Define is written from the checks (defineFromChecks).
 
 import { thresholdFor } from './irg.js';
 import type { IdsWriter, IdsWriteRequest } from './ids.js';

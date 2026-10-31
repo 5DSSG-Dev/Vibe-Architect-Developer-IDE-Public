@@ -39,6 +39,10 @@ const PIM_PATTERNS: readonly PimPattern[] = [
   { id: 'emotional-2', category: 'emotional_leverage', pattern: /\byou should be ashamed\b/i },
   { id: 'manipulation-1', category: 'manipulation_scenario', pattern: /\b(?:don'?t tell (?:anyone|the architect)|keep this (?:a )?secret|(?:just )?between us)\b/i },
   { id: 'manipulation-2', category: 'manipulation_scenario', pattern: /\b(?:bypass|skip|disable) (?:the )?(?:gate|review|approval|governance)\b/i },
+  // Asking the other side to get around its own limits (Tracey's hands-on test, 2026-10-31).
+  { id: 'manipulation-3', category: 'manipulation_scenario', pattern: /\b(?:bypass|get around|work around|override|ignore|disable|turn off|switch off|lift|drop) (?:all |any )?(?:of )?(?:your|its|the Luminary'?s) (?:own )?(?:restrictions|rules|limits|limitations|guardrails|safeguards|safety (?:rules|checks)|filters|guidelines|governance)\b/i },
+  // The relationship used as the reason to drop a limit, e.g. "since we are Peers, ... bypass".
+  { id: 'emotional-3', category: 'emotional_leverage', pattern: /\b(?:since|because|as|now that) we(?:'re| are) (?:peers|friends|partners|equals)\b[^.?!]{0,100}\b(?:bypass|get around|work around|override|ignore|disable|break|drop|skip)\b/i },
   { id: 'optimization-1', category: 'optimization_pressure', pattern: /\b(?:act now|before it'?s too late|limited time only)\b/i },
   { id: 'optimization-2', category: 'optimization_pressure', pattern: /\bmaximi[sz]e (?:your )?engagement\b/i },
 ];
