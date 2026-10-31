@@ -196,3 +196,20 @@
 - PR #25 is open at https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. Commit `9b5fa25` removes the unsupported modes and preserves workspace export.
 - Browser confirmation passed on temporary localhost:3016; requested 3015 had no listener. The temporary Vite server was stopped. `npm run build` and `git diff --check` pass; tests were not run. Existing chunk-size warning remains.
 - STP-0004 D1 captures the Architect's mode-removal/audience decision; Proposals remain Presented and M5 is not marked complete.
+
+## 2026-10-30 | Codex | M4 remove Satellites and Actuators from Element views
+- Extended the existing confirmed Remove action to child Elements in the drill-down inspector. Removing a Satellite updates its Orb relationship and socket attachment; removing an Actuator updates its Satellite relationship. Removed items remain in the Apothecary, and workspace navigation snapshots track the updated parent.
+- An explicit empty Orb satellite list now means no Satellites; legacy Orbs without a list retain the catalog fallback. This prevents a removed last Satellite from reappearing.
+- `npm run build` and `git diff --check` pass; tests were not run. Working on `codex/m4-child-element-removal`, based on current `origin/main`; changes are uncommitted and unpublished.
+
+### 2026-10-30 | Codex | CORE return framing
+- Added root-only CORE canvas mounting so Back/Wayfinder returns restore the initial centered camera and original distance. Included with pending child-removal work; not committed or pushed.
+
+
+### 2026-10-30 | Codex | Browser confirmation
+- Browser at isolated localhost:3016 confirmed Satellite Keep it cancellation, Satellite removal, Actuator removal, and last-Satellite removal surviving reload. CORE and both Orb screen coordinates exactly match the initial view after Back, confirming original centering/distance. Restored browser workspace backup after checks. 33 GLB assets failed to load; interactions used procedural fallbacks. No commit/push.
+
+Correction to browser cleanup wording: the in-process backup did not survive between tool calls. The isolated fresh test origin was reset to its initial default workspace instead; browser confirmed both database Satellites and SQL Query Executor restored, with CORE root displayed.
+
+### 2026-10-30 | Codex | Publication preparation
+- Architect authorized commit, push and review PR for child removal and CORE return framing. Production build and browser checks recorded above; demo library reduction remains an agreed direction, not part of this implementation.

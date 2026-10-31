@@ -120,3 +120,17 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Supersedes the earlier pending-verification note: `npm run build` passed, including TypeScript checks; Vite reports the existing large-chunk warning. `git diff --check` passed. Tests were not run.
 - Fresh browser inspection confirmed the Simulate/Deploy tabs and screens are absent, authoring workspace loads, and the export action is labeled `Export workspace`. Port 3015 had no listener, so Vite was briefly started on 3016 for this check and then stopped.
 - Commit `9b5fa25` is pushed to `codex/remove-demo-modes`; PR #25 is open for Architect review: https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. STP-0004 decision D1 records the UI direction; no proposal or M5 completion is claimed.
+
+## 2026-10-30 | Codex | M4 remove Satellites and Actuators from Element views
+- Extended the existing confirmed Remove action to child Elements in the drill-down inspector. Removing a Satellite updates its Orb relationship and socket attachment; removing an Actuator updates its Satellite relationship. Removed items remain in the Apothecary, and workspace navigation snapshots track the updated parent.
+- An explicit empty Orb satellite list now means no Satellites; legacy Orbs without a list retain the catalog fallback. This prevents a removed last Satellite from reappearing.
+- `npm run build` and `git diff --check` pass; tests were not run. Working on `codex/m4-child-element-removal`, based on current `origin/main`; changes are uncommitted and unpublished.
+
+### 2026-10-30 | Codex | CORE return framing
+- CORE canvas mounts only at the root workspace. Returning from any Element depth recreates its original centered camera at (0, 12, 19), avoiding retention of the outgoing zoom. Saved workspace Elements remain in App state.
+
+
+### 2026-10-30 | Codex | Browser confirmation
+- Confirmed child removal/cancellation and empty Satellite list after reload. Returning to CORE restores initial projected positions for CORE and both Orbs. Browser used procedural fallback models because 33 GLB assets failed to load; workspace backup restored after checks.
+
+Cleanup clarification: restored initial defaults at the isolated test origin, verified both database Satellites and SQL Query Executor present; backup transfer was unavailable. No existing user browser workspace was used.
