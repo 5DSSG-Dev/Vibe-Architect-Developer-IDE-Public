@@ -93,7 +93,12 @@ export interface RunIdsOptions {
 
 export const IDS_ERROR_MESSAGE = 'The message was not sent, and IDS could not respond.';
 
-class IdsUnusable extends Error {}
+class IdsUnusable extends Error {
+  /** Extra guidance for the retry prompt only. It is never recorded with the failure. */
+  constructor(message: string, readonly hint?: string) {
+    super(message);
+  }
+}
 
 /** A list of non-blank strings. A single string is read as a list of one; small models often drop the brackets. */
 function readList(value: unknown): string[] | null {
@@ -170,15 +175,24 @@ const ECHO_MIN_CHARS = 12;
  * dozen characters), or any run of six consecutive words from it.
  */
 export function echoes(text: string, message: string): boolean {
+  return echoedRun(text, message) !== null;
+}
+
+/** The repeated text that makes `text` an echo of `message`, or null when there is none. */
+export function echoedRun(text: string, message: string): string | null {
   const haystack = normalize(text);
   const needle = normalize(message);
-  if (needle.length >= ECHO_MIN_CHARS && haystack.includes(needle)) return true;
+  if (needle.length >= ECHO_MIN_CHARS && haystack.includes(needle)) return needle;
   const words = needle.split(' ').filter(Boolean);
   for (let i = 0; i + ECHO_WORDS <= words.length; i += 1) {
-    if (haystack.includes(words.slice(i, i + ECHO_WORDS).join(' '))) return true;
+    const run = words.slice(i, i + ECHO_WORDS).join(' ');
+    if (haystack.includes(run)) return run;
   }
-  return false;
+  return null;
 }
+
+/** Retry guidance for an echo: at temperature 0 with a fixed seed, only a changed prompt can change the answer. */
+const echoHint = (run: string) => `It repeated these words from the message: "${run}". Say the same thing in different words.`;
 
 const allText = (observation: Pick<IdsObservation, 'identify' | 'define' | 'suggest'>) =>
   [observation.identify, ...observation.define, ...observation.suggest].join('\n');
@@ -206,18 +220,20 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
   const retryDelayMs = options.retryDelayMs ?? IDS_RETRY_DELAY_MS;
   const screen = options.screen ?? screenIdsPim;
   let retryUsed = false;
+  let lastHint: string | undefined;
 
   // One model call, with the response's single service retry (F2b): the limit counts
   // responses, not calls, so once the retry is used any later failure ends the response.
   async function call<T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T, extra: Partial<IdsWriteRequest> = {}): Promise<T> {
     for (;;) {
       const retry = failures.length > 0 && !retryUsed ? (retryUsed = true) : false;
-      const previousFailure = retry ? failures[failures.length - 1].reason : undefined;
+      const previousFailure = retry ? [failures[failures.length - 1].reason, lastHint].filter(Boolean).join(' ') : undefined;
       try {
         const raw = await withTimeout(writer!.write({ ...input, ...extra, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
         return read(raw);
       } catch (error) {
         failures.push({ retry, reason: error instanceof Error ? error.message : 'IDS embedded model failed.' });
+        lastHint = error instanceof IdsUnusable ? error.hint : undefined;
         if (retryUsed) throw error;
         await wait(retryDelayMs);
       }
@@ -232,7 +248,8 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
       const reason = unusableReason(raw);
       if (reason) throw new IdsUnusable(`IDS embedded model returned an unusable response (${reason}).`);
       const valid = { ...validateObservation(raw)!, define: defineFromChecks(input) };
-      if (echoes(allText(valid), input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
+      const run = echoedRun(allText(valid), input.reply);
+      if (run) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).', echoHint(run));
       if (misstatesReadings(allText(valid), input.irg)) throw new IdsUnusable('IDS embedded model response misstates a gauge reading (says a reading below its threshold was above it).');
       return valid;
     });
@@ -291,7 +308,8 @@ async function runLibrary(input: IdsInput, call: Call, screen: (text: string) =>
         throw new IdsUnusable(`IDS embedded model returned an unusable response (identify is ${record.identify === undefined ? 'missing' : 'empty or not text'}).`);
       }
       const identify = record.identify.trim();
-      if (echoes(identify, input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
+      const run = echoedRun(identify, input.reply);
+      if (run) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).', echoHint(run));
       if (misstatesReadings(identify, input.irg)) throw new IdsUnusable('IDS embedded model response misstates a gauge reading (says a reading below its threshold was above it).');
       return { identify, ...pickSuggest(offered, record.pick) };
     }, { suggestOptions: offered });
