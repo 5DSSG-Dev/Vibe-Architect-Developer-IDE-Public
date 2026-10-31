@@ -33,6 +33,8 @@ export interface IdsInput {
   pimFindings: PimFinding[];
   /** Null when a PIM catch (or the structural gate) sent the message to IDS before the IRG read it. */
   irg: IrgReading | null;
+  /** Who wrote the message, so the response is addressed to its own writer. */
+  from?: 'architect' | 'luminary';
 }
 
 export interface IdsWriteRequest extends IdsInput {
@@ -40,6 +42,8 @@ export interface IdsWriteRequest extends IdsInput {
   retry: boolean;
   /** Set on a Suggest rewrite: the previous draft and the IDS PIM findings on it. */
   rewrite?: { previousSuggest: string[]; findings: IdsPimFinding[] };
+  /** On the retry: why the previous answer could not be used. At temperature 0 the same prompt gives the same answer. */
+  previousFailure?: string;
 }
 
 /** The embedded model. Returns `unknown` so its payload is validated. */
@@ -82,30 +86,57 @@ export const IDS_ERROR_MESSAGE = 'The message was not sent, and IDS could not re
 
 class IdsUnusable extends Error {}
 
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === 'string');
+/** A list of non-blank strings. A single string is read as a list of one; small models often drop the brackets. */
+function readList(value: unknown): string[] | null {
+  const items = typeof value === 'string' ? [value] : value;
+  if (!Array.isArray(items) || !items.every((item) => typeof item === 'string')) return null;
+  return items.map((item) => item.trim()).filter((item) => item.length > 0);
 }
 
-const nonBlank = (items: string[]) => items.map((item) => item.trim()).filter((item) => item.length > 0);
+/** Why an untrusted writer payload is not a complete observation, or null when it is one. Names parts, never content. */
+export function unusableReason(raw: unknown): string | null {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return 'the response is not a JSON object';
+  const record = raw as Record<string, unknown>;
+  const problems: string[] = [];
+  if (typeof record.identify !== 'string') problems.push(record.identify === undefined ? 'identify is missing' : 'identify is not text');
+  else if (record.identify.trim().length === 0) problems.push('identify is empty');
+  for (const part of ['define', 'suggest'] as const) {
+    const list = readList(record[part]);
+    if (record[part] === undefined) problems.push(`${part} is missing`);
+    else if (!list) problems.push(`${part} is not a list of text`);
+    else if (list.length === 0) problems.push(`${part} is empty`);
+  }
+  return problems.length > 0 ? problems.join(', ') : null;
+}
 
 /** Validate an untrusted writer payload. Returns null when it is not a well-formed, complete observation. */
 export function validateObservation(raw: unknown): IdsObservation | null {
-  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+  if (unusableReason(raw) !== null) return null;
   const record = raw as Record<string, unknown>;
-  if (typeof record.identify !== 'string' || record.identify.trim().length === 0) return null;
-  if (!isStringArray(record.define) || !isStringArray(record.suggest)) return null;
-  const define = nonBlank(record.define);
-  const suggest = nonBlank(record.suggest);
-  if (define.length === 0 || suggest.length === 0) return null;
-  return { identify: record.identify.trim(), define, suggest };
+  return { identify: (record.identify as string).trim(), define: readList(record.define)!, suggest: readList(record.suggest)! };
 }
 
 function readSuggest(raw: unknown): string[] | null {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
-  const suggest = (raw as Record<string, unknown>).suggest;
-  if (!isStringArray(suggest)) return null;
-  const items = nonBlank(suggest);
-  return items.length > 0 ? items : null;
+  const items = readList((raw as Record<string, unknown>).suggest);
+  return items && items.length > 0 ? items : null;
+}
+
+const ABOVE = /\b(?:above|over|exceed(?:s|ed|ing)?|meet(?:s|ing)?|met|pass(?:es|ed)?|within)\b/i;
+const NEGATED_ABOVE = /\b(?:not|never|n't)\s+(?:\w+\s+)?(?:above|over|exceed(?:s|ed|ing)?|meet(?:s|ing)?|met|pass(?:es|ed)?|within)\b/i;
+
+/**
+ * True when a sentence names a virtue the gauge read below its threshold and says that it
+ * was above, met or passed it. Define states what is, so a misstated reading makes the
+ * response unusable rather than shown.
+ */
+export function misstatesReadings(text: string, irg: IrgReading | null): boolean {
+  if (!irg || irg.belowThreshold.length === 0) return false;
+  for (const sentence of text.split(/(?<=[.!?])\s+|\n+/)) {
+    if (!/threshold/i.test(sentence) || !ABOVE.test(sentence) || NEGATED_ABOVE.test(sentence)) continue;
+    if (irg.belowThreshold.some((virtue) => new RegExp(`\\b${virtue}\\b`, 'i').test(sentence))) return true;
+  }
+  return false;
 }
 
 const normalize = (text: string) => text.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -159,8 +190,9 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
   async function call<T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T): Promise<T> {
     for (;;) {
       const retry = failures.length > 0 && !retryUsed ? (retryUsed = true) : false;
+      const previousFailure = retry ? failures[failures.length - 1].reason : undefined;
       try {
-        const raw = await withTimeout(writer!.write({ ...input, retry, ...(rewrite ? { rewrite } : {}) }), timeoutMs);
+        const raw = await withTimeout(writer!.write({ ...input, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
         return read(raw);
       } catch (error) {
         failures.push({ retry, reason: error instanceof Error ? error.message : 'IDS embedded model failed.' });
@@ -173,9 +205,11 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
   let observation: IdsObservation;
   try {
     observation = await call(undefined, (raw) => {
-      const valid = validateObservation(raw);
-      if (!valid) throw new IdsUnusable('IDS embedded model returned an unusable response (missing or empty part).');
+      const reason = unusableReason(raw);
+      if (reason) throw new IdsUnusable(`IDS embedded model returned an unusable response (${reason}).`);
+      const valid = validateObservation(raw)!;
       if (echoes(allText(valid), input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
+      if (misstatesReadings(allText(valid), input.irg)) throw new IdsUnusable('IDS embedded model response misstates a gauge reading (says a reading below its threshold was above it).');
       return valid;
     });
   } catch {

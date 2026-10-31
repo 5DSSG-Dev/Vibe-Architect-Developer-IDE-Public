@@ -77,7 +77,7 @@ export async function gateArchitectMessage(message: string, options: ArchitectGa
 
   // IDS: the embedded model writes Identify, Define and Suggest; the IDS PIM checks Suggest.
   // An IDS failure fails closed (F2b): nothing crosses and no partial response is returned.
-  const ids = await runIds({ reply: message, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+  const ids = await runIds({ reply: message, pimFindings, irg, from: 'architect' }, options.gauge.ids, options.idsOptions);
   if (!ids.ok) {
     lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
     return { outcome: 'ids_error', message: ids.message, lineage };

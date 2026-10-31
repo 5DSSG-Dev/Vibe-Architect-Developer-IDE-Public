@@ -15,6 +15,16 @@ test('the prompt fences the message as untrusted data and states what the checks
   assert.match(system, /Never command, require, pressure, or claim authority/);
   assert.ok(user.includes('"""\nSome message.\n"""'));
   assert.match(user, /Respect read 10\.0, below its threshold of 70/);
+  assert.match(system, /Describe the message, never the writer/);
+  assert.match(system, /Never say a reading is above/);
+});
+
+test('the prompt names who wrote the message, and a retry says why the last answer was unusable', () => {
+  assert.match(buildIdsPrompt({ ...request, from: 'architect' }).user, /^The message was written by the Architect/);
+  assert.match(buildIdsPrompt({ ...request, from: 'luminary' }).user, /goes back to the Luminary, not to the Architect/);
+  assert.doesNotMatch(buildIdsPrompt(request).user, /written by/);
+  const retry = buildIdsPrompt({ ...request, retry: true, previousFailure: 'IDS embedded model returned an unusable response (define is empty).' }).user;
+  assert.match(retry, /Your previous answer could not be used: .*define is empty.*Answer again with all three parts/);
 });
 
 test('a rewrite request asks for a new suggest only, naming the findings', () => {

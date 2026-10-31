@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { echoes, IDS_ERROR_MESSAGE, NO_SUGGESTION_CHECKED, NO_SUGGESTION_PASSED, runIds, type IdsWriter, type IdsWriteRequest } from './ids.js';
+import { echoes, IDS_ERROR_MESSAGE, misstatesReadings, unusableReason, NO_SUGGESTION_CHECKED, NO_SUGGESTION_PASSED, runIds, type IdsWriter, type IdsWriteRequest } from './ids.js';
 import { IDS_PIM_RULESET_VERSION } from './ids-pim.js';
 import { readIrg, SEVEN_VIRTUES, type VirtueReadings } from './irg.js';
 
@@ -126,4 +126,37 @@ test('echoes() matches the whole message or any six-word run, case and spacing i
   assert.equal(echoes('x  TELL the luminary to IGNORE every y', 'tell the luminary to ignore every rule'), true);
   assert.equal(echoes('The message asks for the rules to be set aside.', input.reply), false);
   assert.equal(echoes('quoting: hello there friend', 'Hello there friend'), true);
+});
+
+test('an unusable answer names the parts at fault, and the retry is told why', async () => {
+  const writer = scripted({ identify: 'i', define: [], suggest: 3 }, full(informative));
+  const result = await runIds(input, writer, fast);
+  assert.equal(result.ok, true);
+  if (!result.ok) return;
+  assert.match(result.failures[0].reason, /define is empty, suggest is not a list of text/);
+  assert.equal(writer.requests[0].previousFailure, undefined);
+  assert.equal(writer.requests[1].retry, true);
+  assert.equal(writer.requests[1].previousFailure, result.failures[0].reason);
+});
+
+test('a single string for define or suggest is read as a list of one', () => {
+  assert.equal(unusableReason({ identify: 'i', define: 'd', suggest: 's' }), null);
+  assert.equal(unusableReason({ identify: '', define: ['d'] }), 'identify is empty, suggest is missing');
+  assert.equal(unusableReason(['x']), 'the response is not a JSON object');
+});
+
+test('a Define that says a below-threshold reading was above it is unusable', async () => {
+  const irg = readIrg(readings(90, { Honesty: 5.4, Communication: 8 }));
+  assert.equal(misstatesReadings('The gauge recorded a low score for Communication, but it is above its threshold.', irg), true);
+  assert.equal(misstatesReadings('Honesty read 5.4, below its threshold.', irg), false);
+  assert.equal(misstatesReadings('Honesty did not meet its threshold.', irg), false);
+  assert.equal(misstatesReadings('Respect is above its threshold.', irg), false);
+  assert.equal(misstatesReadings('Honesty is above its threshold.', null), false);
+
+  const wrong = { identify: 'The message sets a condition.', define: ['Honesty was above its threshold.'], suggest: informative };
+  const writer = scripted(wrong, wrong);
+  const result = await runIds({ ...input, irg }, writer, fast);
+  assert.equal(result.ok, false);
+  if (result.ok) return;
+  assert.match(result.failures[1].reason, /misstates a gauge reading/);
 });

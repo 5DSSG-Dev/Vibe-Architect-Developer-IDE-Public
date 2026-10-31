@@ -142,7 +142,7 @@ export async function runReplyPipeline(
     }
 
     // IDS fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
-    const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+    const ids = await runIds({ reply: reply.content, pimFindings, irg, from: 'luminary' }, options.gauge.ids, options.idsOptions);
     if (!ids.ok) {
       lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
       return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };

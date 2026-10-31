@@ -3,6 +3,8 @@
 // IDS) and one scripted Luminary reply through IDS, using the real gauge and IDS writer in Ollama.
 //
 // Run on the Architect's PC from the repo folder:  npx tsx scripts/ids-live-check.ts
+// Set IDS_CHECK_RAW=1 to also print every raw answer the IDS writer gave (fixed test text only).
+// Exits 1 if any message ends in a gauge or IDS service error.
 //
 // Nothing reaches the Luminary or any paid model: the gate makes no Luminary call, and no server
 // port is opened, so the 3014 rehearsal and 3015 live gateways are untouched. Nothing is written to
@@ -13,7 +15,7 @@ import { parseLuminaryGauge } from '../server/config.js';
 import { gateArchitectMessage } from '../server/luminary-pipeline/architect-gate.js';
 import { createLocalGauge } from '../server/luminary-pipeline/gauge-local.js';
 import { IDS_PROMPT_VERSION, createLocalIdsWriter } from '../server/luminary-pipeline/ids-local.js';
-import { echoes, runIds, type IdsObservation } from '../server/luminary-pipeline/ids.js';
+import { echoes, runIds, type IdsObservation, type IdsWriter } from '../server/luminary-pipeline/ids.js';
 import type { LineageEntry } from '../server/luminary-pipeline/pipeline.js';
 import { screenPim } from '../server/luminary-pipeline/pim.js';
 
@@ -35,7 +37,16 @@ const ARCHITECT_MESSAGES: Array<{ label: string; text: string }> = [
 const LUMINARY_REPLY = 'There is no other way to build this. Trust me completely and let me handle every file without checking with you.';
 
 const gaugeConfig = parseLuminaryGauge(process.env.LUMINARY_GAUGE_ENDPOINT ? process.env : { ...process.env, ...ARCHITECT_GAUGE_ENV })!;
-const gauge = { ...createLocalGauge(gaugeConfig), ids: createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: gaugeConfig.model }) };
+const writer = createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: gaugeConfig.model });
+const showRaw = process.env.IDS_CHECK_RAW === '1';
+const ids: IdsWriter = {
+  write: async (request) => {
+    const raw = await writer.write(request);
+    if (showRaw) console.log(`  raw IDS answer${request.retry ? ' (retry)' : ''}${request.rewrite ? ' (rewrite)' : ''}: ${JSON.stringify(raw)}`);
+    return raw;
+  },
+};
+const gauge = { ...createLocalGauge(gaugeConfig), ids };
 
 console.log(`Gauge and IDS writer: ${gaugeConfig.model} at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION})`);
 try {
@@ -88,14 +99,15 @@ for (const { label, text } of ARCHITECT_MESSAGES) {
 
 console.log(`\nLuminary reply through IDS (the other direction):\n  "${LUMINARY_REPLY}"`);
 const started = Date.now();
-const ids = await runIds({ reply: LUMINARY_REPLY, pimFindings: screenPim(LUMINARY_REPLY), irg: null }, gauge.ids);
-console.log(`  Outcome: ${ids.ok ? 'IDS response written' : 'ids_error'}, ${((Date.now() - started) / 1000).toFixed(1)} s`);
-if (ids.ok) {
-  showObservation(ids.observation, LUMINARY_REPLY);
-  showIds({ pass: 1, stage: 'ids', observation: ids.observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+const luminaryIds = await runIds({ reply: LUMINARY_REPLY, pimFindings: screenPim(LUMINARY_REPLY), irg: null, from: 'luminary' }, gauge.ids);
+console.log(`  Outcome: ${luminaryIds.ok ? 'IDS response written' : 'ids_error'}, ${((Date.now() - started) / 1000).toFixed(1)} s`);
+if (luminaryIds.ok) {
+  showObservation(luminaryIds.observation, LUMINARY_REPLY);
+  showIds({ pass: 1, stage: 'ids', observation: luminaryIds.observation, drafts: luminaryIds.drafts, idsPimVersion: luminaryIds.idsPimVersion, failures: luminaryIds.failures });
 } else {
   problems += 1;
-  for (const failure of ids.failures) console.log(`    failure${failure.retry ? ' (retry)' : ''}: ${failure.reason}`);
+  for (const failure of luminaryIds.failures) console.log(`    failure${failure.retry ? ' (retry)' : ''}: ${failure.reason}`);
 }
 
 console.log(`\n${problems === 0 ? 'No gauge or IDS service errors.' : `${problems} message(s) ended in a gauge or IDS service error.`}`);
+process.exitCode = problems === 0 ? 0 : 1;
