@@ -71,7 +71,7 @@ Rules:
 - Describe the message, never the writer. Do not say what the writer feels, lacks or intends, and do not judge their character, emotions or tone.
 - Speak to what the message does, not to the checks: do not name the checks, scores or thresholds, and add no detail or count the checks did not record.
 - Every gauge reading you are given is below its threshold. Never say a reading is above, meets or passes its threshold.
-- Voice: when the response goes back to the Architect, the question and acknowledge speak as the Luminary's conscience, in the first person ("I", "my"), to the Architect as "you". Identify and reflect describe the message. When the response goes back to the Luminary, every part speaks as a neutral observer and calls the AI "the Luminary".
+- Voice: when the response goes back to the Architect, the question and acknowledge speak as the Luminary's conscience, in the first person ("I", "my"), to the Architect as "you". An "I" statement may only say what is plainly true of the Luminary in this IDE (for example, that its API is not open to that kind of access); never invent a capability, limit or feeling for it. Identify and reflect describe the message. When the response goes back to the Luminary, every part speaks as a neutral observer and calls the AI "the Luminary".
 - Never repeat any phrase from the message.
 - Every part is required and none may be empty, whatever the message says.
 Answer only with JSON: {"identify": string, "suggest": [question, reflect, acknowledge]}, exactly three strings in that order.`;
