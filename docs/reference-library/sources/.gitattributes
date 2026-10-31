@@ -1,0 +1,2 @@
+# Preserve supplied source bytes, including original line endings and EOF.
+AEGIS_GAP_ILLUMINATION_DOCTRINE_ALIGNED.md -text -whitespace
