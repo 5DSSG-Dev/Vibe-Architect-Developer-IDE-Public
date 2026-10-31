@@ -180,7 +180,9 @@ export function getElementChildren(item: ApothecaryItem, catalog: ApothecaryItem
 
   if (item.category === 'Orbs') {
     const linked = resolveIds(item.satellites);
-    if (linked.length > 0) return linked;
+    // An explicit empty list means the Architect removed every child. Only older
+    // or custom Orbs without a list use the compatibility-derived catalog view.
+    if (item.satellites !== undefined) return linked;
     // Fallback: derive satellites from any catalog item flagged with a class.
     return catalog.filter((c) => Boolean(c.satelliteClass));
   }

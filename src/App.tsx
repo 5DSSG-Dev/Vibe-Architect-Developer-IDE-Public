@@ -235,6 +235,7 @@ export function App() {
   // 3-Tier Object Inspection payload
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
   const [inspectingSocket, setInspectingSocket] = useState<SocketBinding | null>(null);
+  const [inspectingParentItem, setInspectingParentItem] = useState<ApothecaryItem | null>(null);
 
   // The Luminary's focus follows what is on screen (STP-0002 N57): an open Element page first,
   // then the Environment the Architect is inside. inspectingItem outlives its page, so it counts
@@ -402,6 +403,7 @@ export function App() {
     );
     setInspectingSocket(host || null);
     setInspectingItem(satellite);
+    setInspectingParentItem(null);
     openOverlay('INSPECT_MANIFEST');
   };
 
@@ -425,14 +427,58 @@ export function App() {
   const handleRightClickElement = (socket?: SocketBinding, item?: ApothecaryItem) => {
     setInspectingSocket(socket || null);
     setInspectingItem(item || socket?.connectedItem || null);
+    setInspectingParentItem(null);
     openOverlay('INSPECT_MANIFEST');
+  };
+
+  const handleInspectEnvironmentElement = (item: ApothecaryItem) => {
+    handleRightClickElement(undefined, item);
+    if (currentEnvironment && item.id !== currentEnvironment.id) {
+      setInspectingParentItem(currentEnvironment);
+    }
   };
 
   // Take a placed Element off the workspace. An Orb's connection is closed by agreement of
   // both sides (the Architect asked; the CORE accepts), which gives its room back and records
   // a 'severed' moment; its tethered Satellites come off with it.
   const placedRemoval = inspectingSocket && inspectingItem ? planElementRemoval(inspectingSocket, inspectingItem.id) : undefined;
+  const inspectedChildIsAttached = Boolean(
+    inspectingParentItem && inspectingItem &&
+    getElementChildren(inspectingParentItem, apothecaryCatalog).some((child) => child.id === inspectingItem.id)
+  );
   const handleRemoveInspectedElement = () => {
+    if (inspectedChildIsAttached && inspectingParentItem && inspectingItem) {
+      const parent = inspectingParentItem;
+      const childId = inspectingItem.id;
+      const remainingChildren = getElementChildren(parent, apothecaryCatalog)
+        .filter((child) => child.id !== childId)
+        .map((child) => child.id);
+      const updatedParent = parent.category === 'Orbs'
+        ? { ...parent, satellites: remainingChildren }
+        : { ...parent, actuators: remainingChildren };
+
+      setCoreManifest((prev) => ({
+        ...prev,
+        sockets: prev.sockets.map((socket) => {
+          const updatedSocket = replaceElementInSocket(socket, updatedParent);
+          if (parent.category !== 'Orbs' || !socket.attachedSatellites?.some((satellite) => satellite.id === childId)) {
+            return updatedSocket;
+          }
+          return {
+            ...updatedSocket,
+            attachedSatellites: updatedSocket.attachedSatellites?.filter((satellite) => satellite.id !== childId)
+          };
+        })
+      }));
+      setApothecaryCatalog((prev) => prev.map((catalogItem) => replaceElementById(catalogItem, updatedParent)));
+      setEnvironmentStack((prev) => prev.map((entry) => replaceElementById(entry, updatedParent)));
+      setResumeStack((prev) => prev.map((entry) => replaceElementById(entry, updatedParent)));
+      setInspectingItem(null);
+      setInspectingSocket(null);
+      setInspectingParentItem(null);
+      closeOverlay('INSPECT_MANIFEST');
+      return;
+    }
     if (!inspectingSocket || !inspectingItem || !placedRemoval) return;
     const socketId = inspectingSocket.id;
     if (placedRemoval.contractId) {
@@ -451,6 +497,7 @@ export function App() {
     setEnvironmentStack(beforeRemoved);
     setInspectingItem(null);
     setInspectingSocket(null);
+    setInspectingParentItem(null);
     closeOverlay('INSPECT_MANIFEST');
   };
 
@@ -528,7 +575,8 @@ export function App() {
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#080b10] text-slate-100 font-sans select-none">
       {/* 1. 3D WebGL Canvas Layer */}
-      <ThreeCanvas
+      {/* Recreate the CORE view on return with its original centered camera pose. */}
+      {environmentStack.length === 0 && <ThreeCanvas
         sockets={coreManifest.sockets}
         selectedSocketId={selectedSocketId}
         onSelectSocket={handleSelectSocket}
@@ -539,7 +587,7 @@ export function App() {
         portals={coreManifest.portals}
         onAddPortal={handleAddPortal}
         onRightClickElement={handleRightClickElement}
-      />
+      />}
 
       {/* 2. UI Overlay Controls */}
       <Header
@@ -558,9 +606,7 @@ export function App() {
               openOverlay('ORB_BUILDER');
             }}
             onRightClickItem={(item) => {
-              setInspectingItem(item);
-              setInspectingSocket(null);
-              openOverlay('INSPECT_MANIFEST');
+              handleRightClickElement(undefined, item);
             }}
           />
 
@@ -574,9 +620,7 @@ export function App() {
               openOverlay('ORB_BUILDER');
             }}
             onRightClickItem={(item) => {
-              setInspectingItem(item);
-              setInspectingSocket(null);
-              openOverlay('INSPECT_MANIFEST');
+              handleRightClickElement(undefined, item);
             }}
             onOpenOrbBuilder={() => {
               setOrbBuilderTargetItem(undefined);
@@ -604,7 +648,7 @@ export function App() {
             center={currentEnvironment}
             children={getElementChildren(currentEnvironment, apothecaryCatalog)}
             onEnterChild={handleEnterElement}
-            onInspectElement={(item) => handleRightClickElement(undefined, item)}
+            onInspectElement={handleInspectEnvironmentElement}
             entryView={environmentEntryView}
           />
 
@@ -748,6 +792,10 @@ export function App() {
           removal={placedRemoval ? {
             hostName: inspectingSocket?.connectedItem?.id !== inspectingItem?.id ? inspectingSocket?.connectedItem?.name : undefined,
             tethered: placedRemoval.removed.slice(1).map((entry) => entry.name),
+            onRemove: handleRemoveInspectedElement
+          } : inspectedChildIsAttached && inspectingParentItem ? {
+            hostName: inspectingParentItem.name,
+            tethered: [],
             onRemove: handleRemoveInspectedElement
           } : undefined}
         />

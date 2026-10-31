@@ -137,7 +137,7 @@ export const ViewContentsModal: React.FC<ViewContentsModalProps> = ({
                 : `Remove ${name} from the CORE? Its connection is closed properly, and its memory and threads go back to the CORE.`}
               {removal.tethered.length > 0 && ` ${removal.tethered.join(', ')} ${removal.tethered.length === 1 ? 'is' : 'are'} tethered to it and will come off too.`}
             </p>
-            <p className="text-[10px] text-slate-400">It stays in the Apothecary, so you can place it again. Its connection history stays in the record.</p>
+            <p className="text-[10px] text-slate-400">It stays in the Apothecary, so you can attach it again later. Other connection history stays in the record.</p>
             <div className="flex items-center justify-end space-x-2">
               <button
                 onClick={() => setConfirmingRemove(false)}
