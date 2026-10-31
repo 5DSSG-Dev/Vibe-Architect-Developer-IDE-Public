@@ -49,7 +49,7 @@ test('an answer that is not JSON is an error, which runIds() turns into its retr
 test('an answer cut off by the output allowance says so, and the writer asks for the IDS allowance', async () => {
   const calls: Parameters<typeof fakeFetch>[1] = [];
   const writer = createMetaIdsWriter({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 2, 10), fetch: fakeFetch(null, calls) });
-  await assert.rejects(writer.write(request), /used its whole output allowance \(6000 tokens\)/);
+  await assert.rejects(writer.write(request), /used its whole output allowance \(12000 tokens\)/);
   assert.equal((calls[0].body as unknown as { max_tokens: number }).max_tokens, 12000);
 });
 
