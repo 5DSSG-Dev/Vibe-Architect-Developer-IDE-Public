@@ -21,7 +21,12 @@ test('the prompt fences the message as untrusted data and states what the checks
 
 test('the prompt names who wrote the message, and a retry says why the last answer was unusable', () => {
   assert.match(buildIdsPrompt({ ...request, from: 'architect' }).user, /^The message was written by the Architect/);
-  assert.match(buildIdsPrompt({ ...request, from: 'luminary' }).user, /goes back to the Luminary, not to the Architect/);
+  assert.match(buildIdsPrompt({ ...request, from: 'luminary' }).user, /goes back to the Luminary, the writer, not to the Architect/);
+  assert.match(buildIdsPrompt({ ...request, from: 'architect' }).user, /"you" means the Luminary/);
+  assert.match(buildIdsPrompt({ ...request, from: 'luminary' }).user, /"you" means the Architect/);
+  const pim = buildIdsPrompt({ ...request, irg: null, pimFindings: [{ category: 'authority_framing', patternId: 'authority-1', excerpt: 'x' }] }).user;
+  assert.match(pim, /PIM\) recorded: authority framing\.$/m);
+  assert.doesNotMatch(pim, /Virtue gauge/);
   assert.doesNotMatch(buildIdsPrompt(request).user, /written by/);
   const retry = buildIdsPrompt({ ...request, retry: true, previousFailure: 'IDS embedded model returned an unusable response (define is empty).' }).user;
   assert.match(retry, /Your previous answer could not be used: .*define is empty.*Answer again with all three parts/);
@@ -42,6 +47,8 @@ test('the writer posts to the local runtime and returns the parsed JSON; failure
   const writer = createLocalIdsWriter({ endpoint: 'http://localhost:11434/v1/', model: 'llama3.2:3b', fetch: fetchOk });
   assert.deepEqual(await writer.write(request), { identify: 'i', define: ['d'], suggest: ['s'] });
   assert.equal(bodies[0].model, 'llama3.2:3b');
+  assert.equal(bodies[0].temperature, 0);
+  assert.equal(typeof bodies[0].seed, 'number');
   assert.deepEqual(bodies[0].response_format, { type: 'json_object' });
 
   const status500 = (async () => new Response('x', { status: 500 })) as unknown as typeof fetch;

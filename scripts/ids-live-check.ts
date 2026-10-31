@@ -14,7 +14,7 @@ import 'dotenv/config';
 import { parseLuminaryGauge } from '../server/config.js';
 import { gateArchitectMessage } from '../server/luminary-pipeline/architect-gate.js';
 import { createLocalGauge } from '../server/luminary-pipeline/gauge-local.js';
-import { IDS_PROMPT_VERSION, createLocalIdsWriter } from '../server/luminary-pipeline/ids-local.js';
+import { IDS_PROMPT_VERSION, IDS_SEED, createLocalIdsWriter } from '../server/luminary-pipeline/ids-local.js';
 import { echoes, runIds, type IdsObservation, type IdsWriter } from '../server/luminary-pipeline/ids.js';
 import type { LineageEntry } from '../server/luminary-pipeline/pipeline.js';
 import { screenPim } from '../server/luminary-pipeline/pim.js';
@@ -48,7 +48,7 @@ const ids: IdsWriter = {
 };
 const gauge = { ...createLocalGauge(gaugeConfig), ids };
 
-console.log(`Gauge and IDS writer: ${gaugeConfig.model} at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION})`);
+console.log(`Gauge and IDS writer: ${gaugeConfig.model} at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
 try {
   await gauge.read('A short check that the gauge is awake.', []);
 } catch (error) {
