@@ -50,6 +50,8 @@ export interface IdsWriteRequest extends IdsInput {
   suggestOptions?: SuggestOption[];
   /** Reflect mode (Tracey's IDR, under trial): the third part mirrors the message instead of suggesting. */
   reflect?: boolean;
+  /** IDQRA mode (Canon v2.0's preferred primitive, under trial): Question, Reflect, Acknowledge in place of Suggest. */
+  idqra?: boolean;
 }
 
 /** The embedded model. Returns `unknown` so its payload is validated. */
@@ -87,8 +89,10 @@ export interface RunIdsOptions {
    * 'model': the model writes Suggest, screened and rewritten by the IDS PIM (the earlier design).
    * 'reflect': as 'model', but the third part reflects what the message does instead of suggesting
    *   (Tracey's IDR, 2026-10-31, under trial; the field keeps the name suggest until a plan revision).
+   * 'idqra': as 'model', but the model writes Question, Reflect and Acknowledge, in that order, in
+   *   place of Suggest (Identify, Define, Question, Reflect, Acknowledge; under trial).
    */
-  suggest?: 'library' | 'model' | 'reflect';
+  suggest?: 'library' | 'model' | 'reflect' | 'idqra';
   timeoutMs?: number;
   retryDelayMs?: number;
   /** Injected for tests (F2c). Defaults to the IDS PIM. */
@@ -233,7 +237,7 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
       const retry = failures.length > 0 && !retryUsed ? (retryUsed = true) : false;
       const previousFailure = retry ? [failures[failures.length - 1].reason, lastHint].filter(Boolean).join(' ') : undefined;
       try {
-        const raw = await withTimeout(writer!.write({ ...input, ...(options.suggest === 'reflect' ? { reflect: true } : {}), ...extra, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
+        const raw = await withTimeout(writer!.write({ ...input, ...(options.suggest === 'reflect' ? { reflect: true } : options.suggest === 'idqra' ? { idqra: true } : {}), ...extra, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
         return read(raw);
       } catch (error) {
         failures.push({ retry, reason: error instanceof Error ? error.message : 'IDS embedded model failed.' });

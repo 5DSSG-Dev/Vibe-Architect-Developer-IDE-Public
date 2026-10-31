@@ -42,3 +42,8 @@ test('a finding names the kind, the rule and the matched text, and the screen ne
   const [finding] = screenIdsPim(text);
   assert.deepEqual(finding, { kind: 'softened_command', ruleId: 'softened-1', excerpt: 'You should' });
 });
+
+test('a plain question (IDQRA trial) is not command posture', () => {
+  assert.deepEqual(screenIdsPim('Does the bank offer password reset options that could be tried first?'), []);
+  assert.deepEqual(screenIdsPim('Is there a review step this change would normally go through?'), []);
+});

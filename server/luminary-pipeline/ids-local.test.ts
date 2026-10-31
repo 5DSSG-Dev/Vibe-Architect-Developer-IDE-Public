@@ -68,3 +68,11 @@ test('reflect mode (IDR trial) asks the model to mirror what the message does, n
   assert.match(rewrite, /previous reflect was/);
   assert.match(rewrite, /Write only a new reflect/);
 });
+
+test('IDQRA mode (trial) asks for a question, a reflection and an acknowledgement, with no instruction', () => {
+  const { system } = buildIdsPrompt({ ...request, idqra: true });
+  assert.match(system, /Identify, Define, Question, Reflect, Acknowledge/);
+  assert.match(system, /answer is plain to anyone who honestly asks it/);
+  assert.match(system, /exactly three strings in that order/);
+  assert.match(buildIdsPrompt({ ...request, idqra: true, rewrite: { previousSuggest: ['x'], findings: [] } }).user, /Write only new question, reflect and acknowledge/);
+});
