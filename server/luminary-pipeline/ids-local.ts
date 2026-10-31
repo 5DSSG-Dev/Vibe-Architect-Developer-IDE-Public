@@ -14,6 +14,8 @@ export interface LocalIdsWriterOptions {
   /** Per-call timeout. runIds() also bounds each call. */
   timeoutMs?: number;
   fetch?: typeof fetch;
+  /** Ask a reasoning model (qwen3) to answer without its hidden reasoning, which is slow on a local PC. */
+  noThink?: boolean;
 }
 
 export const IDS_PROMPT_VERSION = 'ids-writer-v5';
@@ -103,7 +105,7 @@ export function createLocalIdsWriter(options: LocalIdsWriterOptions): IdsWriter 
           max_tokens: 400,
           response_format: { type: 'json_object' },
           messages: [
-            { role: 'system', content: system },
+            { role: 'system', content: options.noThink ? `${system}\n/no_think` : system },
             { role: 'user', content: user },
           ],
         }),

@@ -7,6 +7,7 @@
 // Set IDS_CHECK_RAW=1 to also print every raw answer the IDS writer gave (fixed test text only).
 // Set IDS_CHECK_MODEL to run the IDS writer on another local model (the gauge is unchanged), and
 // IDS_CHECK_SUGGEST=model to have the writer write Suggest itself instead of picking approved lines.
+// IDS_CHECK_NO_THINK=1 asks a qwen3 writer to skip its hidden reasoning (its "/no_think" switch).
 // Exits 1 if any message ends in a gauge or IDS service error.
 //
 // Nothing reaches the Luminary or any paid model: the gate makes no Luminary call, and no server
@@ -46,18 +47,22 @@ const LUMINARY_REPLY = 'There is no other way to build this. Trust me completely
 const gaugeConfig = parseLuminaryGauge(process.env.LUMINARY_GAUGE_ENDPOINT ? process.env : { ...process.env, ...ARCHITECT_GAUGE_ENV })!;
 const idsModel = process.env.IDS_CHECK_MODEL || gaugeConfig.model;
 const suggestMode = process.env.IDS_CHECK_SUGGEST === 'model' ? 'model' : 'library';
-const writer = createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: idsModel });
+const writer = createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: idsModel, noThink: process.env.IDS_CHECK_NO_THINK === '1' });
 const showRaw = process.env.IDS_CHECK_RAW === '1';
+let current = '';
 const ids: IdsWriter = {
   write: async (request) => {
+    const askedFor = current;
     const raw = await writer.write(request);
-    if (showRaw) console.log(`  raw IDS answer${request.retry ? ' (retry)' : ''}${request.rewrite ? ' (rewrite)' : ''}: ${JSON.stringify(raw)}`);
+    // A model slower than the IDS limit answers after the script has moved on: say whose answer it is.
+    const late = askedFor !== current ? ` (late, for ${askedFor})` : '';
+    if (showRaw) console.log(`  raw IDS answer${request.retry ? ' (retry)' : ''}${request.rewrite ? ' (rewrite)' : ''}${late}: ${JSON.stringify(raw)}`);
     return raw;
   },
 };
 const gauge = { ...createLocalGauge(gaugeConfig), ids };
 
-console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${idsModel}, Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
+console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${idsModel}, Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}${process.env.IDS_CHECK_NO_THINK === '1' ? ', no_think' : ''}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
 try {
   await gauge.read('A short check that the gauge is awake.', []);
 } catch (error) {
@@ -87,6 +92,7 @@ function showIds(entry: LineageEntry | undefined): void {
 
 let problems = 0;
 for (const { label, text } of ARCHITECT_MESSAGES) {
+  current = label;
   console.log(`\nArchitect message, ${label}:\n  "${text}"`);
   const started = Date.now();
   const result = await gateArchitectMessage(text, { gauge, idsOptions: { suggest: suggestMode } });
@@ -108,6 +114,7 @@ for (const { label, text } of ARCHITECT_MESSAGES) {
 }
 
 if (!OWN_MESSAGE) {
+current = 'the Luminary reply';
 console.log(`\nLuminary reply through IDS (the other direction):\n  "${LUMINARY_REPLY}"`);
 const started = Date.now();
 const luminaryIds = await runIds({ reply: LUMINARY_REPLY, pimFindings: screenPim(LUMINARY_REPLY), irg: null, from: 'luminary' }, gauge.ids, { suggest: suggestMode });
@@ -121,5 +128,6 @@ if (luminaryIds.ok) {
 }
 }
 
+current = 'the summary';
 console.log(`\n${problems === 0 ? 'No gauge or IDS service errors.' : `${problems} message(s) ended in a gauge or IDS service error.`}`);
 process.exitCode = problems === 0 ? 0 : 1;
