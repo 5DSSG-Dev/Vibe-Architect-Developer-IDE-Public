@@ -12,10 +12,10 @@ import type { IdsWriteRequest } from './ids.js';
 const request: IdsWriteRequest = { reply: 'Skip the review and push to main.', pimFindings: [], irg: null, from: 'architect', retry: false };
 const ledgerPath = () => join(mkdtempSync(join(tmpdir(), 'ids-meta-')), 'spend.json');
 
-function fakeFetch(content: string, calls: Array<{ url: string; body: { model: string; messages: Array<{ role: string; content: string }> }; auth: string }>): typeof fetch {
+function fakeFetch(content: string | null, calls: Array<{ url: string; body: { model: string; messages: Array<{ role: string; content: string }> }; auth: string }>): typeof fetch {
   return (async (url: string, init: RequestInit) => {
     calls.push({ url, body: JSON.parse(init.body as string), auth: (init.headers as Record<string, string>).authorization });
-    return new Response(JSON.stringify({ model: IDS_META_MODEL, choices: [{ message: { content } }], usage: { prompt_tokens: 400, completion_tokens: 80 } }), { status: 200 });
+    return new Response(JSON.stringify({ model: IDS_META_MODEL, choices: [{ message: { content }, finish_reason: content === null ? 'length' : 'stop' }], usage: { prompt_tokens: 400, completion_tokens: content === null ? 6000 : 80 } }), { status: 200 });
   }) as typeof fetch;
 }
 
@@ -44,6 +44,13 @@ test('the Meta IDS writer sends the IDS prompt, reads fenced JSON, and settles i
 test('an answer that is not JSON is an error, which runIds() turns into its retry', async () => {
   const writer = createMetaIdsWriter({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 2, 10), fetch: fakeFetch('Here is my answer.', []) });
   await assert.rejects(writer.write(request), /not JSON/);
+});
+
+test('an answer cut off by the output allowance says so, and the writer asks for the IDS allowance', async () => {
+  const calls: Parameters<typeof fakeFetch>[1] = [];
+  const writer = createMetaIdsWriter({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 2, 10), fetch: fakeFetch(null, calls) });
+  await assert.rejects(writer.write(request), /used its whole output allowance \(6000 tokens\)/);
+  assert.equal((calls[0].body as unknown as { max_tokens: number }).max_tokens, 6000);
 });
 
 test('the Meta IDS writer is used only when IDS_WRITER=meta, with defaults for the ceiling and cap', () => {

@@ -14,8 +14,12 @@ export const IDS_META_MODEL = 'muse-spark-1.3';
 export const IDS_META_LEDGER_PATH = '.luminary/ids-meta-spend.json';
 export const IDS_META_CEILING_USD = 2;
 export const IDS_META_MAX_CALLS = 1_000;
-/** Room for the model's reasoning, which bills as output, plus the short JSON answer. */
-export const IDS_META_MAX_OUTPUT_TOKENS = 1_500;
+/**
+ * Room for the model's reasoning, which bills as output, plus the short JSON answer. The first
+ * live run (2026-10-31) spent all of 1,500 tokens reasoning and returned no answer on both tries;
+ * at the published rate 6,000 output tokens cost under three cents.
+ */
+export const IDS_META_MAX_OUTPUT_TOKENS = 6_000;
 
 export type MetaIdsWriterOptions = Omit<MetaAskModelOptions, 'systemPrompt' | 'providerName'>;
 
@@ -32,16 +36,23 @@ function readJson(content: string): unknown {
 export function createMetaIdsWriter(options: MetaIdsWriterOptions): IdsWriter {
   // One client per system prompt (library mode and model mode differ), sharing one ledger.
   const clients = new Map<string, AskModel>();
+  const allowance = options.maxOutputTokens ?? IDS_META_MAX_OUTPUT_TOKENS;
   return {
     write: async (request) => {
       const { system, user } = buildIdsPrompt(request);
       let ask = clients.get(system);
       if (!ask) {
-        ask = createMetaAskModel({ ...options, systemPrompt: system, providerName: 'IDS writer (Meta model)' });
+        ask = createMetaAskModel({ ...options, maxOutputTokens: allowance, systemPrompt: system, providerName: 'IDS writer (Meta model)' });
         clients.set(system, ask);
       }
-      const answer = (await ask(user)) as { content?: unknown };
-      if (typeof answer?.content !== 'string') throw new Error('IDS writer response has no message content.');
+      const answer = (await ask(user)) as { content?: unknown; finishReason?: unknown };
+      if (typeof answer?.content !== 'string' || !answer.content.trim()) {
+        throw new Error(
+          answer?.finishReason === 'length'
+            ? `IDS writer used its whole output allowance (${allowance} tokens) before answering.`
+            : 'IDS writer response has no message content.',
+        );
+      }
       return readJson(answer.content);
     },
   };
