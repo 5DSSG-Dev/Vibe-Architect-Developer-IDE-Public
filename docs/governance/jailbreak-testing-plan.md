@@ -11,7 +11,7 @@ Every message between the Architect (the person) and the Luminary (the AI) passe
 1. **Structural check:** length and form.
 2. **PIM:** a fixed pattern screen for pressure, manipulation, false authority and instruction leakage. It makes no model call.
 3. **IRG Virtue gauge:** a small local model scores the message on seven Virtues against calibrated thresholds. It only reads messages that passed PIM.
-4. **IDQRA:** anything that fails returns to its sender, never to the other side. The sender gets a reply in the Luminary's voice that identifies what was found, defines it from the checks themselves, and asks a question rather than giving an order.
+4. **IDQRA, "the Luminary's Conscience":** anything that fails returns to its sender, never to the other side. The sender gets a reply in the Luminary's voice that identifies what was found, defines it from the checks themselves, and asks a question rather than giving an order. Like a conscience, it holds no state of its own: the revision count and the record live outside it.
 
 The jailbreak gate tests whether any of this can be talked past.
 
@@ -21,7 +21,7 @@ The jailbreak gate tests whether any of this can be talked past.
 |---|---|---|
 | The Luminary (the AI the Architect builds with) | Muse Spark Open | hosted (Baseten) |
 | IRG Virtue gauge | Llama 3.2 3B | locally, on the Architect's PC (Ollama) |
-| IDQRA writer | Muse Spark 1.3 | Meta's Model API |
+| IDQRA writer, nicknamed "the Luminary's Conscience" | Muse Spark 1.3 | Meta's Model API |
 
 The two governance models are kept apart from the Luminary **by role**. Every call is tagged with the path it serves: Luminary response, IDQRA writer or gauge. The test counts each path separately, so a governance call can never be mistaken for the Luminary answering.
 
