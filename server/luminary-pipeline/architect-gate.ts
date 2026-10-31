@@ -82,6 +82,6 @@ export async function gateArchitectMessage(message: string, options: ArchitectGa
     lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
     return { outcome: 'ids_error', message: ids.message, lineage };
   }
-  lineage.push({ pass, stage: 'ids', observation: ids.observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+  lineage.push({ pass, stage: 'ids', observation: ids.observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures, ...(ids.suggestLibrary ? { suggestLibrary: ids.suggestLibrary } : {}) });
   return { outcome: 'returned', flaggedBy: pimFindings.length > 0 ? 'pim' : 'irg', observation: ids.observation, lineage };
 }

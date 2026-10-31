@@ -19,6 +19,7 @@
 import { thresholdFor, type IrgReading } from './irg.js';
 import { IDS_PIM_RULESET_VERSION, screenIdsPim, type IdsPimFinding } from './ids-pim.js';
 import type { PimFinding } from './pim.js';
+import { pickSuggest, suggestOptions, SUGGEST_LIBRARY_VERSION, type SuggestOption } from './ids-suggest.js';
 
 export interface IdsObservation {
   identify: string;
@@ -45,6 +46,8 @@ export interface IdsWriteRequest extends IdsInput {
   rewrite?: { previousSuggest: string[]; findings: IdsPimFinding[] };
   /** On the retry: why the previous answer could not be used. At temperature 0 the same prompt gives the same answer. */
   previousFailure?: string;
+  /** Library mode: the approved Suggest lines the model may pick from, by id. */
+  suggestOptions?: SuggestOption[];
 }
 
 /** The embedded model. Returns `unknown` so its payload is validated. */
@@ -73,10 +76,15 @@ export interface IdsFailure {
 }
 
 export type IdsResult =
-  | { ok: true; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { ok: true; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[]; suggestLibrary?: { version: string; picked: string[]; fellBack: boolean } }
   | { ok: false; message: string; failures: IdsFailure[] };
 
 export interface RunIdsOptions {
+  /**
+   * 'library' (the default): the model picks Suggest from the approved lines (ids-suggest.ts).
+   * 'model': the model writes Suggest, screened and rewritten by the IDS PIM (the earlier design).
+   */
+  suggest?: 'library' | 'model';
   timeoutMs?: number;
   retryDelayMs?: number;
   /** Injected for tests (F2c). Defaults to the IDS PIM. */
@@ -201,12 +209,12 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
 
   // One model call, with the response's single service retry (F2b): the limit counts
   // responses, not calls, so once the retry is used any later failure ends the response.
-  async function call<T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T): Promise<T> {
+  async function call<T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T, extra: Partial<IdsWriteRequest> = {}): Promise<T> {
     for (;;) {
       const retry = failures.length > 0 && !retryUsed ? (retryUsed = true) : false;
       const previousFailure = retry ? failures[failures.length - 1].reason : undefined;
       try {
-        const raw = await withTimeout(writer!.write({ ...input, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
+        const raw = await withTimeout(writer!.write({ ...input, ...extra, retry, ...(rewrite ? { rewrite } : {}), ...(previousFailure ? { previousFailure } : {}) }), timeoutMs);
         return read(raw);
       } catch (error) {
         failures.push({ retry, reason: error instanceof Error ? error.message : 'IDS embedded model failed.' });
@@ -215,6 +223,8 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
       }
     }
   }
+
+  if ((options.suggest ?? 'library') === 'library') return runLibrary(input, call, screen, failures);
 
   let observation: IdsObservation;
   try {
@@ -261,6 +271,47 @@ export async function runIds(input: IdsInput, writer: IdsWriter | undefined, opt
       return { ok: false, message: IDS_ERROR_MESSAGE, failures };
     }
   }
+}
+
+type Call = <T>(rewrite: IdsWriteRequest['rewrite'], read: (raw: unknown) => T, extra?: Partial<IdsWriteRequest>) => Promise<T>;
+
+/**
+ * Library mode: the model writes Identify and picks Suggest lines by id; Define comes from the
+ * checks. No Suggest text is model-written, so there is nothing to rewrite. The IDS PIM still
+ * screens the shown lines as a guard against a bad library edit; a flagged line is withheld.
+ */
+async function runLibrary(input: IdsInput, call: Call, screen: (text: string) => IdsPimFinding[], failures: IdsFailure[]): Promise<IdsResult> {
+  const offered = suggestOptions(input);
+  let answer: { identify: string; lines: string[]; picked: string[]; fellBack: boolean };
+  try {
+    answer = await call(undefined, (raw) => {
+      const record = typeof raw === 'object' && raw !== null && !Array.isArray(raw) ? (raw as Record<string, unknown>) : null;
+      if (!record) throw new IdsUnusable('IDS embedded model returned an unusable response (the response is not a JSON object).');
+      if (typeof record.identify !== 'string' || record.identify.trim().length === 0) {
+        throw new IdsUnusable(`IDS embedded model returned an unusable response (identify is ${record.identify === undefined ? 'missing' : 'empty or not text'}).`);
+      }
+      const identify = record.identify.trim();
+      if (echoes(identify, input.reply)) throw new IdsUnusable('IDS embedded model response repeats the message text (no echo).');
+      if (misstatesReadings(identify, input.irg)) throw new IdsUnusable('IDS embedded model response misstates a gauge reading (says a reading below its threshold was above it).');
+      return { identify, ...pickSuggest(offered, record.pick) };
+    }, { suggestOptions: offered });
+  } catch {
+    return { ok: false, message: IDS_ERROR_MESSAGE, failures };
+  }
+  const define = defineFromChecks(input);
+  const suggestLibrary = { version: SUGGEST_LIBRARY_VERSION, picked: answer.picked, fellBack: answer.fellBack };
+  let findings: IdsPimFinding[];
+  try {
+    findings = screen(answer.lines.join('\n'));
+  } catch (error) {
+    const drafts = [{ suggest: answer.lines, findings: [], shown: false, idsPimError: error instanceof Error ? error.message : 'IDS PIM failed.' }];
+    return { ok: true, observation: { identify: answer.identify, define, suggest: [], suggestNote: NO_SUGGESTION_CHECKED }, drafts, idsPimVersion: IDS_PIM_RULESET_VERSION, failures, suggestLibrary };
+  }
+  const shown = findings.length === 0;
+  const observation: IdsObservation = shown
+    ? { identify: answer.identify, define, suggest: answer.lines }
+    : { identify: answer.identify, define, suggest: [], suggestNote: NO_SUGGESTION_PASSED };
+  return { ok: true, observation, drafts: [{ suggest: answer.lines, findings, shown }], idsPimVersion: IDS_PIM_RULESET_VERSION, failures, suggestLibrary };
 }
 
 /**

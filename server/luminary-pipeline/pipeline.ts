@@ -57,7 +57,7 @@ export type LineageEntry =
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
-  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[]; suggestLibrary?: { version: string; picked: string[]; fellBack: boolean } }
   | { pass: number; stage: 'ids_error'; failures: IdsFailure[] }
   | { pass: number; stage: 'prism' };
 
@@ -148,7 +148,7 @@ export async function runReplyPipeline(
       return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
     }
     const observation = ids.observation;
-    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures, ...(ids.suggestLibrary ? { suggestLibrary: ids.suggestLibrary } : {}) });
 
     if (pass > maxIdsPasses) {
       return {
