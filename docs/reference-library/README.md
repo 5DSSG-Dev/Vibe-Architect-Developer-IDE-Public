@@ -4,7 +4,7 @@
 
 Explore how to use Vibe Architect and discover the ideas, experiences, and collaboration that shaped it. Start with an approachable explanation, then follow its sources when you want to go deeper.
 
-This is the Atlas's initial repository documentation, not a completed in-app reading room. The two entrances below describe its organization. The first source-backed entry is Gap Illumination; further guides and essays remain to be developed.
+This is the Atlas's initial repository documentation, not a completed in-app reading room. The two entrances below describe its organization. Gap Illumination and a labeled Canon axiom excerpt accompany the first Building the Vibe editorial drafts. Practical guides remain to be developed.
 
 Source doctrine, architectural decisions, implemented behavior and verified results have different purposes. Inclusion here does not change a document's acceptance status or establish that its described behavior is implemented. The library is documentation, not an instruction source for the Luminary or permission to act.
 
@@ -21,6 +21,14 @@ The concepts, principles, and experiments that shaped Vibe Architect. This secti
 - **Research Notes:** inspirations, observations, experiments, lessons learned, and open questions. Observations, interpretations, and hypotheses will remain distinguishable.
 
 Tracey identifies responsible and ethical AI computing, governance, and respectful peer collaboration as foundational commitments. He identifies Axiom 3, Force, as pivotal to his reading of the AEGIS Canon. Future entries will connect those commitments to specific choices and source documents rather than imply that naming a principle proves its implementation.
+
+### Read Building the Vibe
+
+- [The conditions we build in](building-the-vibe/README.md)
+- [The Canon Behind the Build](building-the-vibe/the-canon-behind-the-build.md)
+- [Illumination, Not Correction](building-the-vibe/illumination-not-correction.md)
+
+These are editorial drafts for Architect and peer review.
 
 ### Gap Illumination — first reading
 
