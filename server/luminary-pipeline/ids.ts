@@ -118,7 +118,7 @@ export function defineFromChecks(input: Pick<IdsInput, 'pimFindings' | 'irg'>): 
   }
   if (input.irg && input.irg.belowThreshold.length > 0) {
     const irg = input.irg;
-    return irg.belowThreshold.map((v) => `${v} reads ${Number(irg.readings[v].toFixed(1))}, below the threshold of ${thresholdFor(irg.threshold, v)}.`);
+    return irg.belowThreshold.map((v) => `${v} reads ${irg.readings[v].toFixed(1)}, below the threshold of ${thresholdFor(irg.threshold, v)}.`);
   }
   return ['The structural check recorded the message as not well-formed.'];
 }

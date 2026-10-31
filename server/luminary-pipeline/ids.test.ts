@@ -167,7 +167,7 @@ test('Define is written from the checks, never by the model', async () => {
   const result = await runIds({ ...input, irg }, writer, fast);
   assert.equal(result.ok, true);
   if (!result.ok) return;
-  assert.deepEqual(result.observation.define, ['Honesty reads 5.4, below the threshold of 70.', 'Communication reads 8, below the threshold of 70.']);
+  assert.deepEqual(result.observation.define, ['Honesty reads 5.4, below the threshold of 70.', 'Communication reads 8.0, below the threshold of 70.']);
   assert.deepEqual(defineFromChecks({ pimFindings: [{ category: 'authority_framing', patternId: 'a', excerpt: 'x' }, { category: 'authority_framing', patternId: 'b', excerpt: 'y' }], irg: null }), ['The pattern screen recorded authority framing.']);
   assert.deepEqual(defineFromChecks({ pimFindings: [], irg: null }), ['The structural check recorded the message as not well-formed.']);
 });
