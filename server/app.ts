@@ -15,6 +15,8 @@ import { createLuminaryTaskRouter, isLoopback } from './luminary-task-router.js'
 import type { LuminaryExecutor } from './luminary-executor.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
 import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
+import type { ReviewRecord } from './governance-record/review.js';
+import { createReviewRouter } from './review-router.js';
 
 const LOGIN_WINDOW_MS = 60_000;
 const LOGIN_ATTEMPT_LIMIT = 10;
@@ -57,6 +59,8 @@ export interface CreateGatewayOptions {
    * a not-configured gauge, so no reply leaves ungauged: it fails closed as a gauge_error Shortfall.
    */
   gauge?: Gauge;
+  /** The review areas (STP-0005 P3). Every Architect message and Luminary reply is written here first. */
+  record?: ReviewRecord;
   /** Names the reply source in /api/luminary/status, e.g. 'rehearsal'. Absent = not configured. */
   replySource?: string;
   /** The running spend total for a paid reply source (P21), shown to the Architect in the panel. */
@@ -254,7 +258,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
   // that take the same governed path as /ask.
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
-  const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge } };
+  const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge }, record: options.record };
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),
@@ -273,6 +277,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   if (options.executor) {
     app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
   }
+  if (options.record) app.use('/api/luminary/review', createReviewRouter(options.record));
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));
 
   const vite = options.vite ?? (config.nodeEnv === 'development'

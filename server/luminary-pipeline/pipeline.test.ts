@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { SEVEN_VIRTUES, type VirtueReadings } from './irg.js';
+import { fakeIdsWriter } from './ids.fixtures.js';
 import { GAUGE_NOT_CONFIGURED_MESSAGE, notConfiguredGauge, runReplyPipeline, type Gauge, type Reform } from './pipeline.js';
 
 // Every test uses fakes: a fake gauge and a fake re-form call. No model is reached.
@@ -16,6 +17,7 @@ function gaugeFrom(table: Record<string, VirtueReadings>): Gauge & { seen: strin
   const seen: string[] = [];
   return {
     seen,
+    ids: fakeIdsWriter(),
     read: async (content, virtues) => {
       assert.deepEqual([...virtues], [...SEVEN_VIRTUES]);
       seen.push(content);
@@ -64,7 +66,7 @@ test('an incoherent reply goes to IDS, the originator re-forms, and the re-forme
 
 test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an incoherent_after_ids Shortfall and the text is withheld', async () => {
   let reforms = 0;
-  const gauge: Gauge = { read: async () => readings(90, { Trust: 10 }) };
+  const gauge: Gauge = { read: async () => readings(90, { Trust: 10 }), ids: fakeIdsWriter() };
   const reform: Reform = async () => { reforms += 1; return reply(`attempt ${reforms + 1}`); };
   const result = await runReplyPipeline(reply('attempt 1'), reform, { gauge });
   assert.equal(result.ok, false);
@@ -80,7 +82,7 @@ test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an inc
 });
 
 test('maxIdsPasses tunes the bound; 0 means no re-form at all', async () => {
-  const gauge: Gauge = { read: async () => readings(10) };
+  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
   const result = await runReplyPipeline(reply('x'), noReform, { gauge, maxIdsPasses: 0 });
   assert.equal(result.ok, false);
   if (result.ok) return;
@@ -120,7 +122,7 @@ test('a structurally invalid first reply keeps its P12 Shortfall and never reach
 });
 
 test('a re-formed reply is structurally gated too', async () => {
-  const gauge: Gauge = { read: async () => readings(10) };
+  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
   const result = await runReplyPipeline(reply('first'), async () => ({ content: 'no model id' }), { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;
@@ -144,25 +146,32 @@ test('an invalid gauge payload is a gauge_error, never a guessed reading', async
   assert.match(result.shortfall.message, /Respect/);
 });
 
-test('an injected observer produces the IDS observation; a malformed one is a gauge_error', async () => {
+test('the IDS embedded model writes the response; with none configured, or an unusable one, IDS fails closed as ids_error', async () => {
   const good: Gauge = {
     read: async (content) => (content === 'fixed' ? readings(90) : readings(10)),
-    observe: async () => ({ identify: 'from the gauge model', define: ['d'], suggest: ['s'] }),
+    ids: { write: async () => ({ identify: 'from the embedded model', define: ['d'], suggest: ['One possibility is a shorter reply.'] }) },
   };
   let seenIdentify = '';
   const result = await runReplyPipeline(reply('first'), async (observation) => { seenIdentify = observation.identify; return reply('fixed'); }, { gauge: good });
   assert.equal(result.ok, true);
-  assert.equal(seenIdentify, 'from the gauge model');
+  assert.equal(seenIdentify, 'from the embedded model');
 
-  const bad: Gauge = { read: async () => readings(10), observe: async () => 'not an observation' };
-  const failed = await runReplyPipeline(reply('first'), noReform, { gauge: bad });
-  assert.equal(failed.ok, false);
-  if (failed.ok) return;
-  assert.equal(failed.shortfall.code, 'gauge_error');
+  for (const gauge of [
+    { read: async () => readings(10) } as Gauge,
+    { read: async () => readings(10), ids: { write: async () => 'not an observation' } } as Gauge,
+  ]) {
+    const failed = await runReplyPipeline(reply('first'), noReform, { gauge, idsOptions: { retryDelayMs: 0 } });
+    assert.equal(failed.ok, false);
+    if (failed.ok) return;
+    assert.equal(failed.shortfall.code, 'ids_error');
+    assert.ok(!JSON.stringify({ shortfall: failed.shortfall, lineage: failed.lineage }).includes('"first"'), 'none of the reply text is returned');
+    assert.deepEqual(failed.passes, ['first'], 'the reply is kept in full for the review record');
+    assert.equal(failed.lineage.at(-1)?.stage, 'ids_error');
+  }
 });
 
 test('a failing re-form call is an upstream_error Shortfall', async () => {
-  const gauge: Gauge = { read: async () => readings(10) };
+  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
   const result = await runReplyPipeline(reply('first'), async () => { throw new Error('model down'); }, { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;

@@ -14,7 +14,7 @@
 // and the embedded gauge model arrives with M1.b.
 
 import { governReply, type GovernanceOptions, type GovernedReply, type ShortfallCode } from '../luminary-governance.js';
-import { buildIdsObservation, validateObservation, type IdsInput, type IdsObservation, type IdsObserver } from './ids.js';
+import { runIds, type IdsDraft, type IdsFailure, type IdsObservation, type IdsWriter, type RunIdsOptions } from './ids.js';
 import { IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type IrgReading, type IrgScorer, type IrgThreshold, type Virtue, type VirtueReadings, type VirtueThresholds } from './irg.js';
 import { screenPim, type PimFinding } from './pim.js';
 import { routeRbc, type RbcRoute } from './rbc.js';
@@ -22,8 +22,8 @@ import { routeRbc, type RbcRoute } from './rbc.js';
 /** The separate, small gauge model (N13-N15), injected. */
 export interface Gauge {
   read: IrgScorer;
-  /** Produces the IDS observation. When absent, it is assembled from the readings. */
-  observe?: IdsObserver;
+  /** The IDS embedded model (STP-0005 P2). When absent, IDS fails closed as ids_error. */
+  ids?: IdsWriter;
   /** Per-virtue thresholds selected for this gauge's scale (P18). When absent, IRG_THRESHOLD applies. */
   thresholds?: VirtueThresholds;
 }
@@ -48,6 +48,8 @@ export interface ReplyPipelineOptions {
   threshold?: IrgThreshold;
   maxIdsPasses?: number;
   governance?: GovernanceOptions;
+  /** IDS timeout, retry delay and (for tests) the IDS PIM screen. */
+  idsOptions?: RunIdsOptions;
 }
 
 export type LineageEntry =
@@ -55,10 +57,11 @@ export type LineageEntry =
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
-  | { pass: number; stage: 'ids'; observation: IdsObservation }
+  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { pass: number; stage: 'ids_error'; failures: IdsFailure[] }
   | { pass: number; stage: 'prism' };
 
-export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'incoherent_after_ids';
+export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'ids_error' | 'incoherent_after_ids';
 
 export interface PipelineShortfall {
   code: PipelineShortfallCode;
@@ -70,9 +73,13 @@ export interface PipelineShortfall {
   readings?: VirtueReadings | null;
 }
 
+/**
+ * `passes` holds every structurally valid candidate in full, in order, for the review record
+ * (STP-0005 P3). It is never sent to the Architect.
+ */
 export type PipelineResult =
-  | { ok: true; reply: GovernedReply; lineage: LineageEntry[] }
-  | { ok: false; shortfall: PipelineShortfall; lineage: LineageEntry[] };
+  | { ok: true; reply: GovernedReply; lineage: LineageEntry[]; passes: string[] }
+  | { ok: false; shortfall: PipelineShortfall; lineage: LineageEntry[]; passes: string[] };
 
 function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
@@ -84,12 +91,6 @@ async function gaugeReading(gauge: Gauge, content: string, threshold: IrgThresho
   return readIrg(validateReadings(raw), threshold);
 }
 
-async function observe(gauge: Gauge, input: IdsInput): Promise<IdsObservation> {
-  if (!gauge.observe) return buildIdsObservation(input);
-  const observation = validateObservation(await gauge.observe(input));
-  if (!observation) throw new Error('Gauge observation is not a well-formed IDS observation.');
-  return observation;
-}
 
 /**
  * Run a candidate reply through the pipeline. `candidate` is untrusted (straight from the
@@ -103,15 +104,17 @@ export async function runReplyPipeline(
   const threshold = options.threshold ?? options.gauge.thresholds ?? IRG_THRESHOLD;
   const maxIdsPasses = options.maxIdsPasses ?? DEFAULT_MAX_IDS_PASSES;
   const lineage: LineageEntry[] = [];
+  const passes: string[] = [];
 
   for (let pass = 1; ; pass += 1) {
     const governed = governReply(candidate, options.governance);
     if (!governed.ok) {
       lineage.push({ pass, stage: 'structural', ok: false, code: governed.shortfall.code });
-      return { ok: false, shortfall: governed.shortfall, lineage };
+      return { ok: false, shortfall: governed.shortfall, lineage, passes };
     }
     lineage.push({ pass, stage: 'structural', ok: true });
     const reply = governed.reply;
+    passes.push(reply.content);
 
     const pimFindings = screenPim(reply.content);
     lineage.push({ pass, stage: 'pim', findings: pimFindings });
@@ -125,6 +128,7 @@ export async function runReplyPipeline(
           ok: false,
           shortfall: { code: 'gauge_error', message: errorMessage(error, 'The gauge could not read the reply.'), modelId: reply.modelId },
           lineage,
+          passes,
         };
       }
       lineage.push({ pass, stage: 'irg', coherent: irg.coherent, readings: irg.readings, belowThreshold: irg.belowThreshold, threshold: irg.threshold });
@@ -133,21 +137,18 @@ export async function runReplyPipeline(
       lineage.push({ pass, stage: 'rbc', route });
       if (route === 'prism') {
         lineage.push({ pass, stage: 'prism' });
-        return { ok: true, reply, lineage };
+        return { ok: true, reply, lineage, passes };
       }
     }
 
-    let observation: IdsObservation;
-    try {
-      observation = await observe(options.gauge, { reply: reply.content, pimFindings, irg });
-    } catch (error) {
-      return {
-        ok: false,
-        shortfall: { code: 'gauge_error', message: errorMessage(error, 'The gauge could not produce an IDS observation.'), modelId: reply.modelId },
-        lineage,
-      };
+    // IDS fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
+    const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+    if (!ids.ok) {
+      lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
+      return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
     }
-    lineage.push({ pass, stage: 'ids', observation });
+    const observation = ids.observation;
+    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
 
     if (pass > maxIdsPasses) {
       return {
@@ -160,6 +161,7 @@ export async function runReplyPipeline(
           readings: irg ? irg.readings : null,
         },
         lineage,
+        passes,
       };
     }
 
@@ -170,6 +172,7 @@ export async function runReplyPipeline(
         ok: false,
         shortfall: { code: 'upstream_error', message: errorMessage(error, 'The model path failed while re-forming the reply.'), modelId: reply.modelId },
         lineage,
+        passes,
       };
     }
   }

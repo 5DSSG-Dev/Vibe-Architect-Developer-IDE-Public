@@ -423,3 +423,75 @@ STP-Entry-Hash: 2ab25640fcc386e93ec58c9982fc8c8d679e46b91fb07849325a7f0668f8be5a
 ## 2026-10-29 | codex | M3 ownership closeout / Verus handoff
 - STP-0003 N9 records that PR #12, #13 and #15 are merged and releases the corresponding stale Codex path claims. Luminary can build its consumer on the merged read-only ConnectionEvent feed and restored archive history.
 - suspended remains declared without a runtime producer; Luminary presentation and app-level tests remain open. M3 is not marked accepted.
+
+### 2026-10-30T19:48:55.237Z | stp | message
+Chain-Prev: 700841208aac3b19ebf373a6b9e5dc7295c8870b7a18c1d4a737a85deed6f28d
+Chain-Hash: ba3c156d66c127e3d978ee8bee8baeb8405d6f1cd695bc5c2692b172e6245b38
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: created
+Stage: Situation
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: 3336fa4c6ca593f2348727ed56f97af82ecad1b7c4561a1cc88df374a938a601
+
+### 2026-10-30T19:49:16.868Z | stp | message
+Chain-Prev: ba3c156d66c127e3d978ee8bee8baeb8405d6f1cd695bc5c2692b172e6245b38
+Chain-Hash: 03a5265e3572007501b8a75f9d3b3775db9ba89c47c63a2184f3d0b416663bec
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: stage → Target
+Stage: Target
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: 426f165ed195b0b730cbdf61143e4dbcc44d0cbf00a4be7c511abc712f50e8d7
+
+### 2026-10-30T19:49:19.065Z | stp | message
+Chain-Prev: 03a5265e3572007501b8a75f9d3b3775db9ba89c47c63a2184f3d0b416663bec
+Chain-Hash: 709947e9f02e36f3069e74eeb88b5ea1bbe6e305a1e728777df0ceb56d7b04f6
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: stage → Gap
+Stage: Gap
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: de40304c84230578da26a981a9f693873575e0a7b2f601e74932bde8850f028f
+
+### 2026-10-30T19:49:20.967Z | stp | message
+Chain-Prev: 709947e9f02e36f3069e74eeb88b5ea1bbe6e305a1e728777df0ceb56d7b04f6
+Chain-Hash: c131ba7d7b7d296c4b144b8050e3755fb6b2c823e58e9a800b05d8b7894b84c9
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: stage → Proposal
+Stage: Proposal
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: c7efdfadf4b99eb1eb27b6f15eb771e71f611eec27f76e89b8324c2735162c49
+
+### 2026-10-30T19:51:36.321Z | stp | message
+Chain-Prev: c131ba7d7b7d296c4b144b8050e3755fb6b2c823e58e9a800b05d8b7894b84c9
+Chain-Hash: 4278b17dddd5b26596e0676c8231c5051a34e03e7e7af71390329840a28ef3ad
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: P1 Approved by tracey
+Stage: Proposal
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: 72acf657ea2947ff274a68bd1eb07d8f8ea26abcd23a567e26e4b801b4459103
+
+### 2026-10-30T19:51:36.539Z | stp | message
+Chain-Prev: 4278b17dddd5b26596e0676c8231c5051a34e03e7e7af71390329840a28ef3ad
+Chain-Hash: b074c01bc6b2803bdfbfb3ee4ef0edb10d30ba1860f63a841dd673a97c111499
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: P2 Approved by tracey
+Stage: Proposal
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: dd818b5affc412e0b1a40eeea7f92e8735445f9477c62023f2165ecc0d2720b8
+
+### 2026-10-30T19:51:36.749Z | stp | message
+Chain-Prev: b074c01bc6b2803bdfbfb3ee4ef0edb10d30ba1860f63a841dd673a97c111499
+Chain-Hash: b63715ce2688b8ac8f6f7672eaad6c77bb9a034e6f802526533aface7aec8839
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: P3 Approved by tracey
+Stage: Proposal
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: ba0a986892138cc28ff29afef6f1cde070df703a40cd8a428c000ab469b5f2f4
+
+### 2026-10-30T19:51:36.951Z | stp | message
+Chain-Prev: b63715ce2688b8ac8f6f7672eaad6c77bb9a034e6f802526533aface7aec8839
+Chain-Hash: 0e525fec6f4c5ba91da5ddcf897c044d72bc8f2d5a9a4f300f4d246f4a683694
+STP pointer: STP-0005 "AEGIS Governance in Both Directions"
+Event: P4 Approved by tracey
+Stage: Proposal
+File: .aegis/stp/0005-aegis-governance-in-both-directions.md
+STP-Entry-Hash: 3f92bbc359dab5fa1353252151c4067fed7941aa8a09ff8e9cf162c445b22ffe

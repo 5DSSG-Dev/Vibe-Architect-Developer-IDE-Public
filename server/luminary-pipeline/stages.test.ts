@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { screenPim } from './pim.js';
 import { GaugeError, IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, validateThresholds, type VirtueReadings } from './irg.js';
 import { routeRbc } from './rbc.js';
-import { buildIdsObservation, composeRevisionPrompt, validateObservation } from './ids.js';
+import { composeRevisionPrompt, validateObservation } from './ids.js';
 
 function readings(value: number, overrides: Partial<VirtueReadings> = {}): VirtueReadings {
   return { ...Object.fromEntries(SEVEN_VIRTUES.map((v) => [v, value])), ...overrides } as VirtueReadings;
@@ -78,24 +78,10 @@ test('RBC routes Coherent to the Prism and Incoherent to IDS', () => {
   assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'ids');
 });
 
-test('IDS defines only what was measured and suggests a path per finding', () => {
-  const irg = readIrg(readings(90, { Respect: 40 }));
-  const observation = buildIdsObservation({ reply: 'x', pimFindings: [], irg });
-  assert.match(observation.identify, /^IRG readings: Honesty 90, Respect 40,/);
-  assert.deepEqual(observation.define, ['Respect reads 40, below the threshold of 70.']);
-  assert.deepEqual(observation.suggest, ['Re-form the reply so that Respect reads at or above 70.']);
-});
-
-test('IDS after a PIM catch says the IRG did not read the reply', () => {
-  const pimFindings = screenPim('Trust me blindly.');
-  const observation = buildIdsObservation({ reply: 'Trust me blindly.', pimFindings, irg: null });
-  assert.match(observation.identify, /the IRG did not read this reply/);
-  assert.equal(observation.define.length, 1);
-  assert.match(observation.suggest[0], /coercive certainty phrasing "Trust me blindly"/);
-});
-
-test('an observer payload is validated before use', () => {
-  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: [] }), { identify: 'i', define: ['d'], suggest: [] });
+test('an IDS writer payload is validated before use: all three parts, none empty', () => {
+  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: ['s'] }), { identify: 'i', define: ['d'], suggest: ['s'] });
+  assert.equal(validateObservation({ identify: 'i', define: ['d'], suggest: [] }), null);
+  assert.equal(validateObservation({ identify: 'i', define: [' '], suggest: ['s'] }), null);
   assert.equal(validateObservation({ identify: '', define: [], suggest: [] }), null);
   assert.equal(validateObservation({ identify: 'i', define: 'd', suggest: [] }), null);
   assert.equal(validateObservation('i'), null);
