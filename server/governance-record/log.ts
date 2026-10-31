@@ -68,6 +68,14 @@ async function appendDurably(path: string, text: string): Promise<void> {
   }
 }
 
+export interface LogOptions {
+  maxSegmentBytes?: number;
+  /** Admission-only: freeze after any uncertain append or verification problem. */
+  strict?: boolean;
+  /** Fault-injection/observability seam; never supplied by HTTP request data. */
+  writeHook?: (phase: 'before-write' | 'after-write' | 'after-sync', path: string) => void | Promise<void>;
+}
+
 export class AppendOnlyLog<T> {
   private readonly lines: LogLine<T>[] = [];
   private readonly index: IndexLine[] = [];
@@ -77,11 +85,13 @@ export class AppendOnlyLog<T> {
   private queue: Promise<unknown> = Promise.resolve();
   readonly problems: LogProblem[] = [];
 
-  private constructor(readonly dir: string, private readonly maxSegmentBytes: number) {}
+  private uncertain = false;
+
+  private constructor(readonly dir: string, private readonly maxSegmentBytes: number, private readonly options: LogOptions) {}
 
   /** Open (creating if absent) and check the whole chain. Problems are reported, never repaired. */
-  static async open<T>(dir: string, options: { maxSegmentBytes?: number } = {}): Promise<AppendOnlyLog<T>> {
-    const log = new AppendOnlyLog<T>(dir, options.maxSegmentBytes ?? DEFAULT_SEGMENT_BYTES);
+  static async open<T>(dir: string, options: LogOptions = {}): Promise<AppendOnlyLog<T>> {
+    const log = new AppendOnlyLog<T>(dir, options.maxSegmentBytes ?? DEFAULT_SEGMENT_BYTES, options);
     await mkdir(dir, { recursive: true, mode: 0o700 });
     await log.verify();
     return log;
@@ -164,9 +174,25 @@ export class AppendOnlyLog<T> {
 
   /** Append one entry, flushed to disk before this resolves. Serialised, so the chain cannot fork. */
   append(entry: T): Promise<LogLine<T>> {
-    const next = this.queue.then(() => this.appendNow(entry));
+    const next = this.queue.then(async () => {
+      if (this.options.strict && (this.uncertain || this.problems.length)) throw new Error('Log requires reconciliation.');
+      try { return await this.appendNow(entry); }
+      catch (error) { this.uncertain = true; throw error; }
+    });
     this.queue = next.catch(() => undefined);
     return next;
+  }
+
+  private async write(path: string, text: string): Promise<void> {
+    if (!this.options.writeHook) return appendDurably(path, text);
+    const handle = await open(path, 'a', 0o600);
+    try {
+      await this.options.writeHook('before-write', path);
+      await handle.appendFile(text, 'utf8');
+      await this.options.writeHook('after-write', path);
+      await handle.sync();
+      await this.options.writeHook('after-sync', path);
+    } finally { await handle.close(); }
   }
 
   private async appendNow(entry: T): Promise<LogLine<T>> {
@@ -177,12 +203,12 @@ export class AppendOnlyLog<T> {
 
     if (this.index.length === 0 || this.needsNewSegment || this.segmentBytes + bytes > this.maxSegmentBytes) {
       const indexLine: IndexLine = { segment: segmentName(this.index.length + 1), firstSeq: line.seq, prevHash: this.head.hash, startedAt: body.at };
-      await appendDurably(join(this.dir, 'index.jsonl'), `${JSON.stringify(indexLine)}\n`);
+      await this.write(join(this.dir, 'index.jsonl'), `${JSON.stringify(indexLine)}\n`);
       this.index.push(indexLine);
       this.segmentBytes = 0;
       this.needsNewSegment = false;
     }
-    await appendDurably(join(this.dir, this.index[this.index.length - 1].segment), text);
+    await this.write(join(this.dir, this.index[this.index.length - 1].segment), text);
     this.segmentBytes += bytes;
     this.lines.push(line);
     this.head = { seq: line.seq, hash: line.hash };
