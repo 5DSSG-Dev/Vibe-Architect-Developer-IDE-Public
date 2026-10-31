@@ -171,3 +171,13 @@ test('Define is written from the checks, never by the model', async () => {
   assert.deepEqual(defineFromChecks({ pimFindings: [{ category: 'authority_framing', patternId: 'a', excerpt: 'x' }, { category: 'authority_framing', patternId: 'b', excerpt: 'y' }], irg: null }), ['The pattern screen recorded authority framing.']);
   assert.deepEqual(defineFromChecks({ pimFindings: [], irg: null }), ['The structural check recorded the message as not well-formed.']);
 });
+
+test('reflect mode sends reflect on every call, and its lines go through the same checks as Suggest', async () => {
+  const seen: boolean[] = [];
+  const writer = { write: async (r: { reflect?: boolean }) => { seen.push(r.reflect === true); return { identify: 'The message asks for a change to be merged.', suggest: ['The request leaves the review out of the exchange.'] }; } };
+  const result = await runIds({ reply: 'Merge it now.', pimFindings: [], irg: null }, writer, { retryDelayMs: 0, suggest: 'reflect' });
+  assert.ok(result.ok);
+  assert.deepEqual(seen, [true]);
+  assert.deepEqual(result.ok && result.observation.suggest, ['The request leaves the review out of the exchange.']);
+  assert.equal(result.ok && result.drafts[0].shown, true);
+});

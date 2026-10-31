@@ -56,3 +56,15 @@ test('the writer posts to the local runtime and returns the parsed JSON; failure
   const notJson = (async () => new Response(JSON.stringify({ choices: [{ message: { content: 'hello' } }] }))) as unknown as typeof fetch;
   await assert.rejects(createLocalIdsWriter({ endpoint: 'http://localhost:1/v1', model: 'm', fetch: notJson }).write(request), /not JSON/);
 });
+
+test('reflect mode (IDR trial) asks the model to mirror what the message does, never to propose a change', () => {
+  const { system } = buildIdsPrompt({ ...request, reflect: true });
+  assert.match(system, /Identify, Define, Reflect/);
+  assert.match(system, /do not propose a change/);
+  assert.match(system, /it never corrects/);
+  assert.match(system, /do not restate identify/);
+  assert.doesNotMatch(buildIdsPrompt(request).system, /Reflect/);
+  const rewrite = buildIdsPrompt({ ...request, reflect: true, rewrite: { previousSuggest: ['x'], findings: [] } }).user;
+  assert.match(rewrite, /previous reflect was/);
+  assert.match(rewrite, /Write only a new reflect/);
+});

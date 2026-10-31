@@ -6,7 +6,8 @@
 // To check one message of your own as the Architect:  npx tsx scripts/ids-live-check.ts "your message"
 // Set IDS_CHECK_RAW=1 to also print every raw answer the IDS writer gave (fixed test text only).
 // Set IDS_CHECK_MODEL to run the IDS writer on another local model (the gauge is unchanged), and
-// IDS_CHECK_SUGGEST=model to have the writer write Suggest itself instead of picking approved lines.
+// IDS_CHECK_SUGGEST=model to have the writer write Suggest itself instead of picking approved lines,
+// or IDS_CHECK_SUGGEST=reflect to try Tracey's IDR (Identify, Define, Reflect) instead.
 // IDS_CHECK_NO_THINK=1 asks a qwen3 writer to skip its hidden reasoning (its "/no_think" switch).
 // IDS_WRITER=meta runs the IDS writer on Meta's Model API, a paid call charged to its own ledger
 // (.luminary/ids-meta-spend.json); the key is read from .env and never printed.
@@ -49,7 +50,8 @@ const LUMINARY_REPLY = 'There is no other way to build this. Trust me completely
 
 const gaugeConfig = parseLuminaryGauge(process.env.LUMINARY_GAUGE_ENDPOINT ? process.env : { ...process.env, ...ARCHITECT_GAUGE_ENV })!;
 const idsModel = process.env.IDS_CHECK_MODEL || gaugeConfig.model;
-const suggestMode = process.env.IDS_CHECK_SUGGEST === 'model' ? 'model' : 'library';
+const suggestMode = process.env.IDS_CHECK_SUGGEST === 'model' ? 'model' : process.env.IDS_CHECK_SUGGEST === 'reflect' ? 'reflect' : 'library';
+const third = suggestMode === 'reflect' ? 'Reflect' : 'Suggest';
 const metaIds = parseMetaIdsEnv(process.env);
 const writer = metaIds
   ? createMetaIdsWriter(metaIds)
@@ -68,7 +70,7 @@ const ids: IdsWriter = {
 };
 const gauge = { ...createLocalGauge(gaugeConfig), ids };
 
-console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${metaIds ? `${metaIds.model} on Meta's Model API` : idsModel}, Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}${process.env.IDS_CHECK_NO_THINK === '1' ? ', no_think' : ''}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
+console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${metaIds ? `${metaIds.model} on Meta's Model API` : idsModel}, ${suggestMode === 'reflect' ? 'Reflect written by the model (IDR trial)' : `Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}`}${process.env.IDS_CHECK_NO_THINK === '1' ? ', no_think' : ''}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
 try {
   await gauge.read('A short check that the gauge is awake.', []);
 } catch (error) {
@@ -79,8 +81,8 @@ try {
 function showObservation(observation: IdsObservation, message: string): void {
   console.log(`  Identify: ${observation.identify}`);
   for (const line of observation.define) console.log(`  Define:   ${line}`);
-  for (const line of observation.suggest) console.log(`  Suggest:  ${line}`);
-  if (observation.suggestNote) console.log(`  Suggest:  (${observation.suggestNote})`);
+  for (const line of observation.suggest) console.log(`  ${third}:  ${line}`);
+  if (observation.suggestNote) console.log(`  ${third}:  (${observation.suggestNote})`);
   const all = [observation.identify, ...observation.define, ...observation.suggest].join('\n');
   console.log(`  Echo check on the shown text: ${echoes(all, message) ? 'FAILED' : 'passed'}`);
 }
