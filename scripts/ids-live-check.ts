@@ -8,9 +8,11 @@
 // Set IDS_CHECK_MODEL to run the IDS writer on another local model (the gauge is unchanged), and
 // IDS_CHECK_SUGGEST=model to have the writer write Suggest itself instead of picking approved lines.
 // IDS_CHECK_NO_THINK=1 asks a qwen3 writer to skip its hidden reasoning (its "/no_think" switch).
+// IDS_WRITER=meta runs the IDS writer on Meta's Model API, a paid call charged to its own ledger
+// (.luminary/ids-meta-spend.json); the key is read from .env and never printed.
 // Exits 1 if any message ends in a gauge or IDS service error.
 //
-// Nothing reaches the Luminary or any paid model: the gate makes no Luminary call, and no server
+// Nothing reaches the Luminary, and no paid model is called unless IDS_WRITER=meta: the gate makes no Luminary call, and no server
 // port is opened, so the 3014 rehearsal and 3015 live gateways are untouched. Nothing is written to
 // the review record. The fixed messages are test text; a message of your own is printed as given.
 
@@ -19,6 +21,7 @@ import { parseLuminaryGauge } from '../server/config.js';
 import { gateArchitectMessage } from '../server/luminary-pipeline/architect-gate.js';
 import { createLocalGauge } from '../server/luminary-pipeline/gauge-local.js';
 import { IDS_PROMPT_VERSION, IDS_SEED, createLocalIdsWriter } from '../server/luminary-pipeline/ids-local.js';
+import { createMetaIdsWriter, parseMetaIdsEnv } from '../server/luminary-pipeline/ids-meta.js';
 import { echoes, runIds, type IdsObservation, type IdsWriter } from '../server/luminary-pipeline/ids.js';
 import type { LineageEntry } from '../server/luminary-pipeline/pipeline.js';
 import { screenPim } from '../server/luminary-pipeline/pim.js';
@@ -47,7 +50,10 @@ const LUMINARY_REPLY = 'There is no other way to build this. Trust me completely
 const gaugeConfig = parseLuminaryGauge(process.env.LUMINARY_GAUGE_ENDPOINT ? process.env : { ...process.env, ...ARCHITECT_GAUGE_ENV })!;
 const idsModel = process.env.IDS_CHECK_MODEL || gaugeConfig.model;
 const suggestMode = process.env.IDS_CHECK_SUGGEST === 'model' ? 'model' : 'library';
-const writer = createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: idsModel, noThink: process.env.IDS_CHECK_NO_THINK === '1' });
+const metaIds = parseMetaIdsEnv(process.env);
+const writer = metaIds
+  ? createMetaIdsWriter(metaIds)
+  : createLocalIdsWriter({ endpoint: gaugeConfig.endpoint, model: idsModel, noThink: process.env.IDS_CHECK_NO_THINK === '1' });
 const showRaw = process.env.IDS_CHECK_RAW === '1';
 let current = '';
 const ids: IdsWriter = {
@@ -62,7 +68,7 @@ const ids: IdsWriter = {
 };
 const gauge = { ...createLocalGauge(gaugeConfig), ids };
 
-console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${idsModel}, Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}${process.env.IDS_CHECK_NO_THINK === '1' ? ', no_think' : ''}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
+console.log(`Gauge: ${gaugeConfig.model}; IDS writer: ${metaIds ? `${metaIds.model} on Meta's Model API` : idsModel}, Suggest ${suggestMode === 'model' ? 'written by the model' : 'picked from approved lines'}${process.env.IDS_CHECK_NO_THINK === '1' ? ', no_think' : ''}; at ${gaugeConfig.endpoint} (prompt ${IDS_PROMPT_VERSION}, seed ${IDS_SEED})`);
 try {
   await gauge.read('A short check that the gauge is awake.', []);
 } catch (error) {
