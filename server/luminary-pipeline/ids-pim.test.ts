@@ -10,6 +10,7 @@ const directive: Array<[string, string]> = [
   ['You should rephrase this.', 'softened_command'],
   ['It would be best if you shortened it.', 'softened_command'],
   ['Please make sure the tone is kinder.', 'softened_command'],
+  ['The approach may hold, but it\'s essential to consider the risks.', 'softened_command'],
   ['Change this before it\'s too late.', 'pressure'],
   ['Shorten it, or this won\'t be sent.', 'pressure'],
   ['You have no choice here.', 'coercion'],
