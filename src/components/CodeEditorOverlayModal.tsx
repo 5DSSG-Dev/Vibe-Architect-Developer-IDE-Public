@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { X, Code, Save, CheckCircle2, AlertTriangle, FileCode2, Send, Square } from 'lucide-react';
 import { ApothecaryItem, SocketBinding, ensureElementCodeFrame } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
 import { describeShortfall, luminaryApi, readDemoKey, readLevel } from '../luminary/client';
 import { composeElementCodePrompt, lineDiff, readElementCodeProposal } from '../luminary/elementCode';
+import { elementCodeDiffPage } from '../luminary/elementCodeDiffPage';
 import { recordExchange, textEvidence } from '../luminary/record';
 
 interface CodeEditorOverlayModalProps {
@@ -50,6 +51,11 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [luminaryNote, setLuminaryNote] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Request text and page changes do not invalidate the source-pair comparison.
+  const proposalDiff = useMemo(() => proposal ? lineDiff(sourceText, proposal.code) : [], [sourceText, proposal?.code]);
+  const [diffPosition, setDiffPosition] = useState<{ comparison: typeof proposalDiff | null; page: number }>({ comparison: null, page: 0 });
+  // A new comparison starts on page zero immediately, without a stale-page render.
+  const diffPage = elementCodeDiffPage(proposalDiff, diffPosition.comparison === proposalDiff ? diffPosition.page : 0);
 
   const keep = async (event: Parameters<typeof recordExchange>[0], detail: Parameters<typeof recordExchange>[1]) => {
     const reason = await recordExchange(event, { ...detail, elementId: targetItem.id, codeFrame: targetItem.codeFrame.fileName });
@@ -211,29 +217,36 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
 
           {/* Raw Textarea Code Editor */}
           <textarea
+            aria-label="Element source code"
             value={sourceText}
             onChange={(e) => setSourceText(e.target.value)}
             spellCheck={false}
-            className="flex-1 bg-[#0d1117] p-3 text-xs text-cyan-300/90 font-mono leading-5 resize-none focus:outline-none selection:bg-cyan-900/60"
+            className="flex-1 min-w-0 bg-[#0d1117] p-3 text-xs text-cyan-300/90 font-mono leading-5 resize-none focus:outline-none selection:bg-cyan-900/60"
           />
         </div>
 
         {/* Ask the Luminary (P25) */}
-        <div className="border-t border-amber-400/30 bg-slate-950/90 p-3 space-y-2">
+        <div className="shrink-0 max-h-[55vh] overflow-y-auto border-t border-amber-400/30 bg-slate-950/90 p-3 space-y-2">
           {proposal && (
             <div className="rounded-xl border border-amber-400/40 bg-slate-900/70 p-2 space-y-2" aria-label="The Luminary's proposal">
               {proposal.explanation && <p className="text-[11px] text-amber-100 whitespace-pre-wrap leading-relaxed">{proposal.explanation}</p>}
-              <pre className="max-h-48 overflow-auto rounded-lg bg-[#090d13] p-2 text-[11px] leading-5 font-mono" aria-label="Changes to the code">
-                {lineDiff(sourceText, proposal.code).map((line, index) => (
+              <nav aria-label="Code diff pages" className="flex flex-wrap items-center gap-2 text-[11px]">
+                <span role="status" aria-live="polite" className="min-w-0 mr-auto">Showing {diffPage.start}–{diffPage.end} of {diffPage.total}</span>
+                <button type="button" aria-label="Previous diff page" disabled={!diffPage.hasPrevious} onClick={() => setDiffPosition({ comparison: proposalDiff, page: diffPage.page - 1 })} className="px-3 py-2 rounded-lg bg-slate-800 text-slate-200 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300">Previous</button>
+                <button type="button" aria-label="Next diff page" disabled={!diffPage.hasNext} onClick={() => setDiffPosition({ comparison: proposalDiff, page: diffPage.page + 1 })} className="px-3 py-2 rounded-lg bg-slate-800 text-slate-200 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300">Next</button>
+              </nav>
+              <pre tabIndex={0} className="max-h-48 overflow-auto rounded-lg bg-[#090d13] p-2 text-[11px] leading-5 font-mono" aria-label="Changes to the code">
+                {diffPage.rows.map((line, index) => (
                   <div
-                    key={index}
+                    key={diffPage.start + index}
+                    data-diff-row={line.kind}
                     className={line.kind === 'added' ? 'bg-emerald-900/40 text-emerald-200' : line.kind === 'removed' ? 'bg-rose-900/40 text-rose-200 line-through decoration-rose-400/60' : 'text-slate-400'}
                   >
                     {line.kind === 'added' ? '+ ' : line.kind === 'removed' ? '- ' : '  '}{line.text}
                   </div>
                 ))}
               </pre>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[9px] text-slate-500 mr-auto">Written by {proposal.modelId}. Nothing changes until you accept.</span>
                 <button type="button" onClick={() => void decide(false)} className="px-3 py-1 rounded-lg text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300">Decline</button>
                 <button type="button" onClick={() => void decide(true)} className="px-3 py-1 rounded-lg text-[11px] border border-amber-400/60 text-amber-100 hover:bg-amber-900/30">Accept</button>
@@ -271,7 +284,7 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
         </div>
 
         {/* Footer Bar */}
-        <div className="p-4 border-t border-cyan-500/30 flex items-center justify-between bg-slate-950/90">
+        <div className="shrink-0 p-4 border-t border-cyan-500/30 flex flex-wrap gap-2 items-center justify-between bg-slate-950/90">
           <div className="flex items-center space-x-2 text-[10px] text-slate-400">
             <FileCode2 className="w-3.5 h-3.5 text-cyan-400" />
             <span>Editing functional source only; manifest properties are read-only here.</span>
