@@ -2,10 +2,10 @@
 
 Created: 2026-11-01
 
-Libra is the Claude Cloud Peer (Meta Hackathon, Vibe Architect Developer IDE), paired with Verus;
-independently reviews non-coauthored work and takes bounded cloud-suitable assignments. This lane
-is append-only. (This copy is re-seeded on a branch from main; the first entry below was originally
-recorded on the PR #35 branch, which merged to claude/project-thread-67iwra.)
+Libra is the Claude Cloud Peer, joining as an independent reviewer (Meta Hackathon, Vibe
+Architect Developer IDE). This lane is append-only: messages, handoffs, uncertainty, and
+verified work notes are added below. Durable, verified findings are distilled into the relevant
+Totem; working notes stay here.
 
 ## Append Log
 
@@ -13,12 +13,41 @@ recorded on the PR #35 branch, which merged to claude/project-thread-67iwra.)
 ### 2026-11-01 | libra | message
 To: verus, lumin, human
 
-Joined as the Claude Cloud Peer under the name **Libra**. Completed the independent peer review of
-build-and-run plan rev18 (`docs/team-drafts/rev18-peer-review-libra-2026-11-01.md`), reviewed at
-`7605f3e` (server/ byte-identical to main `37caf4b`); executed `npm ci` + gateway 226/226. Finding,
-not approval; inside-pair contribution (I did not coauthor rev18), so the final cross-pair gate for
-Verus's rev18 remains Lumin or Aster. Merged via PR #35.
+Joined as the Claude Cloud Peer under the name **Libra**. Completed the independent peer review
+of build-and-run plan rev18 requested in `cloud-peer-review-brief-rev18-2026-11-01.md`.
 
+- Review doc: `docs/team-drafts/rev18-peer-review-libra-2026-11-01.md`.
+- Checkout reviewed: `claude/project-thread-67iwra` @ `7605f3ee` (its `server/` + `src/luminary/`
+  are byte-identical to `origin/main` `37caf4b`, verified with `git diff --quiet`).
+- Executed: `npm ci` (clean) + `npm run test:gateway` → **226/226 pass, 0 fail**. Did NOT run
+  test:app, build, local gauge, hosted writer, browser, or any jailbreak suite.
+- Finding (not approval): rev18 correctly reconciles every rev17 conflict Lumin raised; no
+  settled decision is contradicted; every structural claim about the code checks out against main
+  (P6 `/ask`-vs-`/tasks` bypass, the live fresh-count resubmit test at `review.test.ts:87-94`,
+  the per-direction reform composition, the dual cost caps). It is close to an executable
+  blueprint but still carries named-but-unresolved contracts a builder would otherwise guess:
+  the Luminary→Architect isolation mechanism, the Acknowledge shape, an explicit total
+  writer-call ceiling, the single counting authority after wiring (ReviewRecord.loop vs. the
+  admission ordinal), and the absent true-facts / protected-categories drafts.
+- Reached independently; relayed no one's conclusions as my own; created no adversarial corpus.
+
+Open handoff: material changes in response to this review return for review of the resulting
+revision. Architect approval remains separate and Tracey's.
+
+### 2026-11-01 | libra | provenance note (branch reconciliation)
+To: lumin, verus, human
+
+The introduction and first entry above are the canonical original lane, carried **verbatim** from
+`claude/project-thread-67iwra` @ `c2a3bb5e1e841483ca2f5567a38158fcee278c19` (blob
+`d8590189b0a9c73bcc4141cc349321f08bec2359`), where the first entry was originally recorded and
+merged (PR #35). Main had no Libra lane, so this file is re-seeded on a branch from main. An
+earlier push of this PR (#38, head `65902c84`) reworded that original intro/first entry; this
+revision supersedes that by restoring the original text verbatim as the historical prefix, per
+Lumin's reconciliation request on PR #38. No prior record is overwritten: the original remains on
+`project-thread-67iwra`, and both review documents and their pins
+(`rev18-peer-review-libra-2026-11-01.md`; `aster-governance-preparation-v0.1-review-libra-2026-11-01.md`)
+are preserved. Verbatim retention verified by comparing against blob `d8590189` (normalized line
+endings).
 
 ### 2026-11-01 | libra | verified-change
 To: lumin, aster, verus, human
