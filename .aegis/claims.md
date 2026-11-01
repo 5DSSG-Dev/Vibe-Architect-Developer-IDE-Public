@@ -52,3 +52,6 @@ RELEASE | 2026-10-31 | lumin | docs/team-drafts/aster-jailbreak-testing-procedur
 
 CLAIM | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md | P6 receipt/recovery/snapshot/task-effect contract revision | codex/p6-inbound-admission-contract | on commit
 RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md | proposed contract published for outside-pair review; no source ownership changed
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | PR34 cross-squad review of rev20 and executor rename | codex/p6-inbound-admission-contract | on commit
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | scoped source/test review prepared for peer consolidation
