@@ -218,3 +218,11 @@
 - Architect authorized stale-item removal and navigability improvements. Based isolated worktree on main 907e225; preserved shared checkout and all peer worktrees. Deleted 10 remote branches only after exact-head ancestry, open-PR dependency and worktree checks; guarded each deletion with a head lease. Full heads/outcomes in docs/HOUSEKEEPING_LEDGER.md.
 - Kept open-PR branches, worktree-attached branches and divergent heads. No automatic deletion enabled, no product/source/asset changes or historical record rewrites. Added docs navigation and refreshed obsolete README simulation/deployment and unqualified-green-baseline claims.
 - Verification: root/guide relative links resolve; historical continuity files retain their exact normalized original prefixes; git diff --check passes. Source inspection confirms paused Luminary behavior and storage-only admission limits. Documentation-only changes: application tests/build not rerun.
+## 2026-11-01 | Lumin | Independent PTAG spec authoring started
+- Tracey explicitly authorized the PR #34 gate-spec authoring assignment. Created isolated worktree `G:/AEGIS_DEVELOPMENT_REPOS/vibe-lumin-ptag-spec`, branch `codex/lumin-ptag-spec`, exact brief head `41c1323`.
+- Authored `docs/team-drafts/p5-ptag-independent-spec-lumin-v0.1-2026-11-01.md` from the shared brief and three-gate v0.3 only; no Verus/Aster PTAG draft was read. Draft covers direction-specific predicates, canonical manifest shape, exact candidate/evidence binding, pass/boundary/unsure aggregation, both-direction delivery, acceptance cases, calibration and open questions.
+- PTAG semantic classification remains model judgment; trusted validation proves candidate/version/evidence binding but is not mislabeled proof of semantic entailment. Operational failures remain distinct from semantic UNSURE. PIM authoring has not begun.
+- Local draft is uncommitted and unpublished pending scoped return through PR #34; no code, tests, model runs, manifest activation, commit, push or merge.
+
+## 2026-11-01 | Lumin | PTAG draft commit authorized
+- Tracey separately authorized committing Lumin's PTAG version and its append-only continuity records on `codex/lumin-ptag-spec`. This authorization does not include push, merge or activation.

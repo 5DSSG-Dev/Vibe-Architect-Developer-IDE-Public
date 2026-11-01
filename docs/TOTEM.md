@@ -67,3 +67,7 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Repository navigation and branch audit
 - docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.
+## 2026-11-01 | Lumin | Independent PTAG specification draft
+- At Architect direction, prepared the independent Lumin PTAG v0.1 draft from authoring brief `41c1323` and three-gate design v0.3 `3913248`, without reading another author's PTAG draft.
+- The spec separates inbound requests from outbound claims, uses supported/conflict/unresolved per material unit, binds every decision to exact candidate/contract/evidence/context hashes, and maps no-match or insufficient evidence to UNSURE rather than boundary or pass. It includes both-direction delivery, acceptance cases and bounded open questions. This is spec-level input for Verus synthesis, not a typed contract or clearance.
+- Architect subsequently authorized a local commit of this independent version and its continuity records; publication and merge remain separate.

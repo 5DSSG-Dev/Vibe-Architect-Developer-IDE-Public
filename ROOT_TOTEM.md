@@ -129,3 +129,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-10-31 | Lumin | Authorized repository housekeeping
 - Added repository guide at docs/README.md and root navigation links; refreshed README to reflect PR #25 retirement of unsupported modes and PR #32 storage-only admission scope. Historical continuity is unchanged.
 - Deleted ten fully incorporated remote branches without open PR dependencies or attached worktrees, using exact-head leases. Kept active PR branches, worktree branches and divergent heads. Audit evidence in docs/HOUSEKEEPING_LEDGER.md; no local branches, peer worktrees or product files removed.
+## 2026-11-01 | Lumin | PTAG independent-authoring continuity
+- Tracey authorized the PR #34 authoring assignment. Lumin began PTAG first in an isolated branch at exact brief head `41c1323`; PIM remains sequenced after PTAG synthesis.
+- Independent draft preserves the simple three-gate concept while making PTAG inspectable through direction-specific predicates, canonical operating-contract provenance, exact candidate/evidence binding, pass/boundary/UNSURE outcomes and retained regression cases. No product implementation or activation is implied.
+- Architect separately authorized committing Lumin's version locally; no push, merge or activation authority is inferred.
