@@ -28,7 +28,7 @@ test('buildDefine makes one trusted item per PIM finding, in order, tracing to t
   assert.equal(items.length, 2);
   assert.deepEqual(items.map((i) => [i.source, i.ref]), [['pim', 'authority-1'], ['pim', 'manipulation-2']]);
   // Fixed template, never the excerpt:
-  assert.equal(items[0].text, 'The reply claimed an authority it does not hold.');
+  assert.equal(items[0].text, 'The message claimed an authority it does not hold.');
   for (const i of items) assert.ok(!i.text.includes('INJECTED'));
 });
 
@@ -39,7 +39,7 @@ test('buildDefine adds one item per below-threshold virtue in canonical order af
     ['irg', 'Respect'],
     ['irg', 'Trust'],
   ]);
-  assert.equal(items[1].text, 'The reply read below the coherence line on Respect.');
+  assert.equal(items[1].text, 'The message read below the coherence line on Respect.');
 });
 
 test('buildDefine ignores a coherent or absent IRG reading', () => {

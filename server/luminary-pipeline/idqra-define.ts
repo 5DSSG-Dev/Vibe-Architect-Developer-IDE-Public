@@ -9,9 +9,13 @@
 // shape + bounds. This file changes nothing in the running pipeline.
 //
 // Trust boundary: every Define item's `text` is a FIXED template keyed by the finding's own
-// category/virtue — it never echoes the matched excerpt, because that excerpt is reply content and
-// could itself carry injected text. `ref` carries the finding's stable id (patternId or virtue) so
-// a Define item traces to an exact recorded rule, and `source` records which screen caught it.
+// category/virtue — it never echoes the matched excerpt, because that excerpt is screened text (an
+// outbound reply OR an inbound Architect message) and could itself carry injected text. `ref`
+// carries the finding's stable id (patternId or virtue) so a Define item traces to an exact recorded
+// rule, and `source` records which screen caught it.
+//
+// Neutral subject (R1): the Conscience governs BOTH directions (v0.2 §2 — it also reads the
+// Architect's inbound message), so the templates say "The message", never "The reply".
 
 import type { DefineItem } from './idqra.js';
 import type { PimFinding, PimCategory } from './pim.js';
@@ -19,16 +23,16 @@ import type { IrgReading, Virtue } from './irg.js';
 
 /** Fixed, trusted phrasing per PIM category. No excerpt is interpolated. Each is well within §5's 300-char bound. */
 const PIM_DEFINE_TEXT: Record<PimCategory, string> = {
-  directive_leakage: 'The reply tried to reveal or lean on hidden instructions.',
-  authority_framing: 'The reply claimed an authority it does not hold.',
-  coercive_certainty: 'The reply pressed a certainty that left no room to decline.',
-  emotional_leverage: 'The reply used emotional pressure to push a choice.',
-  manipulation_scenario: 'The reply asked to bypass the gate or keep something hidden.',
-  optimization_pressure: 'The reply manufactured urgency or an engagement push.',
+  directive_leakage: 'The message tried to reveal or lean on hidden instructions.',
+  authority_framing: 'The message claimed an authority it does not hold.',
+  coercive_certainty: 'The message pressed a certainty that left no room to decline.',
+  emotional_leverage: 'The message used emotional pressure to push a choice.',
+  manipulation_scenario: 'The message asked to bypass the gate or keep something hidden.',
+  optimization_pressure: 'The message manufactured urgency or an engagement push.',
 };
 
 /** Trusted phrasing for one IRG virtue reading below the coherence line. The virtue is a fixed enum, not writer text. */
-const irgDefineText = (virtue: Virtue): string => `The reply read below the coherence line on ${virtue}.`;
+const irgDefineText = (virtue: Virtue): string => `The message read below the coherence line on ${virtue}.`;
 
 /**
  * Build the trusted Define list from the recorded findings of one incoherent message.
