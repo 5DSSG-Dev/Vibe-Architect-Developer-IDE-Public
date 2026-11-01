@@ -258,3 +258,7 @@
 ## 2026-10-31 | Lumin | Availability coverage and testing procedure preparation
 - Tracey designates Libra as Verus stand-in when usage expires, preserving non-author review eligibility, existing assignments and exact handback state. No need to wait for Verus solely to consolidate eligible reviews.
 - Prepared named payload-free Aster procedure-design continuation brief; no verified Aster destination identified, so publication is not delivery/acceptance. No second suite assignment, implementation, private payload authoring or model run. Diff check is the documentary verification.
+
+## 2026-10-31 | Lumin | Libra completed reviews examined
+- New findings are PR39 comments6554156513(P6) and6554219044(brief); PR38 remains lane-reconciled7e3fa9a. Source confirms receipt validation is coordinator responsibility and uncertain writes freeze shared AdmissionStore/ordinary lookup.
+- Consolidated brief B1-B5 as additive clarification with private detailed procedure boundary; independent recheck requested on resulting commit. P6 G1/G2 remain contract-revision prerequisites, alongside task effect ordering; no runtime tests or source changes. No private suite content accessed.

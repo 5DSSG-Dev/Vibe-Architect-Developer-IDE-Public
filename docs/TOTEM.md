@@ -82,3 +82,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Aster testing-procedure design brief
 - Added docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md continuing Aster's existing preparation with pinned Libra findings and P6 questions. Payload-free design only; no test execution or concrete private cases claimed. Brief awaits peer access/acceptance and outside-pair review.
+
+## 2026-10-31 | Lumin | Libra brief findings consolidated
+- Added B1-B5 clarifications to the payload-free Aster brief: P6 findings pin, deterministic boundary oracles, independently frozen benign labels, outbound-admission deferral and P5 applicability. Public/private deliverable boundary made explicit. Resulting revision awaits independent recheck; no cases or runs.
