@@ -43,3 +43,6 @@ RELEASE | 2026-10-31 | lumin | squad coordination document/navigation/charter po
 
 CLAIM | 2026-10-31 | lumin | docs/team-drafts/rev19-peer-review-lumin-2026-10-31.md, docs/team-drafts/squad-lane-observations-lumin-2026-10-31.md, docs/team-drafts/aster-review-brief-squad-lane-2026-10-31.md | rev19 review and contributor observations, separate Aster brief | codex/rev19-and-squad-review | release on commit
 RELEASE | 2026-10-31 | lumin | three rev19/squad review documents claimed above | published with this commit; peer examination pending
+
+CLAIM | 2026-10-31 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md | bounded product integration proposal, no runtime ownership | codex/p6-inbound-admission-contract | release on commit
+RELEASE | 2026-10-31 | lumin | P6 integration proposal doc claimed above | committed for independent review, no source ownership changed

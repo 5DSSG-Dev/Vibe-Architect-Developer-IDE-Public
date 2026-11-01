@@ -75,3 +75,7 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Review packet for rev19 and proposed squad handoffs
 - Added separate pinned rev19 review, contributor observations and Aster review brief under docs/team-drafts. No source plan/STP rewrites or live squad-register adoption. Main78bd423 differs from inspected product baseline37caf4b only in squad documentation. Runtime tests not rerun for this documentary review.
+
+
+## 2026-10-31 | Lumin | P6 inbound integration contract proposed
+- Added docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md for product implementation review. It defines bounded ingress/identity/snapshot/outcome/receipt behavior and acceptance scenarios. Not implemented/approved; it preserves P5 and existing ownership boundaries.

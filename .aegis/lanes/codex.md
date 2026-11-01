@@ -230,3 +230,10 @@
 - Lumin contributed to squad-register concept; observations are not independent final clearance. Prepared separate Aster review brief and contributor observations, preserving all supplied source documents. No assignment delivered/accepted, live lane created, merge exception adopted or test executed.
 - Architect sequencing: current governance/coordination core, next genuine coded app from IDE, then primarily aesthetics; runtime acceptance and submission checks remain delivery work. No product implementation approval inferred.
 - Verification: historical prefixes preserved; review inputs pinned and source parity checked; staged diff check passes. Documentation-only, no tests/build/model runs. Publishing review artifacts for peer access, no merge.
+
+
+## 2026-10-31 | Lumin | Return effort to P6 product integration
+- Tracey directs closing procedural work promptly; relay bounded remaining R2-1 correction/recheck/setup through PR34comment6553962989. No scope expansion or review exemption.
+- Prepared p6-inbound-admission-contract-v0.1 under docs/team-drafts from current mainfebf1b7: fixed trusted deployment realm, exact original/effective snapshot, shared admission across /ask and /tasks, authoritative ordinal, durable result/receipt ordering, duplicate/restart/failure acceptance and client stable-key lifecycle. Explicitly a proposal; no source changes or broad server claim release.
+- Outside-pair review through Verus and Architect implementation approval remain next. Outbound admission and whole-gate acceptance are separate.
+- Verification: original continuity prefixes preserved; diff check passes. Documentation-only, no runtime tests/build rerun and no provider actions.
