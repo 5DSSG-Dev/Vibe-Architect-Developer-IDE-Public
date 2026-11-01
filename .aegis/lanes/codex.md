@@ -223,3 +223,10 @@
 ## 2026-10-31 | Lumin | Squad configuration and working parameters
 - At Tracey's request, authored docs/COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md on codex/collaboration-squad-parameters from main37caf4b. Covers roles/pairs, current P5/P6/testing split, cross-pair non-author review for all work, explicit approvals, ownership/shared interfaces and test-suite isolation. Added navigation and append-only pointers. No product code, STP records, peer lane files, runtime or path ownership changed. Outside-pair review by Verus or Libra remains pending.
 - Verification: local Markdown links resolve; normalized original prefixes of Totems, lane, claims and earlier charter preserved; git diff check passes. Documentation-only: no app tests/build or live model runs. Publishing for outside-pair review; no merge.
+
+
+## 2026-10-31 | Lumin | Rev19 and proposed squad register review
+- Inspected PR34head018e832 and actual current source: product source unchanged from37caf4b. Rev19 single counting authority/T4 supersession sound; hold clearance on writer-budget dimensions (inbound rewrites/terminal output passes), genuine-new-exchange wording, missing actual evidence pins and directional acceptance. Full findings in docs/team-drafts/rev19-peer-review-lumin-2026-10-31.md.
+- Lumin contributed to squad-register concept; observations are not independent final clearance. Prepared separate Aster review brief and contributor observations, preserving all supplied source documents. No assignment delivered/accepted, live lane created, merge exception adopted or test executed.
+- Architect sequencing: current governance/coordination core, next genuine coded app from IDE, then primarily aesthetics; runtime acceptance and submission checks remain delivery work. No product implementation approval inferred.
+- Verification: historical prefixes preserved; review inputs pinned and source parity checked; staged diff check passes. Documentation-only, no tests/build/model runs. Publishing review artifacts for peer access, no merge.
