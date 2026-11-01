@@ -98,3 +98,13 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 - Added docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md: concrete proposal pinned to current main08f3040 and reviewed P6v0.2. Existing composer fixture outputs/hashes executed with Node24.15.0; proposed validators/storage/adapter/client code remain unimplemented. Shared luminary-reply-router.ts and review.ts require serial P5/P6 handoff; no source claim released. PR44 exact repaired head1bf4543 independently passes58/58; outside-pair repaired-head review requested, not assumed.
 
 - Publication follow-up: Libra final outside-pair harness CLEAR is PR44comment6556095277. Tracey authorizes commit/push of the P6 patch plan and continuity updates; the earlier requested-review status is historical. P6 implementation-plan examination and P5 before-code pins remain separate.
+
+- P6 review follow-up: Libra cleared concrete plan with findings6556232047. Patch-plan additive P6P1-4 clarification now pins aggregate freeze and fixed offline recovery order, P5 sequencing, deliberate task validation changes and IndexedDB transaction semantics. No source implementation or recovery execution claimed.
+
+- Implementation follow-up: Tracey approves disconnected seven-file P6 slice. Local core now passes36 new tests/full gateway262/262 and both server typechecks. The patch plan remains proposal/integration context; implementation is not mounted or accepted. Aster proposed independent Element diff memory-bound task is source-backed, not yet delivered.
+
+
+## 2026-11-01 | Lumin | Cross-account handoff prepared
+- Added account-handoff-lumin-2026-11-01.md with live ref checks, exact artifact hashes, P5 module/runner clearances, P6 independent-review package and compatibility evidence, Aster preview ownership, direct-PR coordination expectations and explicit approval limits. Full note also committed to Lumin PCT under the named continuity marker. Historical notes remain unchanged; handoff itself is local/uncommitted.
+
+- Publication update: Tracey authorizes commit/push of the open Lumin lane, including this handoff and local plan clarifications. New implementation draft is stacked on PR39; final exact revision/URL are recorded in PR/DataQuad and the portable handoff receipt. Historical notes and frozen review patch are preserved.
