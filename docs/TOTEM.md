@@ -64,3 +64,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-29 | App-suite verification follow-up
 - The Knowledge Pack portability check passes in its targeted suite. A fresh full app run has an unrelated identity deterministic-rebuild failure (340/341); the identity test file passes alone (37/37).
+
+## 2026-10-31 | Lumin | Repository navigation and branch audit
+- docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.

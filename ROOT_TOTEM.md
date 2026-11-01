@@ -124,3 +124,8 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-10-29 | M3 contract ownership handoff
 - PR #12, #13 and #15 are merged. Codex appended RELEASE rows for the completed M3 claims and left a Verus lane handoff for Luminary event consumption. STP-0003 N9 records merged state and the remaining suspended-event producer, Luminary presentation and app-test gaps; this does not mark M3 accepted.
+
+
+## 2026-10-31 | Lumin | Authorized repository housekeeping
+- Added repository guide at docs/README.md and root navigation links; refreshed README to reflect PR #25 retirement of unsupported modes and PR #32 storage-only admission scope. Historical continuity is unchanged.
+- Deleted ten fully incorporated remote branches without open PR dependencies or attached worktrees, using exact-head leases. Kept active PR branches, worktree branches and divergent heads. Audit evidence in docs/HOUSEKEEPING_LEDGER.md; no local branches, peer worktrees or product files removed.

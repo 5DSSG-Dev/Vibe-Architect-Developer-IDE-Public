@@ -22,6 +22,8 @@ Three original instruments make their public debut in this submission — each i
 
 ---
 
+**Start here:** [Repository guide](docs/README.md) · [Setup and gateway](server/README.md) · [Module backlog](totems/HACKATHON_TOTEM.md) · [Engineering continuity](ROOT_TOTEM.md)
+
 ## Table of contents
 
 - [What's new here](#whats-new-here)
@@ -32,7 +34,7 @@ Three original instruments make their public debut in this submission — each i
   - [The big picture: CORE, POD, Umbilicals, Aether](#the-big-picture)
   - [The Element model](#the-element-model)
   - [Drilling in: the hierarchy](#drilling-in-the-hierarchy)
-  - [The three working modes](#the-three-working-modes)
+  - [The authoring workspace](#the-authoring-workspace)
   - [The Luminary: a governed AI partner](#the-luminary-a-governed-ai-partner)
   - [AEGIS: the governance and safety layer](#aegis-the-governance-and-safety-layer)
 - [Real-world application and benefits](#real-world-application-and-benefits)
@@ -53,7 +55,7 @@ In Vibe Architect you build a project by:
 1. Dragging **Elements** (named by function — a *Library* that holds documents, a *Memory* that holds state, a *Validation* that checks inputs) out of a library.
 2. **Docking** them around a central **CORE** and connecting them with **Umbilicals**.
 3. **Drilling in** to any object to arrange the smaller pieces inside it.
-4. **Simulating** load and faults to watch the system hold, then **deploying** a signed package.
+4. **Saving and exporting** the CORE workspace as JSON. Executable builds, simulation, and deployment remain future integration work.
 
 A plain-language **Wayfinder** narrates where you are and what to do next, so no screen is ever a dead end. Throughout, an AI partner — the **Luminary** — can advise, explain, and (on request) write code, but always inside guardrails you can see.
 
@@ -126,13 +128,11 @@ CORE → Orb → Satellite → Actuator
 
 You enter an Orb to see its Satellites, and enter a Satellite to see its Actuators. The Wayfinder narrates each level so the structure stays legible at every depth.
 
-### The three working modes
+### The authoring workspace
 
-You select a mode in the header:
+Dock Orbs to the CORE and drill in to arrange Satellites and Actuators. The workspace supports inspection, code editing, saved state, and CORE workspace JSON export.
 
-- **DESIGN** — the default and main authoring mode. Dock Orbs to the CORE and drill in to arrange Satellites and Actuators.
-- **SIMULATE** — raise load or inject a fault and watch containment hold, before anything ships.
-- **DEPLOY** — review the invariant audit, then export the signed package.
+The former Simulate and Deploy screens were removed in PR #25 because they did not perform real simulation or deployment. Workspace export is not a signed executable package.
 
 ### The Luminary: a governed AI partner
 
@@ -155,12 +155,12 @@ AEGIS is what makes the Luminary trustworthy, and what makes this an AEGIS appli
 
 ## Real-world application and benefits
 
-**What you can build.** Vibe Architect is a general visual environment for composing software systems — data and document pipelines, service backends, integration flows, and agent/AI-assisted tools — expressed as connected Orbs, Satellites, and Actuators around a CORE, then simulated and deployed.
+**What you can build.** Vibe Architect is a general visual environment for composing software systems — data and document pipelines, service backends, integration flows, and agent/AI-assisted tools — expressed as connected Orbs, Satellites, and Actuators around a CORE. Turning that composition into an executable build remains an integration target.
 
 **The benefits it provides:**
 
 - **Lowers the barrier to building.** Domain experts and first-time builders express a system by its structure and intent, not its syntax — closing the gap between *having a clear idea* and *having a running system*.
-- **Makes architecture visible and testable.** Dependencies, responsibilities, and failure points are shown as a connected whole; SIMULATE mode proves containment *before* deployment, not after an incident.
+- **Makes architecture visible.** Dependencies and responsibilities can be explored as connected Elements. Runtime containment testing remains a target for future simulation work.
 - **Trustworthy AI by construction.** The governed Luminary gives the leverage of an AI collaborator without the usual risks — no silent actions, no bluffed results, no unexplained changes. Every AI contribution is a reviewable proposal with a receipt.
 - **Accountability that holds over time.** Append-only decision records mean the history of *what changed and why* is never overwritten — useful for teams, audits, and anyone who has to answer for a system later.
 - **Approachable without a ceiling.** The same environment serves a newcomer and an experienced engineer; it meets people where they are and lets them go as deep as they need.
@@ -202,13 +202,13 @@ See [`server/README.md`](server/README.md) for gateway and authentication requir
 
 This repository is the **public hackathon baseline**, and it is honest about what is and is not finished:
 
-- **DESIGN, SIMULATE, and DEPLOY** modes and the Element/POD model are present and demonstrated.
+- **The authoring workspace and Element/POD model are implemented.** Simulate and Deploy were retired in PR #25; genuine simulation and executable deployment remain future work.
 - **AEGIS governance stays in full** — it is the point, not a feature to trim.
-- **The Luminary is under active construction.** It currently opens paused; wiring it into a working, governed collaborator against a Meta model is the hackathon's focal build.
+- **The Luminary is under active construction.** Model-provider integration and governance code exist; durable admission storage merged in PR #32 is not yet wired into live routes. End-to-end governance and build acceptance remain open.
 - **The "Stellar" coding-language subsystem has been removed** from this build and preserved separately; it was not complete and is out of scope for the hackathon. The element **code-editor overlay** remains.
 - The product name describes the direction, not a readiness claim. Some views are demonstrations or partial integrations, and they are labeled as such.
 
-Baseline is green: typechecks clean and the test suite passes.
+Validation results belong to their recorded revision and scope. See the Totems and PR evidence; this overview does not assert that the current revision has passed every check.
 
 ## Repository map
 
