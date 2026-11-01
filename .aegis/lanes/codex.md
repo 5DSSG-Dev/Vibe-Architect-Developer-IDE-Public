@@ -262,3 +262,8 @@
 ## 2026-10-31 | Lumin | Libra completed reviews examined
 - New findings are PR39 comments6554156513(P6) and6554219044(brief); PR38 remains lane-reconciled7e3fa9a. Source confirms receipt validation is coordinator responsibility and uncertain writes freeze shared AdmissionStore/ordinary lookup.
 - Consolidated brief B1-B5 as additive clarification with private detailed procedure boundary; independent recheck requested on resulting commit. P6 G1/G2 remain contract-revision prerequisites, alongside task effect ordering; no runtime tests or source changes. No private suite content accessed.
+
+## 2026-11-01 | Lumin | Return to P6 product contract
+- Verified PR39f235351 and PR34228b456. Libra brief cleared atf235351; Verus milestone agreement comment6554374257 received with setup conditions, not adoption.
+- Posted single-editor coordination comment6555094015: Lumin drafts P6v0.2, Verus P5 and outside-pair intake; any existing Verus P6 draft returns as input. Prepared new v0.2 preserving v0.1, covering G1-G7/task effect boundary and direct merge acceptance clarification. Broad server claim remains; no source edits.
+- Independent review required on resulting revision. Fixed proposed explanation enum against actual blocks.ts before publication. Documentation checks only, no new tests/build/provider calls; no true-facts approval inferred.

@@ -85,3 +85,7 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Libra brief findings consolidated
 - Added B1-B5 clarifications to the payload-free Aster brief: P6 findings pin, deterministic boundary oracles, independently frozen benign labels, outbound-admission deferral and P5 applicability. Public/private deliverable boundary made explicit. Resulting revision awaits independent recheck; no cases or runs.
+
+## 2026-11-01 | Lumin | P6 inbound contract v0.2 proposed
+- Added docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md preserving v0.1. Specifies receipt/result verification, shared-store freeze/status/recovery, versioned snapshot and replacement triple, task-proposal effect intent and conservative crash handling. Proposed API/limits/adapters require outside-pair review and Architect approval before source edits; no runtime change.
+- Conscience conversational assessment is distinct from direct Architect-approved merge acceptance, per Tracey's clarification. P5 actual envelope remains Verus's track. Source inspected, explanation enum checked, historical v0.1 unchanged; no tests/model calls.
