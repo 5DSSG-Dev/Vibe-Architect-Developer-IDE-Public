@@ -226,3 +226,8 @@
 
 ## 2026-11-01 | Lumin | PTAG draft commit authorized
 - Tracey separately authorized committing Lumin's PTAG version and its append-only continuity records on `codex/lumin-ptag-spec`. This authorization does not include push, merge or activation.
+
+## 2026-11-01 | Lumin | Three-way PTAG synthesis
+- Tracey authorized Lumin to synthesize the three independent PTAG drafts for open review while another Verus prepares a separate synthesis. Sources: Verus PR #49 head `7e3f5b1`/blob `a5b0c9e`; Aster PR #34 comment `6562253171`; Lumin commit `f30222c`/blob `dd27d68`.
+- Added `docs/team-drafts/p5-ptag-three-way-synthesis-lumin-v0.1-2026-11-01.md`. It preserves exact direction-specific predicates, whole-candidate/material-obligation coverage, one active contract, projection completeness, candidate/context/evidence binding, pure replay limits, pass/boundary/UNSURE aggregation, direction-specific delivery, terminal service failure, 21 acceptance cases and retained open questions.
+- Contribution-fidelity map attributes distinctive source inputs so each author can check preservation without calling that independent clearance. No source draft was edited. No product code, model run, manifest activation or merge to main.

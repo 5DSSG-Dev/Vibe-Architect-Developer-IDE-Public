@@ -133,3 +133,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - Tracey authorized the PR #34 authoring assignment. Lumin began PTAG first in an isolated branch at exact brief head `41c1323`; PIM remains sequenced after PTAG synthesis.
 - Independent draft preserves the simple three-gate concept while making PTAG inspectable through direction-specific predicates, canonical operating-contract provenance, exact candidate/evidence binding, pass/boundary/UNSURE outcomes and retained regression cases. No product implementation or activation is implied.
 - Architect separately authorized committing Lumin's version locally; no push, merge or activation authority is inferred.
+
+## 2026-11-01 | Lumin | Three-way PTAG synthesis for review
+- Tracey authorized a Lumin synthesis of the independent Verus, Aster and Lumin PTAG drafts, parallel to a separate Verus synthesis. New append-only spec preserves source attribution, open implementation questions and fidelity-review boundaries.
+- This is a review artifact, not main-branch merge, gate activation, model validation or independent clearance. PIM remains outside this synthesis.
