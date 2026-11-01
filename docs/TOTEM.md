@@ -75,3 +75,26 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Review packet for rev19 and proposed squad handoffs
 - Added separate pinned rev19 review, contributor observations and Aster review brief under docs/team-drafts. No source plan/STP rewrites or live squad-register adoption. Main78bd423 differs from inspected product baseline37caf4b only in squad documentation. Runtime tests not rerun for this documentary review.
+
+
+## 2026-10-31 | Lumin | P6 inbound integration contract proposed
+- Added docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md for product implementation review. It defines bounded ingress/identity/snapshot/outcome/receipt behavior and acceptance scenarios. Not implemented/approved; it preserves P5 and existing ownership boundaries.
+
+## 2026-10-31 | Lumin | Aster testing-procedure design brief
+- Added docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md continuing Aster's existing preparation with pinned Libra findings and P6 questions. Payload-free design only; no test execution or concrete private cases claimed. Brief awaits peer access/acceptance and outside-pair review.
+
+## 2026-10-31 | Lumin | Libra brief findings consolidated
+- Added B1-B5 clarifications to the payload-free Aster brief: P6 findings pin, deterministic boundary oracles, independently frozen benign labels, outbound-admission deferral and P5 applicability. Public/private deliverable boundary made explicit. Resulting revision awaits independent recheck; no cases or runs.
+
+## 2026-11-01 | Lumin | P6 inbound contract v0.2 proposed
+- Added docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md preserving v0.1. Specifies receipt/result verification, shared-store freeze/status/recovery, versioned snapshot and replacement triple, task-proposal effect intent and conservative crash handling. Proposed API/limits/adapters require outside-pair review and Architect approval before source edits; no runtime change.
+- Conscience conversational assessment is distinct from direct Architect-approved merge acceptance, per Tracey's clarification. P5 actual envelope remains Verus's track. Source inspected, explanation enum checked, historical v0.1 unchanged; no tests/model calls.
+
+## 2026-11-01 | Lumin | PR34 scoped cross-squad review
+- Added docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md, pinned0c5ccb1: rev20 planning refinements and identifier-only rename supported; exact-head targeted42tests pass. True-facts v4 integrity verified but Lumin authored it, requiring eligible Libra examination; Aster squad recheck and P5 evidence/choices remain distinct. No whole-PR/implementation approval.
+
+
+## 2026-11-01 | Lumin | P6 implementation patch plan
+- Added docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md: concrete proposal pinned to current main08f3040 and reviewed P6v0.2. Existing composer fixture outputs/hashes executed with Node24.15.0; proposed validators/storage/adapter/client code remain unimplemented. Shared luminary-reply-router.ts and review.ts require serial P5/P6 handoff; no source claim released. PR44 exact repaired head1bf4543 independently passes58/58; outside-pair repaired-head review requested, not assumed.
+
+- Publication follow-up: Libra final outside-pair harness CLEAR is PR44comment6556095277. Tracey authorizes commit/push of the P6 patch plan and continuity updates; the earlier requested-review status is historical. P6 implementation-plan examination and P5 before-code pins remain separate.

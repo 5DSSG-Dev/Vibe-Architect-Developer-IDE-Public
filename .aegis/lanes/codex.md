@@ -230,3 +230,56 @@
 - Lumin contributed to squad-register concept; observations are not independent final clearance. Prepared separate Aster review brief and contributor observations, preserving all supplied source documents. No assignment delivered/accepted, live lane created, merge exception adopted or test executed.
 - Architect sequencing: current governance/coordination core, next genuine coded app from IDE, then primarily aesthetics; runtime acceptance and submission checks remain delivery work. No product implementation approval inferred.
 - Verification: historical prefixes preserved; review inputs pinned and source parity checked; staged diff check passes. Documentation-only, no tests/build/model runs. Publishing review artifacts for peer access, no merge.
+
+
+## 2026-10-31 | Lumin | Return effort to P6 product integration
+- Tracey directs closing procedural work promptly; relay bounded remaining R2-1 correction/recheck/setup through PR34comment6553962989. No scope expansion or review exemption.
+- Prepared p6-inbound-admission-contract-v0.1 under docs/team-drafts from current mainfebf1b7: fixed trusted deployment realm, exact original/effective snapshot, shared admission across /ask and /tasks, authoritative ordinal, durable result/receipt ordering, duplicate/restart/failure acceptance and client stable-key lifecycle. Explicitly a proposal; no source changes or broad server claim release.
+- Outside-pair review through Verus and Architect implementation approval remain next. Outbound admission and whole-gate acceptance are separate.
+- Verification: original continuity prefixes preserved; diff check passes. Documentation-only, no runtime tests/build rerun and no provider actions.
+
+
+## 2026-10-31 | Lumin | Live PR review and reconciliation return
+- Exact checkout remains clean at 59fd936 on claude/project-thread-9fdggm before this append; cached tracking ref reports behind 25. Live main is febf1b7. PR36/37 merged; PR34 open c2a3bb5, PR38 draft open 65902c8, PR39 open 32cea72.
+- PR39 contributor review questions posted in comment6554082622: task executor.propose follows governedAsk, so durable exact-result and duplicate/crash effect ownership need explicit contract treatment. Outside-pair clearance remains pending; Verus lead consolidation and Libra availability retained. No duplicate assignment or reviewer acceptance inferred.
+- PR38 comment6554085137 requests retaining the complete canonical Libra lane prefix from PR34 c2a3bb5 (blob d8590189b0a9c73bcc4141cc349321f08bec2359), then appending the new entry and provenance. No peer lane edited here.
+- PR34 comment6554085313 acknowledges Verus rev3 return, superseding the stale awaiting-correction state; Aster exact-revision recheck remains pending. Existing assignments preserved.
+- Lumin health verified append-chain coherence; four daemon processes freshly observed; Processor query assembled=true, RLS executed=true, failure_is_data=false. No source edits, tests/build/provider calls, commit/push/merge or implementation approval. This local lane append is uncommitted on the existing checkout, and PR comments are the published coordination record.
+
+## 2026-10-31 | Lumin | Authorized publication
+- Tracey confirms Libra automatically sees posted PRs; no separate delivery request is needed. Visibility alone does not establish assignment acceptance or completed review.
+- Tracey explicitly authorizes committing and pushing open items. Publish the pending review continuity on existing PR #39, preserving all earlier lane entries; no runtime changes or merge.
+
+## 2026-10-31 | Lumin | PR discovery correction and Libra lane reconciliation
+- Supersedes the preceding blanket PR-visibility assumption: Tracey reports Libra updated PR38 but did not see PR39. Likely discovery is limited to worked-on PRs; exact notification behavior is unverified. Use known active PR conversations for pointers, and require access acknowledgment rather than assuming delivery.
+- Verified PR38 corrected head 7e3fa9a retains the complete original Libra lane prefix from c2a3bb5 with normalized line endings; substantive review document unchanged from65902c8. Lane-history finding resolved at this head, no merge/Architect approval.
+- Posted PR38 comment6554114843 with verification and a pointer to the existing PR39 review packet at61529f7. No duplicate assignment; Verus lead consolidation preserved. No new acceptance inferred, tests/build/provider calls not run.
+
+## 2026-10-31 | Lumin | Availability coverage and testing procedure preparation
+- Tracey designates Libra as Verus stand-in when usage expires, preserving non-author review eligibility, existing assignments and exact handback state. No need to wait for Verus solely to consolidate eligible reviews.
+- Prepared named payload-free Aster procedure-design continuation brief; no verified Aster destination identified, so publication is not delivery/acceptance. No second suite assignment, implementation, private payload authoring or model run. Diff check is the documentary verification.
+
+## 2026-10-31 | Lumin | Libra completed reviews examined
+- New findings are PR39 comments6554156513(P6) and6554219044(brief); PR38 remains lane-reconciled7e3fa9a. Source confirms receipt validation is coordinator responsibility and uncertain writes freeze shared AdmissionStore/ordinary lookup.
+- Consolidated brief B1-B5 as additive clarification with private detailed procedure boundary; independent recheck requested on resulting commit. P6 G1/G2 remain contract-revision prerequisites, alongside task effect ordering; no runtime tests or source changes. No private suite content accessed.
+
+## 2026-11-01 | Lumin | Return to P6 product contract
+- Verified PR39f235351 and PR34228b456. Libra brief cleared atf235351; Verus milestone agreement comment6554374257 received with setup conditions, not adoption.
+- Posted single-editor coordination comment6555094015: Lumin drafts P6v0.2, Verus P5 and outside-pair intake; any existing Verus P6 draft returns as input. Prepared new v0.2 preserving v0.1, covering G1-G7/task effect boundary and direct merge acceptance clarification. Broad server claim remains; no source edits.
+- Independent review required on resulting revision. Fixed proposed explanation enum against actual blocks.ts before publication. Documentation checks only, no new tests/build/provider calls; no true-facts approval inferred.
+
+## 2026-11-01 | Lumin | PR34 review and complementary product tracks
+- PR34 current0c5ccb1 reviewed: plan/STP rev20 R19-1/2/4 consistent; R19-3 disclosure corrected, true-facts v4 now present but hosted-run pin still dependency. Rename only declaration/use; targeted exact-head42pass0fail0skip in isolated sparse worktree with existing dependencies.
+- Review limits: Lumin authored true-facts v4 and contributed squad concepts; independent paths remain Libra for v4 and existing Aster recheck for squad. No wholesale PR approval. Posted PR39comment6555283239 asking Verus begin P5 and review existing P6v0.2fb50bac, not duplicate draft. No product source edits, model/provider calls, merge or approval.
+
+
+## 2026-11-01 | Lumin | P6 concrete patch plan and repair/P5 rechecks
+- Tracey authorized the recommended review sequence. Independently ran PR44 repaired head1bf4543:58pass0fail0skip on Node24.15.0; repair diff check passed. Posted first-pass return6556081398 and Libra notification6556081619. P5 clarificationd2c8e7d checked: accepted raw/public Reflect and event gating; returned deferred table/whole-envelope construction and actual shared-router ownership seams in PR34comment6556119535. Added concrete P6 patch plan with exact files, storage/checkpoint/serialization, composer output hashes, task operation adapter and client pending journal. Existing source, historical documents and peer lanes unchanged. New plan and required continuity appends remain local/uncommitted; peer-readable packet posted separately in PR39. No product tests/build/provider calls; harness tests and existing composer fixture execution only.
+
+- Follow-up: Libra final repaired-head CLEAR received in PR44comment6556095277, independently58/58 plus probes; consolidated in watched PR39. P6 peer-readable packet posted as PR39comment6556153329. No merge performed; P5 concrete pins and P6 packet examination remain pending.
+
+- Libra conceded whole-envelope structural overclaim6556174912; correction and exact fact rows remain P5 before-code pins. P6 long comment reported truncated; same packet redelivered in four bounded full-text comments6556179392/6556179576/6556179725/6556179875, preserving local uncommitted artifact and avoiding an inferred Git publication approval.
+
+
+## 2026-11-01 | Lumin | Explicit publication authorization
+- Tracey explicitly requests committing and pushing the prepared local work. Publish the P6 patch plan and its four continuity files on existing PR39 branch codex/p6-inbound-admission-contract. Supersedes local/uncommitted status above upon successful publication; no merge, product implementation or activation authorized. Historical prefixes preserved; staged diff check and exact file-scope inspection are the publication checks. No tests/build rerun for this documentation-only commit.

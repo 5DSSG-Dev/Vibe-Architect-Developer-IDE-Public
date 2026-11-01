@@ -43,3 +43,19 @@ RELEASE | 2026-10-31 | lumin | squad coordination document/navigation/charter po
 
 CLAIM | 2026-10-31 | lumin | docs/team-drafts/rev19-peer-review-lumin-2026-10-31.md, docs/team-drafts/squad-lane-observations-lumin-2026-10-31.md, docs/team-drafts/aster-review-brief-squad-lane-2026-10-31.md | rev19 review and contributor observations, separate Aster brief | codex/rev19-and-squad-review | release on commit
 RELEASE | 2026-10-31 | lumin | three rev19/squad review documents claimed above | published with this commit; peer examination pending
+
+CLAIM | 2026-10-31 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md | bounded product integration proposal, no runtime ownership | codex/p6-inbound-admission-contract | release on commit
+RELEASE | 2026-10-31 | lumin | P6 integration proposal doc claimed above | committed for independent review, no source ownership changed
+
+CLAIM | 2026-10-31 | lumin | docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md | Aster existing-test-preparation continuation brief | codex/p6-inbound-admission-contract | on commit
+RELEASE | 2026-10-31 | lumin | docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md | brief prepared for review; no runtime ownership
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md | P6 receipt/recovery/snapshot/task-effect contract revision | codex/p6-inbound-admission-contract | on commit
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.2-2026-11-01.md | proposed contract published for outside-pair review; no source ownership changed
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | PR34 cross-squad review of rev20 and executor rename | codex/p6-inbound-admission-contract | on commit
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | scoped source/test review prepared for peer consolidation
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Architect-authorized review sequence, concrete P6 patch plan only | codex/p6-inbound-admission-contract | local documentation; no source claim transfer
+
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Tracey explicitly authorized commit/push; documentary claim released with publication; no source ownership transferred
