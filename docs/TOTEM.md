@@ -79,3 +79,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | P6 inbound integration contract proposed
 - Added docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md for product implementation review. It defines bounded ingress/identity/snapshot/outcome/receipt behavior and acceptance scenarios. Not implemented/approved; it preserves P5 and existing ownership boundaries.
+
+## 2026-10-31 | Lumin | Aster testing-procedure design brief
+- Added docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md continuing Aster's existing preparation with pinned Libra findings and P6 questions. Payload-free design only; no test execution or concrete private cases claimed. Brief awaits peer access/acceptance and outside-pair review.

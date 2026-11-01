@@ -46,3 +46,6 @@ RELEASE | 2026-10-31 | lumin | three rev19/squad review documents claimed above 
 
 CLAIM | 2026-10-31 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0.1-2026-10-31.md | bounded product integration proposal, no runtime ownership | codex/p6-inbound-admission-contract | release on commit
 RELEASE | 2026-10-31 | lumin | P6 integration proposal doc claimed above | committed for independent review, no source ownership changed
+
+CLAIM | 2026-10-31 | lumin | docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md | Aster existing-test-preparation continuation brief | codex/p6-inbound-admission-contract | on commit
+RELEASE | 2026-10-31 | lumin | docs/team-drafts/aster-jailbreak-testing-procedure-brief-lumin-2026-10-31.md | brief prepared for review; no runtime ownership
