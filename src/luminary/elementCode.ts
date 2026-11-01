@@ -58,17 +58,34 @@ export function readElementCodeProposal(content: string): ElementCodeProposal {
 
 export type DiffLine = { kind: 'same' | 'added' | 'removed'; text: string };
 
-/** A line diff (longest common subsequence), enough to mark what the proposal changes. */
+/**
+ * Exact LCS within a deterministic budget of 1,048,576 cells (at most 4 MiB
+ * of Uint32 scores and fewer than that many recurrence steps). Preserve the
+ * existing remove-first tie break. Above the budget, emit all removals then
+ * additions: non-minimal, but lossless and linear in input/output size.
+ * Splitting/emitting still requires O(input characters + output lines) storage
+ * and work; the fixed cap bounds the additional quadratic algorithm, not source
+ * size or string-comparison costs. No newline/CR/Unicode normalization occurs.
+ */
 export function lineDiff(before: string, after: string): DiffLine[] {
   const a = before.split('\n');
   const b = after.split('\n');
-  const table = Array.from({ length: a.length + 1 }, () => new Array<number>(b.length + 1).fill(0));
+  const maxCells = 1_048_576;
+  const columns = b.length + 1;
+  const lines: DiffLine[] = [];
+  // Avoid allocating even a bounded matrix for the common identical-source case.
+  if (before === after) return a.map((text) => ({ kind: 'same', text }));
+  if (a.length + 1 > Math.floor(maxCells / columns)) {
+    for (const text of a) lines.push({ kind: 'removed', text });
+    for (const text of b) lines.push({ kind: 'added', text });
+    return lines;
+  }
+  const table = new Uint32Array((a.length + 1) * columns);
   for (let i = a.length - 1; i >= 0; i--) {
     for (let j = b.length - 1; j >= 0; j--) {
-      table[i][j] = a[i] === b[j] ? table[i + 1][j + 1] + 1 : Math.max(table[i + 1][j], table[i][j + 1]);
+      table[i * columns + j] = a[i] === b[j] ? table[(i + 1) * columns + j + 1] + 1 : Math.max(table[(i + 1) * columns + j], table[i * columns + j + 1]);
     }
   }
-  const lines: DiffLine[] = [];
   let i = 0;
   let j = 0;
   while (i < a.length && j < b.length) {
@@ -76,7 +93,7 @@ export function lineDiff(before: string, after: string): DiffLine[] {
       lines.push({ kind: 'same', text: a[i] });
       i++;
       j++;
-    } else if (table[i + 1][j] >= table[i][j + 1]) {
+    } else if (table[(i + 1) * columns + j] >= table[i * columns + j + 1]) {
       lines.push({ kind: 'removed', text: a[i++] });
     } else {
       lines.push({ kind: 'added', text: b[j++] });
