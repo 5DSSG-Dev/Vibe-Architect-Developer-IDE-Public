@@ -1,0 +1,639 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "admitted"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "type": "string",
+              "minLength": 1
+            },
+            "workspace": {
+              "type": "string",
+              "minLength": 1
+            },
+            "direction": {
+              "const": "architect-to-luminary"
+            },
+            "attemptId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "exchangeId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ordinal": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "registrationDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "snapshotDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "originalDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "effectiveDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "scope",
+            "workspace",
+            "direction",
+            "attemptId",
+            "exchangeId",
+            "ordinal",
+            "registrationDigest",
+            "snapshotDigest",
+            "originalDigest",
+            "effectiveDigest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "dispatch"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "dispatchId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "enum": [
+                "response.generate",
+                "response.reform",
+                "conscience.write",
+                "gauge.read"
+              ]
+            },
+            "phase": {
+              "enum": [
+                "initial",
+                "rewrite",
+                "service-retry"
+              ]
+            },
+            "conscienceResponseId": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "dispatchId",
+            "role",
+            "phase",
+            "conscienceResponseId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "effect-intent"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "operationId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "operationId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "effect"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "operationId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "operationId"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "result-durable"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "seq": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "at": {
+              "type": "string",
+              "minLength": 1
+            },
+            "prevHash": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "entry": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "const": 1
+                },
+                "kind": {
+                  "const": "p6_public_result"
+                },
+                "resultId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "scope": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "workspace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "direction": {
+                  "const": "architect-to-luminary"
+                },
+                "attemptId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exchangeId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ordinal": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2
+                },
+                "registrationDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "snapshotDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "originalDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "effectiveDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "route": {
+                  "enum": [
+                    "ask",
+                    "tasks"
+                  ]
+                },
+                "submissionKeyDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "outcome": {
+                  "enum": [
+                    "returned",
+                    "completed",
+                    "shortfall"
+                  ]
+                },
+                "httpStatus": {
+                  "type": "integer",
+                  "minimum": 100,
+                  "maximum": 599
+                },
+                "body": {},
+                "bodyDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "taskOperationId": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "version",
+                "kind",
+                "resultId",
+                "scope",
+                "workspace",
+                "direction",
+                "attemptId",
+                "exchangeId",
+                "ordinal",
+                "registrationDigest",
+                "snapshotDigest",
+                "originalDigest",
+                "effectiveDigest",
+                "route",
+                "submissionKeyDigest",
+                "outcome",
+                "httpStatus",
+                "body",
+                "bodyDigest",
+                "taskOperationId"
+              ],
+              "additionalProperties": false
+            },
+            "hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "seq",
+            "at",
+            "prevHash",
+            "entry",
+            "hash"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "closed"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "enum": [
+                "returned",
+                "completed",
+                "shortfall"
+              ]
+            },
+            "resultId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "receiptRef": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "descriptor": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "const": 1
+                    },
+                    "issuer": {
+                      "const": "p6-inbound-coordinator"
+                    },
+                    "subject": {
+                      "const": "validated-inbound-return"
+                    },
+                    "scope": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "workspace": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "direction": {
+                      "const": "architect-to-luminary"
+                    },
+                    "attemptId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "exchangeId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "ordinal": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2
+                    },
+                    "registrationDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "snapshotDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "originalDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "effectiveDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "recipientRealm": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "resultId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "bodyDigest": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "resultAnchor": {
+                      "type": "object",
+                      "properties": {
+                        "area": {
+                          "const": "p6-results"
+                        },
+                        "seq": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "hash": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        }
+                      },
+                      "required": [
+                        "area",
+                        "seq",
+                        "hash"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "issuer",
+                    "subject",
+                    "scope",
+                    "workspace",
+                    "direction",
+                    "attemptId",
+                    "exchangeId",
+                    "ordinal",
+                    "registrationDigest",
+                    "snapshotDigest",
+                    "originalDigest",
+                    "effectiveDigest",
+                    "recipientRealm",
+                    "resultId",
+                    "bodyDigest",
+                    "resultAnchor"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "outcome",
+            "resultId",
+            "receiptRef",
+            "descriptor"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "const": "release"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "resultId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bodyDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "resultId",
+            "bodyDigest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "version",
+        "seq",
+        "attemptId",
+        "kind",
+        "payload"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
