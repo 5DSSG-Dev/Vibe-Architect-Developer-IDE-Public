@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "kind": {
+      "const": "p6_public_result"
+    },
+    "resultId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "direction": {
+      "const": "architect-to-luminary"
+    },
+    "attemptId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exchangeId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ordinal": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "registrationDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "snapshotDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "originalDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "effectiveDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "route": {
+      "enum": [
+        "ask",
+        "tasks"
+      ]
+    },
+    "submissionKeyDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "outcome": {
+      "enum": [
+        "returned",
+        "completed",
+        "shortfall"
+      ]
+    },
+    "httpStatus": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "body": {},
+    "bodyDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "taskOperationId": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "kind",
+    "resultId",
+    "scope",
+    "workspace",
+    "direction",
+    "attemptId",
+    "exchangeId",
+    "ordinal",
+    "registrationDigest",
+    "snapshotDigest",
+    "originalDigest",
+    "effectiveDigest",
+    "route",
+    "submissionKeyDigest",
+    "outcome",
+    "httpStatus",
+    "body",
+    "bodyDigest",
+    "taskOperationId"
+  ],
+  "additionalProperties": false
+}
