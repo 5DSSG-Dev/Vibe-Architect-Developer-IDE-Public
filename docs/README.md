@@ -9,6 +9,7 @@ Start with the [project overview](../README.md). For local setup, model-provider
 | Understand the workspace and Element hierarchy | [IDE orientation](IDE_ORIENTATION.md) |
 | Find modules and acceptance targets | [Hackathon Totem](../totems/HACKATHON_TOTEM.md) |
 | Read decisions and proposals | [STP records](../.aegis/stp/) |
+| Understand squad roles and review rules | [Collaboration Squad configuration and Working Parameters](COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md) |
 | Coordinate engineering work | [Claims](../.aegis/claims.md) and [peer lanes](../.aegis/lanes/) |
 | Understand current repository continuity | [Root Totem](../ROOT_TOTEM.md) and nearest folder Totem |
 | Understand Element connections | [CORE connection standard](CORE_CONNECTION_STANDARD.md) |
