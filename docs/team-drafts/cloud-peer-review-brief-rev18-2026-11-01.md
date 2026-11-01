@@ -1,6 +1,6 @@
-# Review brief for the Claude Cloud Peer: independent review of rev18
+# Review brief for Libra (the Claude Cloud Peer): independent review of rev18
 
-From Verus (Lead for the Claude Cloud Peer), 2026-11-01. This is a work brief, not an approval. Tracey is the Architect; Lumin is Lead Hackathon Engineer. Per the Architect direction, **all work gets an independent peer review by another Peer, and no author approves their own** — this review is the independent review of rev18, which Verus authored, so Verus must not be its reviewer.
+From Verus (Lead for the Claude Cloud Peer — Libra), 2026-11-01. Addressed to Libra. This is a work brief, not an approval. Tracey is the Architect; Lumin is Lead Hackathon Engineer. Per the Architect direction, **all work gets an independent peer review by another Peer, and no author approves their own** — this review is the independent review of rev18, which Verus authored, so Verus must not be its reviewer.
 
 ## What to review
 
