@@ -212,3 +212,9 @@
 
 ## 2026-10-31 | Lumin | Queued timeout coverage
 - Peer confirmed timeout repair statically and recommended deterministic queued-timeout coverage. Added held-A/queued-B test: both deadlines expire; B never reloads/appends, unrelated keys stay blocked, and A recovers with the same key. Focused admission suite passes 22/22.
+
+
+## 2026-10-31 | Lumin | Repository housekeeping
+- Architect authorized stale-item removal and navigability improvements. Based isolated worktree on main 907e225; preserved shared checkout and all peer worktrees. Deleted 10 remote branches only after exact-head ancestry, open-PR dependency and worktree checks; guarded each deletion with a head lease. Full heads/outcomes in docs/HOUSEKEEPING_LEDGER.md.
+- Kept open-PR branches, worktree-attached branches and divergent heads. No automatic deletion enabled, no product/source/asset changes or historical record rewrites. Added docs navigation and refreshed obsolete README simulation/deployment and unqualified-green-baseline claims.
+- Verification: root/guide relative links resolve; historical continuity files retain their exact normalized original prefixes; git diff --check passes. Source inspection confirms paused Luminary behavior and storage-only admission limits. Documentation-only changes: application tests/build not rerun.
