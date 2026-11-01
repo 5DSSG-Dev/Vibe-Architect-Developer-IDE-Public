@@ -55,3 +55,7 @@ RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-contract-v0
 
 CLAIM | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | PR34 cross-squad review of rev20 and executor rename | codex/p6-inbound-admission-contract | on commit
 RELEASE | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md | scoped source/test review prepared for peer consolidation
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Architect-authorized review sequence, concrete P6 patch plan only | codex/p6-inbound-admission-contract | local documentation; no source claim transfer
+
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Tracey explicitly authorized commit/push; documentary claim released with publication; no source ownership transferred

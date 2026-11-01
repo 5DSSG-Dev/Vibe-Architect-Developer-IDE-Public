@@ -271,3 +271,15 @@
 ## 2026-11-01 | Lumin | PR34 review and complementary product tracks
 - PR34 current0c5ccb1 reviewed: plan/STP rev20 R19-1/2/4 consistent; R19-3 disclosure corrected, true-facts v4 now present but hosted-run pin still dependency. Rename only declaration/use; targeted exact-head42pass0fail0skip in isolated sparse worktree with existing dependencies.
 - Review limits: Lumin authored true-facts v4 and contributed squad concepts; independent paths remain Libra for v4 and existing Aster recheck for squad. No wholesale PR approval. Posted PR39comment6555283239 asking Verus begin P5 and review existing P6v0.2fb50bac, not duplicate draft. No product source edits, model/provider calls, merge or approval.
+
+
+## 2026-11-01 | Lumin | P6 concrete patch plan and repair/P5 rechecks
+- Tracey authorized the recommended review sequence. Independently ran PR44 repaired head1bf4543:58pass0fail0skip on Node24.15.0; repair diff check passed. Posted first-pass return6556081398 and Libra notification6556081619. P5 clarificationd2c8e7d checked: accepted raw/public Reflect and event gating; returned deferred table/whole-envelope construction and actual shared-router ownership seams in PR34comment6556119535. Added concrete P6 patch plan with exact files, storage/checkpoint/serialization, composer output hashes, task operation adapter and client pending journal. Existing source, historical documents and peer lanes unchanged. New plan and required continuity appends remain local/uncommitted; peer-readable packet posted separately in PR39. No product tests/build/provider calls; harness tests and existing composer fixture execution only.
+
+- Follow-up: Libra final repaired-head CLEAR received in PR44comment6556095277, independently58/58 plus probes; consolidated in watched PR39. P6 peer-readable packet posted as PR39comment6556153329. No merge performed; P5 concrete pins and P6 packet examination remain pending.
+
+- Libra conceded whole-envelope structural overclaim6556174912; correction and exact fact rows remain P5 before-code pins. P6 long comment reported truncated; same packet redelivered in four bounded full-text comments6556179392/6556179576/6556179725/6556179875, preserving local uncommitted artifact and avoiding an inferred Git publication approval.
+
+
+## 2026-11-01 | Lumin | Explicit publication authorization
+- Tracey explicitly requests committing and pushing the prepared local work. Publish the P6 patch plan and its four continuity files on existing PR39 branch codex/p6-inbound-admission-contract. Supersedes local/uncommitted status above upon successful publication; no merge, product implementation or activation authorized. Historical prefixes preserved; staged diff check and exact file-scope inspection are the publication checks. No tests/build rerun for this documentation-only commit.

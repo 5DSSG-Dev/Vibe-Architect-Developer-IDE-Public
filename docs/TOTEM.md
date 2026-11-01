@@ -92,3 +92,9 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-11-01 | Lumin | PR34 scoped cross-squad review
 - Added docs/team-drafts/pr34-rev20-and-executor-review-lumin-2026-11-01.md, pinned0c5ccb1: rev20 planning refinements and identifier-only rename supported; exact-head targeted42tests pass. True-facts v4 integrity verified but Lumin authored it, requiring eligible Libra examination; Aster squad recheck and P5 evidence/choices remain distinct. No whole-PR/implementation approval.
+
+
+## 2026-11-01 | Lumin | P6 implementation patch plan
+- Added docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md: concrete proposal pinned to current main08f3040 and reviewed P6v0.2. Existing composer fixture outputs/hashes executed with Node24.15.0; proposed validators/storage/adapter/client code remain unimplemented. Shared luminary-reply-router.ts and review.ts require serial P5/P6 handoff; no source claim released. PR44 exact repaired head1bf4543 independently passes58/58; outside-pair repaired-head review requested, not assumed.
+
+- Publication follow-up: Libra final outside-pair harness CLEAR is PR44comment6556095277. Tracey authorizes commit/push of the P6 patch plan and continuity updates; the earlier requested-review status is historical. P6 implementation-plan examination and P5 before-code pins remain separate.
