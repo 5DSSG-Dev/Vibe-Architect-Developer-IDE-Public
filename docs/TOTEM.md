@@ -67,3 +67,8 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Repository navigation and branch audit
 - docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.
+
+
+## 2026-11-01 | Aster | Independent PTAG draft publication
+- Published docs/team-drafts/p5-ptag-spec-aster-v0.1-2026-11-01.md from PR34 comment6562253171, preserving the complete draft text. Grounded only in authoring brief and three-gate v0.3 at41c1323; no other peer PTAG draft read. Principle/schema and synthetic acceptance relationships only; no private patterns or fact bodies.
+- Tracey explicitly authorizes commit/push. Draft for Verus consolidation and author fidelity check; no implementation, merged-spec independent clearance, activation or merge acceptance. Documentation-only; tests not run.

@@ -37,3 +37,7 @@ CLAIM   | 2026-10-29T14:03:08Z | codex | src/App.tsx, src/components/HandshakeMo
 
 CLAIM | 2026-10-31 | lumin | README.md, docs/README.md, docs/HOUSEKEEPING_LEDGER.md | Architect-authorized housekeeping and navigation | codex/repository-housekeeping | release on commit
 RELEASE | 2026-10-31 | lumin | README.md, docs/README.md, docs/HOUSEKEEPING_LEDGER.md | documentation ready for review; published with this commit
+
+
+CLAIM | 2026-11-01 | aster | docs/team-drafts/p5-ptag-spec-aster-v0.1-2026-11-01.md | Architect-authorized independent PTAG draft publication | aster/ptag-spec-v0.1 | release with publication
+RELEASE | 2026-11-01 | aster | docs/team-drafts/p5-ptag-spec-aster-v0.1-2026-11-01.md | draft returned in PR34comment6562253171; publication authorized by Tracey | published for Verus consolidation, no source ownership transferred
