@@ -129,3 +129,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-10-31 | Lumin | Authorized repository housekeeping
 - Added repository guide at docs/README.md and root navigation links; refreshed README to reflect PR #25 retirement of unsupported modes and PR #32 storage-only admission scope. Historical continuity is unchanged.
 - Deleted ten fully incorporated remote branches without open PR dependencies or attached worktrees, using exact-head leases. Kept active PR branches, worktree branches and divergent heads. Audit evidence in docs/HOUSEKEEPING_LEDGER.md; no local branches, peer worktrees or product files removed.
+
+
+## 2026-10-31 | Lumin | Collaboration squad parameters
+- Current coordination reference: docs/COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md. Pairs Lumin/Aster and Verus/Libra organize assistance; final independent review comes from a non-author outside the pair; Tracey retains approval. Scoped claims, shared seams and suite confidentiality remain explicit. This Lumin-authored document awaits outside-pair review; it does not claim runtime enforcement or release old path claims.

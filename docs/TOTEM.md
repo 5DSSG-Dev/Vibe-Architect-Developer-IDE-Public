@@ -67,3 +67,7 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Repository navigation and branch audit
 - docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.
+
+
+## 2026-10-31 | Lumin | Squad configuration documented
+- Added COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md at Tracey's request: named roles, P5/P6/test preparation lanes, final outside-pair non-author review, Architect approval, claims/handoffs and private-suite independence. Linked in docs/README.md and appended a current-roster pointer to the earlier team draft; historical text preserved. Document awaits independent review.

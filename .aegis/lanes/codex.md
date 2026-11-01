@@ -218,3 +218,8 @@
 - Architect authorized stale-item removal and navigability improvements. Based isolated worktree on main 907e225; preserved shared checkout and all peer worktrees. Deleted 10 remote branches only after exact-head ancestry, open-PR dependency and worktree checks; guarded each deletion with a head lease. Full heads/outcomes in docs/HOUSEKEEPING_LEDGER.md.
 - Kept open-PR branches, worktree-attached branches and divergent heads. No automatic deletion enabled, no product/source/asset changes or historical record rewrites. Added docs navigation and refreshed obsolete README simulation/deployment and unqualified-green-baseline claims.
 - Verification: root/guide relative links resolve; historical continuity files retain their exact normalized original prefixes; git diff --check passes. Source inspection confirms paused Luminary behavior and storage-only admission limits. Documentation-only changes: application tests/build not rerun.
+
+
+## 2026-10-31 | Lumin | Squad configuration and working parameters
+- At Tracey's request, authored docs/COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md on codex/collaboration-squad-parameters from main37caf4b. Covers roles/pairs, current P5/P6/testing split, cross-pair non-author review for all work, explicit approvals, ownership/shared interfaces and test-suite isolation. Added navigation and append-only pointers. No product code, STP records, peer lane files, runtime or path ownership changed. Outside-pair review by Verus or Libra remains pending.
+- Verification: local Markdown links resolve; normalized original prefixes of Totems, lane, claims and earlier charter preserved; git diff check passes. Documentation-only: no app tests/build or live model runs. Publishing for outside-pair review; no merge.

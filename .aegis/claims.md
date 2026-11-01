@@ -37,3 +37,6 @@ CLAIM   | 2026-10-29T14:03:08Z | codex | src/App.tsx, src/components/HandshakeMo
 
 CLAIM | 2026-10-31 | lumin | README.md, docs/README.md, docs/HOUSEKEEPING_LEDGER.md | Architect-authorized housekeeping and navigation | codex/repository-housekeeping | release on commit
 RELEASE | 2026-10-31 | lumin | README.md, docs/README.md, docs/HOUSEKEEPING_LEDGER.md | documentation ready for review; published with this commit
+
+CLAIM | 2026-10-31 | lumin | docs/COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md, docs/README.md, docs/TEAM_SYSTEMS_AND_LANES.md | Architect-requested squad coordination document | codex/collaboration-squad-parameters | release on commit
+RELEASE | 2026-10-31 | lumin | squad coordination document/navigation/charter pointer (claim above) | authored and released with this commit, independent review pending
