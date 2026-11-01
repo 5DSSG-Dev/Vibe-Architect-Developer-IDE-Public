@@ -249,3 +249,8 @@
 ## 2026-10-31 | Lumin | Authorized publication
 - Tracey confirms Libra automatically sees posted PRs; no separate delivery request is needed. Visibility alone does not establish assignment acceptance or completed review.
 - Tracey explicitly authorizes committing and pushing open items. Publish the pending review continuity on existing PR #39, preserving all earlier lane entries; no runtime changes or merge.
+
+## 2026-10-31 | Lumin | PR discovery correction and Libra lane reconciliation
+- Supersedes the preceding blanket PR-visibility assumption: Tracey reports Libra updated PR38 but did not see PR39. Likely discovery is limited to worked-on PRs; exact notification behavior is unverified. Use known active PR conversations for pointers, and require access acknowledgment rather than assuming delivery.
+- Verified PR38 corrected head 7e3fa9a retains the complete original Libra lane prefix from c2a3bb5 with normalized line endings; substantive review document unchanged from65902c8. Lane-history finding resolved at this head, no merge/Architect approval.
+- Posted PR38 comment6554114843 with verification and a pointer to the existing PR39 review packet at61529f7. No duplicate assignment; Verus lead consolidation preserved. No new acceptance inferred, tests/build/provider calls not run.
