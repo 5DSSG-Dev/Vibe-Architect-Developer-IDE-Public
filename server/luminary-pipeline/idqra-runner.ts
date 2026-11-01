@@ -13,8 +13,9 @@
 // (the Question screen + rewrite budget, §6/§8) and the recorded-finding Define binding are the
 // NEXT slices — this runner does writer-call + render + validate + one bounded service retry.
 //
-// Fail closed (v0.2 §5): writer unavailable, a throw/timeout, or any payload that does not
-// validate yields `conscience_error`; nothing partial is returned.
+// Fail closed (v0.2 §5): writer unavailable, a throw/timeout, a payload with unexpected top-level
+// keys, a payload whose accessors throw, or any payload that does not validate yields
+// `conscience_error`; nothing partial is returned, and no raw exception escapes the runner.
 
 import type { PimFinding } from './pim.js';
 import type { IrgReading } from './irg.js';
@@ -32,6 +33,12 @@ import {
  * writer is called at most `1 + IDQRA_SERVICE_RETRY` times for a single response.
  */
 export const IDQRA_SERVICE_RETRY = 1;
+
+/** Deadline for one writer call (v0.2 §8 bounded I/O; parity with IDS_TIMEOUT_MS). */
+export const IDQRA_TIMEOUT_MS = 60_000;
+
+/** The exact top-level keys a raw writer draft may carry — nothing is silently stripped. */
+const DRAFT_KEYS = ['version', 'identify', 'define', 'question', 'reflect', 'acknowledge'] as const;
 
 /** The incoherent text this response is about: an inbound Architect message or an outbound reply. */
 export interface RunIdqraInput {
@@ -51,6 +58,11 @@ export interface IdqraWriter {
   write(request: IdqraWriteRequest): Promise<unknown>;
 }
 
+export interface RunIdqraOptions {
+  /** Override the per-call writer deadline (tests inject a short one). Defaults to IDQRA_TIMEOUT_MS. */
+  timeoutMs?: number;
+}
+
 export type IdqraRunResult =
   | { ok: true; envelope: IDQRAEnvelopeV1 }
   | { ok: false; shortfall: ConscienceShortfall };
@@ -64,14 +76,34 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/** Exact own-key match: every allowed key present, and no unexpected key (none silently stripped). */
+function hasExactKeys(obj: Record<string, unknown>, keys: readonly string[]): boolean {
+  const own = Object.keys(obj);
+  return own.length === keys.length && keys.every((k) => Object.prototype.hasOwnProperty.call(obj, k));
+}
+
+/** Reject a writer promise that does not settle within `ms` (parity with IDS `withTimeout`). */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Conscience writer timed out after ${ms} ms.`)), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (error) => { clearTimeout(timer); reject(error); },
+    );
+  });
+}
+
 /**
  * Assemble a public envelope from one untrusted writer payload and validate it in context.
- * Reflect is rendered from the writer's drafts by the trusted renderer (no writer text crosses);
- * the assembled envelope is then validated whole (shape + v0.2 §5 bounds + Reflect eligibility).
- * Returns null-shaped failure as `conscience_error`.
+ * The raw payload's top-level keys are checked exactly BEFORE projection, so an unexpected key
+ * cannot be silently discarded by copying only the selected fields. Reflect is then rendered from
+ * the writer's drafts by the trusted renderer (no writer text crosses); the assembled envelope is
+ * validated whole (shape + v0.2 §5 bounds + Reflect eligibility). Returns `conscience_error` on
+ * any rejection. This function may touch untrusted accessors, so the caller runs it guarded.
  */
 function assembleAndValidate(raw: unknown, ctx: RenderContext): IdqraRunResult {
   if (!isPlainObject(raw)) return fail('writer payload is not an object');
+  if (!hasExactKeys(raw, DRAFT_KEYS)) return fail('writer payload has unexpected or missing top-level keys');
   const rendered: ReflectItem[] | null = renderReflectList(raw.reflect, ctx);
   if (!rendered) return fail('reflect drafts could not be rendered to trusted templates');
   // Build the candidate with the writer's free-text fields as-is (validated next) and the
@@ -89,26 +121,33 @@ function assembleAndValidate(raw: unknown, ctx: RenderContext): IdqraRunResult {
 }
 
 /**
- * Drive the Conscience writer for one response. On a service failure (throw) or an invalid
- * payload, retry once (`retry: true`), then fail closed. `ctx` gates conditional/event Reflect
- * facts: pass an empty context (`emptyRenderContext()`) when none apply, and the eligible-now
- * role/intended facts still render while conditional/event facts stay out.
+ * Drive the Conscience writer for one response. Each writer call has a bounded deadline
+ * (`timeoutMs`). On a service failure (throw or timeout), an unexpected-key payload, a payload
+ * whose accessors throw, or an invalid envelope, retry once (`retry: true`), then fail closed.
+ * At most `1 + IDQRA_SERVICE_RETRY` writer calls are made; a late result after a timeout cannot
+ * escape, and no additional retries are launched beyond the bound. `ctx` gates conditional/event
+ * Reflect facts: pass an empty context (`emptyRenderContext()`) when none apply, and the
+ * eligible-now role/intended facts still render while conditional/event facts stay out.
  */
 export async function runIdqra(
   input: RunIdqraInput,
   writer: IdqraWriter | undefined,
   ctx: RenderContext,
+  options: RunIdqraOptions = {},
 ): Promise<IdqraRunResult> {
   if (!writer) return fail(CONSCIENCE_WRITER_NOT_CONFIGURED);
+  const timeoutMs = options.timeoutMs ?? IDQRA_TIMEOUT_MS;
 
   for (let attempt = 0; attempt <= IDQRA_SERVICE_RETRY; attempt += 1) {
-    let raw: unknown;
+    let result: IdqraRunResult;
     try {
-      raw = await writer.write({ ...input, retry: attempt > 0 });
+      const raw = await withTimeout(writer.write({ ...input, retry: attempt > 0 }), timeoutMs);
+      // assembleAndValidate reads untrusted accessors; a throwing getter is an invalid payload,
+      // not a runner crash, so it is caught here and routed through the bounded retry.
+      result = assembleAndValidate(raw, ctx);
     } catch {
-      continue; // service failure: use the bounded retry, then fall through to fail closed
+      continue; // service failure, timeout, or a throwing payload: use the bounded retry, then fail closed
     }
-    const result = assembleAndValidate(raw, ctx);
     if (result.ok) return result;
     // invalid payload: use the bounded retry, then fall through to fail closed
   }

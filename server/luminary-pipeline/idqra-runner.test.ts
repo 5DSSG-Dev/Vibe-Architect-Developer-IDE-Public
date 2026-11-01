@@ -109,3 +109,60 @@ test('runIdqra gates a conditional Reflect fact on the deployment context', asyn
   assert.equal(allowed.ok, true);
   if (allowed.ok) assert.equal(allowed.envelope.reflect[0].text, getFact('TF-03')!.template);
 });
+
+// --- Lumin review repairs (aa283b7): raw key boundary, bounded timeout, throwing payload --------
+
+test('runIdqra rejects a raw payload with an unexpected top-level key (not silently stripped)', async () => {
+  // An otherwise-valid draft carrying an extra key must NOT pass by having the key projected away.
+  const writer = scripted(rawDraft({ extra: 'not allowed' }), rawDraft({ extra: 'still here' }));
+  const result = await runIdqra(input, writer, emptyRenderContext());
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.shortfall.code, 'conscience_error');
+  assert.equal(writer.requests.length, 2); // rejected, retried once, still bad → fail closed
+});
+
+test('runIdqra retries once past an unexpected-key payload, then succeeds on a clean one', async () => {
+  const writer = scripted(rawDraft({ extra: 'x' }), rawDraft());
+  const result = await runIdqra(input, writer, emptyRenderContext());
+  assert.equal(result.ok, true);
+  assert.equal(writer.requests.length, 2);
+});
+
+test('runIdqra enforces a bounded writer deadline and fails closed on a never-settling writer', async () => {
+  let calls = 0;
+  const held: IdqraWriter = {
+    write: () => {
+      calls += 1;
+      return new Promise<unknown>(() => {}); // never settles
+    },
+  };
+  const result = await runIdqra(input, held, emptyRenderContext(), { timeoutMs: 10 });
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.shortfall.reason, CONSCIENCE_NO_VALID_ENVELOPE);
+  assert.equal(calls, 2); // initial + one bounded service retry; no extra retries beyond the bound
+});
+
+test('runIdqra treats a payload whose accessor throws as an invalid payload, never a thrown runner', async () => {
+  const throwingReflect = (): Record<string, unknown> => {
+    const obj: Record<string, unknown> = {
+      version: 1,
+      identify: 'The message asks for the model API to be reached outside the IDE.',
+      define: [{ source: 'pim', ref: 'PIM-ROUTE', text: 'A boundary-crossing request was recorded.' }],
+      question: 'Is there a project you would like to work on in this workspace?',
+      acknowledge: 'The message expressed a wish to reach the model API directly.',
+    };
+    Object.defineProperty(obj, 'reflect', {
+      enumerable: true,
+      get() {
+        throw new Error('hostile accessor');
+      },
+    });
+    return obj;
+  };
+  // A single call is enough to prove the exception is caught and routed, not re-thrown.
+  const writer = scripted(throwingReflect(), throwingReflect());
+  const result = await runIdqra(input, writer, emptyRenderContext());
+  assert.equal(result.ok, false);
+  if (!result.ok) assert.equal(result.shortfall.code, 'conscience_error');
+  assert.equal(writer.requests.length, 2); // throwing payload → bounded retry → fail closed
+});
