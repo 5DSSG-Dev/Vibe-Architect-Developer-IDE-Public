@@ -59,3 +59,8 @@ RELEASE | 2026-11-01 | lumin | docs/team-drafts/pr34-rev20-and-executor-review-l
 CLAIM | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Architect-authorized review sequence, concrete P6 patch plan only | codex/p6-inbound-admission-contract | local documentation; no source claim transfer
 
 RELEASE | 2026-11-01 | lumin | docs/team-drafts/p6-inbound-admission-patch-plan-2026-11-01.md | Tracey explicitly authorized commit/push; documentary claim released with publication; no source ownership transferred
+
+CLAIM | 2026-11-01 | lumin | server/governance-record/p6-result-types.ts, server/governance-record/p6-results.ts, server/governance-record/p6-results.test.ts, server/luminary-admission-snapshot.ts, server/luminary-admission-snapshot.test.ts, server/luminary-admission-coordinator.ts, server/luminary-admission-coordinator.test.ts | Tracey explicitly approves exact seven-file carve from Verus server claim and disconnected implementation/testing | codex/p6-disconnected-core | no route/executor/provider activation; release on handoff
+
+CLAIM | 2026-11-01 | lumin | docs/team-drafts/account-handoff-lumin-2026-11-01.md | Tracey explicitly requests cross-account handoff note and DataQuad continuity | codex/p6-disconnected-core | documentary preparation only
+RELEASE | 2026-11-01 | lumin | docs/team-drafts/account-handoff-lumin-2026-11-01.md | local handoff prepared; no source ownership transferred or remote publication

@@ -17,3 +17,11 @@ Append-only continuity; verify against current source and tests.
 
 ## 2026-10-31 | Lumin | Queued timeout coverage
 - Peer confirmed timeout repair statically and recommended deterministic queued-timeout coverage. Added held-A/queued-B test: both deadlines expire; B never reloads/appends, unrelated keys stay blocked, and A recovers with the same key. Focused admission suite passes 22/22.
+
+
+## 2026-11-01 | Lumin | P6 disconnected result/checkpoint storage
+- Tracey authorizes exact new p6-result-types.ts, p6-results.ts and p6-results.test.ts plus four new snapshot/coordinator files at server root. Added strict JSON/identity/result/intent validation, body digests and returned receipt reconstruction; result and independent checkpoint chains acknowledge before reads/release. Exclusive locks cover both directories; uncertain writes, broken chains/checkpoints and anchor mismatches close the store. Shutdown drains queued writes; no automatic recovery/takeover or log rewriting.
+- Coordinator binds authoritative admission to saved result and receipt, validates returned parents beyond primitive canReplace, suppresses duplicate processors/effects, and conservatively closes both directions of the inbound surface on uncertainty. Here ask/tasks are in-process entrypoints only, not mounted HTTP routes. Fake operation intent tests are not real executor exactly-once evidence.
+-36 new tests plus existing gateway suite pass262/262; both server TypeScript configurations pass. Actual red failures observed before implementation and for exception classification/graceful shutdown fixes. No product route/source consumer edits, provider calls or production-store access. Local code pending independent outside-pair review.
+
+- Publication update: Tracey explicitly authorizes publishing the local disconnected P6 slice. Source remains unchanged from the tested review packet; code is offered for outside-pair review on codex/p6-disconnected-core. No existing route/consumer/executor source is edited or activated.
