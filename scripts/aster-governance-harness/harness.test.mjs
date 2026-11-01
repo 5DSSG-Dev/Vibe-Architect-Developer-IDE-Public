@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { syntheticTrace } from './fakes.mjs';
 import { verify, digest, receiptRef, canonical } from './verifier.mjs';
-import { manifestSchema, eventSchema, resultSchema, publishedSchema } from './schemas.mjs';
+import { manifestSchema, eventSchema, resultSchema, publishedSchema, matches, observationSchema } from './schemas.mjs';
 const event=(t,k)=>t.events.find(e=>e.kind===k);
 const renumber=t=>t.events.forEach((e,i)=>e.seq=i+1);
 function broken(name,change,code,options) {
@@ -42,3 +42,27 @@ broken('event sequence gap',t=>{t.events[1].seq=99;},'event-order');
 test('incomplete witness coverage is inconclusive, never pass',()=>{const t=syntheticTrace();t.observations.coverageComplete=false;assert.equal(verify(t).status,'inconclusive');});
 test('invalid evidence remains invalid despite incomplete coverage',()=>{const t=syntheticTrace();t.observations.coverageComplete=false;t.events=[];assert.equal(verify(t).status,'invalid');});
 test('non-JSON/cyclic evidence is rejected without throwing',()=>{const t=syntheticTrace();t.extra=t;assert.equal(verify(t).status,'invalid');});
+for(const [name,mutate] of [
+ ['deleted event',t=>{delete t.events[1];}],
+ ['all-hole events',t=>{t.events=new Array(2);}],
+ ['undefined event',t=>{t.events[1]=undefined;}],
+ ...['dispatches','releases','effects'].map(key=>[`sparse observation ${key}`,t=>{t.observations[key]=new Array(1);}]),
+ ['sparse nested result body',t=>{event(t,'result-durable').payload.entry.body={values:new Array(1)};}],
+]) {
+ test(`malformed evidence returns invalid without throwing: ${name}`,()=>{
+  const t=syntheticTrace(); mutate(t);
+  assert.deepEqual(verify(t),{version:1,status:'invalid',errors:['schema'],counts:null});
+ });
+}
+test('canonical rejects sparse arrays instead of silently skipping holes',()=>{
+ assert.throws(()=>canonical(new Array(1)),/non-json/);
+ const nested={values:[1,2]}; delete nested.values[0];
+ assert.throws(()=>canonical(nested),/non-json/);
+});
+
+test('standalone schema validator rejects sparse observation arrays',()=>{
+ for(const key of ['dispatches','releases','effects']) {
+  const o=syntheticTrace().observations; o[key]=new Array(1);
+  assert.equal(matches(observationSchema,o),false);
+ }
+});

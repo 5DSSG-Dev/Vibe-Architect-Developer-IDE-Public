@@ -20,7 +20,9 @@ published JSON. Extra fields and unknown versions/roles/contracts fail validatio
 
 `verify({manifest, events, observations})` is a synchronous deterministic function.
 It returns `{version:1, status:'pass'|'invalid'|'inconclusive', errors, counts}`.
-Errors are stable sorted codes, not raw evidence/payloads. Invalid evidence takes
+Sparse arrays (including nested payload/observation arrays) and undefined elements
+are rejected as invalid/schema before event iteration. Errors are stable sorted
+codes, not raw evidence/payloads. Invalid evidence takes
 precedence over incomplete coverage; incomplete coverage never passes.
 
 The manifest pins P6-A v0.2 section 5 at

@@ -6,7 +6,16 @@ export function canonical(value) {
   if(!['string','number','boolean'].includes(typeof value)&&value!==null) throw new Error('non-json');
   return JSON.stringify(value);
  }
- if(Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+ if(Array.isArray(value)) {
+  // map/every/some skip holes; entries/indexed consumers do not. Reject holes
+  // recursively before schema validation or verification can dereference them.
+  const items=[];
+  for(let i=0;i<value.length;i++) {
+   if(!Object.hasOwn(value,i)) throw new Error('non-json');
+   items.push(canonical(value[i]));
+  }
+  return `[${items.join(',')}]`;
+ }
  if(Object.getPrototypeOf(value)!==Object.prototype) throw new Error('non-json');
  return `{${Object.keys(value).sort().map(k=>`${JSON.stringify(k)}:${canonical(value[k])}`).join(',')}}`;
 }

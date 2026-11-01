@@ -42,7 +42,11 @@ export function matches(schema,value) {
   if(schema.additionalProperties===false&&Object.keys(value).some(k=>!Object.hasOwn(schema.properties,k))) return false;
   if(Object.entries(schema.properties).some(([k,s])=>Object.hasOwn(value,k)&&!matches(s,value[k]))) return false;
  }
- if(schema.type==='array'&&value.some(v=>!matches(schema.items,v))) return false;
+ if(schema.type==='array') {
+  for(let i=0;i<value.length;i++) {
+   if(!Object.hasOwn(value,i)||!matches(schema.items,value[i])) return false;
+  }
+ }
  return true;
 }
 export function publishedSchema(name) { return JSON.parse(readFileSync(new URL(`./${name}.schema.json`,import.meta.url),'utf8')); }
