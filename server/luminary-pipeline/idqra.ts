@@ -222,7 +222,9 @@ export function renderReflect(draft: unknown, ctx: RenderContext): ReflectItem |
 
 /**
  * Render a bounded list of Reflect drafts. Over the bound, or any ineligible item, fails the whole
- * list (fail closed) so a partial Reflect never leaves the construction boundary.
+ * list (fail closed) so a partial Reflect never leaves the construction boundary. An empty result
+ * is only a render intermediate — it can NEVER be accepted as an envelope's `reflect`, because
+ * both validators require ≥1 item (v0.2 §5). Callers fail closed rather than emit an empty Reflect.
  */
 export function renderReflectList(drafts: unknown, ctx: RenderContext): ReflectItem[] | null {
   if (!Array.isArray(drafts)) return null;
@@ -246,10 +248,12 @@ const fail = (reason: string): IdqraResult => ({ ok: false, shortfall: { code: '
  * free-text fields' semantics or bind Define to recorded findings — both are later-slice duties.
  * For the body P6 consumes, use `validateReturnedEnvelope`, which adds the context recheck (R3).
  *
- * Decisions, stated (not silent, per R2): `reflect` MAY be empty — the true-facts "select for
- * relevance" rule means an envelope can cite no approved fact; `define` MUST have ≥1 item — an
- * incoherence carries at least one recorded finding. The raw field values are kept unchanged (no
- * trim stored, no Unicode normalization — v0.2 §5).
+ * Decisions, stated (not silent): `reflect` MUST have 1–5 items and `define` MUST have ≥1 item.
+ * Per Libra's PR #39 seam reconciliation (`6557180218`), v0.2 §5 precedence holds — there is no
+ * empty-Reflect variant; when no applicable fact is selected within the bounded draft budget the
+ * envelope fails closed (`conscience_error`), it does not emit an empty Reflect. Eligibility is
+ * trusted/deterministic; relevance is the writer's bounded judgment within the eligible set. The
+ * raw field values are kept unchanged (no trim stored, no Unicode normalization — v0.2 §5).
  */
 export function validateIdqraShape(raw: unknown): IdqraResult {
   if (!isPlainObject(raw)) return fail('envelope is not an object');
@@ -273,6 +277,7 @@ export function validateIdqraShape(raw: unknown): IdqraResult {
   }
 
   if (!Array.isArray(raw.reflect)) return fail('reflect must be an array');
+  if (raw.reflect.length === 0) return fail('reflect must have at least 1 item (v0.2 §5: no empty-Reflect variant)');
   if (raw.reflect.length > MAX_REFLECT_ITEMS) return fail('reflect exceeds MAX_REFLECT_ITEMS');
   for (const r of raw.reflect) {
     if (!isPlainObject(r)) return fail('reflect item is not an object');

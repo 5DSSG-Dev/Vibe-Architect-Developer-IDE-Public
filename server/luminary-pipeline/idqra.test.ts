@@ -100,9 +100,11 @@ test('validateIdqraShape accepts a complete, well-formed envelope and keeps raw 
   assert.equal(result.ok, true);
 });
 
-test('validateIdqraShape allows empty reflect but rejects empty define (documented decision)', () => {
-  assert.equal(validateIdqraShape(envelope({ reflect: [] })).ok, true);
+test('validateIdqraShape rejects empty reflect AND empty define (v0.2 §5: no empty-Reflect variant)', () => {
+  assert.equal(validateIdqraShape(envelope({ reflect: [] })).ok, false);
   assert.equal(validateIdqraShape(envelope({ define: [] })).ok, false);
+  // A single eligible-now role fact satisfies the 1-item minimum:
+  assert.equal(validateIdqraShape(envelope({ reflect: [reflect('TF-02')] })).ok, true);
 });
 
 test('validateIdqraShape fails closed on missing/empty fields, wrong version, and unknown keys (R2)', () => {
