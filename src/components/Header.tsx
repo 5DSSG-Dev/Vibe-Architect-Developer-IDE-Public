@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppMenu } from './AppMenu';
 import { Cpu, HardDrive, Zap, Sliders, Box } from 'lucide-react';
 import { HardwareBudget } from '../engine/relationEngine';
 
@@ -90,6 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Configure CORE Matrix Button */}
+        <AppMenu />
         <button
           onClick={onOpenCoreMatrix}
           className="btn-cyber px-3 py-1.5 rounded-lg text-xs font-orbitron font-semibold flex items-center space-x-1.5 shadow-md"
