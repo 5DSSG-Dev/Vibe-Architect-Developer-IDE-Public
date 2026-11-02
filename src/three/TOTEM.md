@@ -41,3 +41,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-10-29 | Codex | Publication status correction
 - Supersedes earlier pending/uncommitted notes: Element-origin hover and completed-click navigation are committed as `6792987` and pushed to `codex/m4-element-inspection-framing`.
 - Follow-up review is open as [PR #24](https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/24). PR #23 was already merged before this follow-up was published.
+
+
+## 2026-11-02 | Codex | Isolated workspace UI changes
+- Requested by Tracey: Inspector Deck opens from bottom bar; connected Orbs stay docked and ignore legacy transform overrides; Luminary is slightly larger/up-left with a Click to talk button. Reconciled backdrop engagement area and conversation placement.
+- Extracted only nine UI source files from the public checkout after verified pending-change backups. Shared peer history and pipeline/admin work excluded. Prior preview production build and focused tests passed; isolated combined build is checked next. Browser gesture/visual verification remains outstanding.

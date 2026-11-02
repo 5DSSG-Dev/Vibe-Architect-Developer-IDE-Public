@@ -236,11 +236,11 @@ body:has([role="dialog"][aria-modal="true"]) .luminary-form {
 /*
  * A soft window in every IDE page's backdrop around the 3D Luminary, so the Presence stays visible
  * beside an open page (Element info, Code Frame, Edit, builders). The centre matches
- * PRESENCE_SCREEN_OFFSET in src/three/luminaryPresence.ts (right 190px, bottom 450px); keep them
+ * PRESENCE_SCREEN_OFFSET in src/three/luminaryPresence.ts (right 230px, bottom 505px); keep them
  * in step. Only the backdrop is masked; the page itself is untouched.
  */
 [role="dialog"][aria-modal="true"] > .animate-backdrop-fade:first-child {
-  -webkit-mask-image: radial-gradient(ellipse 170px 230px at calc(100% - 190px) calc(100% - 450px), transparent 55%, black 100%);
-  mask-image: radial-gradient(ellipse 170px 230px at calc(100% - 190px) calc(100% - 450px), transparent 55%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 187px 253px at calc(100% - 230px) calc(100% - 505px), transparent 55%, black 100%);
+  mask-image: radial-gradient(ellipse 187px 253px at calc(100% - 230px) calc(100% - 505px), transparent 55%, black 100%);
 }
 

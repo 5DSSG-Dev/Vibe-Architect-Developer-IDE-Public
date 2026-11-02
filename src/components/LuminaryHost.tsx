@@ -449,7 +449,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
               setIsEngaged(false);
             }
           }}
-          className="luminary-form fixed bottom-32 right-[max(0.75rem,min(310px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
+          className="luminary-form fixed bottom-32 right-[max(0.75rem,min(390px,calc(100vw-25.5rem)))] w-[min(24rem,calc(100vw-1.5rem))] max-h-[min(36rem,calc(100vh-13rem))] flex flex-col panel-glass legible-glass rounded-2xl border border-amber-400/40 shadow-[0_0_40px_rgba(252,211,77,0.15)] p-3 gap-2 outline-none motion-safe:animate-modal-zoom"
         >
           <header className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
@@ -762,12 +762,16 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
         <button
           ref={iconRef}
           onClick={() => setIsEngaged(true)}
-          aria-label="Engage the Vibe Luminary"
+          aria-label="Talk to the Vibe Luminary"
           aria-expanded={false}
-          title="Vibe Luminary (paused)"
-          className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-950/80 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 motion-safe:animate-luminary-breathe"
+          title="Click to talk to the Vibe Luminary"
+          className="md:fixed md:right-[230px] md:bottom-[315px] md:translate-x-1/2 px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
           {core('w-7 h-7')}
+          <span className="text-left leading-tight">
+            <span className="block text-xs font-bold text-amber-100">Luminary</span>
+            <span className="block text-[10px] text-amber-200/80">Click to talk</span>
+          </span>
         </button>
       )}
     </div>

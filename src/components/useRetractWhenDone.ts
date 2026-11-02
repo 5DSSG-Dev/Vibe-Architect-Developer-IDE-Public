@@ -5,10 +5,11 @@ import { useEffect, type RefObject } from 'react';
  * they are done with it: a press anywhere outside the open drawer (the workspace, the other
  * drawer, a window it opened) or Escape closes it again, so the Aether workspace stays clear.
  */
-export function useRetractWhenDone(ref: RefObject<HTMLElement>, isOpen: boolean, close: () => void): void {
+export function useRetractWhenDone(ref: RefObject<HTMLElement>, isOpen: boolean, close: () => void, triggerId?: string): void {
   useEffect(() => {
     if (!isOpen) return;
     const onPointerDown = (event: PointerEvent) => {
+      if (triggerId && document.getElementById(triggerId)?.contains(event.target as Node)) return;
       if (ref.current && !ref.current.contains(event.target as Node)) close();
     };
     const onKeyDown = (event: KeyboardEvent) => {
@@ -20,5 +21,5 @@ export function useRetractWhenDone(ref: RefObject<HTMLElement>, isOpen: boolean,
       document.removeEventListener('pointerdown', onPointerDown, true);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [ref, isOpen, close]);
+  }, [ref, isOpen, close, triggerId]);
 }

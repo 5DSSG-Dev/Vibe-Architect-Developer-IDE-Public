@@ -196,3 +196,8 @@
 - PR #25 is open at https://github.com/5DSSG-Dev/Vibe-Architect-Developer-IDE-Public/pull/25. Commit `9b5fa25` removes the unsupported modes and preserves workspace export.
 - Browser confirmation passed on temporary localhost:3016; requested 3015 had no listener. The temporary Vite server was stopped. `npm run build` and `git diff --check` pass; tests were not run. Existing chunk-size warning remains.
 - STP-0004 D1 captures the Architect's mode-removal/audience decision; Proposals remain Presented and M5 is not marked complete.
+
+
+## 2026-11-02 | Codex | Isolated workspace UI changes
+- Requested by Tracey: Inspector Deck opens from bottom bar; connected Orbs stay docked and ignore legacy transform overrides; Luminary is slightly larger/up-left with a Click to talk button. Reconciled backdrop engagement area and conversation placement.
+- Extracted only nine UI source files from the public checkout after verified pending-change backups. Shared peer history and pipeline/admin work excluded. Prior preview production build and focused tests passed; isolated combined build is checked next. Browser gesture/visual verification remains outstanding.

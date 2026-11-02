@@ -176,6 +176,7 @@ export function App() {
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
   // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
   const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
   // user-created items so a refresh never erases the working cabinet.
@@ -585,6 +586,8 @@ export function App() {
           />
 
           <RightPanel
+            isOpen={isInspectorOpen}
+            onClose={() => setIsInspectorOpen(false)}
             catalog={apothecaryCatalog}
             isFooterExpanded={isFooterExpanded}
             coreManifest={coreManifest}
@@ -642,6 +645,11 @@ export function App() {
         onToggleApothecary={() => {
           if (environmentStack.length > 0) popEnvironmentTo(0);
           setIsApothecaryOpen((open) => !(open && environmentStack.length === 0));
+        }}
+        isInspectorOpen={isInspectorOpen && environmentStack.length === 0}
+        onToggleInspector={() => {
+          if (environmentStack.length > 0) popEnvironmentTo(0);
+          setIsInspectorOpen((open) => !(open && environmentStack.length === 0));
         }}
         onOpenReliquary={() => openOverlay('RELIQUARY')}
         onOpenBrowser={() => {
