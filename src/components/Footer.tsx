@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical } from 'lucide-react';
+import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity } from 'lucide-react';
 import { CoreManifest } from '../engine/relationEngine';
 
 export interface WorkspaceSaveStatus {
@@ -22,6 +22,8 @@ interface FooterProps {
   /** The Apothecary Cabinet window, opened and closed from the bar's Apothecary button. */
   isApothecaryOpen?: boolean;
   onToggleApothecary?: () => void;
+  isInspectorOpen?: boolean;
+  onToggleInspector?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -34,7 +36,9 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenReliquary,
   onOpenBrowser,
   isApothecaryOpen = false,
-  onToggleApothecary
+  onToggleApothecary,
+  isInspectorOpen = false,
+  onToggleInspector
 }) => {
   const [localShowDeck, setLocalShowDeck] = useState(true);
   const showTelemetryDeck = propShowTelemetryDeck !== undefined ? propShowTelemetryDeck : localShowDeck;
@@ -111,6 +115,24 @@ export const Footer: React.FC<FooterProps> = ({
             >
               <FlaskConical className="w-4 h-4 text-cyan-300" />
               <span>Apothecary</span>
+            </button>
+          )}
+          {onToggleInspector && (
+            <button
+              id="inspector-deck-toggle"
+              type="button"
+              onClick={onToggleInspector}
+              aria-expanded={isInspectorOpen}
+              aria-controls="inspector-deck"
+              title={isInspectorOpen ? 'Close Inspector Deck' : 'Open Inspector Deck'}
+              className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors ${
+                isInspectorOpen
+                  ? 'bg-cyan-500/20 border-cyan-400/70 text-cyan-200'
+                  : 'bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200'
+              }`}
+            >
+              <Activity className="w-4 h-4 text-cyan-300" />
+              <span>Inspector Deck</span>
             </button>
           )}
           <div className="min-w-0">{wayfinder}</div>

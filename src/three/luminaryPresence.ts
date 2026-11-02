@@ -17,11 +17,11 @@ import { gltfModelCache } from '../utils/gltfLoaderService';
  * camera, in front of the mechanism.
  */
 // Keep in step with the backdrop window in src/index.css, which keeps the Presence visible beside open pages.
-export const PRESENCE_SCREEN_OFFSET = { right: 190, bottom: 450 };
-/** The clear part of that backdrop window (55% of its 170x230px ellipse), where a press engages the Luminary. */
-export const PRESENCE_WINDOW_RADIUS = { x: 94, y: 127 };
+export const PRESENCE_SCREEN_OFFSET = { right: 230, bottom: 505 };
+/** The clear part of the enlarged backdrop window, where a press engages the Luminary. */
+export const PRESENCE_WINDOW_RADIUS = { x: 103, y: 139 };
 const PRESENCE_DISTANCE = 10;
-const PRESENCE_HEIGHT = 2.6;
+const PRESENCE_HEIGHT = 2.86;
 /** Fine turn of the figure around its own upright axis, in radians (positive turns it to its left). */
 const PRESENCE_YAW = 0;
 const REST_GLOW = 0.3;

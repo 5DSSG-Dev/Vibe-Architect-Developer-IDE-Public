@@ -10,6 +10,7 @@ import { CoreMatrixModal } from './components/CoreMatrixModal';
 import { ViewContentsModal } from './components/ViewContentsModal';
 import { EditObjectModal } from './components/EditObjectModal';
 import { CodeEditorOverlayModal } from './components/CodeEditorOverlayModal';
+import { saveCurrentApp } from './utils/appFiles';
 import { OrbBuilderModal } from './components/OrbBuilderModal';
 import { AlchemistReliquaryModal } from './components/AlchemistReliquaryModal.tsx';
 import { BuiltInBrowserModal } from './components/BuiltInBrowserModal';
@@ -176,6 +177,7 @@ export function App() {
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
   // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
   const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
   // user-created items so a refresh never erases the working cabinet.
@@ -251,7 +253,7 @@ export function App() {
   // This preserves placed Elements, active Relations, Portals, hardware settings,
   // contracts and custom Apothecary entries across a normal browser refresh.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || localStorage.getItem('vibe.apps.closed') === 'true') return;
 
     const snapshot: PersistedWorkspace = {
       version: 2,
@@ -267,6 +269,7 @@ export function App() {
 
     try {
       window.localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(snapshot));
+      saveCurrentApp(window.localStorage);
       setSaveStatus({ state: 'saved', at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
     } catch (error) {
       console.warn('[WORKSPACE] Workspace could not be persisted.', error);
@@ -525,6 +528,13 @@ export function App() {
     openOverlay('HANDSHAKE');
   };
 
+  if (localStorage.getItem('vibe.apps.closed') === 'true') return (
+    <div className="w-screen h-screen bg-[#080b10] text-slate-100">
+      <Header hardwareBudget={coreManifest.hardwareBudget} availableResources={getAvailableCoreResources(coreManifest)} onOpenCoreMatrix={() => {}} />
+      <div className="h-full flex flex-col items-center justify-center gap-3 font-mono"><h2 className="text-xl">No app open</h2><p className="text-slate-400">Use the App menu to create or open an app.</p></div>
+    </div>
+  );
+
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#080b10] text-slate-100 font-sans select-none">
       {/* 1. 3D WebGL Canvas Layer */}
@@ -585,6 +595,8 @@ export function App() {
           />
 
           <RightPanel
+            isOpen={isInspectorOpen}
+            onClose={() => setIsInspectorOpen(false)}
             catalog={apothecaryCatalog}
             isFooterExpanded={isFooterExpanded}
             coreManifest={coreManifest}
@@ -642,6 +654,11 @@ export function App() {
         onToggleApothecary={() => {
           if (environmentStack.length > 0) popEnvironmentTo(0);
           setIsApothecaryOpen((open) => !(open && environmentStack.length === 0));
+        }}
+        isInspectorOpen={isInspectorOpen && environmentStack.length === 0}
+        onToggleInspector={() => {
+          if (environmentStack.length > 0) popEnvironmentTo(0);
+          setIsInspectorOpen((open) => !(open && environmentStack.length === 0));
         }}
         onOpenReliquary={() => openOverlay('RELIQUARY')}
         onOpenBrowser={() => {

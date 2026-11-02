@@ -197,6 +197,20 @@
 - Browser confirmation passed on temporary localhost:3016; requested 3015 had no listener. The temporary Vite server was stopped. `npm run build` and `git diff --check` pass; tests were not run. Existing chunk-size warning remains.
 - STP-0004 D1 captures the Architect's mode-removal/audience decision; Proposals remain Presented and M5 is not marked complete.
 
+
+## 2026-11-02 | Codex | Isolated workspace UI changes
+- Requested by Tracey: Inspector Deck opens from bottom bar; connected Orbs stay docked and ignore legacy transform overrides; Luminary is slightly larger/up-left with a Click to talk button. Reconciled backdrop engagement area and conversation placement.
+- Extracted only nine UI source files from the public checkout after verified pending-change backups. Shared peer history and pipeline/admin work excluded. Prior preview production build and focused tests passed; isolated combined build is checked next. Browser gesture/visual verification remains outstanding.
+
+
+## 2026-11-02 | Codex | Isolated App menu
+- Requested seven App actions replace the unused Build app window. New/Open/Recent/Close/Export/Delete/Close IDE preserve complete workspace snapshots, including saved app source. Delete asks confirmation and blocked browser-tab closure provides manual-close guidance. Export/import uses .vibe-app.json.
+- Included App menu, persistence helper and lifecycle tests only. Unused builder modal, preview server, peer claims, unrelated branding and shared historical notes excluded. Five lifecycle tests passed in preview; isolated combined build is checked next.
+
+
+## 2026-11-02 | Codex | Isolated verification complete
+- Supersedes pending-check notes above: combined isolated UI/App-menu production build passes, including client/server TypeScript and Vite; focused lifecycle and spatial-state tests pass 23/23; git diff --check passes. Existing Vite chunk-size warning remains. No browser visual/gesture verification.
+- Both active checkouts retained their source files, branches and indexes; Lumin continues work in the public checkout. Pending files were backed up with byte verification before isolation. Two scoped local commits contain UI and App menu only, with temporary assets and peer pipeline/admin changes excluded. No push or merge performed.
 ## 2026-10-30 | Codex | Concept reference library
 - Architect requested a concept library using supplied Gap Illumination doctrine. Created local README, source copy and provenance record under docs/reference-library. Status and interpretation boundaries preserved. Documentation only; not added to PR29 or published.
 
@@ -250,3 +264,8 @@
 ## 2026-11-01 | Codex | Atlas branch conflict resolution
 - At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
 - Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.
+
+
+## 2026-11-02 | Codex | PR 50 main synchronization
+- Merged main 569ef3d into the isolated UI/App-menu branch at Tracey's request. Automatic merge required no manual conflict edits; both parent lane histories verified in order. Lumin's active checkout untouched.
+- Combined production build, 23 focused tests and staged diff check pass. Existing Vite chunk warning remains; browser verification outstanding. Publishing branch update only, not merging PR 50 into main.

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useRetractWhenDone } from './useRetractWhenDone';
-import { Search, Sparkles, ShieldCheck, ChevronRight, ChevronLeft, ArrowRight, Activity, CheckCircle2, Terminal } from 'lucide-react';
+import { Search, Sparkles, ShieldCheck, X, ArrowRight, Activity, CheckCircle2, Terminal } from 'lucide-react';
 import { ApothecaryItem, CoreManifest } from '../engine/relationEngine';
 import { ChevronDown, ChevronUp, Gauge, Code, Sun, Moon } from 'lucide-react';
 import { WorkRequestPanel } from './WorkRequestPanel';
 
 interface RightPanelProps {
+  isOpen: boolean;
+  onClose: () => void;
   catalog: ApothecaryItem[];
   onSelectAttachItem: (item: ApothecaryItem) => void;
   selectedItem?: ApothecaryItem;
@@ -19,6 +21,8 @@ interface RightPanelProps {
 }
 
 export const RightPanel: React.FC<RightPanelProps> = ({
+  isOpen,
+  onClose,
   catalog,
   onSelectAttachItem,
   selectedItem,
@@ -29,11 +33,10 @@ export const RightPanel: React.FC<RightPanelProps> = ({
   directionalAngle = 0.9,
   onUpdateAether
 }) => {
-  // Tucked away by default; opens when picked and tucks back when done (useRetractWhenDone).
-  const [isOpen, setIsOpen] = useState(false);
+  // Opened from the bottom bar, with its contents preserved while closed.
   const drawerRef = useRef<HTMLDivElement>(null);
-  const retract = useCallback(() => setIsOpen(false), []);
-  useRetractWhenDone(drawerRef, isOpen, retract);
+  const retract = useCallback(() => onClose(), [onClose]);
+  useRetractWhenDone(drawerRef, isOpen, retract, 'inspector-deck-toggle');
   const [prompt, setPrompt] = useState('');
   // Catalog search is a plain keyword match over names and descriptions. It is
   // not AI and must not be presented as Luminary activity.
@@ -82,21 +85,22 @@ export const RightPanel: React.FC<RightPanelProps> = ({
 
   return (
     <div
+      id="inspector-deck"
       ref={drawerRef}
-      className={`fixed right-4 top-20 z-10 transition-all duration-300 flex ${
-        isOpen ? `${isFooterExpanded ? 'bottom-[268px]' : 'bottom-24'} w-80 sm:w-96` : 'h-12 w-12'
-      }`}
+      role="region"
+      aria-label="Inspector Deck"
+      className={`fixed left-4 sm:left-48 z-20 ${isFooterExpanded ? 'bottom-[268px] max-h-[calc(100dvh-348px)]' : 'bottom-24 max-h-[calc(100dvh-11rem)]'} h-[40rem] w-[min(26rem,calc(100vw-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl legible-glass">
         {/* Header */}
         <div className="p-3 border-b border-cyan-500/20 flex items-center justify-between bg-slate-950/40">
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={onClose}
             className="p-1 rounded-lg bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 transition-colors"
-            title={isOpen ? 'Collapse Inspector Deck' : 'Expand Inspector Deck'}
-            aria-label={isOpen ? 'Collapse Inspector Deck' : 'Expand Inspector Deck'}
+            title="Close Inspector Deck"
+            aria-label="Close Inspector Deck"
           >
-            {isOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4 text-cyan-400" />}
+            <X className="w-4 h-4" />
           </button>
 
           <div className={`flex items-center space-x-2 ${!isOpen && 'hidden'}`}>

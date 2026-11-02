@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -35,15 +34,11 @@ import {
 } from '../utils/viewQuality';
 import {
   createSpatialEdits,
-  setOverride,
-  clearOverride,
   clearAll,
   undo,
   redo,
   canUndo,
   canRedo,
-  getOverride,
-  snapPositionToGrid,
   serializeSpatialEdits,
   deserializeSpatialEdits,
   type SpatialEdits,
@@ -581,7 +576,6 @@ const SPATIAL_EDITS_STORAGE_KEY = 'aegis-vibe-architect.spatialEdits.v1';
 const SAVED_VIEWS_STORAGE_KEY = 'aegis-vibe-architect.savedViews.v1';
 // World-unit grid + Y-angle step used when SNAP is on, and the ease duration for
 // a saved/framed camera move.
-const SPATIAL_SNAP_GRID = 1.0;
 const VIEW_TWEEN_SECONDS = 0.65;
 // Leave room around an Element when its focused Environment replaces the CORE view.
 const CORE_ELEMENT_ENTRY_DISTANCE_RATIO = 0.42;
@@ -955,11 +949,8 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
           if (socket.connectedItem) {
             const dockedGroup = createDockedOrbGroup(socket.connectedItem, socket.attachedSatellites ?? []);
             dockedGroup.position.set(0, 0, ORB_DOCK_Z);
-            const override = getOverride(spatialEdits, `orb:${socket.id}`);
-            if (override?.position) {
-              dockedGroup.position.set(override.position[0], override.position[1], override.position[2]);
-            }
-            dockedGroup.scale.setScalar(override?.scale ?? 1);
+            // Connected Orbs stay at their docking point, including after reload.
+            dockedGroup.scale.setScalar(1);
             armGroup.add(dockedGroup);
 
             const conduit = createDynamicUmbilical(
@@ -1253,7 +1244,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   const updateSocketGeometriesRef = useRef<() => void>();
   const buildCoreCrystalRef = useRef<() => void>();
   const buildPortalAssemblyRef = useRef<() => void>();
-  const rebuildDragTargetsRef = useRef<() => void>();
   // Full model-swap rebuild: re-run every builder against the current GLB cache.
   // Used after the initial preload lands and after a failed-model retry.
   const applyLoadedModelsRef = useRef<() => void>();
@@ -1300,8 +1290,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   const socketMeshMapRef = useRef<Map<string, THREE.Group>>(new Map());
   const snappedSocketIdRef = useRef<string | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const dragControlsRef = useRef<DragControls | null>(null);
-  const draggableObjectsRef = useRef<THREE.Object3D[]>([]);
   // Dedicated picking proxies: invisible simple-geometry meshes parented to each
   // selectable node (docked orb, satellite, vacant socket). Selection raycasts
   // this flat list instead of the full detailed GLB subtree — cheaper and far
@@ -1379,9 +1367,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     if (updateSocketGeometriesRef.current) {
       updateSocketGeometriesRef.current();
     }
-    if (rebuildDragTargetsRef.current) {
-      rebuildDragTargetsRef.current();
-    }
+    applySpatialOverridesRef.current?.();
   }, [sockets, isModelsLoaded]);
 
   useEffect(() => {
@@ -1395,11 +1381,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     // scene or setState on an unmounted component. Set true in the cleanup.
     let disposed = false;
 
-    // Interaction state shared across the pointer + drag handlers.
-    // objectDragActive: DragControls is moving an Orb, so the turntable must
-    // stand down. rotateArmed / rotateLastX: an empty-space left-drag is spinning
-    // the assembly pivot.
-    let objectDragActive = false;
+    // Empty-space dragging rotates the whole assembly; connected Elements stay docked.
     let rotateArmed = false;
     let rotateLastX = 0;
 
@@ -1946,30 +1928,18 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     updateSocketGeometriesRef.current = () => updateSocketGeometries(false);
     updateSocketGeometries(true);
 
-    // Collect draggable 3D objects (docked Orbs) and
-    // wire up DragControls so the user can freely reposition them by clicking
-    // and dragging. OrbitControls is disabled while a drag is active.
-    // Re-apply persisted spatial overrides to each docked Orb, and
-    // rebuild each arm's umbilical so it reaches wherever its orb now sits. This
-    // is the single source of truth for placement + conduit reach, so it stays
-    // correct across socket reconciles, model loads, undo/redo, reset, and
-    // context-loss remounts. Rotation is left to the animation loop, so overrides
-    // carry position (and scale) only.
+    // Restore canonical dock transforms on every reconcile. Legacy free-placement
+    // overrides cannot pull a connected Orb away from its Umbilical.
     const applySpatialOverrides = () => {
-      const edits = spatialEditsRef.current;
-
       // CORE is a fixed root anchor; only its in-place visual motion is animated.
       coreGroup.position.set(0, 0, 0);
       coreGroup.scale.setScalar(1);
 
       socketMeshesGroup.children.forEach((arm) => {
-        const sid = arm.userData?.socketId as string | undefined;
         const dock = arm.children.find((c) => c.name === 'docked-orb-group');
         if (!dock) return;
-        const ov = sid ? getOverride(edits, `orb:${sid}`) : undefined;
-        if (ov?.position) dock.position.set(ov.position[0], ov.position[1], ov.position[2]);
-        else dock.position.set(0, 0, ORB_DOCK_Z);
-        dock.scale.setScalar(ov?.scale ?? 1);
+        dock.position.set(0, 0, ORB_DOCK_Z);
+        dock.scale.setScalar(1);
 
         // Rebuild the arm's umbilical so it follows the (possibly overridden) orb.
         const oldConduit = arm.children.find((c) => c.name === 'dynamic-umbilical');
@@ -1990,112 +1960,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     };
     applySpatialOverridesRef.current = applySpatialOverrides;
 
-    const rebuildDragTargets = () => {
-      const targets: THREE.Object3D[] = [];
-
-      // Docked orbs
-      socketMeshesGroup.traverse((child) => {
-        if (child.name === 'docked-orb-group') targets.push(child);
-      });
-
-      // Portals are anchored to their fixed compass points and are intentionally
-      // NOT added to the drag targets, so they cannot be repositioned.
-
-      draggableObjectsRef.current = targets;
-
-      if (dragControlsRef.current) {
-        dragControlsRef.current.dispose();
-      }
-
-      const drag = new DragControls(targets, camera, renderer.domElement);
-      drag.addEventListener('dragstart', () => { controls.enabled = false; objectDragActive = true; });
-      drag.addEventListener('drag', (event) => {
-        const obj = event.object;
-        if (obj.name === 'docked-orb-group' && obj.parent) {
-          const armGroup = obj.parent;
-          const conduit = armGroup.children.find(c => c.name === 'dynamic-umbilical');
-          if (conduit) {
-            armGroup.remove(conduit);
-            // Recreate procedural umbilical targeting new orb position
-            const fromPos = new THREE.Vector3(0, 0, 2.5);
-            // We pull it back slightly from the exact center so it grips the surface
-            const toPos = obj.position.clone().multiplyScalar(0.85); 
-            const isWire = armGroup.userData.isWireframe;
-            const socket = sockets.find((entry) => entry.id === armGroup.userData?.socketId);
-            const profile = getUmbilicalProfile(socket?.resolvedProfileId ?? '');
-            const newConduit = createDynamicUmbilical(fromPos, toPos, isWire ? 'wireframe' : 'solid',
-              profile?.visualModelKey ?? 'umbilical', profile?.visualThickness ?? 0.44);
-            newConduit.name = 'dynamic-umbilical';
-            armGroup.add(newConduit);
-          }
-
-          // Proximity Field logic. Socket nominal positions are in the assembly's
-          // local frame, so convert the dragged orb's world position back through
-          // the pivot before matching (identity when the assembly is unrotated).
-          const worldPos = new THREE.Vector3();
-          obj.getWorldPosition(worldPos);
-          const localPos = assemblyPivot.worldToLocal(worldPos.clone());
-          const nearest = getNearestVacantSocket(localPos, socketsRef.current, 4.0);
-
-          // Reset all socket glow colors to their base state first
-          socketMeshesGroup.children.forEach(arm => {
-            const ring = arm.children.find(c => c.userData.isSocket);
-            if (ring) {
-              const baseColor = ring.userData.ringColor as number;
-              // If it's the nearest vacant socket, make it pulse white/bright
-              const isActive = arm.userData.socketId === nearest?.id;
-              tintGlowRing(ring, isActive ? 0xffffff : baseColor, isActive ? 2.5 : 1.0);
-            }
-          });
-        }
-      });
-      drag.addEventListener('dragend', (event) => {
-        controls.enabled = true;
-        objectDragActive = false;
-
-        const obj = event.object;
-        const snap = snapEnabledRef.current;
-        if (obj.name === 'docked-orb-group') {
-          const armSocketId = obj.parent?.userData?.socketId as string | undefined;
-          const worldPos = new THREE.Vector3();
-          obj.getWorldPosition(worldPos);
-          const localPos = assemblyPivot.worldToLocal(worldPos.clone());
-          const nearest = getNearestVacantSocket(localPos, socketsRef.current, 4.0);
-
-          if (nearest && onDropAttachItem) {
-            // Dropped onto a vacant socket: re-bind and clear any free-placement
-            // override for this orb's arm (it returns to the default dock).
-            const orbChild = obj.children.find(c => c.userData.isOrb);
-            const item = orbChild?.userData.item as ApothecaryItem;
-            if (item) {
-              onDropAttachItem(item, nearest.id);
-              if (armSocketId) setSpatialEdits(prev => clearOverride(prev, `orb:${armSocketId}`));
-            }
-          } else if (armSocketId) {
-            // Free placement: persist the orb's local position as a durable
-            // spatial edit (snapped to the grid when SNAP is on).
-            const raw: [number, number, number] = [obj.position.x, obj.position.y, obj.position.z];
-            const pos: readonly [number, number, number] = snap ? snapPositionToGrid(raw, SPATIAL_SNAP_GRID) : raw;
-            obj.position.set(pos[0], pos[1], pos[2]);
-            setSpatialEdits(prev => setOverride(prev, `orb:${armSocketId}`, { position: pos }));
-          }
-
-          // Reset all socket glow colors
-          socketMeshesGroup.children.forEach(arm => {
-            const ring = arm.children.find(c => c.userData.isSocket);
-            if (ring) {
-              const baseColor = ring.userData.ringColor as number;
-              tintGlowRing(ring, baseColor, 1.0);
-            }
-          });
-        }
-      });
-      dragControlsRef.current = drag;
-      applySpatialOverrides();
-    };
-
-    rebuildDragTargetsRef.current = rebuildDragTargets;
-    rebuildDragTargets();
+    applySpatialOverrides();
 
     // Swap the procedural placeholders for the real .glb models as soon as
     // they are in the cache. Without this the core crystal stayed generic
@@ -2107,7 +1972,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       buildCoreCrystal();
       buildPortalAssembly();
       updateSocketGeometries(true);
-      rebuildDragTargets();
+      applySpatialOverrides();
       luminaryPresence.applyModel();
       setIsModelsLoaded(true);
     };
@@ -2180,7 +2045,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       if (pick?.kind === 'socketNode') {
         const socket = socketsRef.current.find((entry) => entry.id === pick.socketId);
         setHoveredElementTotem(socket?.connectedItem?.id);
-        renderer.domElement.style.cursor = socket?.connectedItem ? 'grab' : 'default';
+        renderer.domElement.style.cursor = socket?.connectedItem ? 'pointer' : 'default';
         return;
       }
       const popup = hoveredElementTotem?.userData?.popupRoot as HTMLElement | undefined;
@@ -2226,7 +2091,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       if (!hasElementTarget && !viewLockedRef.current) {
         // Empty space arms the turntable so a drag spins the
         // assembly. Element selection is handled by the browser's completed
-        // click event below, after DragControls has had a chance to claim a drag.
+        // click event below, after classifying pointer movement.
         rotateArmed = true;
         rotateLastX = event.clientX;
       }
@@ -2241,7 +2106,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         if (dx * dx + dy * dy >= 25) scenePointerMoved = true;
       }
       updateHoveredElementTotem(event);
-      if (!rotateArmed || objectDragActive) return;
+      if (!rotateArmed) return;
       if ((event.buttons & 1) === 0) return; // left button no longer held
       const dx = event.clientX - rotateLastX;
       rotateLastX = event.clientX;
@@ -2252,9 +2117,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const moved = scenePointerMoved;
       scenePointerStart = null;
       scenePointerMoved = false;
-      // The click event occurs after DragControls finishes the pointer
-      // sequence. Use movement as the click-vs-drag boundary so a dragstart on
-      // an Orb cannot swallow an otherwise stationary click.
+      // A drag gesture on an anchored Orb must not trigger drill-down.
+      // Stationary clicks still open the Element normally.
       if (moved || navigationPending) return;
       setPointerRay(event);
       const hit = raycaster.intersectObjects(pickProxiesRef.current, false)[0];
@@ -2430,7 +2294,6 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       renderer.domElement.removeEventListener('webglcontextlost', handleContextLost);
       renderer.domElement.removeEventListener('webglcontextrestored', handleContextRestored);
       cancelAnimationFrame(animationFrameId);
-      if (dragControlsRef.current) dragControlsRef.current.dispose();
       controls.dispose();
       starSprite.dispose();
       particleGeo.dispose();
