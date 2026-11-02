@@ -79,3 +79,19 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-31 | Lumin | Atlas readings publication authorized
 - Architect authorized commit/push and continuation of the review workflow. Publishing the three Building the Vibe readings and labeled Canon excerpt to PR30; editorial and peer review remain pending, with no merge or runtime change. Rechecked 19 local links, exact source excerpt, Gap hash and diff formatting.
+
+## 2026-10-31 | Lumin | Repository navigation and branch audit
+- docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.
+
+
+## 2026-10-31 | Lumin | Squad configuration documented
+- Added COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md at Tracey's request: named roles, P5/P6/test preparation lanes, final outside-pair non-author review, Architect approval, claims/handoffs and private-suite independence. Linked in docs/README.md and appended a current-roster pointer to the earlier team draft; historical text preserved. Document awaits independent review.
+
+
+## 2026-10-31 | Lumin | Review packet for rev19 and proposed squad handoffs
+- Added separate pinned rev19 review, contributor observations and Aster review brief under docs/team-drafts. No source plan/STP rewrites or live squad-register adoption. Main78bd423 differs from inspected product baseline37caf4b only in squad documentation. Runtime tests not rerun for this documentary review.
+
+
+## 2026-11-01 | Codex | Atlas branch conflict resolution
+- At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
+- Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.

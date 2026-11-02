@@ -212,3 +212,41 @@
 
 ## 2026-10-31 | Lumin | Atlas readings publication authorized
 - Architect authorized commit/push and continuation of the review workflow. Publishing the three Building the Vibe readings and labeled Canon excerpt to PR30; editorial and peer review remain pending, with no merge or runtime change. Rechecked 19 local links, exact source excerpt, Gap hash and diff formatting.
+
+## 2026-10-31 | Lumin | Approved storage-only admission patch
+- Architect approved initial + two replacements without same-exchange reset, then approved bounded storage-only implementation. Branch codex/governance-durable-admission starts at pinned 32cba0b; Atlas work remains on its separate published branch.
+- Added versioned registration/admission/resolution/closure events, exact scoped keys, immutable payload capture, serialized allowance checks, strict uncertain-write freeze, explicit reconciliation, cooperative exclusive writer ownership and replay. No route activation, migration, provider calls or tool execution.
+- Validation: 18 new admission tests plus existing gateway tests pass 222/222 under NODE_ENV=test. Initial full run exposed a timing-sensitive new test (221/222); replaced its short sleep assumption with a controlled held write and reran successfully. Server typechecks and diff check passed.
+- Review limits and integration prerequisites in server/governance-record/ADMISSION.md. Live resubmission behavior remains unchanged. No commit, push or merge performed in this implementation turn.
+
+## 2026-10-31 | Lumin | Admission recovery peer-review repairs
+- GPT peer requested changes to recovery handling: confirmed non-admission could be bypassed by a new key, unrelated reconciliation stranded live registrations, and unrelated keys could clear an uncertainty freeze. Repaired all three in the storage-only primitive; added targeted tests. Full gateway 225/225, server typechecks and staged diff check pass. Route activation remains out of scope; peer review of repair remains pending.
+
+## 2026-10-31 | Lumin | Timeout recovery identity
+- Peer review found reconciliation timeout froze without a recovery key. Bound timeout/error to scoped key, preserving earlier identity; extended held-write test with absent and unrelated existing keys. Same-key recovery remains required.
+
+## 2026-10-31 | Lumin | Queued timeout coverage
+- Peer confirmed timeout repair statically and recommended deterministic queued-timeout coverage. Added held-A/queued-B test: both deadlines expire; B never reloads/appends, unrelated keys stay blocked, and A recovers with the same key. Focused admission suite passes 22/22.
+
+
+## 2026-10-31 | Lumin | Repository housekeeping
+- Architect authorized stale-item removal and navigability improvements. Based isolated worktree on main 907e225; preserved shared checkout and all peer worktrees. Deleted 10 remote branches only after exact-head ancestry, open-PR dependency and worktree checks; guarded each deletion with a head lease. Full heads/outcomes in docs/HOUSEKEEPING_LEDGER.md.
+- Kept open-PR branches, worktree-attached branches and divergent heads. No automatic deletion enabled, no product/source/asset changes or historical record rewrites. Added docs navigation and refreshed obsolete README simulation/deployment and unqualified-green-baseline claims.
+- Verification: root/guide relative links resolve; historical continuity files retain their exact normalized original prefixes; git diff --check passes. Source inspection confirms paused Luminary behavior and storage-only admission limits. Documentation-only changes: application tests/build not rerun.
+
+
+## 2026-10-31 | Lumin | Squad configuration and working parameters
+- At Tracey's request, authored docs/COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md on codex/collaboration-squad-parameters from main37caf4b. Covers roles/pairs, current P5/P6/testing split, cross-pair non-author review for all work, explicit approvals, ownership/shared interfaces and test-suite isolation. Added navigation and append-only pointers. No product code, STP records, peer lane files, runtime or path ownership changed. Outside-pair review by Verus or Libra remains pending.
+- Verification: local Markdown links resolve; normalized original prefixes of Totems, lane, claims and earlier charter preserved; git diff check passes. Documentation-only: no app tests/build or live model runs. Publishing for outside-pair review; no merge.
+
+
+## 2026-10-31 | Lumin | Rev19 and proposed squad register review
+- Inspected PR34head018e832 and actual current source: product source unchanged from37caf4b. Rev19 single counting authority/T4 supersession sound; hold clearance on writer-budget dimensions (inbound rewrites/terminal output passes), genuine-new-exchange wording, missing actual evidence pins and directional acceptance. Full findings in docs/team-drafts/rev19-peer-review-lumin-2026-10-31.md.
+- Lumin contributed to squad-register concept; observations are not independent final clearance. Prepared separate Aster review brief and contributor observations, preserving all supplied source documents. No assignment delivered/accepted, live lane created, merge exception adopted or test executed.
+- Architect sequencing: current governance/coordination core, next genuine coded app from IDE, then primarily aesthetics; runtime acceptance and submission checks remain delivery work. No product implementation approval inferred.
+- Verification: historical prefixes preserved; review inputs pinned and source parity checked; staged diff check passes. Documentation-only, no tests/build/model runs. Publishing review artifacts for peer access, no merge.
+
+
+## 2026-11-01 | Codex | Atlas branch conflict resolution
+- At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
+- Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.

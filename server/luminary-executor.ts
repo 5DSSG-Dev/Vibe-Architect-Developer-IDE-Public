@@ -26,7 +26,7 @@ export const MAX_REVIEW_DIFF_CHARS = 1_000_000;
 const LUMINARY_AUTHOR = ['-c', 'user.name=Vibe Luminary', '-c', 'user.email=luminary@vibe-architect.local'];
 
 /** Paths the fence never lets the Luminary write, whatever the task allows. */
-const FORBIDDEN: { pattern: RegExp; reason: string }[] = [
+const OUTSIDE_ACCESS_PARAMETERS: { pattern: RegExp; reason: string }[] = [
   { pattern: /(^|\/)\.env(\.|$)/i, reason: 'settings files hold keys' },
   { pattern: /(^|\/)\.git(\/|$)/, reason: 'Git internals' },
   { pattern: /(^|\/)\.luminary(\/|$)/, reason: 'the Luminary\'s own ledger and worktrees' },
@@ -44,7 +44,7 @@ export function checkFencePath(raw: string): { ok: true; path: string } | { ok: 
   if (trimmed.startsWith('/') || /^[A-Za-z]:/.test(trimmed)) return { ok: false, reason: `${raw} is not inside the project` };
   const path = posix.normalize(trimmed);
   if (path === '.' || path.startsWith('../') || path === '..') return { ok: false, reason: `${raw} is not inside the project` };
-  for (const { pattern, reason } of FORBIDDEN) {
+  for (const { pattern, reason } of OUTSIDE_ACCESS_PARAMETERS) {
     if (pattern.test(path)) return { ok: false, reason: `${path} is outside the fence (${reason})` };
   }
   return { ok: true, path };
