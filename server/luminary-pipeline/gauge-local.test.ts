@@ -10,6 +10,7 @@ import {
 } from './gauge-local.js';
 import { runReplyPipeline } from './pipeline.js';
 import { loadConfig } from '../config.js';
+import { fakeIdsWriter } from './ids.fixtures.js';
 
 // Every test uses a fake fetch. No runtime or model is reached.
 
@@ -121,7 +122,7 @@ test('runtime failures are GaugeErrors: unreachable, HTTP error, or a non-JSON b
 test('in the pipeline, each Virtue meets its own threshold; one below routes to IDS naming that threshold', async () => {
   const selected = thresholds(10, { Respect: 29.3, Communication: 34.7 });
   // Every reading is 30: above Respect's 29.3, below Communication's 34.7.
-  const gauge = gaugeWith(fakeRuntime(() => 0.3).fetch, selected);
+  const gauge = { ...gaugeWith(fakeRuntime(() => 0.3).fetch, selected), ids: fakeIdsWriter() };
   assert.deepEqual(gauge.thresholds, selected);
   const result = await runReplyPipeline({ modelId: 'meta/x', content: 'hello' }, async () => { throw new Error('stop'); }, { gauge });
   assert.equal(result.ok, false);

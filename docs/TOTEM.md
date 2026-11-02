@@ -64,3 +64,34 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-10-29 | App-suite verification follow-up
 - The Knowledge Pack portability check passes in its targeted suite. A fresh full app run has an unrelated identity deterministic-rebuild failure (340/341); the identity test file passes alone (37/37).
+## 2026-10-30 | Codex | Concept reference library
+- Started docs/reference-library with a plain-language Gap Illumination introduction, explicitly labeled project interpretations and an unchanged source copy from the Architect. Source status remains Proposed aligned Canon. SOURCES.md records provenance and SHA-256. Other topic entries await source selection; no runtime or Canon change, commit or push.
+
+
+## 2026-10-30 | Codex | Vibe Atlas documentation publication
+- Architect authorized updating and publishing the reference-library documentation separately. README now uses The Vibe Atlas, Copilot-attributed tagline, Explore and Building the Vibe, with Gap Illumination as the first source-backed reading. Planned entries and IDQRA design direction are distinguished from implemented behavior.
+- Verified local Markdown targets and source SHA-256; documentation only, no application tests needed. Source status and original source bytes preserved. Commit/push/PR publication authorized; merge remains for review.
+
+
+## 2026-10-31 | Lumin | Building the Vibe editorial drafts
+- Continued authorized Atlas writing: introduction, The Canon Behind the Build, and Illumination, Not Correction. Added labeled verbatim axiom-section excerpt and provenance; full Canon unchanged. Architect interpretation and proposed IDQRA behavior explicitly distinguished from source and implementation evidence.
+- Verified 19 local Markdown links, all 17 axiom entries against source section, and unchanged Gap doctrine hash. Documentation only; no application tests. New writing remains local for review, not committed/pushed or added to PR30 this turn.
+
+## 2026-10-31 | Lumin | Atlas readings publication authorized
+- Architect authorized commit/push and continuation of the review workflow. Publishing the three Building the Vibe readings and labeled Canon excerpt to PR30; editorial and peer review remain pending, with no merge or runtime change. Rechecked 19 local links, exact source excerpt, Gap hash and diff formatting.
+
+## 2026-10-31 | Lumin | Repository navigation and branch audit
+- docs/README.md indexes setup, module backlog, decisions, peer coordination, contracts, admission integration limits and archive. Appended exact audited branch heads/outcomes to HOUSEKEEPING_LEDGER.md; initial Oct 24 status/counts are historical. Ten completed remote branches deleted after ancestry/dependency/worktree checks.
+
+
+## 2026-10-31 | Lumin | Squad configuration documented
+- Added COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md at Tracey's request: named roles, P5/P6/test preparation lanes, final outside-pair non-author review, Architect approval, claims/handoffs and private-suite independence. Linked in docs/README.md and appended a current-roster pointer to the earlier team draft; historical text preserved. Document awaits independent review.
+
+
+## 2026-10-31 | Lumin | Review packet for rev19 and proposed squad handoffs
+- Added separate pinned rev19 review, contributor observations and Aster review brief under docs/team-drafts. No source plan/STP rewrites or live squad-register adoption. Main78bd423 differs from inspected product baseline37caf4b only in squad documentation. Runtime tests not rerun for this documentary review.
+
+
+## 2026-11-01 | Codex | Atlas branch conflict resolution
+- At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
+- Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.

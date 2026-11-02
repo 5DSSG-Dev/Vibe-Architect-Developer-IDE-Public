@@ -48,3 +48,6 @@ build/
 
 # Luminary Meta model spend ledger (local only, never committed)
 /.luminary/
+
+# Governance review areas (STP-0005 P3), if GOVERNANCE_RECORD_DIR points inside the repo
+.aegis-vibe-architect/

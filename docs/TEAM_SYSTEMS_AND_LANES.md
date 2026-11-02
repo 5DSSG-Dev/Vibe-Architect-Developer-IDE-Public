@@ -133,3 +133,8 @@ Owned paths need no claim for their owner. Another peer working in someone else'
 3. System 4 reviews each system against its STP Target as work lands.
 
 Hackathon timing: the Meta hackathon runs Oct 26 to Nov 4. STP-0002 finding S11 notes that the rules on pre-existing code are unpublished. System 4 checks the Official Rules before any peer treats pre-Monday code as part of the entry.
+
+
+## 2026-10-31 | Architect-directed squad configuration
+
+The current named roster, assistance pairs and final cross-pair review rules are recorded in [Collaboration Squad configuration and Working Parameters](COLLABORATION_SQUAD_CONFIGURATION_AND_WORKING_PARAMETERS.md). It supersedes this earlier draft roster for current coordination without adopting its historical feature proposals or silently releasing existing claims. The new artifact remains subject to independent review.

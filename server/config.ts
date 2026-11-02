@@ -39,6 +39,10 @@ export interface GatewayConfig {
   luminaryReplySource?: 'rehearsal' | 'meta' | 'baseten';
   /** The Luminary's code-production executor (P19). Off unless LUMINARY_EXECUTOR=on. */
   luminaryExecutor?: boolean;
+  /** Where the review areas live (STP-0005 P3). Defaults to a private folder in the user profile. */
+  governanceRecordDir?: string;
+  /** A second folder the review logs are copied to on start and after each item saved for review. */
+  governanceBackupDir?: string;
   stellarCapabilities?: StellarCapabilityConfig;
   entra?: {
     tenantId: string;
@@ -114,6 +118,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
   const executorFlag = env.LUMINARY_EXECUTOR?.trim().toLowerCase();
   if (executorFlag && executorFlag !== 'on' && executorFlag !== 'off') throw new Error('LUMINARY_EXECUTOR must be on, off or unset');
   const luminaryExecutor = executorFlag === 'on';
+  const governanceRecordDir = env.GOVERNANCE_RECORD_DIR?.trim() || undefined;
+  const governanceBackupDir = env.GOVERNANCE_BACKUP_DIR?.trim() || undefined;
   if (redisUrl && !['redis:', 'rediss:'].includes(new URL(redisUrl).protocol)) {
     throw new Error('REDIS_URL must use the redis: or rediss: scheme');
   }
@@ -191,6 +197,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
     luminaryDemoKey,
     luminaryGauge,
     luminaryReplySource,
+    governanceRecordDir,
+    governanceBackupDir,
     luminaryExecutor,
     stellarCapabilities,
     entra,

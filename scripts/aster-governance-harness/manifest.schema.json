@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract": {
+      "const": "P6-A-v0.2@fb50bacc2ef0e8ecf66fb082aa4ea78f4cdffd52:section-5"
+    },
+    "mode": {
+      "const": "offline-synthetic"
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workspace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "const": "architect-to-luminary"
+        },
+        "attemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exchangeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "registrationDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "snapshotDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "originalDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "effectiveDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "scope",
+        "workspace",
+        "direction",
+        "attemptId",
+        "exchangeId",
+        "ordinal",
+        "registrationDigest",
+        "snapshotDigest",
+        "originalDigest",
+        "effectiveDigest"
+      ],
+      "additionalProperties": false
+    },
+    "route": {
+      "enum": [
+        "ask",
+        "tasks"
+      ]
+    },
+    "submissionKeyDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "outcome": {
+      "enum": [
+        "returned",
+        "completed",
+        "shortfall"
+      ]
+    },
+    "retryScope": {
+      "enum": [
+        "per-response",
+        "per-attempt"
+      ]
+    },
+    "rewriteLimit": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "roleLimits": {
+      "type": "object",
+      "properties": {
+        "response.generate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "response.reform": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conscience.write": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gauge.read": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "response.generate",
+        "response.reform",
+        "conscience.write",
+        "gauge.read"
+      ],
+      "additionalProperties": false
+    },
+    "expectedCounts": {
+      "type": "object",
+      "properties": {
+        "dispatch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "release": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "effect": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "dispatch",
+        "release",
+        "effect"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "version",
+    "runId",
+    "contract",
+    "mode",
+    "identity",
+    "route",
+    "submissionKeyDigest",
+    "outcome",
+    "retryScope",
+    "rewriteLimit",
+    "roleLimits",
+    "expectedCounts"
+  ],
+  "additionalProperties": false
+}

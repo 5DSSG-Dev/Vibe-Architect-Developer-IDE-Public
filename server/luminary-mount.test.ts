@@ -68,13 +68,14 @@ test('a configured endpoint rejects a request with no demo key (401)', async () 
   assert.equal((await ask(base, {})).status, 401);
 });
 
-test('with the demo key and the default placeholder model, the governed path returns a named upstream_error Shortfall (502) — never fabricated prose', async () => {
+test('with the demo key and the default gauge and model, the Architect message is not sent: a named gauge_error Shortfall (502), zero Luminary calls, never fabricated prose', async () => {
   const base = await listen({ luminaryDemoKey: DEMO_KEY });
   const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
   assert.equal(res.status, 502);
   const body = await res.json();
   assert.equal(body.error, 'luminary_shortfall');
-  assert.equal(body.shortfall.code, 'upstream_error');
+  assert.equal(body.shortfall.code, 'gauge_error');
+  assert.equal(body.calls.luminary_response, 0);
   assert.equal(body.reply, undefined);
 });
 

@@ -166,3 +166,39 @@ These look messy but are intentional. **Don't move them.**
 4. **Already planned elsewhere:** H24 and H34 (STP-0003), H19 (System 3).
 
 Each item is small, so peers can split them by Owner. The full list could reasonably be done in one day.
+
+
+## 2026-10-31 | Lumin | Authorized branch and navigation housekeeping
+
+Architect authorized housekeeping in this chat. Audit baseline: `origin/main` at `907e225`. This update supersedes the ledger's initial "nothing moved or deleted" status for the actions below; earlier entries remain historical. Prior archive work is also recorded in [archive/README.md](../archive/README.md). Old H-item counts and paths must be rechecked rather than treated as current instructions.
+
+Deleted remote heads were checked for ancestry in main, absence of open PR head/base dependencies, and absence of an attached worktree. Deletions used exact-head leases to reject concurrent branch updates. No local branches or peer worktrees were removed. PR conversations and historical continuity records remain.
+
+| Branch | Audited head | Outcome |
+|---|---|---|
+| `claude/dataquad-meta-hackathon-9793f8` | `b3d999150d2027d8dec80530d19724c44a7ae55f` | Kept: attached worktree |
+| `claude/docs-plan-rev16` | `09b565d2174260aa6f20bb60f1f5a3403d3b0cb8` | Kept: open PR 31 |
+| `claude/project-thread-7v37qe` | `8b727a178241d3f188faa2648062df83634076fa` | Kept: open PR 21 |
+| `claude/project-thread-9fdggm` | `da0b847b11d2d8bceaf81c3acb1529ddeb8bfe56` | Kept: open PR 28 |
+| `claude/project-thread-h0z478` | `f9aa90462fd0b2d17cd0b95b844326bbf1faca31` | Deleted: exact head preserved in main |
+| `claude/project-thread-p03e4i` | `cf325e2a46fdce5a858a95d8fa393e91855df955` | Deleted: exact head preserved in main |
+| `claude/project-thread-zapc7o` | `72e35790e37ebbdb570e1f6d0e43b0d575fb9685` | Deleted: exact head preserved in main |
+| `codex/governance-durable-admission` | `e1611fbbd00b440aec1777a1954db3ff73b40178` | Kept: attached worktree |
+| `codex/m3-test-and-lane-followups` | `00808f9c3d6200a0675569aac0be153290c6eeaa` | Deleted: exact head preserved in main |
+| `codex/m4-child-element-removal` | `1254c134d348a1ac4c50de9e539df764f035172a` | Kept: open PR 29 |
+| `codex/m4-continuous-zoom` | `e34ef99580d0d4a75a96cf756a01aff86f63ad37` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/m4-core-motion-transitions` | `d5e0e73b626b954cf95c23367cf0ee9dfb4cc5d2` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/m4-element-inspection-framing` | `3e7249b5069ef8fd19b8851c2ed3ea2dd52b52f2` | Deleted: exact head preserved in main |
+| `codex/m5-readiness-stp` | `2d5ec6a3ff7a8abfbfdfc4eceef6329f420887ff` | Deleted: exact head preserved in main |
+| `codex/remove-demo-modes` | `31ad332cbf41dfced0bc9ac9bceac18a5a2eb7ff` | Deleted: exact head preserved in main |
+| `codex/stp-0003-connection-event-history` | `68eeb74fe11ed07d462b1223486bb121fdec92c7` | Deleted: exact head preserved in main |
+| `codex/stp-0003-customs-tumbler-review` | `1e1e7e8617e226dc59190484c9c1f12ae283ee6f` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/stp-0003-p1-element-schema` | `b0e5e2478e918cdf8ab9c3f25f90171025add2c2` | Kept: attached worktree |
+| `codex/stp-0003-review-followups` | `486bdfacf7a0ff7ef827653c3b54c93790d07cc7` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/stp-0003-umbilical-completion` | `4a82b68edf831adcd5d6ffa0f726b5ed7968a6f7` | Deleted: exact head preserved in main |
+| `codex/stp-0003-umbilical-contracts` | `33c1202951f681a614dee454a13edba302cc1cea` | Deleted: exact head preserved in main |
+| `codex/stp-0004-blueprint-closeout` | `6e28d28aa903f2de48b07ec0b4077dfc1aa8b52f` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/unblock-verus-m3-notes` | `16d623deba5dda78371cfa07baa352faf2ca7624` | Kept: head not an ancestor of main; unique history needs review |
+| `codex/vibe-atlas-reference-library` | `b3e072c93bcdeebbe54ec886aaa95b65d6d256b3` | Kept: open PR 30 |
+
+Navigation: added docs/README.md and root entry links. Updated README to reflect retired simulation/deployment screens and storage-only admission integration limits. No product behavior, source assets, historical lanes, STPs, or hashed records were deleted. Existing divergent branches are retained intentionally; their presence is not evidence that they are active or approved.
