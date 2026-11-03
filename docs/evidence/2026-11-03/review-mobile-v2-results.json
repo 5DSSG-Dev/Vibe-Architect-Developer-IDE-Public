@@ -1,0 +1,30 @@
+[
+  {
+    "w": 390,
+    "pass": true,
+    "width": 390,
+    "scroll": 390,
+    "collisions": []
+  },
+  {
+    "w": 768,
+    "pass": true,
+    "width": 768,
+    "scroll": 768,
+    "collisions": []
+  },
+  {
+    "w": 1100,
+    "pass": true,
+    "width": 1100,
+    "scroll": 1100,
+    "collisions": []
+  },
+  {
+    "w": 1440,
+    "pass": true,
+    "width": 1440,
+    "scroll": 1440,
+    "collisions": []
+  }
+]

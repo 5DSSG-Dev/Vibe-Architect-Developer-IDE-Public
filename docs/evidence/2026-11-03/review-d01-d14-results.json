@@ -1,0 +1,45 @@
+[
+  {
+    "id": "D01-unique-production-controls",
+    "result": "PASS",
+    "detail": "Production buttons=[\"ToDo ? 3 remaining +\"]"
+  },
+  {
+    "id": "D08-collapsed-menu-inert",
+    "result": "PASS"
+  },
+  {
+    "id": "D09-focus-return",
+    "result": "PASS",
+    "detail": "Open the Apothecary Cabinet"
+  },
+  {
+    "id": "D10-rename-persistence",
+    "result": "PASS",
+    "detail": "QA Synced Name"
+  },
+  {
+    "id": "D04-builder-labels",
+    "result": "FAIL",
+    "detail": "[\"<select id=\\\"builder-socket\\\" class=\\\"bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold font-orbitron text-xs rounded-lg px-2.5 py-1 focus:outline-none\\\"><option value=\\\"so\"]"
+  },
+  {
+    "id": "D13-modal-luminary-inert",
+    "result": "PASS"
+  },
+  {
+    "id": "D04-D06-builder-axe",
+    "result": "FAIL",
+    "detail": "[{\"id\":\"select-name\",\"impact\":\"critical\",\"count\":1}]"
+  },
+  {
+    "id": "D14-reopen-clone-menu",
+    "result": "PASS",
+    "detail": "Open Recent +"
+  },
+  {
+    "id": "qa-flow",
+    "result": "FAIL",
+    "detail": "Error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:368:30), <anonymous>:1:16)\n    at UtilityScript.evaluate (<anonymous>:370:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  }
+]

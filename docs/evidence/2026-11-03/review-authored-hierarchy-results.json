@@ -1,0 +1,22 @@
+[
+  {
+    "id": "V11-D02-catalog-roundtrip",
+    "result": "PASS",
+    "detail": "authored Elements=2"
+  },
+  {
+    "id": "V11-D02-relations",
+    "result": "PASS",
+    "detail": "parent-child stored"
+  },
+  {
+    "id": "V11-D03-Rust-Python",
+    "result": "PASS",
+    "detail": "language/source unchanged"
+  },
+  {
+    "id": "V11-D02-schema",
+    "result": "PASS",
+    "detail": "typed contracts imported"
+  }
+]

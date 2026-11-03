@@ -324,7 +324,13 @@ export class ReplayOperationsProvider implements OperationsProvider {
     req.once('aborted', cleanup);
 
     const baseline = events[0] ? Date.parse(events[0].observedAt) : 0;
+    // Timer delays round to milliseconds. Enforce a strictly increasing
+    // schedule so high playback rates cannot reorder sequential events.
+    let lastEventDelay = -1;
     for (const event of events) {
+      const relativeDelay = Math.max(0, (Date.parse(event.observedAt) - baseline) / this.playbackRate);
+      const eventDelay = Math.max(lastEventDelay + 1, Math.floor(relativeDelay));
+      lastEventDelay = eventDelay;
       const timer = setTimeout(() => {
         timers.delete(timer);
         if (!closed && !res.writableEnded && !res.destroyed) {
@@ -332,12 +338,12 @@ export class ReplayOperationsProvider implements OperationsProvider {
           res.write('event: operation\n');
           res.write(`data: ${JSON.stringify(event)}\n\n`);
         }
-      }, Math.max(0, (Date.parse(event.observedAt) - baseline) / this.playbackRate));
+      }, eventDelay);
       timers.add(timer);
     }
 
     const endDelay = events.length
-      ? (Date.parse(events[events.length - 1].observedAt) - baseline) / this.playbackRate + 1
+      ? Math.max(lastEventDelay + 1, (Date.parse(events[events.length - 1].observedAt) - baseline) / this.playbackRate + 1)
       : 0;
     const endTimer = setTimeout(() => {
       timers.delete(endTimer);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Sparkles, Cpu, HardDrive, ShieldCheck, Zap, Layers, Plus, Trash2, ArrowRight, Save, ToggleLeft, ToggleRight } from 'lucide-react';
-import { ApothecaryItem, SocketBinding, TrustBadgeType, CategoryType, SatelliteClass } from '../engine/relationEngine';
+import { ApothecaryItem, SocketBinding, TrustBadgeType, CategoryType, SatelliteClass, type ElementCodeLanguage, createDefaultElementCodeFrame } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
 import { UMBILICAL_PROFILE_IDS, UMBILICAL_PROFILES, type UmbilicalProfileId } from '../contracts/umbilicalStandards';
 
@@ -8,6 +8,7 @@ interface OrbBuilderModalProps {
   initialItem?: ApothecaryItem;
   targetSocketId?: string;
   availableSockets: SocketBinding[];
+  catalog: ApothecaryItem[];
   onClose: () => void;
   onSaveToCatalog: (item: ApothecaryItem) => void;
   onInitiateHandshake: (item: ApothecaryItem, targetSocketId: string) => void;
@@ -17,6 +18,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
   initialItem,
   targetSocketId,
   availableSockets,
+  catalog,
   onClose,
   onSaveToCatalog,
   onInitiateHandshake
@@ -25,16 +27,18 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
     targetSocketId || availableSockets.find(s => s.state === 'Vacant')?.id || availableSockets[0]?.id || 'socket-alpha'
   );
 
-  const [name, setName] = useState(initialItem?.name || 'PyTorch Neural Engine');
-  const [description, setDescription] = useState(initialItem?.description || 'Deep learning tensor processing module with hardware acceleration.');
-  const [language, setLanguage] = useState<'Python' | 'TypeScript' | 'Rust' | 'PyTorch'>('PyTorch');
-  const [category, setCategory] = useState<CategoryType>(initialItem?.category || 'Formulas');
+  const [name, setName] = useState(initialItem?.name || 'New Element');
+  const [description, setDescription] = useState(initialItem?.description || 'Describe the Element purpose and its expected behavior.');
+  const [language, setLanguage] = useState<ElementCodeLanguage>(initialItem?.codeFrame?.language ?? 'TypeScript');
+  const [category, setCategory] = useState<CategoryType>(initialItem?.category || 'Orbs');
+  const [satelliteClass, setSatelliteClass] = useState<SatelliteClass>(initialItem?.satelliteClass ?? 'Compute');
+  const [parentElementId, setParentElementId] = useState(initialItem?.parentElementId ?? '');
   const [umbilicalProfileId, setUmbilicalProfileId] = useState<UmbilicalProfileId | ''>(initialItem?.umbilicalProfileId ?? '');
   const [trust, setTrust] = useState<TrustBadgeType>(initialItem?.trust || 'Formulated');
 
   // Capabilities Pair Builder
   const [capabilities, setCapabilities] = useState<string[]>(
-    initialItem?.capabilities || ['tensor_compute', 'gpu_accelerated', 'handshake_exec']
+    initialItem?.capabilities || []
   );
   const [newCapInput, setNewCapInput] = useState('');
 
@@ -68,9 +72,12 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
   };
 
   const buildConfiguredItem = (): ApothecaryItem => {
-    const primarySatClass = (Object.keys(selectedSatellites).find(k => selectedSatellites[k]) || 'Compute') as SatelliteClass;
-    return {
-      id: initialItem?.id || `custom-orb-${Date.now().toString().slice(-4)}`,
+    if ((category === 'Satellites' || category === 'Actuators') &&
+        !catalog.some(entry => entry.id === parentElementId && entry.category === (category === 'Satellites' ? 'Orbs' : 'Satellites'))) {
+      throw new Error('Choose a valid parent Element for this ' + category.slice(0, -1) + '.');
+    }
+    const item: ApothecaryItem = {
+      id: initialItem?.id || `custom-${category.toLowerCase().replace(/s$/, '')}-${crypto.randomUUID()}`,
       name,
       description,
       category,
@@ -80,9 +87,21 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
       threadsReq,
       capabilities,
       requirements: initialItem?.requirements || ['invariant_guard'],
-      satelliteClass: primarySatClass,
-      umbilicalProfileId: category === 'Orbs' && umbilicalProfileId ? umbilicalProfileId : undefined
+      satelliteClass: category === 'Satellites' ? satelliteClass : undefined,
+      geometryType: category === 'Orbs' ? 'sphere' : category === 'Satellites' ? 'dodecahedron' : 'octahedron',
+      parentElementId: category === 'Satellites' || category === 'Actuators' ? parentElementId : undefined,
+      umbilicalProfileId: category === 'Orbs' && umbilicalProfileId ? umbilicalProfileId : undefined,
+      authoringContract: ['Orbs','Satellites','Actuators'].includes(category) ? {
+        version: 1,
+        kind: category === 'Orbs' ? 'OrbUmbilical' : category === 'Satellites' ? 'SatelliteTether' : 'ActuatorOperation',
+        parentId: category === 'Orbs' ? null : parentElementId,
+        capabilities: [...capabilities],
+        requirements: [...(initialItem?.requirements ?? ['invariant_guard'])]
+      } : undefined
     };
+    return { ...item, codeFrame: initialItem?.codeFrame?.language === language
+      ? initialItem.codeFrame
+      : createDefaultElementCodeFrame(item, language) };
   };
 
   const handleSaveCatalog = () => {
@@ -95,6 +114,8 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
     onInitiateHandshake(item, selectedSocketId);
   };
 
+  const parentReady = category !== 'Satellites' && category !== 'Actuators' ||
+    catalog.some(entry => entry.id === parentElementId && entry.category === (category === 'Satellites' ? 'Orbs' : 'Satellites'));
   const profileMemoryReady = category !== 'Orbs' || !umbilicalProfileId ||
     memoryReq >= UMBILICAL_PROFILES[umbilicalProfileId].minimumMemoryMB;
 
@@ -118,6 +139,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
 
           <button
             onClick={onClose}
+            aria-label="Close Element Builder"
             className="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -128,8 +150,9 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
         <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
           {/* Target Socket Selector */}
           <div className="bg-slate-950/70 p-3 rounded-xl border border-cyan-500/20 flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Target Umbilical Socket:</span>
+            <label htmlFor="builder-socket" className="text-[10px] font-bold text-slate-300 uppercase">Target Umbilical Socket:</label>
             <select
+              id="builder-socket"
               value={selectedSocketId}
               onChange={(e) => setSelectedSocketId(e.target.value)}
               className="bg-slate-900 border border-cyan-500/40 text-cyan-300 font-bold font-orbitron text-xs rounded-lg px-2.5 py-1 focus:outline-none"
@@ -145,8 +168,9 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
           {/* Basic Properties Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2 space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase">Orb Name</label>
+              <label htmlFor="builder-name" className="text-[10px] font-bold text-slate-300 uppercase">Element Name</label>
               <input
+                id="builder-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -155,8 +179,9 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase">Runtime Language</label>
+              <label htmlFor="builder-language" className="text-[10px] font-bold text-slate-300 uppercase">Runtime Language</label>
               <select
+                id="builder-language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as any)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-cyan-300 font-bold font-orbitron focus:outline-none focus:border-cyan-400"
@@ -164,7 +189,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                 <option value="Python">Python</option>
                 <option value="TypeScript">TypeScript</option>
                 <option value="Rust">Rust</option>
-                <option value="PyTorch">PyTorch</option>
+                <option disabled value="PyTorch">PyTorch — unsupported as a runtime language (use Python)</option>
               </select>
             </div>
           </div>
@@ -172,20 +197,45 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
           {/* Purpose & Description */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/70 p-3 rounded-xl border border-slate-800">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase">Element kind</label>
+              <label htmlFor="builder-category" className="text-[10px] font-bold text-slate-300 uppercase">Element kind</label>
               <select
+                id="builder-category"
                 value={category}
                 onChange={(event) => setCategory(event.target.value as CategoryType)}
                 className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-cyan-400"
               >
                 <option value="Formulas">Formula</option>
                 <option value="Orbs">Orb</option>
+                <option value="Satellites">Satellite</option>
+                <option value="Actuators">Actuator</option>
               </select>
             </div>
+            {(category === 'Satellites' || category === 'Actuators') && (
+              <div className="space-y-1">
+                <label htmlFor="builder-parent" className="text-[10px] font-bold text-slate-300 uppercase">Parent {category === 'Satellites' ? 'Orb' : 'Satellite'}</label>
+                <select id="builder-parent" value={parentElementId} onChange={event => setParentElementId(event.target.value)}
+                  className="w-full bg-slate-900 border border-slate-600 text-slate-100 rounded-lg p-2 text-xs">
+                  <option value="">Choose parent Element</option>
+                  {catalog.filter(item => item.category === (category === 'Satellites' ? 'Orbs' : 'Satellites')).map(item =>
+                    <option key={item.id} value={item.id}>{item.name}</option>)}
+                </select>
+                <p className="text-xs text-slate-300">The hierarchy is recorded in the catalog; attachment to a live CORE is a separate Architect action.</p>
+              </div>
+            )}
+            {category === 'Satellites' && (
+              <div className="space-y-1">
+                <label htmlFor="builder-satellite-class" className="text-[10px] font-bold text-slate-300 uppercase">Satellite class</label>
+                <select id="builder-satellite-class" value={satelliteClass} onChange={event => setSatelliteClass(event.target.value as SatelliteClass)}
+                  className="w-full bg-slate-900 border border-slate-600 text-slate-100 rounded-lg p-2 text-xs">
+                  {(['I/O','Compute','Storage','Validation','Security'] as const).map(value => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </div>
+            )}
             {category === 'Orbs' && (
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 uppercase">Orb connection contract</label>
+                <label htmlFor="builder-umbilical" className="text-[10px] font-bold text-slate-300 uppercase">Orb connection contract</label>
                 <select
+                  id="builder-umbilical"
                   value={umbilicalProfileId}
                   onChange={(event) => setUmbilicalProfileId(event.target.value as UmbilicalProfileId | '')}
                   className="w-full bg-slate-900 border border-slate-700 text-cyan-200 rounded-lg p-2 text-xs focus:outline-none focus:border-cyan-400"
@@ -197,7 +247,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                     </option>
                   ))}
                 </select>
-                <p className="text-[10px] text-slate-500">
+                <p className="text-[10px] text-slate-300">
                   CORE checks this contract and available capacity when you connect. This profile needs at least {umbilicalProfileId ? UMBILICAL_PROFILES[umbilicalProfileId].minimumMemoryMB : '—'} MB.
                 </p>
               </div>
@@ -206,8 +256,9 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
 
           {/* Purpose & Description */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase">Purpose & Description</label>
+            <label htmlFor="builder-description" className="text-[10px] font-bold text-slate-300 uppercase">Purpose & Description</label>
             <textarea
+              id="builder-description"
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -238,7 +289,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                     className={`py-1.5 px-1 rounded-lg border text-center text-[9px] font-bold transition-all ${
                       isActive
                         ? 'bg-slate-900 text-cyan-300 border-cyan-400 shadow-[0_0_10px_rgba(0,243,255,0.2)]'
-                        : 'bg-slate-950/50 text-slate-500 border-slate-800 hover:border-slate-700'
+                        : 'bg-slate-950/50 text-slate-300 border-slate-800 hover:border-slate-700'
                     }`}
                   >
                     {isActive ? '✓ ' : '+ '}
@@ -259,6 +310,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
             <div className="flex space-x-2">
               <input
                 type="text"
+                aria-label="New capability"
                 value={newCapInput}
                 onChange={(e) => setNewCapInput(e.target.value)}
                 placeholder="Add capability e.g. 'fault_containment'..."
@@ -281,7 +333,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                   className="px-2 py-0.5 rounded-lg bg-slate-900 text-cyan-300 border border-cyan-500/30 text-[10px] flex items-center space-x-1.5"
                 >
                   <span>{cap}</span>
-                  <button onClick={() => handleRemoveCapability(cap)} className="text-slate-500 hover:text-rose-400">
+                  <button type="button" aria-label={`Remove capability ${cap}`} onClick={() => handleRemoveCapability(cap)} className="text-slate-300 hover:text-rose-400">
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </span>
@@ -301,6 +353,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                 <span className="font-bold text-cyan-300 font-orbitron">{memoryReq} MB</span>
               </div>
               <input
+                aria-label="Memory requirement in megabytes"
                 type="range"
                 min="32"
                 max="2048"
@@ -325,7 +378,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                       type="button"
                       onClick={() => setThreadsReq(num)}
                       className={`px-2 py-0.5 rounded font-bold ${
-                        threadsReq === num ? 'bg-purple-950 text-purple-300 border border-purple-500' : 'bg-slate-900 text-slate-500'
+                        threadsReq === num ? 'bg-purple-950 text-purple-300 border border-purple-500' : 'bg-slate-900 text-slate-300'
                       }`}
                     >
                       {num} C
@@ -341,7 +394,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
                   onClick={() => setGpuAccelerated(!gpuAccelerated)}
                   className="flex items-center space-x-1 text-xs text-emerald-400 font-bold"
                 >
-                  {gpuAccelerated ? <ToggleRight className="w-5 h-5 text-emerald-400" /> : <ToggleLeft className="w-5 h-5 text-slate-600" />}
+                  {gpuAccelerated ? <ToggleRight className="w-5 h-5 text-emerald-400" /> : <ToggleLeft className="w-5 h-5 text-slate-300" />}
                   <span>{gpuAccelerated ? 'ENABLED' : 'DISABLED'}</span>
                 </button>
               </div>
@@ -388,7 +441,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
             <button
               type="button"
               onClick={handleSaveCatalog}
-              disabled={category === 'Orbs' && (!umbilicalProfileId || !profileMemoryReady)}
+              disabled={!parentReady || (category === 'Orbs' && (!umbilicalProfileId || !profileMemoryReady))}
               className="px-4 py-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-cyan-300 text-xs font-orbitron font-bold flex items-center space-x-1.5 hover:border-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Save className="w-3.5 h-3.5" />

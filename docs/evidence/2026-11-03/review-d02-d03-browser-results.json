@@ -1,0 +1,39 @@
+{
+  "results": [
+    {
+      "id": "D02-Satellite",
+      "result": "PASS",
+      "detail": "custom-satellite-535ae65a-5370-4a22-9d5c-38d480c1c198"
+    },
+    {
+      "id": "D03-Rust",
+      "result": "PASS",
+      "detail": "qa-browser-satellite.rs"
+    },
+    {
+      "id": "D02-Orb-parent",
+      "result": "PASS",
+      "detail": "custom-satellite-535ae65a-5370-4a22-9d5c-38d480c1c198"
+    },
+    {
+      "id": "D02-Actuator",
+      "result": "PASS",
+      "detail": "custom-actuator-6f695b1a-ab78-41b1-af06-55f9a01963c8"
+    },
+    {
+      "id": "D03-Python",
+      "result": "PASS",
+      "detail": "qa-browser-actuator.py"
+    },
+    {
+      "id": "D02-Satellite-parent",
+      "result": "PASS",
+      "detail": "custom-actuator-6f695b1a-ab78-41b1-af06-55f9a01963c8"
+    },
+    {
+      "id": "D02-unique-IDs",
+      "result": "PASS"
+    }
+  ],
+  "fixture": "scripted zero-provider local build"
+}

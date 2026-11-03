@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity } from 'lucide-react';
 import { CoreManifest } from '../engine/relationEngine';
 
@@ -15,6 +15,7 @@ interface FooterProps {
   /** Result of the last workspace save to browser storage. */
   saveStatus?: WorkspaceSaveStatus;
   onExportCore?: () => void;
+  onRenameCore?: (name: string) => void;
   showTelemetryDeck?: boolean;
   onToggleTelemetryDeck?: () => void;
   onOpenReliquary?: () => void;
@@ -31,6 +32,7 @@ export const Footer: React.FC<FooterProps> = ({
   wayfinder,
   saveStatus,
   onExportCore,
+  onRenameCore,
   showTelemetryDeck: propShowTelemetryDeck,
   onToggleTelemetryDeck,
   onOpenReliquary,
@@ -45,15 +47,22 @@ export const Footer: React.FC<FooterProps> = ({
   const handleToggleDeck = onToggleTelemetryDeck || (() => setLocalShowDeck(!localShowDeck));
 
   const [coreName, setCoreName] = useState(coreManifest?.name || 'My AEGIS CORE');
+  const apothecaryTriggerRef = useRef<HTMLButtonElement>(null);
+  const wasCabinetOpen = useRef(isApothecaryOpen);
+  useEffect(() => { setCoreName(coreManifest?.name || 'My AEGIS CORE'); }, [coreManifest?.coreId, coreManifest?.name]);
+  useEffect(() => {
+    if (wasCabinetOpen.current && !isApothecaryOpen) apothecaryTriggerRef.current?.focus();
+    wasCabinetOpen.current = isApothecaryOpen;
+  }, [isApothecaryOpen]);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-20 flex flex-col font-mono select-none">
       {/* Reliquary Entry Anchor / Command Console */}
-      <div className={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50 transition-all duration-300 ${isConsoleOpen ? '-top-48' : '-top-10'}`}>
+      <div className={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50 transition-all duration-300 ${isConsoleOpen ? '-top-48' : '-top-12'}`}>
         
         {/* The Roll-Up Menu */}
-        <div className={`w-64 bg-slate-900/95 border border-cyan-500/30 rounded-t-xl overflow-hidden transition-all duration-300 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] flex flex-col justify-end ${isConsoleOpen ? 'h-40 opacity-100 mb-0' : 'h-0 opacity-0 mb-0'}`}>
+        <div ref={node => { if (node) node.inert = !isConsoleOpen; }} aria-hidden={!isConsoleOpen} className={`w-64 bg-slate-900/95 border border-cyan-500/30 rounded-t-xl overflow-hidden transition-all duration-300 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] flex flex-col justify-end ${isConsoleOpen ? 'h-40 opacity-100 mb-0' : 'h-0 opacity-0 mb-0'}`}>
           <div className="p-2 flex flex-col space-y-1 w-full h-full justify-end">
             <button
               onClick={() => {
@@ -98,11 +107,12 @@ export const Footer: React.FC<FooterProps> = ({
       </div>
 
       {/* Bottom Status Bar: tall enough to hold the Apothecary button and the Luminary icon. */}
-      <div className="h-20 panel-glass-header px-4 flex items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
+      <div className="min-h-20 panel-glass-header px-2 sm:px-4 flex flex-wrap gap-2 items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
         {/* Left: Wayfinder. The header holds the only mode switch. */}
-        <div className="flex-1 min-w-0 max-w-[calc(50vw-140px)] pl-12 flex items-center gap-4">
+        <div className="flex flex-wrap w-full lg:w-auto lg:flex-1 min-w-0 pl-0 lg:pl-12 items-center justify-center lg:justify-start gap-2 sm:gap-4">
           {onToggleApothecary && (
             <button
+              ref={apothecaryTriggerRef}
               type="button"
               onClick={onToggleApothecary}
               aria-pressed={isApothecaryOpen}
@@ -139,20 +149,22 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Right: Version, Auto Save & Export CORE Button */}
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap w-full lg:w-auto items-center justify-center lg:justify-end gap-2 sm:gap-3">
           {/* CORE Name Input */}
           <input
             type="text"
             value={coreName}
             onChange={(e) => setCoreName(e.target.value)}
+            onBlur={() => { if (coreName.trim() && coreName.trim() !== coreManifest?.name) onRenameCore?.(coreName.trim()); else setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); }}
+            onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur(); if (event.key === 'Escape') { setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); event.currentTarget.blur(); } }}
             aria-label="CORE name"
-            className="bg-transparent border-none text-slate-200 font-orbitron font-bold text-xs focus:outline-none focus:ring-1 focus:ring-cyan-400/50 rounded px-1 w-32 sm:w-44 text-right"
+            className="bg-transparent border-none text-slate-200 font-orbitron font-bold text-xs focus:outline-none focus:ring-1 focus:ring-cyan-400/50 rounded px-1 w-24 sm:w-44 text-right"
           />
 
           <div className="w-px h-3.5 bg-slate-800" />
 
           <span className="text-[10px] text-slate-400 hidden sm:inline">
-            v0.1.0 • AUTO SAVE{' '}
+            v0.1.0 â€¢ AUTO SAVE{' '}
             {saveStatus?.state === 'saved' ? (
               <span className="text-emerald-400 font-bold" title={`Last saved to this browser at ${saveStatus.at}`}>
                 SAVED {saveStatus.at}

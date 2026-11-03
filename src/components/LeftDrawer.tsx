@@ -496,7 +496,7 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
           onClose();
         }
       }}
-      className={`fixed left-[calc(1in+1rem)] top-20 ${isFooterExpanded ? 'bottom-[268px]' : 'bottom-24'} z-20 w-[min(26rem,calc(100vw-1in-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
+      className={`fixed left-[calc(1in+1rem)] top-20 ${isFooterExpanded ? 'bottom-[268px]' : 'bottom-[150px] sm:bottom-24'} z-20 w-[min(26rem,calc(100vw-1in-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl">
         {/* Header */}
@@ -533,13 +533,13 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
                 />
               </div>
 
-              {/* Create Custom Orb Trigger */}
+              {/* Create New Element Trigger */}
               <button
                 onClick={() => onOpenOrbBuilder && onOpenOrbBuilder()}
                 className="mt-2 w-full btn-cyber py-1.5 rounded-xl text-xs font-orbitron font-bold flex items-center justify-center space-x-1.5 shadow-md"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span>+ Create Custom Orb</span>
+                <span>+ Create New Element</span>
               </button>
 
               {/* 4-Tier Compositional Hierarchy Selector */}

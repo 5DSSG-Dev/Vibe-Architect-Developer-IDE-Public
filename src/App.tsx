@@ -515,11 +515,20 @@ export function App() {
   const handleSaveToCatalog = (customItem: ApothecaryItem) => {
     const customItemWithCodeFrame = ensureCustomOrbContract(customItem);
     setApothecaryCatalog((prev) => {
-      const exists = prev.some(i => i.id === customItemWithCodeFrame.id);
+      const parentId = customItemWithCodeFrame.parentElementId;
+      const linked = parentId ? prev.map(entry => entry.id !== parentId ? entry : {
+        ...entry,
+        ...(customItemWithCodeFrame.category === 'Satellites'
+          ? { satellites: Array.from(new Set([...(entry.satellites ?? []), customItemWithCodeFrame.id])) }
+          : customItemWithCodeFrame.category === 'Actuators'
+            ? { actuators: Array.from(new Set([...(entry.actuators ?? []), customItemWithCodeFrame.id])) }
+            : {})
+      }) : prev;
+      const exists = linked.some(i => i.id === customItemWithCodeFrame.id);
       if (exists) {
-        return prev.map(i => i.id === customItemWithCodeFrame.id ? customItemWithCodeFrame : i);
+        return linked.map(i => i.id === customItemWithCodeFrame.id ? customItemWithCodeFrame : i);
       }
-      return [customItemWithCodeFrame, ...prev];
+      return [customItemWithCodeFrame, ...linked];
     });
 
     closeOverlay('ORB_BUILDER');
@@ -645,9 +654,24 @@ export function App() {
         </div>
       )}
 
+      {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
+      {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && <nav aria-label="Keyboard Element navigation"
+        className="fixed top-16 right-2 z-30 max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+        <details>
+          <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
+          <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
+          {(currentEnvironment ? getElementChildren(currentEnvironment, apothecaryCatalog) :
+            coreManifest.sockets.flatMap(socket => socket.connectedItem ? [socket.connectedItem] : [])).map(item =>
+              <div key={item.id} className="flex flex-wrap gap-2 mt-2">
+                <button type="button" className="rounded border border-cyan-500/40 p-1" onClick={() => handleEnterElement(item)}>Enter {item.name}</button>
+                <button type="button" className="rounded border border-amber-500/40 p-1" onClick={() => handleRightClickElement(undefined, item)}>Inspect {item.name}</button>
+              </div>)}
+        </details>
+      </nav>}
       {/* Footer HUD */}
       <Footer
         coreManifest={coreManifest}
+        onRenameCore={name => setCoreManifest(prev => ({ ...prev, name }))}
         saveStatus={saveStatus}
         wayfinder={
           <Wayfinder
@@ -723,13 +747,13 @@ export function App() {
         setApothecaryCatalog(built.catalog);
         setCoreManifest(built.manifest);
       }} />}
-      <LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
+      <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE'; }} aria-hidden={activeOverlay !== 'NONE'}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
 
-      {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={coreManifest.coreId} core={coreManifest} catalog={apothecaryCatalog} onSaveCore={application => {
+      {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={`production:${coreManifest.coreId}`} core={coreManifest} catalog={apothecaryCatalog} onSaveCore={application => {
         saveCoreProgram(window.localStorage, application);
         setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, application } : current);
       }} onRemember={pointer => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, applicationProduction: pointer } : current)} />}
-      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={coreManifest.coreId} coreId={coreManifest.coreId} plan={buildPlan} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
+      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={`journey:${coreManifest.coreId}`} coreId={coreManifest.coreId} plan={buildPlan} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
         onChange={plan => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, appBuildPlan: plan } : current)}
         onSelect={id => { setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
         onApothecary={() => {
@@ -773,6 +797,7 @@ export function App() {
           initialItem={orbBuilderTargetItem}
           targetSocketId={selectedSocketId}
           availableSockets={coreManifest.sockets}
+          catalog={apothecaryCatalog}
           onClose={() => closeOverlay('ORB_BUILDER')}
           onSaveToCatalog={handleSaveToCatalog}
           onInitiateHandshake={handleInitiateHandshakeFromBuilder}

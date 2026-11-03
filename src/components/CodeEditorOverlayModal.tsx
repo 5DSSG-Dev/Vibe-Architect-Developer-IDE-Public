@@ -201,7 +201,7 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
         {/* Editor Area */}
         <div className="flex-1 flex overflow-hidden bg-[#0d1117]">
           {/* Line Numbers Gutter */}
-          <div className="w-12 bg-[#090d13] border-r border-slate-800/80 py-3 text-slate-600 text-[11px] text-right pr-3 font-mono select-none">
+          <div className="w-12 bg-[#090d13] border-r border-slate-800/80 py-3 text-slate-300 text-[11px] text-right pr-3 font-mono select-none">
             {lineNumbers.map((num) => (
               <div key={num} className="leading-5">
                 {num}
@@ -211,6 +211,7 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
 
           {/* Raw Textarea Code Editor */}
           <textarea
+            aria-label="Element source code"
             value={sourceText}
             onChange={(e) => setSourceText(e.target.value)}
             spellCheck={false}
@@ -234,7 +235,7 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
                 ))}
               </pre>
               <div className="flex items-center gap-2">
-                <span className="text-[9px] text-slate-500 mr-auto">Written by {proposal.modelId}. Nothing changes until you accept.</span>
+                <span className="text-[9px] text-slate-300 mr-auto">Written by {proposal.modelId}. Nothing changes until you accept.</span>
                 <button type="button" onClick={() => void decide(false)} className="px-3 py-1 rounded-lg text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300">Decline</button>
                 <button type="button" onClick={() => void decide(true)} className="px-3 py-1 rounded-lg text-[11px] border border-amber-400/60 text-amber-100 hover:bg-amber-900/30">Accept</button>
               </div>

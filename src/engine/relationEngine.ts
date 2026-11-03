@@ -50,6 +50,16 @@ export interface ApothecaryItem {
    * Consumed by getElementChildren to drill into the next hierarchy level.
    */
   satellites?: string[];
+  /** Explicit parent for authored Satellite/Actuator; no implicit attachment until Architect selects it. */
+  parentElementId?: string;
+  /** Declarative authoring contract; not a claim that a live runtime attachment occurred. */
+  authoringContract?: {
+    version: 1;
+    kind: 'OrbUmbilical' | 'SatelliteTether' | 'ActuatorOperation';
+    parentId: string | null;
+    capabilities: string[];
+    requirements: string[];
+  };
   /**
    * Child actuator element ids bound to this Satellite (Satellite -> Actuator
    * tier). Consumed by getElementChildren to drill into the concrete operations.
@@ -206,8 +216,10 @@ export function inferElementCodeLanguage(item: Pick<ApothecaryItem, 'category' |
   return 'TypeScript';
 }
 
-export function createDefaultElementCodeFrame(item: ApothecaryItem): ElementCodeFrame {
-  const language = inferElementCodeLanguage(item);
+export function createDefaultElementCodeFrame(item: ApothecaryItem, selectedLanguage?: ElementCodeLanguage): ElementCodeFrame {
+  const language = selectedLanguage ?? inferElementCodeLanguage(item);
+  if (!['Python', 'Rust', 'TypeScript', 'JSON'].includes(language))
+    throw new Error(`Unsupported code template language: ${String(language)}`);
   const safeName = fileSafeElementName(item);
   const capabilities = item.capabilities.length > 0 ? item.capabilities : ['identity_packet'];
   const requirements = item.requirements.length > 0 ? item.requirements : ['invariant_guard'];
