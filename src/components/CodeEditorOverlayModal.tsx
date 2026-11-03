@@ -174,6 +174,7 @@ export const CodeEditorOverlayModal: React.FC<CodeEditorOverlayModalProps> = ({
             </span>
             <button
               onClick={onClose}
+              aria-label="Close Element Code Editor"
               className="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
             >
               <X className="w-5 h-5" />

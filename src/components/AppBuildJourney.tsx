@@ -44,7 +44,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
     onApothecary();
   };
   return <>
-    <aside aria-label="App build ToDo list" className="fixed z-30 left-4 top-20 w-[min(21rem,calc(100vw-2rem))] min-w-0 text-slate-100">
+    <aside aria-label="App build ToDo list" className="fixed z-30 left-4 top-20 w-[min(21rem,calc(100vw-2rem))] min-w-0 text-slate-100 pointer-events-none [&>*]:pointer-events-auto">
       <button ref={listTrigger} type="button" aria-expanded={open} aria-controls="app-build-todos"
         onClick={() => setOpen(!open)}
         className="rounded-xl border border-amber-300/40 bg-slate-950/95 px-4 py-2 text-sm shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">
@@ -94,7 +94,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
         <button type="button" onClick={enter} className="w-full rounded-xl border border-cyan-300/50 px-3 py-2 text-sm text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200">Continue to Apothecary</button>
       </section>}
     </aside>
-    {guideOpen && focused && <section role="status" aria-label="Luminary build guide" className="fixed z-40 top-36 right-2 sm:right-4 w-[min(22rem,calc(100vw-1rem))] max-h-[calc(100dvh-16rem)] overflow-y-auto break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/50 bg-slate-950/95 p-4 text-slate-100 shadow-2xl">
+    {guideOpen && focused && !isApothecaryOpen && <section role="status" aria-label="Luminary build guide" className="fixed z-40 top-36 right-2 sm:right-4 w-[min(22rem,calc(100vw-1rem))] max-h-[calc(100dvh-16rem)] overflow-y-auto break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/50 bg-slate-950/95 p-4 text-slate-100 shadow-2xl">
       <div className="flex items-start justify-between gap-3"><p className="text-xs font-semibold text-amber-200">Luminary · next build step</p><button type="button" aria-label="Dismiss build guide" onClick={() => setGuideOpen(false)} className="rounded px-2 text-slate-300 hover:text-white">×</button></div>
       <p className="mt-2 text-sm">Okay, let's build the Elements on your ToDo list to get your app running. We can begin with:</p>
       <p className="mt-2 text-sm font-semibold text-cyan-100">{shortTask}{focused.text.length > 110 ? '…' : ''}</p>

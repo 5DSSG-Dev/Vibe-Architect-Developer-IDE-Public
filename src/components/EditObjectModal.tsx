@@ -71,6 +71,7 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
           </div>
 
           <button
+            aria-label="Close Element Properties"
             onClick={onClose}
             className="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
           >

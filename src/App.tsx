@@ -656,7 +656,7 @@ export function App() {
 
       {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
       {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && <nav aria-label="Keyboard Element navigation"
-        className="fixed top-16 right-2 z-30 max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+        className="fixed top-32 right-2 z-30 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
         <details>
           <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
           <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>

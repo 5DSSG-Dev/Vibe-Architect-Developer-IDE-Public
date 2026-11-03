@@ -117,3 +117,6 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-11-03 | Codex | UI validation matrix current disposition
 - Appended a24rowcurrent-status reassessment to UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md without rewriting its historical baseline. Threeboundedsyntheticclosures:review/Terminal/Preview, form/list/navigation,1000recordinteraction. Fourrows partial and17others unclosed. Distinguishes savedCORE programrecovery from stillmissingdurableappdata; browsernowavailablebutuntestedIDEflowsremainopen. Browsermetrics1000→invalid1000→valid1001→navigation1001, TerminalStopremovesiframe, providers0. Productsourceunchanged; no liveactivation/publication.
+
+## 2026-11-03 | Codex | UI follow-up
+See UI_VALIDATION_REVIEW_PACKET_2026-11-03.md for scripted retests, Architect scope decisions, and outstanding accessibility limits. No provider calls or route activation.

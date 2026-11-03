@@ -358,3 +358,6 @@
 ## 2026-11-03 | Codex | Architect-authorized branch publication
 - Tracey explicitly authorized committing and pushing the local accepted CORE runtime branch. Publication includes the saved program/restoration implementation and regressions, runtime handoff, appended UI closure matrix reassessment, and related Totem/lane continuity. External private fixtures, generated projects, screenshots, dependencies and unrelated worktrees are excluded.
 - Checked current source hashes against the browser receipt and retained focused21/gateway274/build passing receipts; full app427pass/1unchanged identity failure remains disclosed. Independent review remains pending. Publication does not authorize merge, active gateway restart or route activation.
+
+## 2026-11-03 | Codex | UI follow-up
+Validated scripted isolation, batching, failure recovery, accepted hierarchy, resume, ToDo context, connected edits, twelve-turn ledger, and terminal start/stop; 274 gateway and 438 app tests passed, no providers. Fixed labels, mobile hit targets, navigation placement, and corrupted interview punctuation. Contrast and complete keyboard review remain open; guide can overlap keyboard navigation until dismissed. Tracey approved V13/V16/V18 demo deferrals; V17 N/A. See docs/UI_VALIDATION_REVIEW_PACKET_2026-11-03.md.
