@@ -137,3 +137,12 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-10-31 | Architect sequencing | Core then actual app production
 - Tracey identifies current governance/coordination as the core build work; the next major milestone is producing an actual coded app from the IDE, followed primarily by aesthetic refinement. Demonstrate generated files, working execution/preview and saved/reopened continuity; independent review, runtime validation and submission evidence remain delivery requirements. This records sequencing, not new implementation approval.
+
+
+## 2026-11-03 | codex | Approved local demo security repair deployed locally
+- Appliedexactapprovedserverindexloopback/Entra-disabledstaticprofileguard andcompatibleUIlockrepair on actualguided-new-appbranch;packageJSONunchanged. UI695tests passed0skip/buildpass,audit9→3criticalremoved;remainingMSAL/Vite/esbuild recorded. ReplacedverifiedownedPID46972with36332;live3012bind127.0.0.1,static/auth/devtool/admin/origintests/browserpass,0providerrequests.
+- Initialnpmci followed pre-existingUI node_modulesjunction into governancecheckout andhitlockedesbuild. Removedonlyverifiedjunction, installedindependentUIdependencies,restoredgovernancedependencies;full678tests0skip andinventory0verified. TemporaryRedisremoved. No unrelatedUIchanges,commits,push/publicdeploy/Entra provisioning. SeparatePTAGintegration/overlayfindingsremain.
+- Completionreport docs/DEMO_SECURITY_REPAIR_COMPLETION_2026-11-03.md (governancecheckout);privatehash/rollback/testreceipt in demo-security-assessment/implementation. Localdemo-only dispositionexpiresatdemocompletion orbeforeexposure/auth/devfeature/configchanges;notcleanauditorproductioncertification.
+
+## 2026-11-03 | codex | Authorized security repair publication
+- Architect authorized commit/push of open Codex lane items. Publish existing loopback-only local static demo guard and compatible dependency lock repair on dedicated branch; preserve untracked QA outputs. Prior695-test/build and live smoke evidence recorded above; MSAL major migration remains a separate candidate, no restart or new deployment in this publication turn.

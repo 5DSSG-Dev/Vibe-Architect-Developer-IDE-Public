@@ -15,6 +15,13 @@ import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 import { loadLuminaryKnowledge, systemPromptWithKnowledge } from './luminary-knowledge.js';
 
 const config = loadConfig();
+// The recorded local demo serves built files and exposes no LAN listener.
+const isolatedLocalDemo = config.nodeEnv === 'development'
+  && config.luminaryLocalSession === true && process.env.LUMINARY_STATIC_PREVIEW === 'true';
+if (isolatedLocalDemo && config.entra) {
+  throw new Error('Local static demo must run without Entra configuration.');
+}
+
 // A live reply source: Meta's Model API (STP-0002 P21) or Baseten's Muse Spark Open (P22). The key
 // and the Architect's ceiling come from .env. The system message is the P15 Instructions followed by
 // the P23 Knowledge Pack, the IDE's own Element descriptions.
@@ -66,7 +73,7 @@ try {
   throw error;
 }
 
-const server = app.listen(config.port, () => {
+const server = app.listen({ port: config.port, ...(isolatedLocalDemo ? { host: '127.0.0.1' } : {}) }, () => {
   console.log(`AEGIS Architect gateway listening at ${config.origin}`);
 });
 

@@ -340,3 +340,12 @@
 - Suggestions remain in structured conversation data and Copy conversation but are no longer appended as duplicate Suggestion lines in the visible Luminary reply. Planning instructions also ask the model not to repeat them in message.
 - A successful selected-suggestion response with a revised proposal scrolls the transcript to the bottom so the included addition and acceptance controls are visible. Ordinary requests/replies retain beginning-of-message scroll; errors and clarification-only replies do not trigger completion scroll.
 - Earlier remote application was blocked by approval-review usage exhaustion; resumed after access returned. Local production build passed; Windows build checked separately. No live inference or workspace storage changes.
+
+
+## 2026-11-03 | codex | Approved local demo security repair deployed locally
+- Appliedexactapprovedserverindexloopback/Entra-disabledstaticprofileguard andcompatibleUIlockrepair on actualguided-new-appbranch;packageJSONunchanged. UI695tests passed0skip/buildpass,audit9→3criticalremoved;remainingMSAL/Vite/esbuild recorded. ReplacedverifiedownedPID46972with36332;live3012bind127.0.0.1,static/auth/devtool/admin/origintests/browserpass,0providerrequests.
+- Initialnpmci followed pre-existingUI node_modulesjunction into governancecheckout andhitlockedesbuild. Removedonlyverifiedjunction, installedindependentUIdependencies,restoredgovernancedependencies;full678tests0skip andinventory0verified. TemporaryRedisremoved. No unrelatedUIchanges,commits,push/publicdeploy/Entra provisioning. SeparatePTAGintegration/overlayfindingsremain.
+- Completionreport docs/DEMO_SECURITY_REPAIR_COMPLETION_2026-11-03.md (governancecheckout);privatehash/rollback/testreceipt in demo-security-assessment/implementation. Localdemo-only dispositionexpiresatdemocompletion orbeforeexposure/auth/devfeature/configchanges;notcleanauditorproductioncertification.
+
+## 2026-11-03 | codex | Authorized security repair publication
+- Architect authorized commit/push of open Codex lane items. Publish existing loopback-only local static demo guard and compatible dependency lock repair on dedicated branch; preserve untracked QA outputs. Prior695-test/build and live smoke evidence recorded above; MSAL major migration remains a separate candidate, no restart or new deployment in this publication turn.
