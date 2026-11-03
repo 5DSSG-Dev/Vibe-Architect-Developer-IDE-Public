@@ -302,3 +302,8 @@
 
 ## 2026-11-02 | Codex | Local hostname session repair
 - Reproduced localhost:3012 bootstrap403 while 127.0.0.1:3012 returned204. Accept explicit loopback aliases on configured port only, while Origin must match request Host. Cross-origin, wrong-port and remote restrictions remain. Added regression.
+
+
+## 2026-11-02 | Codex | Planning conversation readability
+- New replies align their beginning within the conversation scroller. Text selection is enabled inside the frame; Copy conversation includes greeting, turns and available architecture proposals, with manual-copy fallback.
+- Follow-up requests carry the previous structured proposal, including pre-update in-memory proposal state. React hook order retained and gateway not restarted during application. Visual/browser behavior remains for Architect verification.

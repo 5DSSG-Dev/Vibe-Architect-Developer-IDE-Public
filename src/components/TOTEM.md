@@ -55,3 +55,8 @@
 ## 2026-11-02 | Codex | Local preview gateway session
 - Explicit opt-in development-only loopback session authenticates same-origin local preview without exposing demo/provider keys. Existing public header authentication unchanged. Provider type now has machine-readable status separate from display name.
 - Windows build and ten local-session/access tests pass; real HTTP session204/status200/cross-origin403 verified. Baseten live source and gauge configured; no model inference requested.
+
+
+## 2026-11-02 | Codex | Planning conversation readability
+- New replies align their beginning within the conversation scroller. Text selection is enabled inside the frame; Copy conversation includes greeting, turns and available architecture proposals, with manual-copy fallback.
+- Follow-up requests carry the previous structured proposal, including pre-update in-memory proposal state. React hook order retained and gateway not restarted during application. Visual/browser behavior remains for Architect verification.

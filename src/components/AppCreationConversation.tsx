@@ -5,7 +5,7 @@ import type { ApothecaryItem } from '../engine/relationEngine';
 import { luminaryApi, readDemoKey, saveDemoKey } from '../luminary/client';
 import { setAppCreationActive } from '../luminary/appCreationPresence';
 
-type Turn = { role: string; text: string };
+type Turn = { role: string; text: string; proposal?: AppProposal | null };
 const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. Tell me about the app you’d like to create: what should it help people do, and who will use it?';
 export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal) => Promise<void> }) {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -26,11 +26,21 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     void luminaryApi.localSession(controller.signal).then(ready => { if (!controller.signal.aborted) setLocalReady(ready); });
     return () => controller.abort();
   }, []);
-  useEffect(() => { latest.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, [turns, answer, error]);
+  useEffect(() => {
+    const reply = latest.current, container = reply?.parentElement;
+    if (!reply || !container || !turns.length) return;
+    container.scrollTop = Math.max(0, reply.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20);
+  }, [turns]);
+  async function copyConversation(button: HTMLButtonElement) {
+    const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === turns.length - 1 ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
+    try { await navigator.clipboard.writeText(content); button.textContent = 'Copied'; window.setTimeout(() => { button.textContent = 'Copy conversation'; }, 2000); }
+    catch { window.prompt('Copy conversation text (Ctrl+C or Command+C)', content); }
+  }
   async function send(event: React.FormEvent) {
     event.preventDefault();
     if (request.current || accepting.current || !draft.trim()) return;
-    const next = [...turns, { role: 'architect', text: draft.trim() }];
+    const history = turns.map((turn, index) => index === turns.length - 1 && turn.role === 'luminary' && !turn.proposal ? { ...turn, proposal: answer?.proposal } : turn);
+    const next = [...history, { role: 'architect', text: draft.trim() }];
     if (JSON.stringify(next).length > 12_000) { setError('This conversation is getting long. Shorten your description before continuing.'); return; }
     const controller = new AbortController(); request.current = controller;
     setBusy(true); setError(''); setAnswer(null);
@@ -50,7 +60,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       if (controller.signal.aborted) return;
       if (!result.ok) throw Error(result.shortfall.message);
       const response = parseCreationAnswer(result.value.reply.content, catalog);
-      setTurns([...next, { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n') }]);
+      setTurns([...next, { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
       setAnswer(response); setDraft('');
     } catch (e) {
       if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'The planning request could not be completed.');
@@ -63,11 +73,11 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     catch (e) { setError(e instanceof Error ? e.message : 'The architecture could not be connected.'); }
     finally { accepting.current = false; setApplying(false); }
   }
-  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-4 right-4 md:left-auto md:right-[420px] md:w-[min(42rem,calc(100vw-450px))] flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden">
-    <header className="p-5 border-b border-amber-300/20"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p></header>
+  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-4 right-4 md:left-auto md:right-[420px] md:w-[min(42rem,calc(100vw-450px))] flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
+    <header className="p-5 border-b border-amber-300/20"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="mt-3 rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button></header>
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
-      {turns.map((turn, index) => <div key={index} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}</div>)}
+      {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 && turn.role === 'luminary' ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}</div>)}
       {answer?.proposal && <div className="rounded-2xl border border-cyan-300/40 bg-cyan-950/20 p-4 space-y-3">
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
         <ul className="space-y-3 text-sm">{answer.proposal.elements.map(e => <li key={e.id}><strong>{catalog.find(i => i.id === e.id)?.name}</strong><span className="block text-xs text-slate-400">{e.parentId ? `Inside ${catalog.find(i => i.id === e.parentId)?.name}` : 'Connected to CORE'}</span><span className="text-slate-300">{e.reason}</span></li>)}</ul>
@@ -78,7 +88,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       </div>}
       {busy && <p role="status" className="text-sm text-amber-200">Luminary is considering your app…</p>}
       {error && <p role="alert" className="text-sm text-rose-200 border border-rose-400/40 rounded-xl p-3">{error}</p>}
-      <div ref={latest}/>
+
     </div>
     <form onSubmit={send} className="p-4 border-t border-amber-300/20 space-y-3">
       {localReady ? <p className="text-xs text-emerald-300">Connected through your local gateway</p> : <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>}
