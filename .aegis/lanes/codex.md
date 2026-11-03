@@ -318,3 +318,9 @@
 - New App composer keeps up to three model suggestions below input. Choice clicks send directly, preserve unsent draft, retain unused choices and replace selected slot after successful response. Failed calls retain choices and proposal; no filler suggestions are invented. Prompt history retains initial requirements and latest architecture without resending every old proposal.
 - Orb/Satellite/Actuator EnvironmentView now creates the shared Luminary Presence, follows the same screen anchor, supports avatar click/hover and disposes owned resources. Async model completion is guarded after unmount.
 - Thirteen focused creation/suggestion/anchor/cache-ownership checks pass. Windows build checked; browser visual and live suggestion-click confirmation remain with Architect. Saved app data was not cleared.
+
+
+## 2026-11-02 | Codex | Compact composer and immediate request echo
+- Send appends the Architect request before awaiting authentication/model calls and clears submitted input immediately. New typing is not erased on reply; failed/stopped requests remain visible with status.
+- Moved Copy conversation beside Send. Replaced three tall suggestion cards with a single-line native dropdown, retaining direct submission and replacement behavior. Prompt requests short user-facing feature ideas without Element IDs. Current proposal is preserved correctly in copy/history while a request is pending.
+- Build verification checked separately. No gateway restart or provider request for this UI update; active conversation can finish before manual reload.

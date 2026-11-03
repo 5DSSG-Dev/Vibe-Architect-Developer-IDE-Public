@@ -6,7 +6,7 @@ import type { ApothecaryItem } from '../engine/relationEngine';
 import { luminaryApi, readDemoKey, saveDemoKey } from '../luminary/client';
 import { setAppCreationActive } from '../luminary/appCreationPresence';
 
-type Turn = { role: string; text: string; proposal?: AppProposal | null };
+type Turn = { role: string; text: string; proposal?: AppProposal | null; state?: 'pending' | 'sent' | 'failed' | 'stopped' };
 const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. Tell me about the app you’d like to create: what should it help people do, and who will use it?';
 export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal) => Promise<void> }) {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -36,7 +36,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     container.scrollTop = Math.max(0, reply.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20);
   }, [turns]);
   async function copyConversation(button: HTMLButtonElement) {
-    const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === turns.length - 1 ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
+    const latestAssistant = turns.map(turn => turn.role).lastIndexOf('luminary');
+    const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === latestAssistant ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
     try { await navigator.clipboard.writeText(content); button.textContent = 'Copied'; window.setTimeout(() => { button.textContent = 'Copy conversation'; }, 2000); }
     catch { window.prompt('Copy conversation text (Ctrl+C or Command+C)', content); }
   }
@@ -46,13 +47,17 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   }
   async function sendText(text: string, clearDraft: boolean, selected?: string) {
     if (request.current || accepting.current || !text.trim()) return;
-    const history = turns.map((turn, index) => index === turns.length - 1 && turn.role === 'luminary' && !turn.proposal ? { ...turn, proposal: answer?.proposal } : turn);
-    const next = [...history, { role: 'architect', text: text.trim() }];
+    const latestAssistantIndex = turns.map(turn => turn.role).lastIndexOf('luminary');
+    const history = turns.map((turn, index) => index === latestAssistantIndex && !turn.proposal ? { ...turn, proposal: answer?.proposal } : turn);
+    const sentTurn: Turn = { role: 'architect', text: text.trim(), state: 'pending' };
+    const next = [...history, sentTurn];
     // Keep the full visible transcript, but send only the latest architecture plus recent conversation.
-    const promptHistory = next.map((turn, index) => ({ ...turn, proposal: index === next.length - 2 ? (turn as Turn).proposal : undefined }));
+    const promptHistory = next.map((turn, index) => ({ ...turn, proposal: index === latestAssistantIndex ? (turn as Turn).proposal : undefined }));
     const promptTurns = promptHistory.length > 9 ? [promptHistory[0], ...promptHistory.slice(-8)] : promptHistory;
     if (JSON.stringify(promptTurns).length > 20_000) { setError('The current architecture is too large for one planning request. Start a smaller app scope.'); return; }
     const controller = new AbortController(); request.current = controller;
+    setTurns(next);
+    if (clearDraft) setDraft('');
     setBusy(true); setError(''); setSelectedSuggestion(selected ?? null);
     try {
       if (!localReady && !key.trim()) {
@@ -70,14 +75,18 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       if (controller.signal.aborted) return;
       if (!result.ok) throw Error(result.shortfall.message);
       const response = parseCreationAnswer(result.value.reply.content, catalog);
-      setTurns([...next, { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
+      setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
       setAnswer(response);
       setSuggestions(nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
       if (selected) setUsedSuggestions(previous => [...previous, selected]);
-      if (clearDraft) setDraft('');
     } catch (e) {
-      if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'The planning request could not be completed.');
-    } finally { if (request.current === controller) { request.current = null; setBusy(false); setSelectedSuggestion(null); } }
+      if (!controller.signal.aborted) {
+        setTurns(current => current.map(turn => turn === sentTurn ? { ...turn, state: 'failed' } : turn));
+        setError(e instanceof Error ? e.message : 'The planning request could not be completed.');
+      }
+    } finally {
+      if (controller.signal.aborted) setTurns(current => current.map(turn => turn === sentTurn ? { ...turn, state: 'stopped' } : turn));
+      if (request.current === controller) { request.current = null; setBusy(false); setSelectedSuggestion(null); } }
   }
   async function accept() {
     if (!answer?.proposal || accepting.current || request.current) return;
@@ -87,10 +96,10 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     finally { accepting.current = false; setApplying(false); }
   }
   return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-4 right-4 md:left-auto md:right-[420px] md:w-[min(42rem,calc(100vw-450px))] flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
-    <header className="p-3 sm:p-5 border-b border-amber-300/20 shrink-0"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="mt-3 rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button></header>
+    <header className="p-3 sm:p-5 border-b border-amber-300/20 shrink-0"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p></header>
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
-      {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 && turn.role === 'luminary' ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}</div>)}
+      {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}{turn.state && turn.state !== 'sent' && <span className="block mt-2 text-xs text-slate-400">{turn.state === 'pending' ? 'Sending to Luminary…' : turn.state === 'failed' ? 'Request failed — your message is kept here.' : 'Stopped — your message is kept here.'}</span>}</div>)}
       {answer?.proposal && <div className="rounded-2xl border border-cyan-300/40 bg-cyan-950/20 p-4 space-y-3">
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
         <ul className="space-y-3 text-sm">{answer.proposal.elements.map(e => <li key={e.id}><strong>{catalog.find(i => i.id === e.id)?.name}</strong><span className="block text-xs text-slate-400">{e.parentId ? `Inside ${catalog.find(i => i.id === e.parentId)?.name}` : 'Connected to CORE'}</span><span className="text-slate-300">{e.reason}</span></li>)}</ul>
@@ -103,20 +112,22 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       {error && <p role="alert" className="text-sm text-rose-200 border border-rose-400/40 rounded-xl p-3">{error}</p>}
 
     </div>
-    <form onSubmit={send} className="p-3 border-t border-amber-300/20 space-y-2 shrink-0 max-h-[55%] overflow-y-auto">
+    <form onSubmit={send} className="p-3 border-t border-amber-300/20 space-y-2 shrink-0 max-h-[45%] overflow-y-auto">
       {localReady ? <p className="text-xs text-emerald-300">Connected through your local gateway</p> : <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>}
       <label className="sr-only" htmlFor="app-idea">Describe your app or answer Luminary</label>
       <textarea id="app-idea" autoFocus value={draft} onChange={e => setDraft(e.target.value)} maxLength={4000} rows={2} placeholder="I’d like to build an app that…" disabled={applying} className="w-full bg-slate-900 border border-slate-700 focus:border-amber-300 focus:outline-none rounded-xl p-3 text-sm resize-none"/>
-      <div className="flex items-center justify-between gap-3"><p className="text-[11px] text-slate-400">Sent to your configured Luminary when you press Send.</p>{busy ? <button type="button" onClick={() => { request.current?.abort(); }} className="text-sm text-amber-200 flex gap-1 items-center"><Square size={14}/>Stop</button> : <button disabled={!draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button>}</div>
-      <aside aria-label="Suggested app additions" className="rounded-xl border border-amber-300/25 bg-amber-300/5 p-3 space-y-2">
-        <h3 className="text-xs font-semibold text-amber-100">Suggested additions</h3>
-        {suggestions.length === 0 ? <p className="text-xs text-slate-400">Luminary’s next suggestions will appear here.</p> : <div className="grid gap-2">
-          {suggestions.map(suggestion => <button key={suggestion} title={suggestion} type="button" disabled={busy || applying} onClick={() => void sendText(`Please add this to the app and update the starting architecture: ${suggestion}`, false, suggestion)} className="w-full text-left rounded-lg border border-amber-300/20 bg-slate-900/70 px-3 py-2 text-xs text-amber-50 hover:border-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200 disabled:opacity-50">
-            <span className="line-clamp-2">{selectedSuggestion === suggestion ? 'Adding… ' : '+ '}{suggestion}</span>
-          </button>)}
-        </div>}
-        <p className="text-[10px] text-slate-400">Click a choice to send it to Luminary. Review its updated architecture before accepting.</p>
-      </aside>
+      <div className="flex items-center justify-between gap-3"><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button>{busy ? <button type="button" onClick={() => { request.current?.abort(); }} className="text-sm text-amber-200 flex gap-1 items-center"><Square size={14}/>Stop</button> : <button disabled={!draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button>}</div>
+      <div>
+        <label htmlFor="app-suggestions" className="sr-only">Choose a suggested addition to send to Luminary</label>
+        <select id="app-suggestions" value="" disabled={busy || applying || suggestions.length === 0} onChange={event => {
+          if (event.target.value === '') return;
+          const suggestion = suggestions[Number(event.target.value)];
+          if (suggestion) void sendText(`Please add this to the app and update the starting architecture: ${suggestion}`, false, suggestion);
+        }} className="w-full h-9 rounded-lg border border-amber-300/25 bg-slate-900 px-3 text-xs text-amber-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200 disabled:opacity-50">
+          <option value="">{selectedSuggestion ? 'Adding suggestion…' : suggestions.length ? `Suggested additions (${suggestions.length}) — choose to add` : 'Suggestions will appear after Luminary replies'}</option>
+          {suggestions.map((suggestion, index) => <option key={suggestion} value={index} title={suggestion}>{suggestion.length > 70 ? `${suggestion.slice(0, 67).trimEnd()}…` : suggestion}</option>)}
+        </select>
+      </div>
     </form>
   </section>;
 }
