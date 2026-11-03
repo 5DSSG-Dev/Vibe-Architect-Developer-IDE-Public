@@ -65,7 +65,7 @@ function gitRepo(): string {
 test('status names the rehearsal source, the gauge state and coding tasks off', async () => {
   const base = await listen();
   const res = await fetch(`${base}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } });
-  assert.deepEqual(await res.json(), { replySource: 'rehearsal', gauge: 'not_configured', codingTasks: 'off' });
+  assert.deepEqual(await res.json(), { replySource: 'rehearsal', replySourceKind: 'configured', gauge: 'not_configured', codingTasks: 'off' });
   const none = await listen({ rehearsal: false });
   assert.equal((await (await fetch(`${none}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } })).json()).replySource, 'not_configured');
 });
