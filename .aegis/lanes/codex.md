@@ -269,3 +269,8 @@
 ## 2026-11-02 | Codex | PR 50 main synchronization
 - Merged main 569ef3d into the isolated UI/App-menu branch at Tracey's request. Automatic merge required no manual conflict edits; both parent lane histories verified in order. Lumin's active checkout untouched.
 - Combined production build, 23 focused tests and staged diff check pass. Existing Vite chunk warning remains; browser verification outstanding. Publishing branch update only, not merging PR 50 into main.
+
+
+## 2026-11-02 | Codex | CORE Configurator review preview
+- Added app details persisted inside CORE manifest, app-type crystal defaults and selectable isolated GLB preview. Removed CyberPeer daemon controls from this modal and clarified resource budget wording.
+- Prepared on isolated current-main worktree for Architect visual review. Existing active checkout untouched.
