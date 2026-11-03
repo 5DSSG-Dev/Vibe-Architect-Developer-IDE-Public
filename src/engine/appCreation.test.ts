@@ -32,9 +32,14 @@ test('open questions carry bounded choices tied to their exact wording', () => {
 });
 test('interview batches open questions with independent choices', () => {
  assert.match(creationPrompt([], catalog), /Ask all essential design questions that remain unresolved together/);
+ assert.match(creationPrompt([], catalog), /Use sensible defaults for ordinary implementation details/);
+ assert.match(creationPrompt([], catalog), /After the Architect answers the batch, present the proposal unless a new essential blocker/);
  const answer = parseCreationAnswer(JSON.stringify({ message: 'Choose your details', questions: ['First?', 'Second?'], decisionChoices: [{ question: 'First?', options: ['A', 'B'], recommended: 'A' }, { question: 'Second?', options: ['C', 'D'], recommended: 'D' }], suggestions: [], proposal: null }), catalog);
  assert.equal(answer.questions.length, 2);
  assert.equal(answer.decisionChoices[1].recommended, 'D');
+ const wrapped = parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: [{ question: 'First?' }, { text: 'Second?' }], decisionChoices: [{ question: 'First?', options: ['A', 'B'] }, { question: 'Second?', options: ['C', 'D'] }], suggestions: [], proposal: null }), catalog);
+ assert.deepEqual(wrapped.questions, ['First?', 'Second?']);
+ assert.throws(() => parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: [{ unknown: 'First?' }], suggestions: [], proposal: null }), catalog), /invalid or oversized text/);
  assert.throws(() => parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: Array.from({ length: 9 }, (_, i) => `Question ${i}?`), suggestions: [], proposal: null }), catalog), /invalid list/);
 });
 test('accepted proposal uses a successful runtime handshake and preserves blank input', () => {

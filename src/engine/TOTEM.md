@@ -67,3 +67,6 @@
 
 ## 2026-11-03 | Lumen | Batched decisions
 - App creation now accepts up to eight open questions with matched choices; the prompt asks all known essential design decisions together to reduce provider round trips.
+
+## 2026-11-03 | Lumen | Live interview resilience
+- Parser accepts bounded question objects with question/text/prompt strings after live Baseten shape drift; prompt requires strings and limits questions to material decisions, defaulting optional details. Two-turn live synthetic note interview reached a proposal. Tests and build pass.
