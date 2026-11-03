@@ -1,3 +1,4 @@
+import { nextAppSuggestions } from '../engine/appSuggestions';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowRight, Send, Square, Sparkles } from 'lucide-react';
 import { creationPrompt, parseCreationAnswer, type AppProposal, type CreationAnswer } from '../engine/appCreation';
@@ -10,6 +11,9 @@ const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. T
 export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal) => Promise<void> }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [answer, setAnswer] = useState<CreationAnswer | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [usedSuggestions, setUsedSuggestions] = useState<string[]>([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [key, setKey] = useState(readDemoKey);
   const [localReady, setLocalReady] = useState(false);
@@ -38,12 +42,18 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   }
   async function send(event: React.FormEvent) {
     event.preventDefault();
-    if (request.current || accepting.current || !draft.trim()) return;
+    await sendText(draft.trim(), true);
+  }
+  async function sendText(text: string, clearDraft: boolean, selected?: string) {
+    if (request.current || accepting.current || !text.trim()) return;
     const history = turns.map((turn, index) => index === turns.length - 1 && turn.role === 'luminary' && !turn.proposal ? { ...turn, proposal: answer?.proposal } : turn);
-    const next = [...history, { role: 'architect', text: draft.trim() }];
-    if (JSON.stringify(next).length > 12_000) { setError('This conversation is getting long. Shorten your description before continuing.'); return; }
+    const next = [...history, { role: 'architect', text: text.trim() }];
+    // Keep the full visible transcript, but send only the latest architecture plus recent conversation.
+    const promptHistory = next.map((turn, index) => ({ ...turn, proposal: index === next.length - 2 ? (turn as Turn).proposal : undefined }));
+    const promptTurns = promptHistory.length > 9 ? [promptHistory[0], ...promptHistory.slice(-8)] : promptHistory;
+    if (JSON.stringify(promptTurns).length > 20_000) { setError('The current architecture is too large for one planning request. Start a smaller app scope.'); return; }
     const controller = new AbortController(); request.current = controller;
-    setBusy(true); setError(''); setAnswer(null);
+    setBusy(true); setError(''); setSelectedSuggestion(selected ?? null);
     try {
       if (!localReady && !key.trim()) {
         if (!await luminaryApi.localSession(controller.signal)) throw Error('The local gateway is unavailable. Enter the IDE demo key under connection settings for a remote gateway.');
@@ -54,17 +64,20 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       if (controller.signal.aborted) return;
       if (!status.ok) throw Error(status.shortfall.message);
       if (!['meta', 'baseten'].includes(status.value.replySourceKind ?? status.value.replySource)) throw Error('App planning needs a live Luminary connection. This gateway has no live model configured. Your description is still here.');
-      const prompt = creationPrompt(next, catalog);
+      const prompt = creationPrompt(promptTurns, catalog);
       if (new TextEncoder().encode(prompt).length > 48_000) throw Error('The catalog and conversation are too large for one planning request.');
       const result = await luminaryApi.ask(key.trim(), prompt, controller.signal);
       if (controller.signal.aborted) return;
       if (!result.ok) throw Error(result.shortfall.message);
       const response = parseCreationAnswer(result.value.reply.content, catalog);
       setTurns([...next, { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
-      setAnswer(response); setDraft('');
+      setAnswer(response);
+      setSuggestions(nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
+      if (selected) setUsedSuggestions(previous => [...previous, selected]);
+      if (clearDraft) setDraft('');
     } catch (e) {
       if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'The planning request could not be completed.');
-    } finally { if (request.current === controller) { request.current = null; setBusy(false); } }
+    } finally { if (request.current === controller) { request.current = null; setBusy(false); setSelectedSuggestion(null); } }
   }
   async function accept() {
     if (!answer?.proposal || accepting.current || request.current) return;
@@ -74,7 +87,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     finally { accepting.current = false; setApplying(false); }
   }
   return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-4 right-4 md:left-auto md:right-[420px] md:w-[min(42rem,calc(100vw-450px))] flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
-    <header className="p-5 border-b border-amber-300/20"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="mt-3 rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button></header>
+    <header className="p-3 sm:p-5 border-b border-amber-300/20 shrink-0"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="mt-3 rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button></header>
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
       {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 && turn.role === 'luminary' ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}</div>)}
@@ -90,11 +103,20 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       {error && <p role="alert" className="text-sm text-rose-200 border border-rose-400/40 rounded-xl p-3">{error}</p>}
 
     </div>
-    <form onSubmit={send} className="p-4 border-t border-amber-300/20 space-y-3">
+    <form onSubmit={send} className="p-3 border-t border-amber-300/20 space-y-2 shrink-0 max-h-[55%] overflow-y-auto">
       {localReady ? <p className="text-xs text-emerald-300">Connected through your local gateway</p> : <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>}
       <label className="sr-only" htmlFor="app-idea">Describe your app or answer Luminary</label>
-      <textarea id="app-idea" autoFocus value={draft} onChange={e => setDraft(e.target.value)} maxLength={4000} rows={3} placeholder="I’d like to build an app that…" disabled={applying} className="w-full bg-slate-900 border border-slate-700 focus:border-amber-300 focus:outline-none rounded-xl p-3 text-sm resize-none"/>
+      <textarea id="app-idea" autoFocus value={draft} onChange={e => setDraft(e.target.value)} maxLength={4000} rows={2} placeholder="I’d like to build an app that…" disabled={applying} className="w-full bg-slate-900 border border-slate-700 focus:border-amber-300 focus:outline-none rounded-xl p-3 text-sm resize-none"/>
       <div className="flex items-center justify-between gap-3"><p className="text-[11px] text-slate-400">Sent to your configured Luminary when you press Send.</p>{busy ? <button type="button" onClick={() => { request.current?.abort(); }} className="text-sm text-amber-200 flex gap-1 items-center"><Square size={14}/>Stop</button> : <button disabled={!draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button>}</div>
+      <aside aria-label="Suggested app additions" className="rounded-xl border border-amber-300/25 bg-amber-300/5 p-3 space-y-2">
+        <h3 className="text-xs font-semibold text-amber-100">Suggested additions</h3>
+        {suggestions.length === 0 ? <p className="text-xs text-slate-400">Luminary’s next suggestions will appear here.</p> : <div className="grid gap-2">
+          {suggestions.map(suggestion => <button key={suggestion} title={suggestion} type="button" disabled={busy || applying} onClick={() => void sendText(`Please add this to the app and update the starting architecture: ${suggestion}`, false, suggestion)} className="w-full text-left rounded-lg border border-amber-300/20 bg-slate-900/70 px-3 py-2 text-xs text-amber-50 hover:border-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200 disabled:opacity-50">
+            <span className="line-clamp-2">{selectedSuggestion === suggestion ? 'Adding… ' : '+ '}{suggestion}</span>
+          </button>)}
+        </div>}
+        <p className="text-[10px] text-slate-400">Click a choice to send it to Luminary. Review its updated architecture before accepting.</p>
+      </aside>
     </form>
   </section>;
 }

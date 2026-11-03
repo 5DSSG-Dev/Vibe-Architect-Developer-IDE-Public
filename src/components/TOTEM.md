@@ -60,3 +60,9 @@
 ## 2026-11-02 | Codex | Planning conversation readability
 - New replies align their beginning within the conversation scroller. Text selection is enabled inside the frame; Copy conversation includes greeting, turns and available architecture proposals, with manual-copy fallback.
 - Follow-up requests carry the previous structured proposal, including pre-update in-memory proposal state. React hook order retained and gateway not restarted during application. Visual/browser behavior remains for Architect verification.
+
+
+## 2026-11-02 | Codex | Suggestion shelf and Element-screen Luminary
+- New App composer keeps up to three model suggestions below input. Choice clicks send directly, preserve unsent draft, retain unused choices and replace selected slot after successful response. Failed calls retain choices and proposal; no filler suggestions are invented. Prompt history retains initial requirements and latest architecture without resending every old proposal.
+- Orb/Satellite/Actuator EnvironmentView now creates the shared Luminary Presence, follows the same screen anchor, supports avatar click/hover and disposes owned resources. Async model completion is guarded after unmount.
+- Thirteen focused creation/suggestion/anchor/cache-ownership checks pass. Windows build checked; browser visual and live suggestion-click confirmation remain with Architect. Saved app data was not cleared.

@@ -312,3 +312,9 @@
 ## 2026-11-02 | Codex | Static local demo preview
 - Reproduced browser dependency failure: served dev main module referenced React optimizer URLs returning504. Added explicit null Vite override and development/local-session-only LUMINARY_STATIC_PREVIEW launcher opt-in to serve verified dist assets through the existing gateway.
 - Windows production build passes. Real HTTP checks: root200 with no Vite client; referenced JS200 JavaScript and CSS200 CSS. No workspace storage changed. Live gateway session checked separately; visual reload confirmation remains with Architect.
+
+
+## 2026-11-02 | Codex | Suggestion shelf and Element-screen Luminary
+- New App composer keeps up to three model suggestions below input. Choice clicks send directly, preserve unsent draft, retain unused choices and replace selected slot after successful response. Failed calls retain choices and proposal; no filler suggestions are invented. Prompt history retains initial requirements and latest architecture without resending every old proposal.
+- Orb/Satellite/Actuator EnvironmentView now creates the shared Luminary Presence, follows the same screen anchor, supports avatar click/hover and disposes owned resources. Async model completion is guarded after unmount.
+- Thirteen focused creation/suggestion/anchor/cache-ownership checks pass. Windows build checked; browser visual and live suggestion-click confirmation remain with Architect. Saved app data was not cleared.
