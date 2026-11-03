@@ -11,6 +11,8 @@ import { productionReceiptKey as receiptKey, terminalGenerationFailure, canRepla
 export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
+ const terminalEnd=useRef<HTMLDivElement>(null);
  const [outcomeUnknown,setOutcomeUnknown]=useState(false);
  const [receipt,setReceipt]=useState<Receipt|null>(null),[file,setFile]=useState('src/main.jsx');
  const [reviewedFor,setReviewedFor]=useState(''),[evidenceFor,setEvidenceFor]=useState(''),[key,setKey]=useState(readDemoKey);
@@ -135,6 +137,27 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
    }
   } finally {if(request.current===controller){request.current=null;setBusy(false);}}
  }
+ function runTerminal(raw:string) {
+  const command=raw.trim().toLowerCase();
+  setTerminalInput('');
+  if(!command)return;
+  if(command==='clear'){setTerminalLines([]);return;}
+  const write=(line:string)=>setTerminalLines(previous=>[...previous,'> '+raw,line].slice(-80));
+  if(command==='help'){write('Available: help, files, status, start, stop, clear. Start runs the reviewed app through the governed launch path.');return;}
+  if(command==='files'){write(receipt?Object.keys(receipt.files).join('\n'):'Generate an application first.');return;}
+  if(command==='status'){write(receipt?`${receipt.state}${receipt.previewUrl?' · '+receipt.previewUrl:''}`:'No generated application yet.');if(receipt&&!busy)void act('status');return;}
+  if(command==='start'){
+   if(!receipt){write('Generate an application first.');return;}
+   if(busy||stale||!reviewed||!evidenceSaved||Boolean(preview)||outcomeUnknown||receipt.state==='building') {write('Review the current source and save its evidence before starting; wait for any active operation to finish.');return;}
+   write('Starting reviewed application. Tests and build output will appear below.');void act('launch');return;
+  }
+  if(command==='stop'){
+   if(!preview||busy){write('No running application is available to stop.');return;}
+   write('Stopping application.');void act('stop');return;
+  }
+  write('Unknown command. Type help for available commands.');
+ }
+ useEffect(()=>{if(open)terminalEnd.current?.scrollIntoView({block:'nearest'});},[terminalLines,receipt?.output,open]);
  const preview=receipt?.previewUrl && /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f-]{36}\/$/.test(receipt.previewUrl) ? receipt.previewUrl : undefined;
  const button='rounded-lg border border-cyan-400/40 px-3 py-2 text-sm disabled:opacity-40 hover:bg-cyan-500/10';
  return <>
@@ -163,7 +186,18 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
      <pre tabIndex={0} className="mt-2 max-h-64 overflow-auto rounded bg-black p-3 text-xs">{receipt.files[file] ?? 'Select a generated file.'}</pre>
     </details>
     <label className="my-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={reviewed} disabled={stale||busy} onChange={e=>setReviewedFor(e.target.checked?receiptKey(receipt):'')}/>I reviewed this generated app against the agreed requirements.</label>
-    <details className="my-4" open><summary>Execution output</summary><pre tabIndex={0} className="max-h-48 overflow-auto whitespace-pre-wrap rounded bg-black p-3 text-xs">{receipt.output}</pre></details>
+    <section className="my-4" aria-label="Application Terminal"><h3 className="mb-2 text-sm font-semibold">Terminal</h3>
+     <div role="log" aria-live="polite" aria-relevant="additions text" tabIndex={0} className="max-h-52 overflow-auto rounded bg-black p-3 font-mono text-xs whitespace-pre-wrap text-emerald-100">
+      {terminalLines.join('\n')}{'\n'}{receipt.output}<div ref={terminalEnd}/>
+     </div>
+     <form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();runTerminal(terminalInput);}}>
+      <label htmlFor="production-terminal-input" className="sr-only">Terminal command</label>
+      <span aria-hidden="true" className="py-2 font-mono text-emerald-200">&gt;</span>
+      <input id="production-terminal-input" autoComplete="off" spellCheck={false} value={terminalInput} onChange={e=>setTerminalInput(e.target.value)} placeholder="Type help, start, stop or status" className="min-w-0 flex-1 rounded bg-slate-800 p-2 font-mono text-sm" />
+      <button type="submit" className={button} disabled={busy}>Run</button>
+     </form>
+     <p className="mt-2 text-xs text-slate-400">Commands operate only on this generated app. Start runs its tests and build before opening Preview.</p>
+    </section>
     {preview && <section className="mt-4"><h3 className="mb-2">Application Preview</h3><iframe title={core.name+' application preview'} src={preview} sandbox="allow-scripts allow-forms" referrerPolicy="no-referrer" className="h-[55vh] w-full rounded bg-white" /><p className="mt-2 text-xs text-slate-400">Closing this panel keeps the app running. Stop application closes its local preview.</p></section>}
    </>}
   </dialog>

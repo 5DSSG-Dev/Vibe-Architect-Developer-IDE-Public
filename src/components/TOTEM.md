@@ -101,3 +101,7 @@
 
 ## 2026-11-02 | Lumen | Build & Preview
 - New ApplicationProduction is keyed by CORE identity; proposes definitions through existing governed gateway, exposes source/ownership review, explicit launch, execution output and sandboxed Preview/Stop. Receipt pointers persist with the app. Review binds to exact receipt/digest/context; delayed restore cannot supersede a later action. Request/evidence recovery and building/unknown status guards preserve active controls. Automated runtime checks pass; browser/live-provider rehearsal and final Verus/Libra review remain pending. Existing running gateway still needs source reload; see chatgpt-work lane.
+
+
+## 2026-11-03 | Lumen | Application Terminal launch controls
+- Build & Preview now shows a keyboard Terminal for a generated receipt. Fixed commands help/files/status/start/stop/clear use existing production status and governed launch/stop actions; arbitrary shell input is not executed. Start requires the same exact source/context review and saved evidence as the launch button. Generated test/build output and preview appear in this panel. Browser interaction remains to be rehearsed.
