@@ -1,0 +1,72 @@
+{
+  "commit": "09b85a8394e91ccd771e1c4f10af50d10d53b03a",
+  "results": [
+    {
+      "id": "app-8d77b223-2fa3-4834-b642-fc5baa43d43c",
+      "executed": true,
+      "draft": true,
+      "occupied": 0,
+      "contracts": 0,
+      "bundle": "/assets/index-CK6Vn8pc.js"
+    },
+    {
+      "id": "V02",
+      "executed": true,
+      "pass": true,
+      "requests": 2,
+      "selectedAndCustomInSingleRequest": true
+    },
+    {
+      "id": "V03",
+      "executed": true,
+      "pass": true,
+      "cases": [
+        {
+          "kind": "bad-json",
+          "draftRetained": true,
+          "proposalRetained": true,
+          "retry": true
+        },
+        {
+          "kind": "oversized",
+          "draftRetained": true,
+          "proposalRetained": true,
+          "retry": true
+        },
+        {
+          "kind": "http-error",
+          "draftRetained": true,
+          "proposalRetained": true,
+          "retry": true
+        },
+        {
+          "kind": "transport",
+          "draftRetained": true,
+          "retry": true
+        }
+      ],
+      "newTypingRetained": true
+    },
+    {
+      "id": "V05",
+      "executed": true,
+      "pass": true,
+      "coreId": "app-8d77b223-2fa3-4834-b642-fc5baa43d43c",
+      "name": "QA Constellation",
+      "orb": "orb-http-gateway",
+      "satellite": "sat-request-validator",
+      "actuator": "act-sql-query-executor",
+      "todos": [
+        "Implement plain-note entry in the selected Elements and verify valid input.",
+        "Verify navigation and reopen preserve the agreed architecture.",
+        "Verify the requested app works, saves its data, and reopens successfully."
+      ],
+      "footerName": "QA Constellation"
+    },
+    {
+      "id": "V09",
+      "executed": false,
+      "error": "locator.waitFor: Timeout 7000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '+ Create Custom Orb', exact: true }) to be visible\u001b[22m\n"
+    }
+  ]
+}

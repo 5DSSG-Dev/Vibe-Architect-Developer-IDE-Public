@@ -1,0 +1,242 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "core-matrix",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844
+      },
+      "pageOverflow": false,
+      "buttons": [],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 565,
+          "scrollHeight": 1609
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 768,
+        "h": 1024
+      },
+      "pageOverflow": false,
+      "buttons": [],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 767,
+          "scrollHeight": 1063
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 1000
+      },
+      "pageOverflow": false,
+      "buttons": [],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 746,
+          "scrollHeight": 1047
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "pageOverflow": false,
+      "buttons": [],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 818,
+          "scrollHeight": 1047
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 23,
+        "nodes": [
+          {
+            "target": [
+              ".text-base"
+            ],
+            "html": "<h2 class=\"font-orbitron text-base font-bold text-slate-100 glow-cyan\">CORE MATRIX CONFIGURATOR</h2>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".space-x-3.items-center.flex > div:nth-child(2) > .text-cyan-400"
+            ],
+            "html": "<p class=\"text-xs font-mono text-cyan-400\">App identity, resources and CORE crystal</p>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              "strong"
+            ],
+            "html": "<strong class=\"text-cyan-300\">Your app starts with its CORE.</strong>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-cyan-950\\/40 > .mt-1"
+            ],
+            "html": "<p class=\"mt-1\">The CORE brings your app’s identity and connected Elements together. Set the resources available to its Orbs, describe what you are building, and choose a crystal to represent it.</p>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".space-y-4:nth-child(2) > .pb-2.border-b.text-slate-200"
+            ],
+            "html": "<h3 class=\"text-xs font-orbitron font-bold text-slate-200 tracking-wider uppercase border-b border-slate-800 pb-2\">1. App resource budget</h3>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-deprecated-role",
+      "aria-hidden-focus",
+      "aria-prohibited-attr",
+      "aria-required-attr",
+      "aria-roles",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "avoid-inline-spacing",
+      "button-name",
+      "color-contrast",
+      "definition-list",
+      "dlitem",
+      "form-field-multiple-labels",
+      "image-alt",
+      "label",
+      "nested-interactive",
+      "scrollable-region-focusable",
+      "select-name"
+    ]
+  }
+}

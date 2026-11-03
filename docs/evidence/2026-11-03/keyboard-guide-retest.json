@@ -1,0 +1,7 @@
+{
+  "guideInitiallyVisible": true,
+  "guideHiddenWhenNavigationExpanded": true,
+  "navOpen": true,
+  "enterByKeyboard": true,
+  "guideRestoredOnNavClose": true
+}

@@ -1,0 +1,317 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "production",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 19,
+        "y": 42.203125,
+        "w": 352,
+        "h": 759.59375
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Close panel",
+          "x": 274.984375,
+          "y": 63.203125,
+          "w": 75.015625,
+          "h": 58,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Generate application",
+          "x": 40,
+          "y": 281.203125,
+          "w": 154.28125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Launch reviewed application",
+          "x": 40,
+          "y": 331.203125,
+          "w": 201.125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Restore saved CORE app",
+          "x": 53,
+          "y": 714.203125,
+          "w": 177.09375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 19.203125,
+        "y": 277,
+        "w": 729.59375,
+        "h": 470
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Close panel",
+          "x": 630.4375,
+          "y": 298,
+          "w": 97.359375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Generate application",
+          "x": 40.203125,
+          "y": 456,
+          "w": 154.28125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Launch reviewed application",
+          "x": 206.484375,
+          "y": 456,
+          "w": 201.125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Restore saved CORE app",
+          "x": 261.265625,
+          "y": 659,
+          "w": 177.09375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 80,
+        "y": 301,
+        "w": 1280,
+        "h": 398
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Close panel",
+          "x": 1241.640625,
+          "y": 322,
+          "w": 97.359375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Generate application",
+          "x": 101,
+          "y": 460,
+          "w": 154.28125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Launch reviewed application",
+          "x": 267.28125,
+          "y": 460,
+          "w": 201.125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Restore saved CORE app",
+          "x": 322.0625,
+          "y": 611,
+          "w": 177.09375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 320,
+        "y": 341,
+        "w": 1280,
+        "h": 398
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Close panel",
+          "x": 1481.640625,
+          "y": 362,
+          "w": 97.359375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Generate application",
+          "x": 341,
+          "y": 500,
+          "w": 154.28125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Launch reviewed application",
+          "x": 507.28125,
+          "y": 500,
+          "w": 201.125,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Restore saved CORE app",
+          "x": 562.0625,
+          "y": 651,
+          "w": 177.09375,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-deprecated-role",
+      "aria-prohibited-attr",
+      "aria-required-attr",
+      "aria-roles",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "button-name",
+      "color-contrast",
+      "duplicate-id-aria",
+      "nested-interactive",
+      "summary-name"
+    ]
+  }
+}
