@@ -298,3 +298,7 @@
 ## 2026-11-02 | Codex | Local preview gateway session
 - Explicit opt-in development-only loopback session authenticates same-origin local preview without exposing demo/provider keys. Existing public header authentication unchanged. Provider type now has machine-readable status separate from display name.
 - Windows build and ten local-session/access tests pass; real HTTP session204/status200/cross-origin403 verified. Baseten live source and gauge configured; no model inference requested.
+
+
+## 2026-11-02 | Codex | Local hostname session repair
+- Reproduced localhost:3012 bootstrap403 while 127.0.0.1:3012 returned204. Accept explicit loopback aliases on configured port only, while Origin must match request Host. Cross-origin, wrong-port and remote restrictions remain. Added regression.

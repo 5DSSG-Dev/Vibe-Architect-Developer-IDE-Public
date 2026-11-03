@@ -29,3 +29,10 @@ test('same-origin browser GET status can use cookie without Origin header',()=>{
 test('public origins and absent gateway keys cannot enable local sessions',()=>{
  assert.throws(()=>createLocalLuminarySession('https://example.com','key'));assert.throws(()=>createLocalLuminarySession(origin,''));
 });
+
+test('localhost alias authenticates only against its own origin on the configured port',()=>{
+ const r=invoke({headers:{host:'localhost:3012',origin:'http://localhost:3012'}});
+ assert.equal(r.status,204);
+ assert.equal(invoke({headers:{host:'localhost:3012',origin}}).status,403);
+ assert.equal(invoke({headers:{host:'localhost:9999',origin:'http://localhost:9999'}}).status,403);
+});

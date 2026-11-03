@@ -11,8 +11,10 @@ export function createLocalLuminarySession(origin: string, demoKey: string): Req
   return (req, res, next) => {
     const address = req.socket.remoteAddress;
     const local = address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1';
-    const hostMatches = req.get('host') === expected.host;
-    const sameOrigin = req.get('origin') === origin;
+    let requestOrigin: URL | undefined;
+    try { requestOrigin = new URL(`${expected.protocol}//${req.get('host')}`); } catch { /* Invalid Host never authenticates. */ }
+    const hostMatches = Boolean(requestOrigin && ['localhost', '127.0.0.1', '[::1]'].includes(requestOrigin.hostname) && requestOrigin.port === expected.port && requestOrigin.host === req.get('host') && !requestOrigin.username && !requestOrigin.password);
+    const sameOrigin = hostMatches && req.get('origin') === requestOrigin?.origin;
     const sameSite = req.get('sec-fetch-site') === 'same-origin';
     if (req.path === '/local-session' && req.method === 'POST') {
       if (!local || !hostMatches || !sameOrigin) { res.sendStatus(403); return; }
