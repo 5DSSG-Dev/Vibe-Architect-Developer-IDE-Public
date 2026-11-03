@@ -1,0 +1,165 @@
+{
+  "source": "Live Baseten accepted app; scroll-to-hit coverage across four target viewports",
+  "records": [
+    {
+      "name": "workspace",
+      "width": 390,
+      "height": 844,
+      "checked": 82,
+      "passed": 82,
+      "failures": [],
+      "docWidth": 390,
+      "viewportWidth": 390
+    },
+    {
+      "name": "workspace",
+      "width": 768,
+      "height": 1024,
+      "checked": 82,
+      "passed": 82,
+      "failures": [],
+      "docWidth": 768,
+      "viewportWidth": 768
+    },
+    {
+      "name": "workspace",
+      "width": 1100,
+      "height": 900,
+      "checked": 82,
+      "passed": 82,
+      "failures": [],
+      "docWidth": 1100,
+      "viewportWidth": 1100
+    },
+    {
+      "name": "workspace",
+      "width": 1440,
+      "height": 900,
+      "checked": 82,
+      "passed": 82,
+      "failures": [],
+      "docWidth": 1440,
+      "viewportWidth": 1440
+    },
+    {
+      "name": "cabinet",
+      "width": 390,
+      "height": 844,
+      "checked": 43,
+      "passed": 43,
+      "failures": [],
+      "docWidth": 390,
+      "viewportWidth": 390
+    },
+    {
+      "name": "cabinet",
+      "width": 768,
+      "height": 1024,
+      "checked": 43,
+      "passed": 43,
+      "failures": [],
+      "docWidth": 768,
+      "viewportWidth": 768
+    },
+    {
+      "name": "cabinet",
+      "width": 1100,
+      "height": 900,
+      "checked": 43,
+      "passed": 43,
+      "failures": [],
+      "docWidth": 1100,
+      "viewportWidth": 1100
+    },
+    {
+      "name": "cabinet",
+      "width": 1440,
+      "height": 900,
+      "checked": 43,
+      "passed": 43,
+      "failures": [],
+      "docWidth": 1440,
+      "viewportWidth": 1440
+    },
+    {
+      "name": "builder",
+      "width": 390,
+      "height": 844,
+      "checked": 20,
+      "passed": 20,
+      "failures": [],
+      "docWidth": 390,
+      "viewportWidth": 390
+    },
+    {
+      "name": "builder",
+      "width": 768,
+      "height": 1024,
+      "checked": 20,
+      "passed": 20,
+      "failures": [],
+      "docWidth": 768,
+      "viewportWidth": 768
+    },
+    {
+      "name": "builder",
+      "width": 1100,
+      "height": 900,
+      "checked": 20,
+      "passed": 20,
+      "failures": [],
+      "docWidth": 1100,
+      "viewportWidth": 1100
+    },
+    {
+      "name": "builder",
+      "width": 1440,
+      "height": 900,
+      "checked": 20,
+      "passed": 20,
+      "failures": [],
+      "docWidth": 1440,
+      "viewportWidth": 1440
+    },
+    {
+      "name": "production",
+      "width": 390,
+      "height": 844,
+      "checked": 3,
+      "passed": 3,
+      "failures": [],
+      "docWidth": 390,
+      "viewportWidth": 390
+    },
+    {
+      "name": "production",
+      "width": 768,
+      "height": 1024,
+      "checked": 3,
+      "passed": 3,
+      "failures": [],
+      "docWidth": 768,
+      "viewportWidth": 768
+    },
+    {
+      "name": "production",
+      "width": 1100,
+      "height": 900,
+      "checked": 3,
+      "passed": 3,
+      "failures": [],
+      "docWidth": 1100,
+      "viewportWidth": 1100
+    },
+    {
+      "name": "production",
+      "width": 1440,
+      "height": 900,
+      "checked": 3,
+      "passed": 3,
+      "failures": [],
+      "docWidth": 1440,
+      "viewportWidth": 1440
+    }
+  ]
+}

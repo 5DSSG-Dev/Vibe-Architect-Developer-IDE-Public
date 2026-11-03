@@ -1,0 +1,8 @@
+{
+  "before": "Quick Jot\n\nQuick Jot - add a title and body, then Add to list.\n\nTitle\nBody\nSave",
+  "after": "Quick Jot\n\nQuick Jot - add a title and body, then Add to list.\n\nTitle\nBody\nSave\n\ntitle: QA Live Note 1\n\nbody: Real Meta-generated application browser behavior",
+  "addPreserved": true,
+  "afterReload": "Quick Jot\n\nQuick Jot - add a title and body, then Add to list.\n\nTitle\nBody\nSave",
+  "inMemoryReset": true,
+  "error": "Error: page.addScriptTag: Executing inline script violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-5vxLHrkaMlk/YwTMhnnACCMv4oGC015tL36L39pVoPw='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked."
+}

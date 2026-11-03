@@ -1,0 +1,21 @@
+{
+  "source": "Live Baseten accepted project, real editor authoring, exported and reimported in clean Chrome workspace; zero fixtures",
+  "result": {
+    "exported": {
+      "name": "Field Journal",
+      "coreId": "app-fb809c4c-970a-4faa-b354-d03df193f1de",
+      "items": 57
+    },
+    "results": {
+      "coreId": true,
+      "satelliteId": true,
+      "actuatorId": true,
+      "language": true,
+      "satelliteContract": true,
+      "actuatorContract": true,
+      "hierarchy": true,
+      "sourceFrames": true
+    },
+    "pass": true
+  }
+}

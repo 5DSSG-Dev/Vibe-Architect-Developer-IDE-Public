@@ -1,0 +1,57 @@
+{
+  "source": "Genuine Baseten accepted app, real keyboard input, all major IDE surfaces",
+  "checks": [
+    {
+      "id": "Nav-open",
+      "pass": true
+    },
+    {
+      "id": "3D-Enter",
+      "pass": true
+    },
+    {
+      "id": "Nav-close",
+      "pass": true
+    },
+    {
+      "id": "ToDo-Enter",
+      "pass": true
+    },
+    {
+      "id": "Cabinet-Enter",
+      "pass": true
+    },
+    {
+      "id": "Luminary-Enter",
+      "pass": true
+    },
+    {
+      "id": "Luminary-Escape",
+      "pass": true
+    },
+    {
+      "id": "Builder-Tab",
+      "pass": true
+    },
+    {
+      "id": "Builder-Escape",
+      "pass": true
+    },
+    {
+      "id": "Cabinet-close",
+      "pass": true
+    },
+    {
+      "id": "Core-Matrix-Tab",
+      "pass": true
+    },
+    {
+      "id": "Production-Tab",
+      "pass": true
+    },
+    {
+      "id": "Production-Escape",
+      "pass": true
+    }
+  ]
+}

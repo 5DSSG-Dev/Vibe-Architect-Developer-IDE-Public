@@ -1,0 +1,19 @@
+{
+  "provider": "Baseten",
+  "mode": "Actual ToDo→Apothecary→Luminary browser route, no mocks",
+  "result": {
+    "focus": "ToDo: Create notes table in orb-database-engine with tit · 2285 B",
+    "checks": {
+      "hasToDo": true,
+      "hasArchitecture": true,
+      "hasInterview": true,
+      "hasApp": true
+    },
+    "requestKeys": [
+      "prompt"
+    ],
+    "status": "POST",
+    "requestLength": 2496,
+    "http": 200
+  }
+}

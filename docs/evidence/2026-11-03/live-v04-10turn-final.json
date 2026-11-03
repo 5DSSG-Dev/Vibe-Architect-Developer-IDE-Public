@@ -1,0 +1,479 @@
+{
+  "mode": "True live Meta and Baseten model API; no mocks, ten Architect turns and cumulative ledger",
+  "results": [
+    {
+      "source": "baseten",
+      "time": "2026-11-03T19:58:12.784Z",
+      "model": "meta-models/muse-spark-open-1026",
+      "pass": true,
+      "turnCount": 10,
+      "checks": [
+        {
+          "requirement": "plain",
+          "present": true
+        },
+        {
+          "requirement": "tags",
+          "present": true
+        },
+        {
+          "requirement": "newest",
+          "present": true
+        },
+        {
+          "requirement": "search",
+          "present": true
+        },
+        {
+          "requirement": "timestamp",
+          "present": true
+        },
+        {
+          "requirement": "json",
+          "present": true
+        },
+        {
+          "requirement": "offline",
+          "present": true
+        },
+        {
+          "requirement": "keyboard",
+          "present": true
+        },
+        {
+          "requirement": "contrast",
+          "present": true
+        }
+      ],
+      "receipts": [
+        {
+          "turn": 1,
+          "pass": true,
+          "questions": 6,
+          "hasProposal": false,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 4218,
+          "ledgerCount": 1,
+          "usage": {
+            "inputTokens": 1791,
+            "outputTokens": 1072,
+            "usd": 0.00679475
+          }
+        },
+        {
+          "turn": 2,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 8640,
+          "ledgerCount": 2,
+          "usage": {
+            "inputTokens": 2103,
+            "outputTokens": 2440,
+            "usd": 0.01299875
+          }
+        },
+        {
+          "turn": 3,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 10619,
+          "ledgerCount": 3,
+          "usage": {
+            "inputTokens": 2187,
+            "outputTokens": 2994,
+            "usd": 0.01545825
+          }
+        },
+        {
+          "turn": 4,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 12069,
+          "ledgerCount": 4,
+          "usage": {
+            "inputTokens": 2275,
+            "outputTokens": 3224,
+            "usd": 0.01654575
+          }
+        },
+        {
+          "turn": 5,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 12341,
+          "ledgerCount": 5,
+          "usage": {
+            "inputTokens": 2365,
+            "outputTokens": 3344,
+            "usd": 0.01716825
+          }
+        },
+        {
+          "turn": 6,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 15342,
+          "ledgerCount": 6,
+          "usage": {
+            "inputTokens": 2458,
+            "outputTokens": 4168,
+            "usd": 0.0207865
+          }
+        },
+        {
+          "turn": 7,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 13535,
+          "ledgerCount": 7,
+          "usage": {
+            "inputTokens": 2563,
+            "outputTokens": 3653,
+            "usd": 0.018729
+          }
+        },
+        {
+          "turn": 8,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 17214,
+          "ledgerCount": 8,
+          "usage": {
+            "inputTokens": 2655,
+            "outputTokens": 4736,
+            "usd": 0.02344675
+          }
+        },
+        {
+          "turn": 9,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 11186,
+          "ledgerCount": 9,
+          "usage": {
+            "inputTokens": 2776,
+            "outputTokens": 3108,
+            "usd": 0.016679
+          }
+        },
+        {
+          "turn": 10,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "meta-models/muse-spark-open-1026",
+          "elapsedMs": 10110,
+          "ledgerCount": 10,
+          "usage": {
+            "inputTokens": 2931,
+            "outputTokens": 2770,
+            "usd": 0.01543625
+          }
+        }
+      ],
+      "final": {
+        "name": "Field Journal",
+        "purpose": "Single-user Web App for plain-text title/body notes with topic tags (R002), server DB API CRUD view/edit/delete/list (R002), newest-first sorting (R003), title keyword search (R004), immutable creation timestamps (R005), downloadable JSON export (R006 superseding no-export), offline-readable cached notes (R007), keyboard-only controls (R008), 4.5:1 contrast labels (R009), no login no rich text (R001).",
+        "appType": "Web App",
+        "crystalModel": "CORE_CRYSTAL_CAGED.glb",
+        "elements": [
+          {
+            "id": "orb-http-gateway",
+            "parentId": null,
+            "reason": "Front-door Web App API for plain-text title/body notes; handles CRUD list/view/edit/delete, newest-first title search and JSON export without login per R001/R002"
+          },
+          {
+            "id": "orb-database-engine",
+            "parentId": null,
+            "reason": "Server database persisting notes with title, body, tags and immutable creation timestamp per R002/R005"
+          },
+          {
+            "id": "sat-request-validator",
+            "parentId": "orb-http-gateway",
+            "reason": "Validates plain-text title/body/tags payloads and rejects rich-text per R001"
+          },
+          {
+            "id": "sat-query-planner",
+            "parentId": "orb-database-engine",
+            "reason": "Optimizes newest-first ordering and title keyword search queries per R003/R004"
+          },
+          {
+            "id": "sat-response-cache",
+            "parentId": "orb-http-gateway",
+            "reason": "Caches list/note responses to keep previously loaded notes readable offline per R007"
+          },
+          {
+            "id": "model-satelite2",
+            "parentId": "orb-http-gateway",
+            "reason": "JSON Transformer shaping notes+tags+timestamps into downloadable JSON export per R006"
+          },
+          {
+            "id": "act-sql-query-executor",
+            "parentId": "sat-query-planner",
+            "reason": "Executes CRUD and title-search SQL against relational store per R002-R005"
+          },
+          {
+            "id": "act-payload-serializer",
+            "parentId": "model-satelite2",
+            "reason": "Serializes JSON export payload with size limits for download per R006"
+          }
+        ],
+        "gaps": [
+          "Notes schema+API: create table/API for plain-text title/body, tags[], immutable createdAt in orb-database-engine/sat-request-validator/act-sql-query-executor; verify CRUD and newest-first list order",
+          "Title search: implement keyword filter on title only in orb-http-gateway/sat-query-planner/act-sql-query-executor; verify title match not body match",
+          "JSON export: build GET /export via model-satelite2/act-payload-serializer returning all notes with timestamps/tags; verify download parses as valid JSON",
+          "Offline reading: add service worker + sat-response-cache for previously loaded notes/list; verify airplane-mode readable",
+          "Keyboard: implement tab order, focus and keyboard handlers for all main controls in Web App frontend; verify full flow keyboard-only",
+          "Contrast: apply theme meeting 4.5:1 for normal-text labels in frontend; verify with contrast checker"
+        ]
+      }
+    },
+    {
+      "source": "meta",
+      "time": "2026-11-03T20:01:52.792Z",
+      "model": "muse-spark-1.3",
+      "pass": true,
+      "turnCount": 10,
+      "checks": [
+        {
+          "requirement": "plain",
+          "present": true
+        },
+        {
+          "requirement": "tags",
+          "present": true
+        },
+        {
+          "requirement": "newest",
+          "present": true
+        },
+        {
+          "requirement": "search",
+          "present": true
+        },
+        {
+          "requirement": "timestamp",
+          "present": true
+        },
+        {
+          "requirement": "json",
+          "present": true
+        },
+        {
+          "requirement": "offline",
+          "present": true
+        },
+        {
+          "requirement": "keyboard",
+          "present": true
+        },
+        {
+          "requirement": "contrast",
+          "present": true
+        }
+      ],
+      "receipts": [
+        {
+          "turn": 1,
+          "pass": true,
+          "questions": 3,
+          "hasProposal": false,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 13011,
+          "ledgerCount": 1,
+          "usage": {
+            "inputTokens": 1658,
+            "outputTokens": 1346,
+            "usd": 0.007793
+          }
+        },
+        {
+          "turn": 2,
+          "pass": true,
+          "questions": 3,
+          "hasProposal": false,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 15437,
+          "ledgerCount": 2,
+          "usage": {
+            "inputTokens": 1850,
+            "outputTokens": 2021,
+            "usd": 0.01090175
+          }
+        },
+        {
+          "turn": 3,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 18426,
+          "ledgerCount": 3,
+          "usage": {
+            "inputTokens": 2077,
+            "outputTokens": 2413,
+            "usd": 0.0128515
+          }
+        },
+        {
+          "turn": 4,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 15481,
+          "ledgerCount": 4,
+          "usage": {
+            "inputTokens": 2152,
+            "outputTokens": 2083,
+            "usd": 0.01154275
+          }
+        },
+        {
+          "turn": 5,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 31960,
+          "ledgerCount": 5,
+          "usage": {
+            "inputTokens": 2233,
+            "outputTokens": 3946,
+            "usd": 0.01956175
+          }
+        },
+        {
+          "turn": 6,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 19449,
+          "ledgerCount": 6,
+          "usage": {
+            "inputTokens": 2317,
+            "outputTokens": 2450,
+            "usd": 0.01330875
+          }
+        },
+        {
+          "turn": 7,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 22704,
+          "ledgerCount": 7,
+          "usage": {
+            "inputTokens": 2400,
+            "outputTokens": 2868,
+            "usd": 0.015189
+          }
+        },
+        {
+          "turn": 8,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 27413,
+          "ledgerCount": 8,
+          "usage": {
+            "inputTokens": 2487,
+            "outputTokens": 3288,
+            "usd": 0.01708275
+          }
+        },
+        {
+          "turn": 9,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 34340,
+          "ledgerCount": 9,
+          "usage": {
+            "inputTokens": 2589,
+            "outputTokens": 4296,
+            "usd": 0.02149425
+          }
+        },
+        {
+          "turn": 10,
+          "pass": true,
+          "questions": 0,
+          "hasProposal": true,
+          "model": "muse-spark-1.3",
+          "elapsedMs": 21778,
+          "ledgerCount": 10,
+          "usage": {
+            "inputTokens": 2730,
+            "outputTokens": 2820,
+            "usd": 0.0153975
+          }
+        }
+      ],
+      "final": {
+        "name": "Field Journal",
+        "purpose": "Single-user plain-text title+body notes with no login, no rich text and simple defaults as Web App using browser localStorage CRUD, freeform comma-separated topic tags with click-tag filter, newest-first list, title/body/tags text search including title search, original creation timestamps, downloadable JSON export, offline-readable loaded notes, keyboard-only controls, 4.5:1 normal-text contrast.",
+        "appType": "Web App",
+        "crystalModel": "CORE_CRYSTAL_CAGED.glb",
+        "elements": [
+          {
+            "id": "orb-http-gateway",
+            "parentId": null,
+            "reason": "Serve Web App shell with keyboard-only controls and 4.5:1 contrast layout"
+          },
+          {
+            "id": "orb-file-storage",
+            "parentId": null,
+            "reason": "Persist notes to browser localStorage for durable offline-readable reads"
+          },
+          {
+            "id": "sat-request-validator",
+            "parentId": "orb-http-gateway",
+            "reason": "Validate plain-text title/body and comma tags, reject rich text"
+          },
+          {
+            "id": "sat-json-transformer",
+            "parentId": "orb-http-gateway",
+            "reason": "Shape newest-first list, tag filter, and title/body/tags search views"
+          },
+          {
+            "id": "sat-response-cache",
+            "parentId": "orb-file-storage",
+            "reason": "Cache loaded notes for offline reading without internet"
+          },
+          {
+            "id": "act-payload-serializer",
+            "parentId": "sat-json-transformer",
+            "reason": "Encode downloadable JSON export of saved notes"
+          }
+        ],
+        "gaps": [
+          "ToDo: Build plain-text CRUD with timestamps newest-first on orb-http-gateway + orb-file-storage + sat-request-validator; create in Apothecary UI and storage wiring; verify create/edit/delete, order, timestamps, no login.",
+          "ToDo: Build freeform comma tags with click-filter and title/body/tags search on sat-json-transformer; create in Apothecary list logic; verify tag add, filter, title search.",
+          "ToDo: Build JSON export download via sat-json-transformer + act-payload-serializer; create in Apothecary export action; verify file downloads all notes.",
+          "ToDo: Build offline-readable cache and keyboard + 4.5:1 contrast UI on sat-response-cache + orb-http-gateway; create in Apothecary cache and a11y fixes; verify offline read, keyboard-only use, contrast ratio."
+        ]
+      }
+    }
+  ]
+}

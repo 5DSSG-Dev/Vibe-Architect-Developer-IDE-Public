@@ -1,0 +1,11 @@
+{
+  "source": "Live Meta-generated application, real Chromium form submissions, not synthetic data fixture",
+  "result": {
+    "durationMs": 71192,
+    "containsFirst": true,
+    "containsLast": true,
+    "length": 41865,
+    "visibleRecordCount": 1000,
+    "pass": true
+  }
+}

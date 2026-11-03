@@ -1,0 +1,29 @@
+{
+  "mode": "Live gateway; real UI, no mock",
+  "results": [
+    {
+      "width": 390,
+      "scroll": 390,
+      "controls": 4,
+      "blocked": []
+    },
+    {
+      "width": 768,
+      "scroll": 768,
+      "controls": 4,
+      "blocked": []
+    },
+    {
+      "width": 1100,
+      "scroll": 1100,
+      "controls": 4,
+      "blocked": []
+    },
+    {
+      "width": 1440,
+      "scroll": 1440,
+      "controls": 4,
+      "blocked": []
+    }
+  ]
+}

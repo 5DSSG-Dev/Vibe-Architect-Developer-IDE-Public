@@ -1,0 +1,29 @@
+{
+  "method": "Real Baseten accepted app browser computed WCAG colors on alpha-composited ancestor backgrounds, tested black and white underlays (conservative); gradients and backdrop not modeled",
+  "results": [
+    {
+      "name": "workspace",
+      "tested": 58,
+      "below": 0,
+      "offenders": []
+    },
+    {
+      "name": "cabinet",
+      "tested": 93,
+      "below": 0,
+      "offenders": []
+    },
+    {
+      "name": "builder",
+      "tested": 35,
+      "below": 0,
+      "offenders": []
+    },
+    {
+      "name": "production",
+      "tested": 63,
+      "below": 0,
+      "offenders": []
+    }
+  ]
+}

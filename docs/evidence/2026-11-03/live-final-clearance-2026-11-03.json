@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-03",
+  "codeCommit": "59e26623a8d3403739eec7bce0c61f673911eb13",
+  "scope": "Approved Vibe Architect IDE demonstration scope, excludes Annex, V07/V08 semantic exhaustive, V13, V16, V17, V18",
+  "providerMode": "Live Meta and Baseten endpoints, active auth from local environment, genuine model calls. No mock provider/gateway in these receipts.",
+  "providers": [
+    {
+      "source": "baseten",
+      "liveTenTurnPass": true,
+      "turns": 10,
+      "totalInputTokens": 24104,
+      "totalOutputTokens": 31509,
+      "totalUsd": 0.16404325
+    },
+    {
+      "source": "meta",
+      "liveTenTurnPass": true,
+      "turns": 10,
+      "totalInputTokens": 22493,
+      "totalOutputTokens": 27531,
+      "totalUsd": 0.145123
+    }
+  ],
+  "requirements": {
+    "V03": {
+      "receipt": "live-v03-fault-recovery.json",
+      "sha256": "46facfd16b35153f9a7437221deeab85b936a3a4fa9083fea12dfb3a16589c2b"
+    },
+    "V04": {
+      "receipt": "live-v04-10turn-final.json",
+      "sha256": "10858fdc043fe712ac20f9a365f2c51afe9eb2e3148bbdd674506945f6cc4f29"
+    },
+    "V09": {
+      "receipt": "live-v09-fullcontext.json",
+      "sha256": "bc5c63ab834fc85baea3bd4a0afa64f8a011c7b4edf8efe9fa1d8389e2aad237"
+    },
+    "V11": {
+      "receipt": "live-v11-import-export.json",
+      "sha256": "b28388b98568c14cc4432ae917c7f5bf111db0f5f4a638bab957caf89834182d"
+    },
+    "V12": {
+      "receipt": "live-v12-connected-edit.json",
+      "sha256": "2634c50c08a14a4d926103be3c2a71e9ee64d2a6d3ff1f9f99487958c3830a8c"
+    },
+    "V14": {
+      "receipt": "live-meta-launch-preview.json",
+      "sha256": "33a78cf63b8b1197928126d97c4bbbb147b73a6ae3cff79ed46d5070f48c4d87",
+      "metaProviderReceipt": "live-meta-production.json"
+    },
+    "V15": {
+      "receipt": "live-meta-app-behavior.json",
+      "sha256": "e4bf04321986101ed8d49e32dd6dca37e1b324368ef9adee27ac1ef883574123"
+    },
+    "V19": {
+      "receipt": "live-v19-1000-records.json",
+      "sha256": "6141937d6c5bfcee2901bb78021ed3657679b5e14d79d52a10f0ab62f72d03db"
+    },
+    "V20": {
+      "receipt": "live-v20-all-green.json",
+      "sha256": "db0bb1cc9fefe03a641ab3512d5e011cf893db0534105f6b4dfb13a4dddef470"
+    },
+    "V21": {
+      "receipt": "live-css-contrast-final.json",
+      "sha256": "db363344992159eec3f1f696a35fdd841fca8ec1ac25984b608194faf8c92445"
+    },
+    "V22": {
+      "receipt": "live-v22-scrolled-hit-validation.json",
+      "sha256": "4dfeda8d5a46395394c18d78a9178b51f1d06b99ff4fba6bd1c28b538713f34a"
+    }
+  },
+  "actualGeneratedMetaApp": {
+    "receipt": "live-meta-production.json",
+    "launch": "live-meta-launch-preview.json",
+    "behavior": "live-meta-app-behavior.json",
+    "stress": "live-v19-1000-records.json",
+    "previewAccessibility": "meta-terminal-preview-accessibility.json"
+  },
+  "localColdRelease": {
+    "worktreeCodeCommit": "59e26623a8d3403739eec7bce0c61f673911eb13",
+    "install": "npm ci --no-audit --no-fund: 255 packages, exit 0",
+    "gateway": "274/274 passing",
+    "app": "441/441 passing",
+    "build": "npm run build exit 0 (large bundle warning)",
+    "fullTests": 715
+  },
+  "humanPending": "V24 final Architect subjective UX walkthrough",
+  "governance": "Baseten production generation for unsupported capabilities correctly refused. Meta generated and ran compatible real application. Do not alter IDS or gauge thresholds."
+}

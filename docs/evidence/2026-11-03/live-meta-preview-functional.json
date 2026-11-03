@@ -1,0 +1,23 @@
+{
+  "http": 200,
+  "title": "Quick Jot",
+  "body": "Quick Jot\n\nQuick Jot - add a title and body, then Add to list.\n\nTitle\nBody\nSave",
+  "inputs": [
+    {
+      "placeholder": "",
+      "id": "",
+      "type": "text",
+      "aria": null
+    },
+    {
+      "placeholder": "",
+      "id": "",
+      "type": "text",
+      "aria": null
+    }
+  ],
+  "buttons": [
+    "Save"
+  ],
+  "errors": []
+}
