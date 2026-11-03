@@ -329,3 +329,8 @@
 ## 2026-11-02 | Codex | Centered planning window and addition summary
 - Centered New App panel horizontally with responsive viewport width. Successful suggestion requests returning a revised proposal appear in an additions summary after app details and immediately before the acceptance controls.
 - A suggestion response that asks questions without returning a proposal does not mark the suggestion completed or consume its shelf choice. No saved app data or gateway configuration changed.
+
+
+## 2026-11-02 | Codex | Explain architecture gaps
+- Renamed remaining capability section to What the app still needs, with explicit distinction from Architect instructions and an Explain remaining work action that sends the listed gaps for explanation without silently adding features.
+- Planning prompt now requires impact and supported next steps for essential unresolved requirements, proactive explanation in the reply, and separation of unrequested enhancements into suggestions (e.g. rich-text editing versus requested plain notes). Acceptance remains architecture-only.
