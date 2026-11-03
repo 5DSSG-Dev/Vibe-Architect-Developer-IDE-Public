@@ -48,6 +48,7 @@ import { getAvailableCoreResources, getCoreRuntimeCapabilities } from './engine/
 import { MODEL_CATALOG } from './engine/modelCatalog';
 import { appendConnectionEventEvidence, appendRelationContractEvidence, readEvidenceArchive } from './engine/evidenceArchive';
 import { describeCurrentTask } from './utils/wayfinder';
+import { assertCompatibleElementEdit } from './engine/connectedElementEdit';
 import { NavigationPosition, readNavigationPosition, resolveEnvironmentStack } from './utils/navigationSnapshot';
 import { getRegisteredOrbManifest, registerCustomOrbManifest, registerOrbManifest } from './contracts/orbManifest';
 import { restoreConnectionEvents, subscribeConnectionEvents, type ConnectionEvent } from './contracts/connectionEvents';
@@ -103,8 +104,8 @@ function ensureSocketCodeFrames(socket: SocketBinding): SocketBinding {
 /**
  * Enforces the Umbilical handshake invariant on load: only an Orb can be bound
  * to a socket, because only an Orb carries the handshake code. Any non-Orb that
- * slipped in through the older permissive drop path — e.g. persisted in a saved
- * workspace — is vacated back to an empty socket.
+ * slipped in through the older permissive drop path â€” e.g. persisted in a saved
+ * workspace â€” is vacated back to an empty socket.
  */
 function vacateNonOrbSocket(socket: SocketBinding): SocketBinding {
   if (socket.connectedItem && !isOrbItem(socket.connectedItem)) {
@@ -196,6 +197,7 @@ export function App() {
   // replaces whatever was open, so modals never stack. The item/socket states
   // below are the payloads the open overlay reads.
   const [activeOverlay, setActiveOverlay] = useState<OverlayId>('NONE');
+  const [keyboardNavExpanded, setKeyboardNavExpanded] = useState(false);
   const openOverlay = (id: OverlayId) => setActiveOverlay(id);
   // Closing only clears the overlay if it is still the open one, so a late
   // close from a replaced overlay never closes its successor.
@@ -209,7 +211,7 @@ export function App() {
   // Apothecary Studio Orb Builder payload
   const [orbBuilderTargetItem, setOrbBuilderTargetItem] = useState<ApothecaryItem | undefined>(undefined);
 
-  // Drill-down Environment navigation: CORE (empty) → Orb → Satellite → Actuator.
+  // Drill-down Environment navigation: CORE (empty) â†’ Orb â†’ Satellite â†’ Actuator.
   // Each entry is the Element centred in that Environment.
   const [environmentStack, setEnvironmentStack] = useState<ApothecaryItem[]>([]);
   const [environmentEntryView, setEnvironmentEntryView] = useState<EnvironmentEntryView | null>(null);
@@ -391,7 +393,7 @@ export function App() {
   };
 
   // Tether a Satellite to the Orb docked at a socket. Unlike docking an Orb this
-  // needs no handshake — a Satellite operates through its host rather than
+  // needs no handshake â€” a Satellite operates through its host rather than
   // crossing the CORE boundary itself, so it binds directly.
   const handleAttachSatellite = (satellite: ApothecaryItem, hostSocketId: string) => {
     const satelliteWithCodeFrame = ensureElementCodeFrame(satellite);
@@ -469,6 +471,10 @@ export function App() {
 
   // Save updated element properties / manifest JSON
   const handleSaveInspectedItem = (updatedItem: ApothecaryItem) => {
+    const old = apothecaryCatalog.find(item => item.id === updatedItem.id) ??
+      coreManifest.sockets.flatMap(socket => [socket.connectedItem, ...(socket.attachedSatellites ?? [])]).find(item => item?.id === updatedItem.id);
+    if (old) assertCompatibleElementEdit(old, updatedItem, coreManifest, apothecaryCatalog);
+
     setCoreManifest((prev) => {
       return {
         ...prev,
@@ -481,6 +487,10 @@ export function App() {
   };
 
   const handleSaveInspectedCodeFrame = (updatedItem: ApothecaryItem) => {
+    const old = apothecaryCatalog.find(item => item.id === updatedItem.id) ??
+      coreManifest.sockets.flatMap(socket => [socket.connectedItem, ...(socket.attachedSatellites ?? [])]).find(item => item?.id === updatedItem.id);
+    if (old) assertCompatibleElementEdit(old, updatedItem, coreManifest, apothecaryCatalog);
+
     setCoreManifest((prev) => ({
       ...prev,
       sockets: prev.sockets.map((socket) => replaceElementInSocket(socket, updatedItem))
@@ -630,7 +640,7 @@ export function App() {
         </>
       )}
 
-      {/* Drill-down Element Environment (Orb → Satellites, Satellite → Actuators) */}
+      {/* Drill-down Element Environment (Orb â†’ Satellites, Satellite â†’ Actuators) */}
       {currentEnvironment && (
         <div className="absolute inset-0 z-10 bg-[#05070c]">
           <EnvironmentView
@@ -647,7 +657,7 @@ export function App() {
               onClick={() => popEnvironmentTo(environmentStack.length - 1)}
               className="mr-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide text-cyan-200 border border-cyan-400/40 hover:bg-cyan-500/20"
             >
-              ← Back
+              â† Back
             </button>
             <span className="px-2 py-1 text-[10px] font-bold tracking-wide text-cyan-200">{currentEnvironment.name}</span>
           </div>
@@ -656,8 +666,8 @@ export function App() {
 
       {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
       {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && <nav aria-label="Keyboard Element navigation"
-        className="fixed top-32 right-2 z-30 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
-        <details>
+        className="fixed top-32 right-2 z-50 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+        <details onToggle={event => setKeyboardNavExpanded(event.currentTarget.open)}>
           <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
           <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
           {(currentEnvironment ? getElementChildren(currentEnvironment, apothecaryCatalog) :
@@ -716,7 +726,7 @@ export function App() {
           className="fixed top-[72px] left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 pl-3 pr-1.5 py-1 rounded-full bg-slate-950/90 backdrop-blur-md border border-cyan-400/40 font-mono text-[10px] shadow-[0_0_15px_rgba(0,243,255,0.2)]"
         >
           <span className="text-slate-300">
-            Left off at <span className="text-cyan-200 font-bold">CORE › {resumeStack.map((el) => el.name).join(' › ')}</span>
+            Left off at <span className="text-cyan-200 font-bold">CORE â€º {resumeStack.map((el) => el.name).join(' â€º ')}</span>
           </span>
           <button
             onClick={handleResume}
@@ -729,7 +739,7 @@ export function App() {
             aria-label="Dismiss resume"
             className="px-1.5 py-1 rounded-full text-slate-400 hover:text-slate-200"
           >
-            ✕
+            âœ•
           </button>
         </div>
       )}
@@ -753,7 +763,7 @@ export function App() {
         saveCoreProgram(window.localStorage, application);
         setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, application } : current);
       }} onRemember={pointer => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, applicationProduction: pointer } : current)} />}
-      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={`journey:${coreManifest.coreId}`} coreId={coreManifest.coreId} plan={buildPlan} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
+      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={`journey:${coreManifest.coreId}`} coreId={coreManifest.coreId} plan={buildPlan} keyboardNavExpanded={keyboardNavExpanded} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
         onChange={plan => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, appBuildPlan: plan } : current)}
         onSelect={id => { setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
         onApothecary={() => {
@@ -791,7 +801,7 @@ export function App() {
         />
       )}
 
-      {/* 4. Apothecary Studio — Orb & Satellite Builder Modal */}
+      {/* 4. Apothecary Studio â€” Orb & Satellite Builder Modal */}
       {activeOverlay === 'ORB_BUILDER' && (
         <OrbBuilderModal
           initialItem={orbBuilderTargetItem}
