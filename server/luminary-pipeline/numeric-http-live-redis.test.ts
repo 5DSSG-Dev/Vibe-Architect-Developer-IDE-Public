@@ -4,6 +4,9 @@ import { createHash, randomUUID } from 'node:crypto';
 import { test } from 'node:test';
 import express from 'express';
 import { createClient } from 'redis';
+import type { ViteDevServer } from 'vite';
+import { createGateway } from '../app.js';
+import type { GatewayConfig } from '../config.js';
 import { RedisSessionStore } from '../session-store.js';
 import { RedisAtomicDeliveryClaims } from './numeric-delivery-claim.js';
 import { numericDeliveryId } from './numeric-delivery-reconciliation.js';
@@ -15,9 +18,8 @@ import type { PtagAttemptRequest } from './ptag-attempt-factory.js';
 import { bindNumericReceiverAcceptance } from './numeric-receiver-boundary.js';
 import { RedisReceiverAcceptanceReceipts } from './numeric-receiver-receipt.js';
 import { RedisNumericRequestIdentities } from './numeric-request-identity.js';
-import { createNumericSessionRouter } from './numeric-session-router.js';
 
-test('isolated HTTP request reaches numeric pass, one acceptance receipt, and retry suppression',
+test('optional gateway mount reaches numeric pass, one acceptance receipt, and retry suppression',
   { skip: !process.env.NUMERIC_TEST_REDIS_URL }, async t => {
     const clients = Array.from({ length: 3 }, () => createClient({ url: process.env.NUMERIC_TEST_REDIS_URL! }));
     await Promise.all(clients.map(client => client.connect()));
@@ -66,9 +68,17 @@ test('isolated HTTP request reaches numeric pass, one acceptance receipt, and re
       }),
       reform: () => { throw new Error('no reform'); }, claims, receiver, maxReforms: 0,
     };
-    const app = express();
-    app.use(express.json());
-    app.use('/numeric', createNumericSessionRouter('http://127.0.0.1:3000', 'aegis_admin_session', sessions, inputs));
+    const config: GatewayConfig = {
+      nodeEnv: 'test', port: 0, origin: 'http://127.0.0.1:3000', sessionTtlMs: 60_000,
+      cookieSecure: false, trustProxy: false,
+    };
+    const vite = { middlewares: express.Router() } as unknown as ViteDevServer;
+    const entra = {
+      configured: false,
+      createAuthorizationUrl: async () => { throw new Error('not configured'); },
+      completeAuthorization: async () => { throw new Error('not configured'); },
+    };
+    const app = await createGateway({ config, sessions, entra, vite, numericRoute: inputs });
     const server = app.listen(0, '127.0.0.1');
     await new Promise<void>(resolve => server.once('listening', resolve));
     const address = server.address();
@@ -79,7 +89,7 @@ test('isolated HTTP request reaches numeric pass, one acceptance receipt, and re
       if (keys.length) await numericClient.del(keys);
       await Promise.all(clients.map(client => client.quit()));
     });
-    const send = (prompt: string, retryKey: string) => fetch(`http://127.0.0.1:${address.port}/numeric/ask`, {
+    const send = (prompt: string, retryKey: string) => fetch(`http://127.0.0.1:${address.port}/api/luminary/numeric/ask`, {
       method: 'POST', headers: {
         'content-type': 'application/json', origin: 'http://127.0.0.1:3000', 'x-csrf-token': 'csrf',
         'idempotency-key': retryKey, cookie: `aegis_admin_session=${session.id}`,
