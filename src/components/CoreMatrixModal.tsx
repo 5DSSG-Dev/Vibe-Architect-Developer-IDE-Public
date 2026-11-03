@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Sliders, Cpu, HardDrive, Zap, Shield, CheckCircle2, Circle } from 'lucide-react';
 import { HardwareBudget } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
-import { CoreCrystalPreview } from './CoreCrystalPreview';
+import { CoreCrystalPreview, CoreCrystalThumbnail } from './CoreCrystalPreview';
 import type { CoreManifest } from '../engine/relationEngine';
 
 const APP_TYPES = ['Web App', 'Database', 'Desktop App', 'Mobile App', 'Browser Extension', 'API / Service', 'Library / Package', 'Automation', 'Other'];
@@ -29,6 +29,7 @@ export const CoreMatrixModal: React.FC<CoreMatrixModalProps> = ({
   onUpdateHardwareBudget,
   onClose
 }) => {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const config = manifest.appConfiguration ?? { appType: 'Web App', purpose: '', crystalModel: CRYSTALS[0][0], updatedAt: '' };
   const updateConfig = (patch: Partial<typeof config>) => onUpdateApp({ appConfiguration: { ...config, ...patch, updatedAt: new Date().toISOString() } });
   const fieldClass = "w-full mt-1 rounded-xl border border-slate-700 bg-slate-950 p-2 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none";
@@ -166,7 +167,16 @@ export const CoreMatrixModal: React.FC<CoreMatrixModalProps> = ({
               <div className="space-y-3">
                 <h4 className="text-sm text-cyan-300">{config.appType} CORE</h4>
                 <CoreCrystalPreview model={CRYSTALS.some(([file]) => file === config.crystalModel) ? config.crystalModel : CRYSTALS[0][0]} />
-                <label className="block text-sm text-slate-300">Crystal<select className={fieldClass} value={config.crystalModel} onChange={e => updateConfig({ crystalModel: e.target.value })}>{CRYSTALS.map(([file, name]) => <option key={file} value={file}>{name}</option>)}</select></label>
+                <div className="text-sm text-slate-300">
+                  <button type="button" aria-expanded={pickerOpen} aria-controls="core-crystal-options" onClick={() => setPickerOpen(open => !open)} className={`${fieldClass} flex items-center justify-between text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300`}>
+                    <span>Crystal · {CRYSTALS.find(([file]) => file === config.crystalModel)?.[1] ?? 'Seed Crystal'}</span><span aria-hidden="true">{pickerOpen ? '▴' : '▾'}</span>
+                  </button>
+                  {pickerOpen && <div id="core-crystal-options" role="group" aria-label="Choose a CORE crystal" className="mt-2 grid grid-cols-2 gap-2 rounded-2xl border border-slate-700 bg-slate-950 p-2">
+                    {CRYSTALS.map(([file, name]) => <button key={file} type="button" aria-pressed={config.crystalModel === file} onClick={() => { updateConfig({ crystalModel: file }); }} className={`rounded-xl border p-2 text-center text-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 ${config.crystalModel === file ? 'border-cyan-300 bg-cyan-950/60 text-cyan-200' : 'border-slate-700 hover:border-cyan-500'}`}>
+                      <CoreCrystalThumbnail model={file} /><span>{name}{config.crystalModel === file ? ' ✓' : ''}</span>
+                    </button>)}
+                  </div>}
+                </div>
                 <p className="text-xs text-slate-400">A visual identity for your app. Choosing a type suggests a crystal; you can choose another. This does not change the workspace’s central model.</p>
               </div>
             </div>

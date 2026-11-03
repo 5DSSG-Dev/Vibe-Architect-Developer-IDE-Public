@@ -274,3 +274,8 @@
 ## 2026-11-02 | Codex | CORE Configurator review preview
 - Added app details persisted inside CORE manifest, app-type crystal defaults and selectable isolated GLB preview. Removed CyberPeer daemon controls from this modal and clarified resource budget wording.
 - Prepared on isolated current-main worktree for Architect visual review. Existing active checkout untouched.
+
+
+## 2026-11-02 | Codex | Crystal picker feedback
+- Added visual thumbnail choices in expandable crystal picker. Seed preview uses shared workspace loader with Meshopt/KTX2 support and shared cache ownership; preview no longer disposes cached assets.
+- Retains separate scene, environment and renderer cleanup. Browser interaction review remains pending.
