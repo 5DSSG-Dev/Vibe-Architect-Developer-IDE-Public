@@ -105,3 +105,7 @@
 
 ## 2026-11-03 | Lumen | Application Terminal launch controls
 - Build & Preview now shows a keyboard Terminal for a generated receipt. Fixed commands help/files/status/start/stop/clear use existing production status and governed launch/stop actions; arbitrary shell input is not executed. Start requires the same exact source/context review and saved evidence as the launch button. Generated test/build output and preview appear in this panel. Browser interaction remains to be rehearsed.
+
+
+## 2026-11-03 | Lumen | Guided ToDo and Apothecary entry
+- AppBuildJourney now constrains its ToDo panel to viewport height/width, wraps long tokens, and shows compact task summaries with full detail on demand. Selecting a task visibly opens a short build guide and attaches its complete accepted context to Luminary. Entering Apothecary opens the guide with the next unfinished item. Guide text is deterministic local UI guidance, not a model reply or completion claim.

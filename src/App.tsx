@@ -726,7 +726,7 @@ export function App() {
       <LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={coreManifest.coreId} core={coreManifest} catalog={apothecaryCatalog} onRemember={pointer => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, applicationProduction: pointer } : current)} />}
-      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={coreManifest.coreId} coreId={coreManifest.coreId} plan={buildPlan}
+      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={coreManifest.coreId} coreId={coreManifest.coreId} plan={buildPlan} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
         onChange={plan => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, appBuildPlan: plan } : current)}
         onSelect={id => { setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
         onApothecary={() => {
