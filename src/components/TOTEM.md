@@ -50,3 +50,8 @@
 
 ## 2026-11-02 | Codex | Guided creation verification
 - Final production build passes, including TypeScript checks. Full app suite: 358 passed, zero failed/skipped. Rejects uncontracted model-only Orbs before proposal acceptance; explicit empty child lists stay empty. No provider calls or browser visual tests performed. Desktop Commander remains unresponsive; preview application pending.
+
+
+## 2026-11-02 | Codex | Local preview gateway session
+- Explicit opt-in development-only loopback session authenticates same-origin local preview without exposing demo/provider keys. Existing public header authentication unchanged. Provider type now has machine-readable status separate from display name.
+- Windows build and ten local-session/access tests pass; real HTTP session204/status200/cross-origin403 verified. Baseten live source and gauge configured; no model inference requested.

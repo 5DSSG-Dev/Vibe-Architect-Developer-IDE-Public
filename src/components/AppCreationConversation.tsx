@@ -12,6 +12,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   const [answer, setAnswer] = useState<CreationAnswer | null>(null);
   const [draft, setDraft] = useState('');
   const [key, setKey] = useState(readDemoKey);
+  const [localReady, setLocalReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState('');
@@ -20,21 +21,29 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   const latest = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => { setAppCreationActive(true); return () => setAppCreationActive(false); }, []);
   useEffect(() => () => request.current?.abort(), []);
+  useEffect(() => {
+    const controller = new AbortController();
+    void luminaryApi.localSession(controller.signal).then(ready => { if (!controller.signal.aborted) setLocalReady(ready); });
+    return () => controller.abort();
+  }, []);
   useEffect(() => { latest.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, [turns, answer, error]);
   async function send(event: React.FormEvent) {
     event.preventDefault();
     if (request.current || accepting.current || !draft.trim()) return;
-    if (!key.trim()) { setError('Enter the IDE demo key to connect to Luminary.'); return; }
     const next = [...turns, { role: 'architect', text: draft.trim() }];
     if (JSON.stringify(next).length > 12_000) { setError('This conversation is getting long. Shorten your description before continuing.'); return; }
     const controller = new AbortController(); request.current = controller;
     setBusy(true); setError(''); setAnswer(null);
     try {
-      saveDemoKey(key.trim());
+      if (!localReady && !key.trim()) {
+        if (!await luminaryApi.localSession(controller.signal)) throw Error('The local gateway is unavailable. Enter the IDE demo key under connection settings for a remote gateway.');
+        setLocalReady(true);
+      }
+      if (key.trim()) saveDemoKey(key.trim());
       const status = await luminaryApi.status(key.trim());
       if (controller.signal.aborted) return;
       if (!status.ok) throw Error(status.shortfall.message);
-      if (!['meta', 'baseten'].includes(status.value.replySource)) throw Error('App planning needs a live Luminary connection. This gateway has no live model configured. Your description is still here.');
+      if (!['meta', 'baseten'].includes(status.value.replySourceKind ?? status.value.replySource)) throw Error('App planning needs a live Luminary connection. This gateway has no live model configured. Your description is still here.');
       const prompt = creationPrompt(next, catalog);
       if (new TextEncoder().encode(prompt).length > 48_000) throw Error('The catalog and conversation are too large for one planning request.');
       const result = await luminaryApi.ask(key.trim(), prompt, controller.signal);
@@ -72,7 +81,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       <div ref={latest}/>
     </div>
     <form onSubmit={send} className="p-4 border-t border-amber-300/20 space-y-3">
-      <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>
+      {localReady ? <p className="text-xs text-emerald-300">Connected through your local gateway</p> : <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>}
       <label className="sr-only" htmlFor="app-idea">Describe your app or answer Luminary</label>
       <textarea id="app-idea" autoFocus value={draft} onChange={e => setDraft(e.target.value)} maxLength={4000} rows={3} placeholder="I’d like to build an app that…" disabled={applying} className="w-full bg-slate-900 border border-slate-700 focus:border-amber-300 focus:outline-none rounded-xl p-3 text-sm resize-none"/>
       <div className="flex items-center justify-between gap-3"><p className="text-[11px] text-slate-400">Sent to your configured Luminary when you press Send.</p>{busy ? <button type="button" onClick={() => { request.current?.abort(); }} className="text-sm text-amber-200 flex gap-1 items-center"><Square size={14}/>Stop</button> : <button disabled={!draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button>}</div>

@@ -33,6 +33,7 @@ export interface GatewayConfig {
   redisUrl?: string;
   /** Shared demo key for the reviewer-facing Luminary reply endpoint. Absent = endpoint disabled. */
   luminaryDemoKey?: string;
+  luminaryLocalSession?: boolean;
   /** The embedded gauge model for the Luminary reply pipeline (STP-0002 P18). Absent = not configured. */
   luminaryGauge?: { endpoint: string; model: string; timeoutMs: number; thresholds: VirtueThresholds };
   /** The Luminary's reply source: the labelled rehearsal stand-in (P19), Meta's Model API (P21) or Baseten's Muse Spark Open (P22); absent = not configured. */
@@ -195,6 +196,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): GatewayConfig 
     trustProxy,
     redisUrl,
     luminaryDemoKey,
+    luminaryLocalSession: nodeEnv === 'development' && env.LUMINARY_LOCAL_SESSION === 'true',
     luminaryGauge,
     luminaryReplySource,
     governanceRecordDir,

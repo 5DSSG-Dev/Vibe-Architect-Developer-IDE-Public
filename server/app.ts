@@ -1,3 +1,4 @@
+import { createLocalLuminarySession } from './luminary-local-session.js';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import type { ViteDevServer } from 'vite';
@@ -257,6 +258,9 @@ export async function createGateway(options: CreateGatewayOptions) {
   // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
   // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
   // that take the same governed path as /ask.
+  if (config.nodeEnv === 'development' && config.luminaryLocalSession && config.luminaryDemoKey) {
+    app.use('/api/luminary', createLocalLuminarySession(config.origin, config.luminaryDemoKey));
+  }
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
   const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge }, record: options.record };
   app.use(
@@ -267,6 +271,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   app.get('/api/luminary/status', (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.json({
+      replySourceKind: options.askModel ? (config.luminaryReplySource ?? 'configured') : 'not_configured',
       replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
       gauge: options.gauge ? 'configured' : 'not_configured',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',

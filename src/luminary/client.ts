@@ -129,6 +129,7 @@ export interface CodingTask {
 }
 
 export interface LuminaryStatus {
+  replySourceKind?: string;
   replySource: string;
   gauge: 'configured' | 'not_configured';
   codingTasks: 'on' | 'off' | 'local_only';
@@ -215,6 +216,10 @@ async function call<T>(path: string, key: string, init: { method?: string; body?
 }
 
 export const luminaryApi = {
+  localSession: async (signal?: AbortSignal): Promise<boolean> => {
+    try { return (await fetch('/api/luminary/local-session', { method: 'POST', credentials: 'same-origin', signal })).ok; }
+    catch { return false; }
+  },
   status: (key: string) => call<LuminaryStatus>('/api/luminary/status', key),
   ask: (key: string, prompt: string, signal?: AbortSignal, link: { revisionOf?: string; resubmit?: boolean } = {}) =>
     call<{ reply: GovernedReply; lineage?: LineageEntry[]; record?: TurnRecord }>('/api/luminary/ask', key, { method: 'POST', body: { prompt, ...link }, signal }),
