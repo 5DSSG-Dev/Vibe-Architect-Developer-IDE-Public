@@ -147,7 +147,7 @@ export const OrbBuilderModal: React.FC<OrbBuilderModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+        <div className="flex-1 min-h-0 overflow-y-auto p-5 pb-24 space-y-4 text-xs">
           {/* Target Socket Selector */}
           <div className="bg-slate-950/70 p-3 rounded-xl border border-cyan-500/20 flex items-center justify-between">
             <label htmlFor="builder-socket" className="text-[10px] font-bold text-slate-300 uppercase">Target Umbilical Socket:</label>

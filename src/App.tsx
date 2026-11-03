@@ -1,10 +1,10 @@
 import { ApplicationProduction } from './components/ApplicationProduction';
 import { AppBuildJourney } from './components/AppBuildJourney';
 import { buildItemFocus, isBuildPlan, nextBuildItem } from './engine/appBuildPlan';
-import { setLuminaryEngaged } from './luminary/presence';
+import { setLuminaryEngaged, isLuminaryEngaged, subscribeLuminaryEngaged } from './luminary/presence';
 import { AppCreationConversation } from './components/AppCreationConversation';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
 import { LeftDrawer } from './components/LeftDrawer';
@@ -198,6 +198,7 @@ export function App() {
   // below are the payloads the open overlay reads.
   const [activeOverlay, setActiveOverlay] = useState<OverlayId>('NONE');
   const [keyboardNavExpanded, setKeyboardNavExpanded] = useState(false);
+  const luminaryEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
   const openOverlay = (id: OverlayId) => setActiveOverlay(id);
   // Closing only clears the overlay if it is still the open one, so a late
   // close from a replaced overlay never closes its successor.
@@ -569,6 +570,7 @@ export function App() {
       {/* 1. 3D WebGL Canvas Layer */}
       <ThreeCanvas
         creationMode={coreManifest.appCreation === 'draft'}
+        hideWorkspaceControls={keyboardNavExpanded}
         coreModel={coreManifest.appConfiguration?.crystalModel}
         sockets={coreManifest.sockets}
         selectedSocketId={selectedSocketId}
@@ -590,7 +592,7 @@ export function App() {
       />
 
       {/* Workspace tools and drawers */}
-      {environmentStack.length === 0 && (
+      {environmentStack.length === 0 && coreManifest.appCreation !== 'draft' && (
         <>
           <ElementRail
             catalog={apothecaryCatalog}
@@ -619,6 +621,7 @@ export function App() {
               setInspectingSocket(null);
               openOverlay('INSPECT_MANIFEST');
             }}
+            onTalkLuminary={() => setLuminaryEngaged(true)}
             onOpenOrbBuilder={() => {
               setOrbBuilderTargetItem(undefined);
               openOverlay('ORB_BUILDER');
@@ -665,8 +668,8 @@ export function App() {
       )}
 
       {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
-      {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && <nav aria-label="Keyboard Element navigation"
-        className="fixed top-32 right-2 z-50 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+      {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && !isApothecaryOpen && <nav aria-label="Keyboard Element navigation"
+        className="fixed top-56 right-2 z-50 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
         <details onToggle={event => setKeyboardNavExpanded(event.currentTarget.open)}>
           <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
           <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
@@ -679,7 +682,7 @@ export function App() {
         </details>
       </nav>}
       {/* Footer HUD */}
-      <Footer
+      {coreManifest.appCreation !== 'draft' && <Footer
         coreManifest={coreManifest}
         onRenameCore={name => setCoreManifest(prev => ({ ...prev, name }))}
         saveStatus={saveStatus}
@@ -718,7 +721,7 @@ export function App() {
           a.download = `${coreManifest.name.toLowerCase().replace(/\s+/g, '-')}-manifest.json`;
           a.click();
         }}
-      />
+      />}
 
       {resumeStack.length > 0 && environmentStack.length === 0 && (
         <div
@@ -757,7 +760,7 @@ export function App() {
         setApothecaryCatalog(built.catalog);
         setCoreManifest(built.manifest);
       }} />}
-      <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE'; }} aria-hidden={activeOverlay !== 'NONE'}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
+      <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged); }} aria-hidden={activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged)}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
 
       {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={`production:${coreManifest.coreId}`} core={coreManifest} catalog={apothecaryCatalog} onSaveCore={application => {
         saveCoreProgram(window.localStorage, application);

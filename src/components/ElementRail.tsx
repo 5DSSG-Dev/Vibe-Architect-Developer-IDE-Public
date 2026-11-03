@@ -58,7 +58,7 @@ export const ElementRail: React.FC<ElementRailProps> = ({ catalog, onSelectItem,
   return (
     <nav
       aria-label="Element library"
-      className="fixed left-0 top-16 bottom-20 z-10 w-[1in] flex flex-col panel-glass border-r border-cyan-500/20"
+      className="fixed left-0 top-16 bottom-20 z-30 w-[1in] flex flex-col panel-glass border-r border-cyan-500/20"
     >
       <div className="px-1 py-1.5 border-b border-cyan-500/20 space-y-1">
         <h2 className="text-center font-orbitron text-[9px] font-bold tracking-widest text-cyan-300 uppercase">Elements</h2>
@@ -77,7 +77,7 @@ export const ElementRail: React.FC<ElementRailProps> = ({ catalog, onSelectItem,
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-1 py-2 space-y-3">
         {shown.map(({ category, items }) => (
           <section key={category} aria-label={category}>
-            <h3 className="mb-1 text-center text-[8px] font-mono uppercase tracking-wider text-slate-500">{category}</h3>
+            <h3 className="mb-1 text-center text-[8px] font-mono uppercase tracking-wider text-slate-400">{category}</h3>
             <ul className="space-y-1">
               {items.map((item) => (
                 <RailItem key={item.id} item={item} onSelect={onSelectItem} onRightClick={onRightClickItem} />

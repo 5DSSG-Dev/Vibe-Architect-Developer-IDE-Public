@@ -50,7 +50,7 @@ export const Wayfinder: React.FC<WayfinderProps> = ({ path, task, onNavigate }) 
       </ol>
       <span className="w-px h-3.5 bg-slate-800 shrink-0" aria-hidden="true" />
       <p className="text-slate-300 truncate" title={task}>
-        <span className="text-slate-500">Now: </span>
+        <span className="text-slate-400">Now: </span>
         {task}
       </p>
     </nav>

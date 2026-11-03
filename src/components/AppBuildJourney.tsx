@@ -45,7 +45,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
     onApothecary();
   };
   return <>
-    <aside aria-label="App build ToDo list" className="fixed z-30 left-4 top-20 w-[min(21rem,calc(100vw-2rem))] min-w-0 text-slate-100 pointer-events-none [&>*]:pointer-events-auto">
+    <aside aria-label="App build ToDo list" className="fixed z-30 left-[calc(1in+1rem)] top-32 md:top-20 w-[min(21rem,calc(100vw-1in-2rem))] min-w-0 text-slate-100 pointer-events-none [&>*]:pointer-events-auto">
       <button ref={listTrigger} type="button" aria-expanded={open} aria-controls="app-build-todos"
         onClick={() => setOpen(!open)}
         className="rounded-xl border border-amber-300/40 bg-slate-950/95 px-4 py-2 text-sm shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">

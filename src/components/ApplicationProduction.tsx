@@ -21,6 +21,23 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore}:{core
  const [fingerprint,setFingerprint]=useState({text:'',hash:''});
  const coreOperation=useRef(false);
  const dialog=useRef<HTMLDialogElement>(null),request=useRef<AbortController|null>(null),epoch=useRef(0);
+ const trigger=useRef<HTMLButtonElement>(null);
+ const keepModalFocus=(event:React.KeyboardEvent<HTMLDialogElement>)=>{
+  if(event.key!=='Tab')return;
+  const root=event.currentTarget;
+  const candidates=Array.from(root.querySelectorAll<HTMLElement>('a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),summary,[tabindex]:not([tabindex="-1"])'));
+  const focusable=candidates.filter(el=>{
+   const computed=window.getComputedStyle(el);
+   return computed.display!=='none'&&computed.visibility!=='hidden'&&el.getClientRects().length>0&&
+     !(el.closest('details:not([open])')&&!el.matches('summary'));
+  });
+  if(!focusable.length){event.preventDefault();root.focus();return;}
+  const first=focusable[0],last=focusable[focusable.length-1],active=document.activeElement;
+  if(!root.contains(active)||(!event.shiftKey&&active===last)|| (event.shiftKey&&active===first)){
+   event.preventDefault();(event.shiftKey?last:first).focus();
+  }
+ };
+
  let context:ReturnType<typeof productionContext>|undefined,problem='';
  try {context=productionContext(core,catalog);}catch(e){problem=(e as Error).message;}
  const contextText=JSON.stringify(context ?? null);
@@ -181,8 +198,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore}:{core
  const preview=receipt?.previewUrl && /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f-]{36}\/$/.test(receipt.previewUrl) ? receipt.previewUrl : undefined;
  const button='rounded-lg border border-cyan-400/40 px-3 py-2 text-sm disabled:opacity-40 hover:bg-cyan-500/10';
  return <>
-  <button type="button" className="fixed top-20 right-4 z-30 rounded-xl border border-cyan-400/40 bg-slate-950/90 px-4 py-2 text-xs text-cyan-100" onClick={()=>setOpen(true)}>Build &amp; Preview</button>
-  <dialog ref={dialog} aria-labelledby="application-production-title" onCancel={()=>setOpen(false)} onClose={()=>setOpen(false)} className="m-auto w-[min(95vw,80rem)] max-h-[90dvh] overflow-y-auto rounded-2xl border border-cyan-400/40 bg-slate-950 p-5 text-slate-100 backdrop:bg-black/70">
+  <button ref={trigger} type="button" className="fixed top-20 right-4 z-30 rounded-xl border border-cyan-400/40 bg-slate-950/90 px-4 py-2 text-xs text-cyan-100" onClick={()=>setOpen(true)}>Build &amp; Preview</button>
+  <dialog ref={dialog} tabIndex={-1} onKeyDown={keepModalFocus} aria-labelledby="application-production-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);trigger.current?.focus();}} className="m-auto w-[min(95vw,80rem)] max-h-[90dvh] overflow-y-auto rounded-2xl border border-cyan-400/40 bg-slate-950 p-5 text-slate-100 backdrop:bg-black/70">
    <div className="flex items-center justify-between gap-4"><h2 id="application-production-title" className="text-xl">Build &amp; Preview — {core.name}</h2><button type="button" className={button} onClick={()=>setOpen(false)}>Close panel</button></div>
    <p className="my-3 text-sm text-slate-300">Generate from your accepted architecture, review the files, then launch. This first profile supports text, forms, in-memory records, pages and navigation. Reloading clears app data. Existing Element code frames are not compiled.</p>
    <details className="my-3"><summary>Gateway connection</summary><label className="block text-sm">Local demo key, if needed<input type="password" value={key} onChange={e=>setKey(e.target.value)} className="ml-3 rounded bg-slate-800 p-2" autoComplete="off" /></label></details>

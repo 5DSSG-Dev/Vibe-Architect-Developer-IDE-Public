@@ -84,6 +84,7 @@ import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 interface ThreeCanvasProps {
   creationMode?: boolean;
+  hideWorkspaceControls?: boolean;
   coreModel?: string;
   sockets: SocketBinding[];
   portals?: PortalPlacement[];
@@ -1169,7 +1170,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       )}
 
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">CORE</span>
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
         {CORE_CRYSTAL_VARIANTS.map((variant) => (
           <button
             key={variant.key}
@@ -1186,7 +1187,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       </div>
 
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">VIEW</span>
         {selectedEntityId && (
           <span className="text-[9px] font-mono font-bold text-emerald-300/90 tracking-widest px-1.5">
             {selectedEntityId.toUpperCase()}
@@ -1223,6 +1224,8 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
 };
 
 const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
+  creationMode = false,
+  hideWorkspaceControls = false,
   coreModel,
   sockets,
   portals = [],
@@ -2791,9 +2794,9 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       {/* View quality / motion / bloom controls (display-only). Lifted clear of
           the bottom command bar so both rows stay visible. */}
-      <div className="absolute bottom-24 right-4 z-20 flex flex-col items-end space-y-1.5">
+      {!creationMode && !hideWorkspaceControls && <div className="absolute top-80 lg:top-auto lg:bottom-28 right-2 lg:right-4 z-20 flex flex-col items-end space-y-1.5">
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">QUALITY</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">QUALITY</span>
           {QUALITY_PRESET_ORDER.map((p) => (
             <button
               key={p}
@@ -2847,7 +2850,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         {/* Saved-camera navigation: frame the whole assembly, save the current
             viewpoint, and fly to (or delete) a saved one. */}
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">VIEW</span>
           <button
             onClick={handleFrameAll}
             title="Frame the whole assembly in view"
@@ -2878,7 +2881,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         {/* Durable spatial edits: undo/redo drag placements, toggle grid snap,
             and reset every override back to the default layout. */}
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">EDITS</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">EDITS</span>
           <button
             onClick={handleUndoEdit}
             disabled={!canUndo(spatialEdits)}
@@ -2915,11 +2918,11 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             RESET
           </button>
         </div>
-      </div>
+      </div>}
 
       {/* CORE Crystal selector */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">CORE</span>
+      {!creationMode && !hideWorkspaceControls && <div className="absolute bottom-[170px] lg:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
         {CORE_CRYSTAL_VARIANTS.map((v) => (
           <button
             key={v.key}
@@ -2933,7 +2936,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             {v.label}
           </button>
         ))}
-      </div>
+      </div>}
 
     </div>
   );
