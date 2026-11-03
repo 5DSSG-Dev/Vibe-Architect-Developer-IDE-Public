@@ -158,3 +158,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-02 | Codex | Local hostname session repair
 - Reproduced localhost:3012 bootstrap403 while 127.0.0.1:3012 returned204. Accept explicit loopback aliases on configured port only, while Origin must match request Host. Cross-origin, wrong-port and remote restrictions remain. Added regression.
+
+
+## 2026-11-02 | Codex | Static local demo preview
+- Reproduced browser dependency failure: served dev main module referenced React optimizer URLs returning504. Added explicit null Vite override and development/local-session-only LUMINARY_STATIC_PREVIEW launcher opt-in to serve verified dist assets through the existing gateway.
+- Windows production build passes. Real HTTP checks: root200 with no Vite client; referenced JS200 JavaScript and CSS200 CSS. No workspace storage changed. Live gateway session checked separately; visual reload confirmation remains with Architect.

@@ -70,7 +70,7 @@ export interface CreateGatewayOptions {
   knowledge?: { version: string; sha256: string; bytes: number };
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
-  vite?: ViteDevServer;
+  vite?: ViteDevServer | null;
 }
 
 /** Reviewer-facing Luminary endpoint throttle: 30 requests per IP per minute. */
@@ -285,7 +285,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   if (options.record) app.use('/api/luminary/review', createReviewRouter(options.record));
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));
 
-  const vite = options.vite ?? (config.nodeEnv === 'development'
+  const vite = options.vite === null ? undefined : options.vite ?? (config.nodeEnv === 'development'
     ? await import('vite').then(({ createServer }) => createServer({ server: { middlewareMode: true }, appType: 'custom' }))
     : undefined);
   if (vite) app.use(vite.middlewares);

@@ -44,6 +44,8 @@ let app;
 try {
   app = await createGateway({
     config,
+    // Local demo can serve its verified build without sharing Vite optimizer caches.
+    vite: config.nodeEnv === 'development' && config.luminaryLocalSession && process.env.LUMINARY_STATIC_PREVIEW === 'true' ? null : undefined,
     sessions,
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
