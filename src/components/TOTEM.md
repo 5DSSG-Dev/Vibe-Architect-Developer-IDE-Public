@@ -36,3 +36,7 @@
 ## 2026-11-02 | Codex | Crystal picker feedback
 - Added visual thumbnail choices in expandable crystal picker. Seed preview uses shared workspace loader with Meshopt/KTX2 support and shared cache ownership; preview no longer disposes cached assets.
 - Retains separate scene, environment and renderer cleanup. Browser interaction review remains pending.
+
+
+## 2026-11-02 | Codex | CORE footer Luminary
+- Docked the Luminary trigger in the CORE modal footer, centered beside Done. Suppressed floating paused trigger only while CORE modal is open; shared conversation state and workspace placement preserved.

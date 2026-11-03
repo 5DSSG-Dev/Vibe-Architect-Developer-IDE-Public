@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
+import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
 import { X, Sliders, Cpu, HardDrive, Zap, Shield, CheckCircle2, Circle } from 'lucide-react';
 import { HardwareBudget } from '../engine/relationEngine';
 import { Dialog } from './Dialog';
@@ -29,6 +30,7 @@ export const CoreMatrixModal: React.FC<CoreMatrixModalProps> = ({
   onUpdateHardwareBudget,
   onClose
 }) => {
+  const luminaryEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
   const [pickerOpen, setPickerOpen] = useState(false);
   const config = manifest.appConfiguration ?? { appType: 'Web App', purpose: '', crystalModel: CRYSTALS[0][0], updatedAt: '' };
   const updateConfig = (patch: Partial<typeof config>) => onUpdateApp({ appConfiguration: { ...config, ...patch, updatedAt: new Date().toISOString() } });
@@ -184,10 +186,15 @@ export const CoreMatrixModal: React.FC<CoreMatrixModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-cyan-500/20 bg-slate-950/60 flex items-center justify-end">
+        <div className="p-4 border-t border-cyan-500/20 bg-slate-950/60 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <span aria-hidden="true" />
+          <button type="button" onClick={() => setLuminaryEngaged(!luminaryEngaged)} aria-expanded={luminaryEngaged} aria-label={luminaryEngaged ? 'Minimize Luminary conversation' : 'Talk to the Vibe Luminary'} className="px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300">
+            <img src="/assets/luminary/luminary-codeglass-96.webp" alt="" className="w-7 h-7 object-contain" />
+            <span className="text-left leading-tight"><span className="block text-xs font-bold text-amber-100">Luminary</span><span className="block text-[10px] text-amber-200/80">{luminaryEngaged ? 'Minimize conversation' : 'Click to talk'}</span></span>
+          </button>
           <button
             onClick={onClose}
-            className="btn-cyber px-6 py-2 rounded-xl text-xs font-orbitron font-semibold shadow-lg"
+            className="btn-cyber justify-self-end px-6 py-2 rounded-xl text-xs font-orbitron font-semibold shadow-lg"
           >
             Done
           </button>

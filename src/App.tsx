@@ -700,7 +700,7 @@ export function App() {
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
       <LuminaryBubble />
-      <LuminaryHost mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
+      <LuminaryHost docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
