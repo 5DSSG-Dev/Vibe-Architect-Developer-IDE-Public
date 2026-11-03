@@ -14,6 +14,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [usedSuggestions, setUsedSuggestions] = useState<string[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+  const [selectedDecisions, setSelectedDecisions] = useState<Record<string, string>>({});
   const [draft, setDraft] = useState('');
   const [key, setKey] = useState(readDemoKey);
   const [localReady, setLocalReady] = useState(false);
@@ -58,7 +59,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     const sentTurn: Turn = { role: 'architect', text: text.trim(), state: 'pending' };
     const next = [...history, sentTurn];
     // Keep the full visible transcript, but send only the latest architecture plus recent conversation.
-    const promptHistory = next.map((turn, index) => ({ ...turn, proposal: index === latestAssistantIndex ? (turn as Turn).proposal : undefined }));
+    const promptHistory = next.map((turn, index) => ({ ...turn, proposal: index === latestAssistantIndex ? (turn as Turn).proposal : undefined }))
+      .filter(turn => turn.state !== 'failed' && turn.state !== 'stopped');
     const promptTurns = promptHistory.length > 9 ? [promptHistory[0], ...promptHistory.slice(-8)] : promptHistory;
     if (JSON.stringify(promptTurns).length > 20_000) { setError('The current architecture is too large for one planning request. Start a smaller app scope.'); return; }
     const controller = new AbortController(); request.current = controller;
@@ -84,11 +86,13 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       scrollToCompletedAddition.current = Boolean(selected && response.proposal);
       setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions].join('\n\n'), suggestions: response.suggestions, proposal: response.proposal }]);
       setAnswer(response);
+      setSelectedDecisions({});
       setSuggestions(selected && !response.proposal ? suggestions : nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
       if (selected && response.proposal) setUsedSuggestions(previous => [...previous, selected]);
     } catch (e) {
       if (!controller.signal.aborted) {
         setTurns(current => current.map(turn => turn === sentTurn ? { ...turn, state: 'failed' } : turn));
+        if (clearDraft) setDraft(current => current || text);
         setError(e instanceof Error ? e.message : 'The planning request could not be completed.');
       }
     } finally {
@@ -107,6 +111,24 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
       {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}{turn.state && turn.state !== 'sent' && <span className="block mt-2 text-xs text-slate-400">{turn.state === 'pending' ? 'Sending to Luminary…' : turn.state === 'failed' ? 'Request failed — your message is kept here.' : 'Stopped — your message is kept here.'}</span>}</div>)}
+      {answer && answer.questions.length > 0 && <section aria-label="Open app design choices" className="rounded-2xl border border-amber-300/40 bg-amber-950/10 p-4 space-y-4 text-sm">
+        <h3 className="font-semibold text-amber-200">A few choices for your app</h3>
+        <p className="text-xs text-slate-300">Choose an option for each question you know. You can also describe your own answer below. Luminary will ask again about anything left open.</p>
+        {answer.questions.map((question, index) => {
+          const choice = answer.decisionChoices.find(item => item.question === question);
+          return <fieldset key={index} className="min-w-0 rounded-xl border border-slate-700 p-3"><legend className="px-1 text-slate-100">{question}</legend>
+            {choice ? <div className="mt-2 space-y-2">{choice.options.map(option => <label key={option} className="flex items-start gap-2 cursor-pointer rounded-lg p-1 hover:bg-slate-800/70">
+              <input type="checkbox" checked={selectedDecisions[question] === option} onChange={() => setSelectedDecisions(current => ({...current, [question]: current[question] === option ? '' : option}))} className="mt-0.5 accent-amber-300" />
+              <span>{option}{choice.recommended === option && <span className="ml-2 text-xs text-amber-200">Luminary suggests this</span>}</span>
+            </label>)}</div> : <p className="mt-2 text-xs text-slate-300">Tell Luminary your preference in the message box below.</p>}
+          </fieldset>;
+        })}
+        {Object.values(selectedDecisions).some(Boolean) && <button type="button" disabled={busy || applying} onClick={() => {
+          const chosen = answer.questions.filter(question => selectedDecisions[question]).map(question => `${question} My choice: ${selectedDecisions[question]}.`);
+          const missing = answer.questions.filter(question => !selectedDecisions[question]);
+          void sendText(`${chosen.join(' ')} ${missing.length ? `I have not answered these yet; please ask me again: ${missing.join(' / ')}.` : 'These are my answers to the open questions. Please update the starting architecture.'}`, false);
+        }} className="rounded-lg border border-amber-300/50 px-3 py-2 text-xs text-amber-100 disabled:opacity-40">Send my choices to Luminary</button>}
+      </section>}
       {answer?.proposal && <div className="rounded-2xl border border-cyan-300/40 bg-cyan-950/20 p-4 space-y-3">
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
         <ul className="space-y-3 text-sm">{answer.proposal.elements.map(e => <li key={e.id}><strong>{catalog.find(i => i.id === e.id)?.name}</strong><span className="block text-xs text-slate-400">{e.parentId ? `Inside ${catalog.find(i => i.id === e.parentId)?.name}` : 'Connected to CORE'}</span><span className="text-slate-300">{e.reason}</span></li>)}</ul>

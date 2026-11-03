@@ -271,12 +271,16 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       const reason = providerReason(body).split(options.apiKey).join('[key]');
       throw new Error(`${provider} returned HTTP ${response.status}${reason ? `: ${reason}` : ''}.`);
     }
-    const choice = (body as { model?: unknown; choices?: Array<{ message?: { content?: unknown } }> })?.choices?.[0];
+    const choice = (body as { model?: unknown; choices?: Array<{ finish_reason?: unknown; message?: { content?: unknown } }> })?.choices?.[0];
     const declared = (body as { model?: unknown })?.model;
-    // Untrusted: governReply() decides whether this is a reply.
+    // A truncated completion is never a finished answer, even if it contains some text.
+    if (choice?.finish_reason === 'length') throw new Error(`${provider} used its output allowance before finishing a reply. Your message is still in the conversation; please send it again in a shorter form.`);
+    if (choice?.finish_reason === 'content_filter') throw new Error(`${provider} withheld the reply. Your message is still in the conversation.`);
+    if (typeof choice?.message?.content !== 'string') throw new Error(`${provider} returned no readable reply (finish reason: ${typeof choice?.finish_reason === 'string' ? choice.finish_reason.slice(0, 40) : 'unknown'}). Your message is still in the conversation; please retry.`);
+    // Untrusted: governReply() still validates the text and declared model id.
     return {
       modelId: typeof declared === 'string' && declared.trim() ? declared : model,
-      content: choice?.message?.content,
+      content: choice.message.content,
     };
   };
 }

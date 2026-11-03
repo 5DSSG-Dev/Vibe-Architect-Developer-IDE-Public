@@ -7,6 +7,15 @@ import { BASETEN_MODEL, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS, SpendLedger, parseL
 
 // Every test uses a fake fetch. Meta's API is never reached.
 
+test('a completed HTTP response without reply content identifies truncation or missing text', async () => {
+  const truncated = createMetaAskModel({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 1, 10),
+    fetch: fakeMeta(() => ({ body: { choices: [{ finish_reason: 'length', message: { content: null } }], usage: { prompt_tokens: 20, completion_tokens: 2000 } } })).fetch });
+  await assert.rejects(truncated('Follow up'), /output allowance before finishing/);
+  const missing = createMetaAskModel({ apiKey: 'k', ledger: new SpendLedger(ledgerPath(), 1, 10),
+    fetch: fakeMeta(() => ({ body: { choices: [{ finish_reason: 'stop', message: { content: null } }] } })).fetch });
+  await assert.rejects(missing('Follow up'), /no readable reply \(finish reason: stop\)/);
+});
+
 const ledgerPath = () => join(mkdtempSync(join(tmpdir(), 'luminary-meta-')), 'spend.json');
 
 function fakeMeta(reply: (call: number) => { status?: number; body: unknown }) {

@@ -24,6 +24,12 @@ test('questions are allowed without proposals; malformed model text cannot confi
  assert.throws(() => parseCreationAnswer('I have built your app!', catalog), /readable/);
  assert.throws(() => parseCreationAnswer(JSON.stringify({message:'x',questions:[],suggestions:[],proposal:{...proposal(),elements:[]}}),catalog),/one and eight/);
 });
+test('open questions carry bounded choices tied to their exact wording', () => {
+ const answer=parseCreationAnswer(JSON.stringify({message:'Choose a note format',questions:['Title and text, or just text?'],decisionChoices:[{question:'Title and text, or just text?',options:['Title and text','Just text'],recommended:'Title and text'}],suggestions:[],proposal:null}),catalog);
+ assert.equal(answer.decisionChoices[0].recommended,'Title and text');
+ assert.throws(()=>parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],decisionChoices:[{question:'Different?',options:['A','B']}],suggestions:[],proposal:null}),catalog),/do not match/);
+ assert.deepEqual(parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],suggestions:[],proposal:null}),catalog).decisionChoices,[]);
+});
 test('accepted proposal uses a successful runtime handshake and preserves blank input', () => {
  const blank = createBlankApp();const result = connectAppProposal(proposal(), blank, catalog);
  assert.equal(result.manifest.appCreation,'ready');assert.equal(result.manifest.contracts.length,1);
