@@ -137,3 +137,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-10-31 | Architect sequencing | Core then actual app production
 - Tracey identifies current governance/coordination as the core build work; the next major milestone is producing an actual coded app from the IDE, followed primarily by aesthetic refinement. Demonstrate generated files, working execution/preview and saved/reopened continuity; independent review, runtime validation and submission evidence remain delivery requirements. This records sequencing, not new implementation approval.
+
+## 2026-11-02 | codex | Isolated numeric governance publication candidate
+- Tracey authorized commits and pushes after reviewing the readiness note. Created codex/numeric-governance-20261102 from current origin/main dd73bf4 and copied only the numeric governance modules, gateway mount, Redis probe, and readiness documents from the shared dirty checkout. Preserved main's newer review/IDS and UI code; server/index.ts still omits numericRoute.
+- In this isolated branch, server TypeScript passed; gateway with pinned private replay artifacts 363 passed, 5 opt-in Redis skipped, 0 failed; full build passed. App suite initially showed one intermittent identity deterministic-hash failure, then focused identity suite 37 passed and full app rerun 383 passed. This branch is a reviewable default-off candidate, not active PIM/PTAG authority or production acceptance.

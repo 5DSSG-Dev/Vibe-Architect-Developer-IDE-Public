@@ -269,3 +269,7 @@
 ## 2026-11-02 | Codex | PR 50 main synchronization
 - Merged main 569ef3d into the isolated UI/App-menu branch at Tracey's request. Automatic merge required no manual conflict edits; both parent lane histories verified in order. Lumin's active checkout untouched.
 - Combined production build, 23 focused tests and staged diff check pass. Existing Vite chunk warning remains; browser verification outstanding. Publishing branch update only, not merging PR 50 into main.
+
+## 2026-11-02 | codex | Isolated numeric governance publication candidate
+- Tracey authorized commits and pushes after reviewing the readiness note. Created codex/numeric-governance-20261102 from current origin/main dd73bf4 and copied only the numeric governance modules, gateway mount, Redis probe, and readiness documents from the shared dirty checkout. Preserved main's newer review/IDS and UI code; server/index.ts still omits numericRoute.
+- In this isolated branch, server TypeScript passed; gateway with pinned private replay artifacts 363 passed, 5 opt-in Redis skipped, 0 failed; full build passed. App suite initially showed one intermittent identity deterministic-hash failure, then focused identity suite 37 passed and full app rerun 383 passed. This branch is a reviewable default-off candidate, not active PIM/PTAG authority or production acceptance.

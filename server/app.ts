@@ -15,6 +15,8 @@ import { createLuminaryTaskRouter, isLoopback } from './luminary-task-router.js'
 import type { LuminaryExecutor } from './luminary-executor.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
 import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
+import { createNumericSessionRouter } from './luminary-pipeline/numeric-session-router.js';
+import type { AuthenticatedNumericDeliveryInputs } from './luminary-pipeline/numeric-authenticated-delivery.js';
 import type { ReviewRecord } from './governance-record/review.js';
 import { createReviewRouter } from './review-router.js';
 
@@ -69,6 +71,8 @@ export interface CreateGatewayOptions {
   knowledge?: { version: string; sha256: string; bytes: number };
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
+  /** Explicitly supplied numeric governance sources. Absent keeps this route disabled. */
+  numericRoute?: AuthenticatedNumericDeliveryInputs;
   vite?: ViteDevServer;
 }
 
@@ -139,6 +143,11 @@ export async function createGateway(options: CreateGatewayOptions) {
   app.use(express.json({ limit: '32kb' }));
 
   app.use(async (req, _res, next) => {
+    // The numeric boundary owns its session lookup and maps store failure to 503.
+    if (options.numericRoute && (req.path === '/api/luminary/numeric' || req.path.startsWith('/api/luminary/numeric/'))) {
+      next();
+      return;
+    }
     const id = readCookie(req, sessionCookieName(config));
     if (id) req.adminSession = await sessions.get(id);
     next();
@@ -259,6 +268,10 @@ export async function createGateway(options: CreateGatewayOptions) {
   // that take the same governed path as /ask.
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
   const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge }, record: options.record };
+  if (options.numericRoute) {
+    app.use('/api/luminary/numeric', createNumericSessionRouter(
+      config.origin, sessionCookieName(config), sessions, options.numericRoute));
+  }
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),

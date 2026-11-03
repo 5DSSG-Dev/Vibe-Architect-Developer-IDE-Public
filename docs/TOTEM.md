@@ -95,3 +95,7 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 ## 2026-11-01 | Codex | Atlas branch conflict resolution
 - At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
 - Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.
+
+## 2026-11-02 | codex | Isolated numeric governance publication candidate
+- Tracey authorized commits and pushes after reviewing the readiness note. Created codex/numeric-governance-20261102 from current origin/main dd73bf4 and copied only the numeric governance modules, gateway mount, Redis probe, and readiness documents from the shared dirty checkout. Preserved main's newer review/IDS and UI code; server/index.ts still omits numericRoute.
+- In this isolated branch, server TypeScript passed; gateway with pinned private replay artifacts 363 passed, 5 opt-in Redis skipped, 0 failed; full build passed. App suite initially showed one intermittent identity deterministic-hash failure, then focused identity suite 37 passed and full app rerun 383 passed. This branch is a reviewable default-off candidate, not active PIM/PTAG authority or production acceptance.
