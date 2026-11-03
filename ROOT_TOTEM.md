@@ -137,3 +137,8 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-10-31 | Architect sequencing | Core then actual app production
 - Tracey identifies current governance/coordination as the core build work; the next major milestone is producing an actual coded app from the IDE, followed primarily by aesthetic refinement. Demonstrate generated files, working execution/preview and saved/reopened continuity; independent review, runtime validation and submission evidence remain delivery requirements. This records sequencing, not new implementation approval.
+
+
+## 2026-11-03 | Codex | Saved CORE application and governed restart recovery
+- Isolated PR52 worktree G:/AEGIS_DEVELOPMENT_REPOS/vibe-accepted-core-runtime, codex/accepted-core-runtime-20261103 at ac03d4f, adds complete program data in CORE instead of only a gateway receipt pointer. Current source/context/ownership and original private governed-generation note must match before model-free restore. Existing authentication/local-only checks, private-record closure, explicit review/launch, tests/build and sandbox remain. Durable restore note failure leaves no launchable receipt.
+- Focused21 and fullgateway274 passed; buildpassed. Fullapp428:427pass/1unchangedidentitydeterminismfailure. Browser fixture verified save/quota/launch/forms/navigation/Stop/restart/restore/fresh review at desktop/mobile, zero provider calls. No active demo restart, commit/push/merge/activation or peer messages. Independent review pending; report docs/ACCEPTED_CORE_RUNTIME_2026-11-03.md.

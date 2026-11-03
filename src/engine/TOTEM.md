@@ -70,3 +70,8 @@
 
 ## 2026-11-03 | Lumen | Live interview resilience
 - Parser accepts bounded question objects with question/text/prompt strings after live Baseten shape drift; prompt requires strings and limits questions to material decisions, defaulting optional details. Two-turn live synthetic note interview reached a proposal. Tests and build pass.
+
+
+## 2026-11-03 | Codex | CORE-owned executable program continuity
+- coreApplication.ts validates and fingerprints a complete deterministic production definition, ownership and accepted context; save/restore requires accepted state and matching successful Orb/socket contracts. CoreManifest.application retains it through app snapshots. Existing code frames remain non-executable context.
+- Request-specific proposal evidence preserves generation and restore histories as separate immutable entries. Focused21 checks include source/context/binding tampering, quota/reopen, no-model runtime restore, evidence conflict regression and real generated build/preview. Full app final427pass/1unchanged identity determinism failure; gateway274pass/buildpass. See docs/ACCEPTED_CORE_RUNTIME_2026-11-03.md. Uncommitted/independent review pending; active demo unchanged.

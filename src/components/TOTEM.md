@@ -115,3 +115,8 @@
 
 ## 2026-11-03 | Lumen | Batched interview form
 - AppCreationConversation shows separate question boxes, accepts one selected or custom answer per box, and sends the complete batch together.
+
+
+## 2026-11-03 | Codex | Save/restore the reviewed CORE program
+- ApplicationProduction adds explicit Save reviewed app to CORE and Restore saved CORE app. Restore resets review/evidence readiness and reuses existing explicit Launch/Stop/Terminal controls; no automatic model call or run. Browser verified forms/navigation, stop, restart/restore/fresh-review/relaunch and failed quota save with zero provider calls. Desktop1100x900/mobile390x844 fit; expected missing-receipt409 documented.
+- Independent review pending; no active gateway/route activation. Exact evidence and profile limits: docs/ACCEPTED_CORE_RUNTIME_2026-11-03.md.

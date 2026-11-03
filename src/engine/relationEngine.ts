@@ -378,6 +378,7 @@ export interface ActiveDaemons {
 }
 
 export interface CoreManifest {
+  application?: import('./coreApplication').CoreApplication;
   applicationProduction?: { id: string; digest: string; contextHash: string };
   appBuildPlan?: import('./appBuildPlan').AppBuildPlan;
   appCreation?: 'draft' | 'ready';

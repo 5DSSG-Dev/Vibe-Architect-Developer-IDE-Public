@@ -1,4 +1,5 @@
 import { isBuildPlan } from '../engine/appBuildPlan';
+import { acceptedCoreContext, validateCoreApplication, type CoreApplication } from '../engine/coreApplication';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
 import type { NavigationPosition } from './navigationSnapshot';
 export const WORKSPACE_KEY = 'aegis-vibe-architect.workspace.v1';
@@ -19,12 +20,21 @@ export function readAppFile(raw: string): AppSnapshot {
     || !['memoryMB', 'threads'].every(k => Number.isFinite(c.hardwareBudget[k]) && c.hardwareBudget[k] >= 0)
     || !Array.isArray(value.navigation?.environmentIds) || !value.navigation.environmentIds.every((id: unknown) => typeof id === 'string')) throw new Error('Choose a complete .vibe-app.json file exported from this IDE.');
   if (c.appBuildPlan !== undefined && !isBuildPlan(c.appBuildPlan)) throw new Error('The imported app has an invalid ToDo build plan. Your current app is unchanged.');
+  if (c.application !== undefined) validateCoreApplication(c.application);
   return value;
 }
 export function readApps(storage: Storage): SavedApp[] {
   const raw = storage.getItem(APPS_KEY); if (!raw) return [];
   const apps = JSON.parse(raw); if (!Array.isArray(apps)) throw new Error('The saved-app list could not be read.');
   return apps.map(a => ({ id: String(a.id), snapshot: readAppFile(JSON.stringify(a.snapshot)) }));
+}
+/** Persist before changing React state, so failed writes preserve the old program. */
+export function saveCoreProgram(storage: Storage, application: CoreApplication): void {
+  validateCoreApplication(application);
+  const snapshot = readAppFile(storage.getItem(WORKSPACE_KEY) ?? '');
+  if (JSON.stringify(acceptedCoreContext(snapshot.coreManifest, snapshot.apothecaryCatalog)) !== JSON.stringify(application.context)) throw Error('Save the current Workspace successfully before saving its CORE program.');
+  snapshot.coreManifest.application = application;
+  storage.setItem(WORKSPACE_KEY, JSON.stringify(snapshot));
 }
 export function saveCurrentApp(storage: Storage): void {
   if (storage.getItem(CLOSED_KEY) === 'true') return;

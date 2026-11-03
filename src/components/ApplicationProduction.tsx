@@ -3,12 +3,13 @@ import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
 import { productionContext, type ProductionAnswer } from '../engine/applicationProduction';
 import { luminaryApi, readDemoKey, saveDemoKey, anchorDetail, type TurnRecord } from '../luminary/client';
 import { appendLuminaryExchangeEvidence } from '../engine/evidenceArchive';
+import { acceptedCoreContext, saveCoreApplication, verifyCoreApplication, type CoreApplication } from '../engine/coreApplication';
 interface Receipt {
  id:string;requestId:string;digest:string;contextHash:string;modelId:string;projectPath:string;
  answer:ProductionAnswer;files:Record<string,string>;state:string;output:string;previewUrl?:string;record?:TurnRecord;
 }
-import { productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction } from '../engine/productionClientState';
-export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void}) {
+import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction } from '../engine/productionClientState';
+export function ApplicationProduction({core,catalog,onRemember,onSaveCore}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
@@ -18,6 +19,7 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
  const [reviewedFor,setReviewedFor]=useState(''),[evidenceFor,setEvidenceFor]=useState(''),[key,setKey]=useState(readDemoKey);
  const [pendingId,setPendingId]=useState(()=>{try{return sessionStorage.getItem(pendingKey)??'';}catch{return '';}});
  const [fingerprint,setFingerprint]=useState({text:'',hash:''});
+ const coreOperation=useRef(false);
  const dialog=useRef<HTMLDialogElement>(null),request=useRef<AbortController|null>(null),epoch=useRef(0);
  let context:ReturnType<typeof productionContext>|undefined,problem='';
  try {context=productionContext(core,catalog);}catch(e){problem=(e as Error).message;}
@@ -52,7 +54,8 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
   setPendingId('');
  }
  async function saveEvidence(next:Receipt) {
-  await appendLuminaryExchangeEvidence({exchangeId:next.id+':production-proposed',event:'task_proposed',conversationId:core.coreId,detail:{generationId:next.id,sourceDigest:next.digest,contextHash:next.contextHash,...anchorDetail(next.record)}});
+  // A restored materialization has its own request; preserve the original proposal evidence.
+  await appendLuminaryExchangeEvidence({exchangeId:productionEvidenceId(next),event:'task_proposed',conversationId:core.coreId,detail:{generationId:next.id,sourceDigest:next.digest,contextHash:next.contextHash,...anchorDetail(next.record)}});
  }
  useEffect(()=>{
   const pointer=core.applicationProduction;
@@ -69,6 +72,19 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
  },[core.coreId]);
  const stale=!receipt || fingerprint.text!==contextText || receipt.contextHash!==fingerprint.hash;
  const replaceable=canReplaceProduction(receipt?.state,outcomeUnknown);
+ async function saveToCore() {
+  if(coreOperation.current || request.current)return;
+  coreOperation.current=true;setBusy(true);setError('');
+  const sentContext=contextText;
+  try {
+    if(!receipt || !reviewed || stale || !evidenceSaved || outcomeUnknown)throw Error('Review the current generated source and save its evidence before saving to CORE.');
+    const application=await saveCoreApplication(core,catalog,receipt);
+    await appendLuminaryExchangeEvidence({exchangeId:crypto.randomUUID(),event:'task_accepted',conversationId:core.coreId,detail:{generationId:receipt.id,sourceDigest:receipt.digest,contextHash:receipt.contextHash,action:'save_core_program'}});
+    if(live.current!==sentContext)throw Error('The architecture changed before saving. Review again.');
+    onSaveCore(application);
+  } catch(e) {setError((e as Error).message);}
+  finally {coreOperation.current=false;setBusy(false);}
+ }
  useEffect(()=>{
   if(!receipt || (receipt.state!=='building'&&!outcomeUnknown))return;
   const controller=new AbortController();let timer:number|undefined,attempts=0;
@@ -84,19 +100,23 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
   timer=window.setTimeout(poll,1000);
   return()=>{controller.abort();window.clearTimeout(timer);};
  },[receipt?.id,receipt?.state,outcomeUnknown,key]);
- async function act(action:'generate'|'recover'|'evidence'|'status'|'launch'|'stop') {
-  if(request.current || (action==='generate' && (!context||!replaceable)))return;
+ async function act(action:'generate'|'recover'|'restore-core'|'evidence'|'status'|'launch'|'stop') {
+  if(coreOperation.current || request.current || (action==='generate' && (!context||!replaceable)))return;
   const controller=new AbortController();request.current=controller;epoch.current++;
   const sentContext=contextText;
   setBusy(true);setError('');
   try {
    if(key.trim())saveDemoKey(key.trim());
    let next:Receipt;
-   if(action==='generate'||action==='recover') {
+   if(action==='generate'||action==='recover'||action==='restore-core') {
     if(action==='generate') {
      if(pendingId)throw Error('Recover the earlier request before starting another generation.');
      const id=crypto.randomUUID();sessionStorage.setItem(pendingKey,id);setPendingId(id);
      next=await api('/generate','POST',{context,requestId:id},controller.signal);
+    } else if(action==='restore-core') {
+     if(!core.application || !replaceable || pendingId)throw Error('Recover any pending request and stop the running app before restoring CORE.');
+     const application=await verifyCoreApplication(core.application,acceptedCoreContext(core,catalog));
+     next=await api('/restore-core','POST',{application,context},controller.signal);
     } else next=await api('/requests/'+encodeURIComponent(pendingId),'GET',undefined,controller.signal);
     if(controller.signal.aborted)return;
     // Preserve successful source and its ID before a supplementary browser write.
@@ -177,6 +197,15 @@ export function ApplicationProduction({core,catalog,onRemember}:{core:CoreManife
     <span role="status" className="text-sm">{busy?'Waiting for the gateway…':receipt?.state ?? 'Architecture ready for generation'}</span>
    </div>
    {error && <p role="alert" className="my-3 whitespace-pre-wrap text-rose-200">{error}</p>}
+   <section aria-label="CORE application" className="my-4 rounded-xl border border-cyan-400/30 p-3">
+    <h3 className="mb-2">CORE application</h3>
+    <p className="mb-3 text-sm text-slate-300">Save the reviewed program inside this app. After reopening, restore it without another model request, review its source, then launch above. The local gateway and its original review record are required. App records remain in memory; Element code frames are not compiled.</p>
+    <div className="flex flex-wrap gap-3">
+     <button type="button" className={button} disabled={busy||stale||!reviewed||!evidenceSaved||outcomeUnknown} onClick={()=>void saveToCore()}>Save reviewed app to CORE</button>
+     <button type="button" className={button} disabled={busy||!context||!core.application||!replaceable||Boolean(pendingId)} onClick={()=>void act('restore-core')}>Restore saved CORE app</button>
+    </div>
+    {core.application && <p className="mt-2 text-xs text-slate-400">Saved program: {core.application.answer?.definition?.name} · Run is always explicit.</p>}
+   </section>
    {receipt && <>
     {stale && <p className="my-3 text-amber-200">The current architecture differs from this generation, or its fingerprint is still being checked. Regenerate before launching.</p>}
     <details className="my-4" open={!preview}><summary>Generated source and ownership</summary>

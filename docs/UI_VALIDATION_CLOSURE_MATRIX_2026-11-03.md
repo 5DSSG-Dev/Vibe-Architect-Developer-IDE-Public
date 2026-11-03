@@ -32,3 +32,47 @@ Baseline: branch `codex/guided-new-app-20261102` at `e93af93`; see [autonomous v
 ## Closure interpretation
 
 No row is classified Missing Authorization under the present synthetic-test directive. No actual user workspace was altered by the validation. Browser-capable rows remain blocked by the lack of a connected local browser surface; they are executable on this branch once that environment is available. Missing Feature rows need implementation before they can pass, and Deferred rows need a defined objective oracle. The final walkthrough is the Architect's decision.
+
+
+## 2026-11-03 append-only reassessment — saved CORE runtime candidate
+
+This section supersedes the **current status and blanket missing-browser interpretation** above; the original 24 rows and their historical prerequisites remain unchanged. Scope is the local, uncommitted candidate in `G:/AEGIS_DEVELOPMENT_REPOS/vibe-accepted-core-runtime`, branch `codex/accepted-core-runtime-20261103`, based on PR #52 head `ac03d4f`. These statuses do not propagate automatically to the active demo, PR head, or another worktree.
+
+**Three of 24 original rows are now Closed (verified within the supported synthetic profile). Four more have partial evidence and remain open. Seventeen others remain unclosed.** A controllable Playwright browser is now available. Ready/unexecuted UI checks below no longer require missing-browser authorization or environment repair; they require the named isolated fixtures and execution. No provider/model calls, live3012 changes, commits, pushes, merges or route activation were performed in this reassessment.
+
+### Current disposition of all original rows
+
+| ID | Original validation item | Current status | Evidence / exact remaining condition |
+| --- | --- | --- | --- |
+| V01 | New App controls and submit | Ready, unexecuted | Browser available, but actual AppMenu/New App action and vacant Workspace were not browser exercised. Run the full IDE synthetic path. |
+| V02 | Interview boxes, option/custom input and batch send | Ready, unexecuted | Existing live/API evidence and current parser tests do not demonstrate clicks/custom inputs/batch submission in the actual conversation component. Use scripted replies with no providers. |
+| V03 | Failed reply retention and retry in UI | Ready, unexecuted | Inject malformed/oversized reply and retry through the actual conversation UI; inspect preserved draft, prior proposal and message state. Production quota failure is different behavior. |
+| V04 | Long interview requirement retention | Open — implementation/oracle gap | No >9-turn early/middle/final requirement proof; current history truncation concern is not closed by CORE persistence. |
+| V05 | Accept proposal and render CORE/Elements | Ready, unexecuted | Real engine fixture passes accepted proposal and Orb handshake, but the full 3D Workspace acceptance/rendering UI was not tested. |
+| V06 | Workspace navigation and resume on reload | Ready, unexecuted | Program restore and generated-app page navigation do not verify IDE Element drill-down/resume. Execute the original Workspace case. |
+| V07 | Catalog reuse versus similar Element recommendation | Deferred — oracle needed | Exact/similar/missing recommendation expectations remain undefined. Browser availability does not supply semantic correctness evidence. |
+| V08 | False positive and missing gap analysis | Deferred — oracle needed | Requirement-to-gap oracle remains missing; no exhaustive coverage claim. |
+| V09 | ToDo selection and Apothecary handoff | Ready, unexecuted | Engine context tests and guidance source exist; actual task selection, visible highlight and Apothecary transition remain untested. |
+| V10 | Create Element metadata and schema in UI | Ready, unexecuted | No Orb/Satellite/Actuator was created through its editor in this verification. |
+| V11 | Element export/import and reload through UI | Partial — remains open | CORE program app snapshot/export/reopen tests pass; a newly created Element's ID/version/schema/code-frame browser round trip is still required. |
+| V12 | Modify Element and preserve dependencies | Ready, unexecuted | Need connected Element edit/save/reload and exact comparison of contracts, children and behavior. |
+| V13 | Automatic reintegration from Apothecary | Open — contract/implementation gap | Define required reintegration behavior, implement if approved/required, then verify return wiring and orphan-free references. CORE restoration is unrelated to this attachment behavior. |
+| V14 | Generated project review, Terminal start/stop and Preview UI | **Closed — verified synthetic profile** | Actual ApplicationProduction UI: exact source/context receipt restored with browser evidence; Terminal start refused before review; source review then files/start; generated tests/build and real iframe; Terminal stop removes iframe. Prior CORE verification adds evidence-save/restore/fresh-review guards. |
+| V15 | Generated app form, list and navigation UI | **Closed — verified append/view/navigation profile** | Actual generated React app: whitespace-only required field shows Note is required and leaves1000records; valid submission yields1001; About hash route and Home return preserve1001. No edit/delete/search/persistent-data claim. |
+| V16 | Generated edit/delete/search | Open — missing feature | Generator still lacks those controls/handlers; implement and verify each accepted operation. |
+| V17 | Generated authentication | Open — missing feature | No generated login/session profile or allowed/denied test identity flow. |
+| V18 | Generated data persistence/restart | Partial — remains open | **Program/receipt recovery subgap closed**: reviewed definition/context/bindings/digests persist in CORE, and original-record-bound restore across gateway restart uses no model call. **Data continuity remains open**: records entered during a run are in memory and do not survive reload/restart. This combined original row cannot close until durable data is implemented and tested. |
+| V19 | 1,000-record runtime interaction | **Closed — bounded fixture** | Rendered1000initialrecords, scrolled to the last record, rejected invalid submission, appended to1001, navigated away/back retaining1001, then stopped cleanly. This is interaction/correctness evidence, not a latency or memory benchmark. |
+| V20 | Keyboard and focus flow | Partial — remains open | Terminal input/commands were exercised; modal/questions/ToDo/Apothecary/Preview keyboard traversal, focus containment/return and labels remain to verify. |
+| V21 | Semantic labels and contrast measurement | Open — rendered audit unexecuted | No automated accessibility/contrast audit across the major screens was run. |
+| V22 | Mobile/tablet/desktop/large-screen clipping | Partial — remains open | Actual production panel/generated preview captured at1100x900 and390x844 with no page overflow in the prior CORE run. Tablet/large screen and every major IDE screen are not covered. |
+| V23 | Full requirement-to-implementation-to-test chain | Open — feature/traceability gap | Bounded append/view/navigation fixture is demonstrated; full accepted note-app edit/delete/search and other agreed gaps still need source/Element/test traceability. |
+| V24 | Subjective UX, aesthetic approval, final walkthrough | Pending Architect walkthrough | Automated fixture evidence does not substitute for Tracey's subjective acceptance. |
+
+### Inspectable closure evidence
+
+- [CORE runtime handoff](ACCEPTED_CORE_RUNTIME_2026-11-03.md) records the previous real browser save/quota/launch/forms/navigation/Stop/runtime-restart/restore/fresh-review checks, focused21pass, gateway274pass and production buildpass. Final full app result remains427pass/1unchangedidentityfailure at `src/identity/identity.test.ts:443`; these row closures do not relabel the full suite green.
+- This reassessment ran `matrix-closure-browser-fixture.mts` through `node --import tsx` from this candidate. It exercises the actual component, production router/runtime, governed-ask fixture and generated React app. The initial definition is scripted, not provider-generated. Browser endpoint `127.0.0.1:5174/__core-flow` was temporary and is now stopped.
+- Exact results: guardedBeforeReview=true; initial=1000; afterInvalid=1000; afterValid=1001; afterNavigation=1001; terminalStopRemovedPreview=true; fixtureCalls=1; providerCalls=0; framework overlays=0. Only console error was an unrelated favicon404; no app runtime error observed.
+- Harness, source-bound JSON receipt and screenshot remain under `C:/Users/TraceyPrutch/.codex/visualizations/2026/11/03/01a1a1be-97aa-75b3-a7cc-78022e891d58/`: `matrix-closure-browser-fixture.mts`, `matrix-closure-browser-results.json`, `matrix-stress.png`. The receipt pins ApplicationProduction, applicationGenerator and server application-production SHA256 values. No product source changed during this reassessment, so no unrelated regression/build rerun was needed.
+- These are author-executed bounded verification closures. Independent outside-pair review, Architect acceptance, live-model behavior, deployment and production readiness remain separate states.

@@ -8,6 +8,7 @@ import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { build } from 'vite';
 import { generateApplication } from '../src/engine/applicationGenerator.js';
+import { verifyCoreApplication } from '../src/engine/coreApplication.js';
 import { validateProductionContext, parseProductionAnswer, productionPrompt, type ProductionContext } from '../src/engine/applicationProduction.js';
 import type { ReviewRecord } from './governance-record/review.js';
 import { isLoopback } from './luminary-task-router.js';
@@ -39,9 +40,47 @@ export class ProductionRuntime {
   await this.options.record.architect.append({kind:'note',id:randomUUID(),text});
  }
  private entry(id:string) {
-  const e=this.entries.get(id);if(!e)throw Error('Generated project not found. Generate it again after a gateway restart.');return e;
+  const e=this.entries.get(id);if(!e)throw Error('Generated project not found. Restore the saved CORE app, or generate again if it was not saved.');return e;
  }
  get(id:string):ProductionReceipt { return structuredClone(this.entry(id).receipt); }
+ /** Restore only a generation already witnessed by this private review record. No model call. */
+ async restoreCore(raw:unknown,current:unknown):Promise<ProductionReceipt> {
+  this.assertOpen();
+  const application=await verifyCoreApplication(raw,validateProductionContext(current));
+  this.assertOpen();
+  const original=this.options.record.architect.entries.find(row=>{
+   if(row.entry.kind!=='note')return false;
+   try {
+    const note=JSON.parse(row.entry.text);
+    return note.kind==='application_generated' && note.id===application.generationId && note.digest===application.sourceDigest
+     && note.contextHash===application.contextHash && JSON.stringify(note.bindings)===JSON.stringify(application.answer.bindings);
+   } catch {return false;}
+  });
+  if(!original || original.entry.kind!=='note')throw Error('The original governed generation is missing from this review record. Restore that record before restoring CORE.');
+  const existing=this.entries.get(application.generationId);
+  if(existing) {
+   if(existing.receipt.digest!==application.sourceDigest || existing.receipt.contextHash!==application.contextHash)throw Error('CORE generation identity conflicts with the current project.');
+   return this.get(application.generationId);
+  }
+  if(this.generating || [...this.entries.values()].some(e=>e.server||e.pending))throw Error('Stop the active application and wait for generation before restoring CORE.');
+  if(this.entries.size>=8)throw Error('This gateway session has reached its eight-project limit. Restart after stopping previews.');
+  this.generating=true;
+  try {
+   const {files}=generateApplication(application.answer.definition);
+   await mkdir(this.options.root,{recursive:true});
+   const projectPath=await mkdtemp(join(resolve(this.options.root),'app-'));
+   for(const [relative,source] of Object.entries(files)) {
+    const target=join(projectPath,relative);
+    await mkdir(dirname(target),{recursive:true});await writeFile(target,source,{flag:'wx'});
+   }
+   await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({restoredFromCore:application},null,2),{flag:'wx'});
+   await this.note(JSON.stringify({kind:'application_restored_from_core',id:application.generationId,digest:application.sourceDigest,contextHash:application.contextHash,projectPath}));
+   const receipt:ProductionReceipt={id:application.generationId,requestId:randomUUID(),digest:application.sourceDigest,contextHash:application.contextHash,
+    modelId:JSON.parse(original.entry.text).modelId,projectPath,answer:application.answer,files,state:'generated',
+    output:'Saved CORE program restored against its original governed generation. No model request repeated. Review the source before launch.\nData profile: in memory only. Existing code frames are not compiled.\n'};
+   this.entries.set(receipt.id,{receipt});return this.get(receipt.id);
+  } finally {this.generating=false;}
+ }
  async generate(raw:unknown,requestId=randomUUID()):Promise<ProductionReceipt> {
   this.assertOpen();
   if(!/^[0-9a-f-]{36}$/.test(requestId))throw Error('Invalid generation request ID.');
@@ -181,6 +220,7 @@ export function createProductionRouter(runtime:ProductionRuntime):Router {
  });
  const reply=(res:express.Response,error:unknown)=>res.status(409).json({error:'production_shortfall',message:error instanceof Error?error.message:'Application production could not finish.'});
  router.post('/generate',async(req,res)=>{try{if(typeof req.body?.requestId!=='string')throw Error('A recoverable request ID is required.');res.status(201).json(await runtime.generate(req.body?.context,req.body.requestId));}catch(error){reply(res,error);}});
+ router.post('/restore-core',async(req,res)=>{try{res.status(201).json(await runtime.restoreCore(req.body?.application,req.body?.context));}catch(error){reply(res,error);}});
  router.get('/requests/:id',async(req,res)=>{try{res.json(await runtime.recover(String(req.params.id)));}catch(error){reply(res,error);}});
  router.get('/:id',(req,res)=>{try{res.json(runtime.get(String(req.params.id)));}catch(error){reply(res,error);}});
  router.post('/:id/launch',async(req,res)=>{try{res.json(await runtime.launch(String(req.params.id),req.body?.context,req.body?.digest));}catch(error){reply(res,error);}});

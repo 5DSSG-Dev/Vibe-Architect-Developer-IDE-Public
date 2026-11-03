@@ -1,6 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {productionReceiptKey,terminalGenerationFailure,canReplaceProduction} from './productionClientState';
+import {productionEvidenceId,productionReceiptKey,terminalGenerationFailure,canReplaceProduction} from './productionClientState';
+import {appendLuminaryExchangeEvidence,readEvidenceArchive} from './evidenceArchive';
+
+test('restored materialization appends evidence without conflicting with the original generation',async()=>{
+ const values=new Map<string,string>(),storage={getItem:(key:string)=>values.get(key)??null,setItem:(key:string,value:string)=>{values.set(key,value);}};
+ const original={exchangeId:productionEvidenceId({id:'same-generation',requestId:'initial'}),event:'task_proposed' as const,conversationId:'core',detail:{sourceDigest:'same-source',originalAnchor:'anchor'}};
+ const restored={...original,exchangeId:productionEvidenceId({id:'same-generation',requestId:'restored'}),detail:{sourceDigest:'same-source'}};
+ await appendLuminaryExchangeEvidence(original,storage);await appendLuminaryExchangeEvidence(restored,storage);
+ assert.equal((await appendLuminaryExchangeEvidence(restored,storage)).appended,false);
+ const records=await readEvidenceArchive(storage);
+ assert.equal(records.length,2);assert.deepEqual(records[0].payload,original);assert.deepEqual(records[1].payload,restored);
+});
 test('review approval never transfers to a different receipt, source or context',()=>{
  const first={id:'a',digest:'source-a',contextHash:'context-a'};
  for(const other of [{...first,id:'b'},{...first,digest:'source-b'},{...first,contextHash:'context-b'}])assert.notEqual(productionReceiptKey(first),productionReceiptKey(other));

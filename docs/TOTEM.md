@@ -109,3 +109,11 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 
 ## 2026-11-03 | Lumen | UI validation closure matrix
 - UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md maps 24 unexecuted claims to exact prerequisites, CLI/browser feasibility, authorization and human review. It distinguishes unavailable local browser from missing generated-app features and deferred objective oracles.
+
+
+## 2026-11-03 | Codex | Accepted CORE runtime implementation handoff
+- ACCEPTED_CORE_RUNTIME_2026-11-03.md records PR52 source findings, minimal persisted-program/restoration path, exact verification (focused21pass/gateway274pass/buildpass/app427pass1baselinefail), browser fixture scope, original-review-record boundary, unsupported capabilities and independent-review return point. Raw private test evidence remains outside tracked source. No active routes or publication changed.
+
+
+## 2026-11-03 | Codex | UI validation matrix current disposition
+- Appended a24rowcurrent-status reassessment to UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md without rewriting its historical baseline. Threeboundedsyntheticclosures:review/Terminal/Preview, form/list/navigation,1000recordinteraction. Fourrows partial and17others unclosed. Distinguishes savedCORE programrecovery from stillmissingdurableappdata; browsernowavailablebutuntestedIDEflowsremainopen. Browsermetrics1000→invalid1000→valid1001→navigation1001, TerminalStopremovesiframe, providers0. Productsourceunchanged; no liveactivation/publication.
