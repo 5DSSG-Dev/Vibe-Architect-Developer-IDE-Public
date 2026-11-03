@@ -30,10 +30,12 @@ test('open questions carry bounded choices tied to their exact wording', () => {
  assert.throws(()=>parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],decisionChoices:[{question:'Different?',options:['A','B']}],suggestions:[],proposal:null}),catalog),/do not match/);
  assert.deepEqual(parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],suggestions:[],proposal:null}),catalog).decisionChoices,[]);
 });
-test('interview asks one decision per turn and rejects grouped model questions', () => {
- assert.match(creationPrompt([], catalog), /Ask exactly one focused question per turn/);
- assert.match(creationPrompt([], catalog), /ask the next essential question in a new turn/);
- assert.throws(() => parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: ['First?', 'Second?'], suggestions: [], proposal: null }), catalog), /invalid list/);
+test('interview batches open questions with independent choices', () => {
+ assert.match(creationPrompt([], catalog), /Ask all essential design questions that remain unresolved together/);
+ const answer = parseCreationAnswer(JSON.stringify({ message: 'Choose your details', questions: ['First?', 'Second?'], decisionChoices: [{ question: 'First?', options: ['A', 'B'], recommended: 'A' }, { question: 'Second?', options: ['C', 'D'], recommended: 'D' }], suggestions: [], proposal: null }), catalog);
+ assert.equal(answer.questions.length, 2);
+ assert.equal(answer.decisionChoices[1].recommended, 'D');
+ assert.throws(() => parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: Array.from({ length: 9 }, (_, i) => `Question ${i}?`), suggestions: [], proposal: null }), catalog), /invalid list/);
 });
 test('accepted proposal uses a successful runtime handshake and preserves blank input', () => {
  const blank = createBlankApp();const result = connectAppProposal(proposal(), blank, catalog);

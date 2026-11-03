@@ -65,3 +65,6 @@
 
 ## 2026-11-03 | Lumen | Sequential app interview
 - Architect asked Luminary to ask one question at a time. Prompt now requests one essential decision per turn and the next only after an answer; parser enforces one open question. Choice panel uses singular wording and sends that choice with a request for the next decision or architecture. Focused 11/11 and production build exit0; full suite running. Provider interaction remains unverified.
+
+## 2026-11-03 | Lumen | Batched app interview
+- Architect found sequential model round trips too slow. Prompt now gathers up to eight known essential decisions together. UI renders each in its own box with exclusive checkbox options or a custom text answer, waits for all answers, and submits one combined reply. Focused 11/11, full npm test exit0 (app423/423), build exit0, diff check exit0. Local3012 serves new bundle. Live provider interview remains unverified.

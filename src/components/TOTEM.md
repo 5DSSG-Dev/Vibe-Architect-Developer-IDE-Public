@@ -112,3 +112,6 @@
 
 ## 2026-11-03 | Lumen | Sequential interview choice
 - AppCreationConversation presents and sends one current decision; the Luminary follows with the next needed decision or proposal.
+
+## 2026-11-03 | Lumen | Batched interview form
+- AppCreationConversation shows separate question boxes, accepts one selected or custom answer per box, and sends the complete batch together.

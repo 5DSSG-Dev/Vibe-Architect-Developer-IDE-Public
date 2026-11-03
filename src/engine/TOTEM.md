@@ -64,3 +64,6 @@
 
 ## 2026-11-03 | Lumen | One decision per turn
 - App creation prompt sequences essential questions; parser limits open questions to one. Focused regression covers grouped response refusal.
+
+## 2026-11-03 | Lumen | Batched decisions
+- App creation now accepts up to eight open questions with matched choices; the prompt asks all known essential design decisions together to reduce provider round trips.

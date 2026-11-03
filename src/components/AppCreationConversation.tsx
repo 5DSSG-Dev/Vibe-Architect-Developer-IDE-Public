@@ -112,21 +112,22 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
       {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}{turn.state && turn.state !== 'sent' && <span className="block mt-2 text-xs text-slate-400">{turn.state === 'pending' ? 'Sending to Luminary…' : turn.state === 'failed' ? 'Request failed — your message is kept here.' : 'Stopped — your message is kept here.'}</span>}</div>)}
       {answer && answer.questions.length > 0 && <section aria-label="Open app design choices" className="rounded-2xl border border-amber-300/40 bg-amber-950/10 p-4 space-y-4 text-sm">
-        <h3 className="font-semibold text-amber-200">One choice at a time</h3>
-        <p className="text-xs text-slate-300">Choose an option or describe your own answer below. Luminary will ask the next question after you answer this one.</p>
+        <h3 className="font-semibold text-amber-200">Choose your app details</h3>
+        <p className="text-xs text-slate-300">Each question has its own box. Choose an option or type your own answer for every box, then send them together.</p>
         {answer.questions.map((question, index) => {
           const choice = answer.decisionChoices.find(item => item.question === question);
           return <fieldset key={index} className="min-w-0 rounded-xl border border-slate-700 p-3"><legend className="px-1 text-slate-100">{question}</legend>
             {choice ? <div className="mt-2 space-y-2">{choice.options.map(option => <label key={option} className="flex items-start gap-2 cursor-pointer rounded-lg p-1 hover:bg-slate-800/70">
               <input type="checkbox" checked={selectedDecisions[question] === option} onChange={() => setSelectedDecisions(current => ({...current, [question]: current[question] === option ? '' : option}))} className="mt-0.5 accent-amber-300" />
               <span>{option}{choice.recommended === option && <span className="ml-2 text-xs text-amber-200">Luminary suggests this</span>}</span>
-            </label>)}</div> : <p className="mt-2 text-xs text-slate-300">Tell Luminary your preference in the message box below.</p>}
+            </label>)}</div> : null}
+            <input type="text" value={choice?.options.includes(selectedDecisions[question] ?? '') ? '' : (selectedDecisions[question] ?? '')} onChange={event => setSelectedDecisions(current => ({ ...current, [question]: event.target.value }))} placeholder="Or type your own answer" aria-label={`Your own answer to ${question}`} className="mt-3 w-full min-w-0 rounded-lg border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100" />
           </fieldset>;
         })}
-        {Object.values(selectedDecisions).some(Boolean) && <button type="button" disabled={busy || applying} onClick={() => {
-          const question = answer.questions[0];
-          void sendText(`${question} My choice: ${selectedDecisions[question]}. Please continue with the next decision, or show the starting architecture if we have settled them all.`, false);
-        }} className="rounded-lg border border-amber-300/50 px-3 py-2 text-xs text-amber-100 disabled:opacity-40">Send my choice to Luminary</button>}
+        <button type="button" disabled={busy || applying || !answer.questions.every(question => selectedDecisions[question]?.trim())} onClick={() => {
+          const choices = answer.questions.map((question, index) => `${index + 1}. ${question}\nMy answer: ${selectedDecisions[question].trim()}`);
+          void sendText(`Here are my answers to all the open questions:\n${choices.join('\n\n')}\nPlease update the starting architecture, or ask only genuinely unresolved decisions.`, false);
+        }} className="rounded-lg border border-amber-300/50 px-3 py-2 text-xs text-amber-100 disabled:opacity-40">Send all answers to Luminary</button>
       </section>}
       {answer?.proposal && <div className="rounded-2xl border border-cyan-300/40 bg-cyan-950/20 p-4 space-y-3">
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
