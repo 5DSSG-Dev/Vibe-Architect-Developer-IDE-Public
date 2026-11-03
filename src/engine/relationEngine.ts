@@ -179,8 +179,7 @@ export function getElementChildren(item: ApothecaryItem, catalog: ApothecaryItem
       .filter((c): c is ApothecaryItem => Boolean(c));
 
   if (item.category === 'Orbs') {
-    const linked = resolveIds(item.satellites);
-    if (linked.length > 0) return linked;
+    if (item.satellites !== undefined) return resolveIds(item.satellites);
     // Fallback: derive satellites from any catalog item flagged with a class.
     return catalog.filter((c) => Boolean(c.satelliteClass));
   }
@@ -379,6 +378,7 @@ export interface ActiveDaemons {
 }
 
 export interface CoreManifest {
+  appCreation?: 'draft' | 'ready';
   appConfiguration?: { appType: string; purpose: string; crystalModel: string; updatedAt: string };
   coreId: string;
   name: string;

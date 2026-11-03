@@ -1,3 +1,5 @@
+import { AppCreationConversation } from './components/AppCreationConversation';
+import { createBlankApp, connectAppProposal } from './engine/appCreation';
 import React, { useState, useEffect } from 'react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
@@ -19,7 +21,7 @@ import type { EnvironmentEntryView } from './utils/environmentScene';
 import { Wayfinder } from './components/Wayfinder';
 import { LuminaryHost } from './components/LuminaryHost';
 import { luminaryFocus } from './luminary/focus';
-import { closeConnectionByAgreement } from './engine/connectionRuntime';
+import { severConnection, closeConnectionByAgreement } from './engine/connectionRuntime';
 import { LuminaryBubble } from './components/LuminaryBubble';
 import {
   ApothecaryItem,
@@ -161,7 +163,7 @@ export function App() {
   const [restoredWorkspace] = useState<PersistedWorkspace | null>(() => loadPersistedWorkspace());
   const [coreManifest, setCoreManifest] = useState<CoreManifest>(
     () => {
-      if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createInitialCoreManifest());
+      if (!restoredWorkspace?.coreManifest) return ensureManifestCodeFrames(createBlankApp());
       // Workspaces saved before 2026-10-28 carry the old built-in starter Portal, which the
       // Architect never added. Portals now appear only once added, so that one is left out.
       // Workspaces still on an earlier starting budget move to today's, which fits all 8 sockets;
@@ -539,6 +541,8 @@ export function App() {
     <div className="relative w-screen h-screen overflow-hidden bg-[#080b10] text-slate-100 font-sans select-none">
       {/* 1. 3D WebGL Canvas Layer */}
       <ThreeCanvas
+        creationMode={coreManifest.appCreation === 'draft'}
+        coreModel={coreManifest.appConfiguration?.crystalModel}
         sockets={coreManifest.sockets}
         selectedSocketId={selectedSocketId}
         onSelectSocket={handleSelectSocket}
@@ -699,8 +703,19 @@ export function App() {
       )}
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
-      <LuminaryBubble />
-      <LuminaryHost docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
+      {coreManifest.appCreation !== 'draft' && <LuminaryBubble />}
+      {coreManifest.appCreation === 'draft' && <AppCreationConversation catalog={apothecaryCatalog} onAccept={async (proposal) => {
+        const built = connectAppProposal(proposal, coreManifest, apothecaryCatalog);
+        try {
+          for (const contract of built.manifest.contracts) await appendRelationContractEvidence(contract);
+        } catch (error) {
+          for (const contract of built.manifest.contracts) { try { severConnection(contract.contractId, 'App creation evidence could not be saved', { initiatorConsent: true, receptorConsent: true }); } catch { /* Preserve evidence error. */ } }
+          throw error;
+        }
+        setApothecaryCatalog(built.catalog);
+        setCoreManifest(built.manifest);
+      }} />}
+      <LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (

@@ -1,3 +1,4 @@
+import { isAppCreationActive } from '../luminary/appCreationPresence';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -82,6 +83,8 @@ import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract
 import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 interface ThreeCanvasProps {
+  creationMode?: boolean;
+  coreModel?: string;
   sockets: SocketBinding[];
   portals?: PortalPlacement[];
   onSelectSocket: (socket: SocketBinding, item?: ApothecaryItem) => void;
@@ -1220,6 +1223,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
 };
 
 const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
+  coreModel,
   sockets,
   portals = [],
   onSelectSocket,
@@ -1272,6 +1276,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   }, [portals]);
 
   const [crystalVariant, setCrystalVariant] = useState<string>(CORE_CRYSTAL_VARIANTS[0].key);
+  useEffect(() => {
+    const keys: Record<string, string> = { 'AEGIS_POD_CRYSTAL.glb': 'coreCrystal', 'CORE_CRYSTAL_CAGED.glb': 'coreCaged', 'CORE_CRYSTAL_CAGED2.glb': 'coreCaged2', 'crystals.glb': 'coreCluster' };
+    if (coreModel && keys[coreModel]) setCrystalVariant(keys[coreModel]);
+  }, [coreModel]);
   const crystalVariantRef = useRef(crystalVariant);
   crystalVariantRef.current = crystalVariant;
 
@@ -2201,6 +2209,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const dt = Math.min(0.05, elapsedTime - lastFrameTime);
       lastFrameTime = elapsedTime;
 
+      assemblyPivot.visible = !isAppCreationActive();
+      coreTotem.visible = !isAppCreationActive();
       luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged(), camera, renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
       // Decorative motion is gated on the reduced-motion control. When motion is
@@ -2932,7 +2942,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 export const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
   // The experimental P0 renderer does not draw the 3D Luminary Presence (STP-0002 P19 is built on the
   // legacy renderer); the Luminary stays reachable through LuminaryHost's icon and Full Form.
-  if (isThreeRuntimeMainViewP0Enabled()) {
+  if (!props.creationMode && isThreeRuntimeMainViewP0Enabled()) {
     return (
       <ThreeRuntimeMainViewP0
         sockets={props.sockets}

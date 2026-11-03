@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { createInitialCoreManifest } from '../engine/relationEngine';
+import { createBlankApp } from '../engine/appCreation';
 import { WORKSPACE_KEY, readApps, saveCurrentApp, activateApp, closeApp, deleteApp, readAppFile, type SavedApp } from '../utils/appFiles';
 
 export function AppMenu() {
@@ -32,10 +32,8 @@ export function AppMenu() {
     }} />
     {open && <div id="app-menu" className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-xl border border-cyan-500/30 bg-slate-950 shadow-2xl py-1 z-50" aria-label="App actions">
       <button className={itemClass} onClick={() => run(() => {
-        const name = window.prompt('Name your new app', 'Untitled App'); if (name === null) return;
-        if (!name.trim() || name.trim().length > 80) throw new Error('Use an app name of 1–80 characters.');
         saveCurrentApp(localStorage);
-        const coreManifest = createInitialCoreManifest(); coreManifest.name = name.trim();
+        const coreManifest = createBlankApp();
         activateApp(localStorage, { version: 2, coreManifest, apothecaryCatalog: [], navigation: { environmentIds: [] } }); reload();
       })}>New App</button>
       <button className={itemClass} onClick={() => { file.current?.click(); setOpen(false); }}>Open App…</button>

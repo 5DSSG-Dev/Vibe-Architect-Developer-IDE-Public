@@ -1,3 +1,4 @@
+import { isAppCreationActive } from '../luminary/appCreationPresence';
 import * as THREE from 'three';
 import { gltfModelCache } from '../utils/gltfLoaderService';
 
@@ -127,11 +128,12 @@ export function createLuminaryPresence(): LuminaryPresence {
         root.lookAt(camera.position);
         root.rotateY(PRESENCE_YAW);
       }
-      const target = engaged ? ENGAGED_GLOW : REST_GLOW;
+      const target = engaged || isAppCreationActive() ? ENGAGED_GLOW : REST_GLOW;
       glow += (target - glow) * Math.min(1, dt * 4);
       // A slow breath in size and light; held still when Motion is off.
       const breath = motionEnabled ? Math.sin(elapsedTime * PULSE_RATE) : 0;
-      body.scale.setScalar(1 + breath * PULSE_SCALE);
+      const targetScale = (isAppCreationActive() ? 1.4 : 1) * (1 + breath * PULSE_SCALE);
+      body.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), Math.min(1, dt * 5));
       for (const material of materials) material.emissiveIntensity = glow * (1 + breath * 0.12);
       light.intensity = 0.4 + glow * 1.2 * (1 + breath * 0.12);
     },
