@@ -77,8 +77,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       const response = parseCreationAnswer(result.value.reply.content, catalog);
       setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
       setAnswer(response);
-      setSuggestions(nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
-      if (selected) setUsedSuggestions(previous => [...previous, selected]);
+      setSuggestions(selected && !response.proposal ? suggestions : nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
+      if (selected && response.proposal) setUsedSuggestions(previous => [...previous, selected]);
     } catch (e) {
       if (!controller.signal.aborted) {
         setTurns(current => current.map(turn => turn === sentTurn ? { ...turn, state: 'failed' } : turn));
@@ -95,7 +95,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
     catch (e) { setError(e instanceof Error ? e.message : 'The architecture could not be connected.'); }
     finally { accepting.current = false; setApplying(false); }
   }
-  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-4 right-4 md:left-auto md:right-[420px] md:w-[min(42rem,calc(100vw-450px))] flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
+  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
     <header className="p-3 sm:p-5 border-b border-amber-300/20 shrink-0"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p></header>
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
@@ -104,6 +104,11 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
         <ul className="space-y-3 text-sm">{answer.proposal.elements.map(e => <li key={e.id}><strong>{catalog.find(i => i.id === e.id)?.name}</strong><span className="block text-xs text-slate-400">{e.parentId ? `Inside ${catalog.find(i => i.id === e.parentId)?.name}` : 'Connected to CORE'}</span><span className="text-slate-300">{e.reason}</span></li>)}</ul>
         {answer.proposal.gaps.length > 0 && <div className="text-sm text-amber-200"><strong>Still to build or provide</strong><ul className="list-disc pl-5">{answer.proposal.gaps.map(g => <li key={g}>{g}</li>)}</ul></div>}
+        {usedSuggestions.length > 0 && <section aria-label="Additions to the app proposal" className="rounded-xl border border-emerald-300/25 bg-emerald-950/20 p-3 space-y-2">
+          <h4 className="text-sm font-semibold text-emerald-200">Added to this proposal</h4>
+          <ul className="space-y-1 text-sm text-slate-200">{usedSuggestions.map((suggestion, index) => <li key={`${index}:${suggestion}`} className="flex gap-2"><span className="text-emerald-300" aria-hidden="true">✓</span><span>{suggestion}</span></li>)}</ul>
+          <p className="text-xs text-slate-400">Review these additions with the app information above, then accept the revised architecture below.</p>
+        </section>}
         <p className="text-xs text-slate-400">Accepting configures and connects these Elements. App code, execution and external services are separate build steps.</p>
         <button type="button" disabled={busy || applying} onClick={() => void accept()} className="btn-cyber px-4 py-2 rounded-xl text-sm disabled:opacity-50 flex gap-2 items-center"><Sparkles size={16} />{applying ? 'Connecting Elements…' : 'Accept starting architecture'}<ArrowRight size={16}/></button>
         <p className="text-xs text-slate-400">Want changes? Describe them below before accepting.</p>
