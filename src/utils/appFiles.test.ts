@@ -29,3 +29,20 @@ test('failed archive write leaves the active workspace intact', () => {
  storage.setItem = (k,v) => { if (k === 'vibe.apps.v1') throw new Error('quota'); set(k,v); };
  assert.throws(() => closeApp(storage)); assert.equal(storage.getItem('vibe.apps.closed'), null); assert.equal(storage.getItem(WORKSPACE_KEY), before);
 });
+
+test('malformed build plans are rejected before imported activation changes the active app',()=>{
+ const storage=memory();activateApp(storage,app('Keep'),'keep');const before=storage.getItem(WORKSPACE_KEY);
+ const bad=app('Bad');(bad.coreManifest as any).appBuildPlan={};
+ assert.throws(()=>activateApp(storage,bad),/ToDo/);
+ assert.equal(storage.getItem(WORKSPACE_KEY),before);
+});
+
+test('saving and reopening retains a generated project receipt without executing it',()=>{
+ const storage=memory(),snapshot=app('Generated');
+ snapshot.coreManifest.applicationProduction={id:'12345678-1234-4234-8234-123456789000',digest:'a'.repeat(64),contextHash:'b'.repeat(64)};
+ activateApp(storage,snapshot,'generated');saveCurrentApp(storage);closeApp(storage);
+ const saved=readApps(storage)[0];
+ assert.deepEqual(saved.snapshot.coreManifest.applicationProduction,snapshot.coreManifest.applicationProduction);
+ activateApp(storage,saved.snapshot,saved.id);
+ assert.deepEqual(readAppFile(storage.getItem(WORKSPACE_KEY)!).coreManifest.applicationProduction,snapshot.coreManifest.applicationProduction);
+});

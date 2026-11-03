@@ -1,3 +1,7 @@
+import { ApplicationProduction } from './components/ApplicationProduction';
+import { AppBuildJourney } from './components/AppBuildJourney';
+import { buildItemFocus, isBuildPlan, nextBuildItem } from './engine/appBuildPlan';
+import { setLuminaryEngaged } from './luminary/presence';
 import { AppCreationConversation } from './components/AppCreationConversation';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
 import React, { useState, useEffect } from 'react';
@@ -179,6 +183,7 @@ export function App() {
   const [isFooterExpanded, setIsFooterExpanded] = useState<boolean>(true);
   // The Apothecary Cabinet opens as a window from the bottom bar's Apothecary button.
   const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
+  const [selectedBuildItem, setSelectedBuildItem] = useState<{ coreId: string; id: string } | null>(null);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
@@ -248,6 +253,9 @@ export function App() {
     { openPageItem: elementPageOpen ? inspectingItem : null, currentEnvironment: currentEnvironment ?? null, attachingItem: attachingItem ?? null },
     apothecaryCatalog
   );
+
+  const buildPlan = isBuildPlan(coreManifest.appBuildPlan) ? coreManifest.appBuildPlan : undefined;
+  const buildSelection = buildPlan && selectedBuildItem?.coreId === coreManifest.coreId ? buildItemFocus(coreManifest.coreId, buildPlan, selectedBuildItem.id, luminarySelection) : undefined;
 
   const [saveStatus, setSaveStatus] = useState<WorkspaceSaveStatus>({ state: 'pending' });
 
@@ -704,8 +712,8 @@ export function App() {
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
       {coreManifest.appCreation !== 'draft' && <LuminaryBubble />}
-      {coreManifest.appCreation === 'draft' && <AppCreationConversation catalog={apothecaryCatalog} onAccept={async (proposal) => {
-        const built = connectAppProposal(proposal, coreManifest, apothecaryCatalog);
+      {coreManifest.appCreation === 'draft' && <AppCreationConversation catalog={apothecaryCatalog} onAccept={async (proposal, decisions) => {
+        const built = connectAppProposal(proposal, coreManifest, apothecaryCatalog, decisions);
         try {
           for (const contract of built.manifest.contracts) await appendRelationContractEvidence(contract);
         } catch (error) {
@@ -715,8 +723,19 @@ export function App() {
         setApothecaryCatalog(built.catalog);
         setCoreManifest(built.manifest);
       }} />}
-      <LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
+      <LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
+      {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={coreManifest.coreId} core={coreManifest} catalog={apothecaryCatalog} onRemember={pointer => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, applicationProduction: pointer } : current)} />}
+      {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={coreManifest.coreId} coreId={coreManifest.coreId} plan={buildPlan}
+        onChange={plan => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, appBuildPlan: plan } : current)}
+        onSelect={id => { setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
+        onApothecary={() => {
+          setEnvironmentStack([]); setActiveOverlay('NONE'); setIsApothecaryOpen(true);
+          const next = nextBuildItem(buildPlan, selectedBuildItem?.coreId === coreManifest.coreId ? selectedBuildItem.id : undefined);
+          if (next) setSelectedBuildItem({ coreId: coreManifest.coreId, id: next.id });
+          setLuminaryEngaged(true);
+        }} />}
+      {coreManifest.appBuildPlan !== undefined && !buildPlan && <p role="alert" className="fixed top-28 left-4 z-40 max-w-sm rounded-xl bg-slate-950 p-4 text-sm text-amber-100">The saved ToDo list could not be read. Your Workspace is retained. Restore a valid app export before continuing its build list.</p>}
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
         <HandshakeModal

@@ -1,3 +1,4 @@
+import { ProductionRuntime, createProductionRouter } from './application-production.js';
 import { createLocalLuminarySession } from './luminary-local-session.js';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
@@ -121,6 +122,7 @@ export async function createGateway(options: CreateGatewayOptions) {
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         frameAncestors: ["'none'"],
+        frameSrc: config.nodeEnv === 'development' && config.luminaryLocalSession ? ["'self'", 'http://127.0.0.1:*'] : ["'self'"],
         formAction: ["'self'", 'https://login.microsoftonline.com'],
         upgradeInsecureRequests: config.nodeEnv === 'production' ? [] : null,
       },
@@ -281,6 +283,12 @@ export async function createGateway(options: CreateGatewayOptions) {
   });
   if (options.executor) {
     app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
+  }
+  // The first production profile compiles only deterministic generated templates, locally.
+  if (config.nodeEnv === 'development' && config.luminaryLocalSession && options.record && ['meta', 'baseten'].includes(config.luminaryReplySource ?? '')) {
+    const production = new ProductionRuntime({ root: resolve(process.cwd(), 'output/generated-projects'), record: options.record, ask: createGovernedAsk(luminaryAskModel, luminaryReplyOptions) });
+    app.locals.applicationProduction = production;
+    app.use('/api/luminary/production', createProductionRouter(production));
   }
   if (options.record) app.use('/api/luminary/review', createReviewRouter(options.record));
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));

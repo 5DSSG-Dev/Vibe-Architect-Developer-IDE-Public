@@ -51,3 +51,8 @@ build/
 
 # Governance review areas (STP-0005 P3), if GOVERNANCE_RECORD_DIR points inside the repo
 .aegis-vibe-architect/
+
+# Generated application projects and local runtime verification (may contain Architect requirements)
+/output/generated-projects/
+/output/production-runtime-test-*/
+/output/generated-app-*/

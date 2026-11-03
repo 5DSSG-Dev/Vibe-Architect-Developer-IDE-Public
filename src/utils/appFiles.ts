@@ -1,3 +1,4 @@
+import { isBuildPlan } from '../engine/appBuildPlan';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
 import type { NavigationPosition } from './navigationSnapshot';
 export const WORKSPACE_KEY = 'aegis-vibe-architect.workspace.v1';
@@ -17,6 +18,7 @@ export function readAppFile(raw: string): AppSnapshot {
     || !Array.isArray(value.apothecaryCatalog) || !value.apothecaryCatalog.every(item)
     || !['memoryMB', 'threads'].every(k => Number.isFinite(c.hardwareBudget[k]) && c.hardwareBudget[k] >= 0)
     || !Array.isArray(value.navigation?.environmentIds) || !value.navigation.environmentIds.every((id: unknown) => typeof id === 'string')) throw new Error('Choose a complete .vibe-app.json file exported from this IDE.');
+  if (c.appBuildPlan !== undefined && !isBuildPlan(c.appBuildPlan)) throw new Error('The imported app has an invalid ToDo build plan. Your current app is unchanged.');
   return value;
 }
 export function readApps(storage: Storage): SavedApp[] {

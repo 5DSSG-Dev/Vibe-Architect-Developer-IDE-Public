@@ -61,3 +61,19 @@ test('model-only Orbs without registered contracts cannot be proposed for connec
  const p=proposal();p.elements=[{id:unregistered.id,parentId:null,reason:'Requested service'}];
  assert.throws(()=>validateProposal(p,[...catalog,unregistered]),/registered Orb contract/);
 });
+
+test('accepted architecture carries pending construction and agreed context into its saved manifest', () => {
+ const p = proposal(); p.gaps = ['Create projects and tasks tables; statuses: To Do, In Progress, Done', 'Build notebook views and CRUD handlers'];
+ const blank = createBlankApp();
+ const built = connectAppProposal(p, blank, catalog, 'Architect chose plain notes and three task statuses.');
+ try {
+  const saved = JSON.parse(JSON.stringify(built.manifest));
+  assert.deepEqual(saved.appBuildPlan.items.slice(0, 2).map((item: any) => item.text), p.gaps);
+  assert.match(saved.appBuildPlan.items[2].text, /Verify the requested app/);
+  assert.ok(saved.appBuildPlan.items.every((i: any) => !i.verification));
+  assert.equal(saved.appBuildPlan.proposal.purpose, p.purpose);
+  assert.match(saved.appBuildPlan.decisions, /plain notes/);
+  assert.equal(saved.appBuildPlan.invitation, 'pending');
+  assert.equal(blank.appBuildPlan, undefined);
+ } finally { for(const c of built.manifest.contracts)closeConnectionByAgreement(c.contractId,c,'test cleanup'); }
+});

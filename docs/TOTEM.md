@@ -95,3 +95,11 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 ## 2026-11-01 | Codex | Atlas branch conflict resolution
 - At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
 - Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.
+
+
+## 2026-11-02 | Aster | Workspace build journey
+- docs/APP_BUILD_JOURNEY.md records approved design and implementation sequence. Actual code/test evidence and exact hashes are in .aegis/lanes/aster.md. Final Verus/Libra review and browser rehearsal remain pending.
+
+
+## 2026-11-02 | Lumen | Application production plan
+- APPLICATION_PRODUCTION_PLAN.md records the directive, source gap, first generator slice, verification approach and pending IDE/runtime/governance integration. Fresh generator7/app413/generated4 checks pass; IDE and generated builds pass. Full npm test retains the existing gateway status mismatch. Detailed evidence/limitations in .aegis/lanes/chatgpt-work.md.

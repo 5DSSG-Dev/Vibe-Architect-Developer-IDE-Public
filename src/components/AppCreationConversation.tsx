@@ -8,7 +8,7 @@ import { setAppCreationActive } from '../luminary/appCreationPresence';
 
 type Turn = { role: string; text: string; proposal?: AppProposal | null; suggestions?: string[]; state?: 'pending' | 'sent' | 'failed' | 'stopped' };
 const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. Tell me about the app you’d like to create: what should it help people do, and who will use it?';
-export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal) => Promise<void> }) {
+export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal, decisions: string) => Promise<void> }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [answer, setAnswer] = useState<CreationAnswer | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -96,9 +96,9 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       if (request.current === controller) { request.current = null; setBusy(false); setSelectedSuggestion(null); } }
   }
   async function accept() {
-    if (!answer?.proposal || accepting.current || request.current) return;
+    if (!answer?.proposal || answer.questions.length > 0 || accepting.current || request.current) return;
     accepting.current = true; setApplying(true); setError('');
-    try { await onAccept(answer.proposal); }
+    try { await onAccept(answer.proposal, turns.filter(turn => !turn.state || turn.state === 'sent').map(turn => turn.role + ': ' + turn.text).join('\n\n')); }
     catch (e) { setError(e instanceof Error ? e.message : 'The architecture could not be connected.'); }
     finally { accepting.current = false; setApplying(false); }
   }
@@ -111,8 +111,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>
         <ul className="space-y-3 text-sm">{answer.proposal.elements.map(e => <li key={e.id}><strong>{catalog.find(i => i.id === e.id)?.name}</strong><span className="block text-xs text-slate-400">{e.parentId ? `Inside ${catalog.find(i => i.id === e.parentId)?.name}` : 'Connected to CORE'}</span><span className="text-slate-300">{e.reason}</span></li>)}</ul>
         {answer.proposal.gaps.length > 0 && <section aria-label="Remaining work for this app" className="rounded-xl border border-amber-300/30 bg-amber-950/15 p-3 space-y-2 text-sm text-amber-100">
-          <h4 className="font-semibold">What the app still needs</h4>
-          <p className="text-xs text-slate-300">These are parts of the requested app that this starting architecture does not yet cover. They are not instructions for you to carry out. Accepting the architecture does not complete this work.</p>
+          <h4 className="font-semibold">Agreed build ToDo</h4>
+          <p className="text-xs text-slate-300">Luminary will carry this work and your agreed decisions into the Workspace ToDo list. After acceptance, explore your connected Elements, then build or edit what is needed together in the Apothecary. Acceptance does not complete this work.</p>
           <ul className="list-disc pl-5 space-y-2">{answer.proposal.gaps.map(g => <li key={g}>{g}</li>)}</ul>
           <button type="button" disabled={busy || applying} onClick={() => void sendText(`Explain the remaining work in this proposal: ${answer.proposal!.gaps.join('; ')}. For each item, tell me whether it is essential to my original request or an optional enhancement, why it is missing, how it affects the app, and the supported next step. Move any unrequested optional features to suggestions. Do not add features or change my requested scope just to explain it.`, false)} className="rounded-lg border border-amber-300/40 px-3 py-1.5 text-xs text-amber-100 hover:bg-amber-300/10 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Explain remaining work</button>
         </section>}
@@ -122,8 +122,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
           <p className="text-xs text-slate-400">Review these additions with the app information above, then accept the revised architecture below.</p>
         </section>}
         <p className="text-xs text-slate-400">Accepting configures and connects these Elements. App code, execution and external services are separate build steps.</p>
-        <button type="button" disabled={busy || applying} onClick={() => void accept()} className="btn-cyber px-4 py-2 rounded-xl text-sm disabled:opacity-50 flex gap-2 items-center"><Sparkles size={16} />{applying ? 'Connecting Elements…' : 'Accept starting architecture'}<ArrowRight size={16}/></button>
-        <p className="text-xs text-slate-400">Want changes? Describe them below before accepting.</p>
+        <button type="button" disabled={busy || applying || answer.questions.length > 0} onClick={() => void accept()} className="btn-cyber px-4 py-2 rounded-xl text-sm disabled:opacity-50 flex gap-2 items-center"><Sparkles size={16} />{applying ? 'Connecting Elements…' : 'Accept starting architecture'}<ArrowRight size={16}/></button>
+        <p className="text-xs text-slate-400">Want changes? Describe them below before accepting. {answer.questions.length > 0 && 'Answer the open design questions before acceptance, or explicitly agree to defer them.'}</p>
       </div>}
       {busy && <p role="status" className="text-sm text-amber-200">Luminary is considering your app…</p>}
       {error && <p role="alert" className="text-sm text-rose-200 border border-rose-400/40 rounded-xl p-3">{error}</p>}

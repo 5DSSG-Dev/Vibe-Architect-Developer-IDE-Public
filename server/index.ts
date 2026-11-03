@@ -73,7 +73,7 @@ const server = app.listen(config.port, () => {
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
     server.close(async () => {
-      await Promise.allSettled([sessions.close?.(), evidenceStore.close?.()]);
+      await Promise.allSettled([sessions.close?.(), evidenceStore.close?.(), app.locals.applicationProduction?.close()]);
       process.exit(0);
     });
   });
