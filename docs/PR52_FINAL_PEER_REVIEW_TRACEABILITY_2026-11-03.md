@@ -1,6 +1,6 @@
 ﻿# PR #52 — Final Peer Review Traceability and Source-Bound Closure
 Date: 2026-11-03
-Review candidate CODE SHA: `5c2924a166387efce786d6d5f72e6d7276f98692`
+Review candidate CODE SHA: `cf2574c78104224dac44703942eb363a6fcfbdd9`
 Integration target: `codex/core-configurator-20261102`
 GitHub PR head: `codex/guided-new-app-20261102`
 Worktree: `codex/accepted-core-runtime-20261103`
@@ -38,7 +38,7 @@ This document maps the complete agreed demo scope. The `peer-review/qa-current-*
 | V24 | Final Architect walkthrough | Human | Not automated | Architect acceptance pending | Human gate |
 
 ## Connected Element version policy (V12)
-Ordinary properties and code-frame edits retain `id`, tier category, `version`, `parentElementId`, child-id lists, `authoringContract`, Umbilical contract references and profile IDs. The editor refuses an attempted implicit change to any of these; such changes require a separate reviewed migration. A connected socket must continue to hold an Orb, and its catalog/runtime tier-version agreement is checked before the edit. Existing handshake record and resolved profile version are preserved across property edits and save/reopen. This is a **compatibility policy**, not an assertion that arbitrary edited code keeps semantic behavior or satisfies a runtime contract.
+Ordinary properties and code-frame edits retain `id`, tier category, `version`, `parentElementId`, child-id lists, `authoringContract`, Umbilical contract references and profile IDs. The editor refuses an attempted implicit change to any of these; such changes require a separate reviewed migration. A connected CORE socket must continue to hold an Orb; editor edits also compare the actual attached runtime Element version, category, parent and authoring contract against the catalog to refuse drift. Existing handshake record and resolved profile version are preserved across property edits and save/reopen. This is a **compatibility policy**, not an assertion that arbitrary edited code keeps semantic behavior or satisfies a runtime contract.
 
 ## Release gate and outstanding independent review
 The test/build receipt and merge-tree check belong to the pinned code SHA above; see `evidence/2026-11-03/peer-review-release-gates.json`. Full test and build checks are not substituted by old screenshots. Historical fixture captures from earlier source revisions are labeled as such.

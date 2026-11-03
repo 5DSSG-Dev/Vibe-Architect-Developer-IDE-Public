@@ -1,7 +1,7 @@
 {
   "date": "2026-11-03",
-  "codeCommit": "5c2924a166387efce786d6d5f72e6d7276f98692",
-  "codeTree": "56488fa38cff0b13dbc113d522b4d59bb9a66658",
+  "codeCommit": "cf2574c78104224dac44703942eb363a6fcfbdd9",
+  "codeTree": "17faec252e1e417ac3404514f5b4198f79318c7e",
   "fixture": "synthetic local browser only, no model/provider calls",
   "coldInstall": {
     "command": "npm ci --no-audit --no-fund",
@@ -16,7 +16,7 @@
   },
   "app": {
     "command": "npm test (app phase)",
-    "passed": 440,
+    "passed": 441,
     "failed": 0,
     "exit": 0
   },
