@@ -1,6 +1,6 @@
 # Numeric route integration readiness — 2026-11-02
 
-Status: unmounted implementation and local tests; independent technical review pending. The exact 15-file review target is `C:/Users/TraceyPrutch/Downloads/lumin-numeric-route-review-2026-11-02-r5.zip`, SHA-256 `43B18715051911905A844656E5E169519C136A5CC2ABCF48A6869F7B4EBE207D`. The later `numeric-reply-loop.ts` and its tests are **outside** that packet.
+Current status: the numeric gateway is an optional, default-off mount candidate in draft PR #53. `server/index.ts` does not inject `numericRoute`; approved live PIM registry and PTAG context/producer sources are absent. The sections below retain the chronological evidence and earlier packet scopes; later dated entries supersede earlier status statements. The original 15-file stage packet is `C:/Users/TraceyPrutch/Downloads/lumin-numeric-route-review-2026-11-02-r5.zip`, SHA-256 `43B18715051911905A844656E5E169519C136A5CC2ABCF48A6869F7B4EBE207D`.
 
 ## Current mounted path
 
