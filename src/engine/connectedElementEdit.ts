@@ -31,6 +31,15 @@ export function assertCompatibleElementEdit(
   const host = manifest.sockets.find(socket =>
     socket.connectedItem?.id === original.id ||
     socket.attachedSatellites?.some(satellite => satellite.id === original.id));
+  const activeItem = host?.connectedItem?.id === original.id
+    ? host.connectedItem
+    : host?.attachedSatellites?.find(item => item.id === original.id);
+  if (activeItem && (activeItem.version !== original.version ||
+      activeItem.category !== original.category ||
+      activeItem.parentElementId !== original.parentElementId ||
+      JSON.stringify(activeItem.authoringContract ?? null) !== JSON.stringify(original.authoringContract ?? null))) {
+    throw new Error('Connected Element catalog and runtime versions or structural contracts have drifted.');
+  }
   if (host?.connectedItem?.id === original.id && original.category !== 'Orbs') {
     throw new Error('A connected CORE socket requires an Orb.');
   }

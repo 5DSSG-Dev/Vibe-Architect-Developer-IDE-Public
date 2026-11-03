@@ -51,3 +51,10 @@ test('V12 connected Element editor refuses implicit version/topology and authori
   {...satellite,authoringContract:{version:1 as const,kind:'SatelliteTether' as const,parentId:'wrong',capabilities:[],requirements:[]}}
  ]) assert.throws(()=>assertCompatibleElementEdit(satellite,edit,manifest,catalog),/migration/);
 });
+
+test('V12 refuses save when attached runtime child version drifts from catalog',()=>{
+ const {satellite,manifest,catalog}=connected();
+ const drifted=structuredClone(manifest);
+ drifted.sockets[0].attachedSatellites![0].version='999.0.0';
+ assert.throws(()=>assertCompatibleElementEdit(satellite,{...satellite,name:'Attempted edit'},drifted,catalog),/drifted/);
+});
