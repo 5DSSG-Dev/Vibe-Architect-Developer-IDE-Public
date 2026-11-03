@@ -440,12 +440,14 @@ describe('P1.5 — Verification Suite', () => {
     assert.equal(result.shortfall.failureType, 'kernel_construction');
   });
 
-  it('deterministic rebuild from identical inputs', () => {
+  it('deterministic rebuild from identical inputs across clock changes', (t) => {
+    const clock = t.mock.method(Date, 'now', () => 1000);
     const records = makeFullRecordSet();
     const context = makeContext({ activeIntent: 'test determinism' });
     const envelope = ENVELOPE_PROFILES['standard-8k'];
 
     const r1 = projectIdentitySurface(records, context, envelope);
+    clock.mock.mockImplementation(() => 2000);
     const r2 = projectIdentitySurface(records, context, envelope);
 
     assert.ok(r1.surface && r2.surface);

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { screenPim } from './pim.js';
 import { GaugeError, IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, validateThresholds, type VirtueReadings } from './irg.js';
 import { routeRbc } from './rbc.js';
-import { buildIdsObservation, composeRevisionPrompt, validateObservation } from './ids.js';
+import { buildIdqObservation, composeRevisionPrompt, validateIdqObservation } from './idq.js';
 
 function readings(value: number, overrides: Partial<VirtueReadings> = {}): VirtueReadings {
   return { ...Object.fromEntries(SEVEN_VIRTUES.map((v) => [v, value])), ...overrides } as VirtueReadings;
@@ -73,35 +73,35 @@ test('gauge readings are validated: a missing, non-numeric or out-of-range virtu
   assert.throws(() => validateReadings([90, 90]), GaugeError);
 });
 
-test('RBC routes Coherent to the Prism and Incoherent to IDS', () => {
+test('RBC routes Coherent to the Prism and Incoherent to IDQ', () => {
   assert.equal(routeRbc(readIrg(readings(90))), 'prism');
-  assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'ids');
+  assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'idq');
 });
 
-test('IDS defines only what was measured and suggests a path per finding', () => {
+test('IDQ defines only what was measured and questions a path per finding', () => {
   const irg = readIrg(readings(90, { Respect: 40 }));
-  const observation = buildIdsObservation({ reply: 'x', pimFindings: [], irg });
+  const observation = buildIdqObservation({ reply: 'x', pimFindings: [], irg });
   assert.match(observation.identify, /^IRG readings: Honesty 90, Respect 40,/);
   assert.deepEqual(observation.define, ['Respect reads 40, below the threshold of 70.']);
-  assert.deepEqual(observation.suggest, ['Re-form the reply so that Respect reads at or above 70.']);
+  assert.deepEqual(observation.question, ['How could the reply express its point while strengthening Respect (currently 40)?']);
 });
 
-test('IDS after a PIM catch says the IRG did not read the reply', () => {
+test('IDQ after a PIM catch says the IRG did not read the reply', () => {
   const pimFindings = screenPim('Trust me blindly.');
-  const observation = buildIdsObservation({ reply: 'Trust me blindly.', pimFindings, irg: null });
+  const observation = buildIdqObservation({ reply: 'Trust me blindly.', pimFindings, irg: null });
   assert.match(observation.identify, /the IRG did not read this reply/);
   assert.equal(observation.define.length, 1);
-  assert.match(observation.suggest[0], /coercive certainty phrasing "Trust me blindly"/);
+  assert.match(observation.question[0], /coercive certainty pattern "Trust me blindly"/);
 });
 
 test('an observer payload is validated before use', () => {
-  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: [] }), { identify: 'i', define: ['d'], suggest: [] });
-  assert.equal(validateObservation({ identify: '', define: [], suggest: [] }), null);
-  assert.equal(validateObservation({ identify: 'i', define: 'd', suggest: [] }), null);
-  assert.equal(validateObservation('i'), null);
+  assert.deepEqual(validateIdqObservation({ identify: 'i', define: ['d'], question: ['q'] }), { identify: 'i', define: ['d'], question: ['q'] });
+  assert.equal(validateIdqObservation({ identify: '', define: [], question: [] }), null);
+  assert.equal(validateIdqObservation({ identify: 'i', define: 'd', question: [] }), null);
+  assert.equal(validateIdqObservation('i'), null);
 });
 
 test('the revision prompt carries the observation, the previous reply and the original prompt', () => {
-  const prompt = composeRevisionPrompt('Design an Orb', 'Old reply', { identify: 'I', define: ['D'], suggest: ['S'] });
-  for (const part of ['Identify: I', 'Define: D', 'Suggest: S', 'Old reply', 'Design an Orb']) assert.ok(prompt.includes(part), part);
+  const prompt = composeRevisionPrompt('Design an Orb', 'Old reply', { identify: 'I', define: ['D'], question: ['S'] });
+  for (const part of ['Identify: I', 'Define: D', 'Question: S', 'Old reply', 'Design an Orb']) assert.ok(prompt.includes(part), part);
 });

@@ -7,6 +7,28 @@ import { BASETEN_MODEL, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS, SpendLedger, parseL
 
 // Every test uses a fake fetch. Meta's API is never reached.
 
+test('governance inference transmits a strict response schema without altering ordinary writer requests', async () => {
+  const meta = fakeMeta(() => ok('{"decision":"coherent"}'));
+  const responseFormat = { type: 'json_schema', json_schema: { name: 'gate_test', strict: true, schema: { type: 'object' } } };
+  const ask = createMetaAskModel({ apiKey: 'fake-key', ledger: new SpendLedger(ledgerPath(), 1, 2), fetch: meta.fetch, responseFormat });
+  await ask('untrusted candidate');
+  assert.deepEqual(meta.calls[0].body.response_format, responseFormat);
+  assert.equal(meta.calls[0].body.temperature, 0);
+});
+
+test('aggregate interaction cancellation aborts the real writer transport before its independent timeout', async () => {
+  const controller = new AbortController();
+  let aborted = false;
+  const transport = (async (_url: unknown, init: RequestInit) => new Promise((_resolve, reject) => {
+    init.signal!.addEventListener('abort', () => { aborted = true; reject(new Error('aborted')); }, { once: true });
+  })) as typeof fetch;
+  const writer = createMetaAskModel({ apiKey: 'fake-key', ledger: new SpendLedger(ledgerPath(), 1, 2), fetch: transport, timeoutMs: 10_000 });
+  const pending = writer('ordinary prompt', { signal: controller.signal });
+  controller.abort();
+  await assert.rejects(pending);
+  assert.equal(aborted, true);
+});
+
 const ledgerPath = () => join(mkdtempSync(join(tmpdir(), 'luminary-meta-')), 'spend.json');
 
 function fakeMeta(reply: (call: number) => { status?: number; body: unknown }) {

@@ -30,11 +30,11 @@ Microsoft Entra authorization is server-enforced on every Admin endpoint. The re
 
 The current `ReplayOperationsProvider` is deterministic fixture data and the UI labels it `REPLAY DATA`. The browser depends on `OperationsDataSource`, while the gateway depends on `OperationsProvider`. A live adapter replaces the provider behind those interfaces without changing the Admin UI, domain schema, replay store, or Three.js projection. Invalid state, authorization loss, sequence gaps, and unsupported routes fail closed or remain visible rather than being converted into success.
 
-Each classified event may carry an allowlisted `SanitizedMessageFlowProjection`. The Flow rail and transaction inspector consume that projection directly; they never infer stages, exchange direction, or terminal party from operation IDs or summaries. Sender and Receiver are per-transaction roles: the same pipeline supports both Human-to-AI and AI-to-Human exchanges without assigning either party a permanent origin role. The supported observations are Sender Ingress, inbound PIM, IRG, CORE Transit, RBC, the Prism/IDS fork, outbound PIM, Receiver Delivery, Return to Sender, and Unavailable. The UI preserves these boundaries:
+Each classified event may carry an allowlisted `SanitizedMessageFlowProjection`. The Flow rail and transaction inspector consume that projection directly; they never infer stages, exchange direction, or terminal party from operation IDs or summaries. Sender and Receiver are per-transaction roles: the same pipeline supports both Human-to-AI and AI-to-Human exchanges without assigning either party a permanent origin role. The supported observations are Sender Ingress, inbound PIM, IRG, CORE Transit, RBC, the Prism/IDQ fork, outbound PIM, Receiver Delivery, Return to Sender, and Unavailable. The UI preserves these boundaries:
 
-- RBC is the sole Prism/IDS branch authority.
+- RBC is the sole Prism/IDQ branch authority.
 - Prism proceeds through the receiver-side outbound-PIM projection to Receiver Delivery.
-- IDS always loops left through the sender-side outbound-PIM projection to Return to Sender, including the direct lane that bypasses IRG/RBC.
+- IDQ always loops left through the sender-side outbound-PIM projection to Return to Sender, including the direct lane that bypasses IRG/RBC.
 - Both visual outbound-PIM positions represent the single semantic `pim_out` stage; their placement communicates the selected terminal path without inventing separate service stages.
 - `exchangeDirection` identifies Human-to-AI or AI-to-Human for the selected transaction. `terminalOutcome` identifies delivery to Receiver, return to the original Sender, shortfall return to the original Sender, pending, or unavailable.
 - CORE Transit is explicitly noncanonical, presentation-only coordination.

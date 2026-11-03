@@ -106,7 +106,7 @@ test('an upstream throw is a named upstream_error Shortfall, never a 500 or fall
 const allVirtues = (value: number) =>
   ({ Honesty: value, Respect: value, Attention: value, Affection: value, Loyalty: value, Trust: value, Communication: value });
 
-test('with the pipeline, an incoherent reply is re-formed by the same reply source with the IDS observation in its prompt', async () => {
+test('with the pipeline, an incoherent reply is re-formed by the same reply source with the IDQ observation in its prompt', async () => {
   const prompts: string[] = [];
   const askModel: AskModel = async (prompt) => {
     prompts.push(prompt);
@@ -123,13 +123,13 @@ test('with the pipeline, an incoherent reply is re-formed by the same reply sour
   assert.equal(body.lineage.at(-1).stage, 'prism');
 });
 
-test('with the pipeline, a reply that never resonates is a 502 incoherent_after_ids Shortfall with lineage and no reply', async () => {
+test('with the pipeline, a reply that never resonates is a 502 incoherent_after_idq Shortfall with lineage and no reply', async () => {
   const askModel: AskModel = async () => ({ modelId: 'm', content: 'rough' });
   const url = await serve(askModel, { pipeline: { gauge: { read: async () => allVirtues(20) } } });
   const { status, body } = await postAsk(url, { prompt: 'Hi' });
   assert.equal(status, 502);
   assert.equal(body.error, 'luminary_shortfall');
-  assert.equal(body.shortfall.code, 'incoherent_after_ids');
+  assert.equal(body.shortfall.code, 'incoherent_after_idq');
   assert.equal(body.reply, undefined);
   assert.ok(Array.isArray(body.lineage));
 });

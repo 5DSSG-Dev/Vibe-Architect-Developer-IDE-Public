@@ -133,12 +133,12 @@ test('message flow samples consecutive observation timestamps and reduced motion
   );
 });
 
-test('IDS return packet follows the lower loop instead of crossing CORE', () => {
+test('IDQ return packet follows the lower loop instead of crossing CORE', () => {
   const transaction = {
-    id: 'flow:ids-loop', traceId: 'trace:ids-loop', exchangeDirection: 'ai_to_human' as const,
+    id: 'flow:idq-loop', traceId: 'trace:idq-loop', exchangeDirection: 'ai_to_human' as const,
     startedAtMs: 1_000, durationMs: 2_000,
-    route: ['ids', 'pim_out', 'sender_return'] as const,
-    visualRoute: ['ids', 'pim_out_sender_projection', 'sender_return'] as const,
+    route: ['idq', 'pim_out', 'sender_return'] as const,
+    visualRoute: ['idq', 'pim_out_sender_projection', 'sender_return'] as const,
     stageObservedAtMs: [1_000, 2_000, 3_000], status: 'contained' as const,
   };
   const prepared = {

@@ -113,17 +113,17 @@ test('following-live TICK advances the same authoritative replay clock', () => {
   assert.equal(state.clock.followingLive, false);
 });
 
-test('IDS shortfall remains localized until sender-return evidence is observed', () => {
-  const idsShortfallIndex = REPLAY_FIXTURE_EVENTS.findIndex((event) => (
-    event.messageFlow?.traceId === 'trace:ids-shortfall-return' && event.messageFlow.stage === 'ids'
+test('IDQ shortfall remains localized until sender-return evidence is observed', () => {
+  const idqShortfallIndex = REPLAY_FIXTURE_EVENTS.findIndex((event) => (
+    event.messageFlow?.traceId === 'trace:idq-shortfall-return' && event.messageFlow.stage === 'idq'
   ));
-  let state = replayReducer(loadedState(), { type: 'INGEST_EVENTS', events: REPLAY_FIXTURE_EVENTS.slice(0, idsShortfallIndex + 1) });
-  const idsOrb = REPLAY_FIXTURE_SNAPSHOT.orbs.find((orb) => orb.orb_id === 'orb:validation');
-  assert.ok(idsOrb);
-  const idsStatus = selectComponentStatus(state, 'orb', idsOrb.orb_id, idsOrb.status);
+  let state = replayReducer(loadedState(), { type: 'INGEST_EVENTS', events: REPLAY_FIXTURE_EVENTS.slice(0, idqShortfallIndex + 1) });
+  const idqOrb = REPLAY_FIXTURE_SNAPSHOT.orbs.find((orb) => orb.orb_id === 'orb:validation');
+  assert.ok(idqOrb);
+  const idqStatus = selectComponentStatus(state, 'orb', idqOrb.orb_id, idqOrb.status);
   const coreStatus = selectComponentStatus(state, 'pod', state.topology.pod.pod_id, state.topology.pod.status);
-  assert.equal(idsStatus.health, 'contained');
-  assert.equal(idsStatus.activity, 'fell_short');
+  assert.equal(idqStatus.health, 'contained');
+  assert.equal(idqStatus.activity, 'fell_short');
   assert.equal(coreStatus.health, 'nominal');
   assert.equal(coreStatus.activity, 'running');
 });

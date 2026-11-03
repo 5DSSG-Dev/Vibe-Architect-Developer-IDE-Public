@@ -43,7 +43,7 @@ test('the gauge receives only the reply content and the Seven Virtues', async ()
   assert.deepEqual(gauge.seen, ['Only this.']);
 });
 
-test('an incoherent reply goes to IDS, the originator re-forms, and the re-formed reply is delivered', async () => {
+test('an incoherent reply goes to IDQ, the originator re-forms, and the re-formed reply is delivered', async () => {
   const gauge = gaugeFrom({ first: readings(90, { Respect: 30 }), second: readings(88) });
   const observations: string[][] = [];
   const reform: Reform = async (observation, previous) => {
@@ -57,12 +57,12 @@ test('an incoherent reply goes to IDS, the originator re-forms, and the re-forme
   assert.equal(result.reply.content, 'second');
   assert.deepEqual(observations, [['Respect reads 30, below the threshold of 70.']]);
   assert.deepEqual(result.lineage.map((e) => `${e.pass}:${e.stage}`), [
-    '1:structural', '1:pim', '1:irg', '1:rbc', '1:ids',
+    '1:structural', '1:pim', '1:irg', '1:rbc', '1:idq',
     '2:structural', '2:pim', '2:irg', '2:rbc', '2:prism',
   ]);
 });
 
-test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an incoherent_after_ids Shortfall and the text is withheld', async () => {
+test('the loop is bounded: after 2 IDQ passes a still-incoherent reply is an incoherent_after_idq Shortfall and the text is withheld', async () => {
   let reforms = 0;
   const gauge: Gauge = { read: async () => readings(90, { Trust: 10 }) };
   const reform: Reform = async () => { reforms += 1; return reply(`attempt ${reforms + 1}`); };
@@ -70,42 +70,42 @@ test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an inc
   assert.equal(result.ok, false);
   if (result.ok) return;
   assert.equal(reforms, 2);
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
   assert.equal(result.shortfall.modelId, 'meta/test-model');
   assert.deepEqual(result.shortfall.readings, readings(90, { Trust: 10 }));
   assert.deepEqual(result.shortfall.observation?.define, ['Trust reads 10, below the threshold of 70.']);
   assert.ok(!JSON.stringify(result).includes('"content"'), 'incoherent text is never returned as a reply');
-  assert.equal(result.lineage.filter((e) => e.stage === 'ids').length, 3);
-  assert.equal(result.lineage.at(-1)?.stage, 'ids');
+  assert.equal(result.lineage.filter((e) => e.stage === 'idq').length, 3);
+  assert.equal(result.lineage.at(-1)?.stage, 'idq');
 });
 
-test('maxIdsPasses tunes the bound; 0 means no re-form at all', async () => {
+test('maxIdqPasses tunes the bound; 0 means no re-form at all', async () => {
   const gauge: Gauge = { read: async () => readings(10) };
-  const result = await runReplyPipeline(reply('x'), noReform, { gauge, maxIdsPasses: 0 });
+  const result = await runReplyPipeline(reply('x'), noReform, { gauge, maxIdqPasses: 0 });
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
 });
 
-test('a PIM catch goes straight to IDS without the IRG reading the reply', async () => {
+test('a PIM catch goes straight to IDQ without the IRG reading the reply', async () => {
   const gauge = gaugeFrom({ 'A calm answer.': readings(90) });
   const reform: Reform = async () => reply('A calm answer.');
   const result = await runReplyPipeline(reply('You have no choice but to accept.'), reform, { gauge });
   assert.equal(result.ok, true);
   assert.deepEqual(gauge.seen, ['A calm answer.']);
   assert.deepEqual(result.lineage.map((e) => `${e.pass}:${e.stage}`), [
-    '1:structural', '1:pim', '1:ids',
+    '1:structural', '1:pim', '1:idq',
     '2:structural', '2:pim', '2:irg', '2:rbc', '2:prism',
   ]);
 });
 
-test('a PIM catch that persists ends as incoherent_after_ids with no readings', async () => {
+test('a PIM catch that persists ends as incoherent_after_idq with no readings', async () => {
   const gauge = gaugeFrom({});
   const reform: Reform = async () => reply('Keep this secret.');
   const result = await runReplyPipeline(reply('Keep this secret.'), reform, { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
   assert.equal(result.shortfall.readings, null);
   assert.deepEqual(gauge.seen, []);
 });
@@ -144,10 +144,10 @@ test('an invalid gauge payload is a gauge_error, never a guessed reading', async
   assert.match(result.shortfall.message, /Respect/);
 });
 
-test('an injected observer produces the IDS observation; a malformed one is a gauge_error', async () => {
+test('an injected observer produces the IDQ observation; a malformed one is a gauge_error', async () => {
   const good: Gauge = {
     read: async (content) => (content === 'fixed' ? readings(90) : readings(10)),
-    observe: async () => ({ identify: 'from the gauge model', define: ['d'], suggest: ['s'] }),
+    observe: async () => ({ identify: 'from the gauge model', define: ['d'], question: ['s'] }),
   };
   let seenIdentify = '';
   const result = await runReplyPipeline(reply('first'), async (observation) => { seenIdentify = observation.identify; return reply('fixed'); }, { gauge: good });

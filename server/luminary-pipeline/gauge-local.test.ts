@@ -118,17 +118,17 @@ test('runtime failures are GaugeErrors: unreachable, HTTP error, or a non-JSON b
   await assert.rejects(gaugeWith(notJson).read('x', SEVEN_VIRTUES), /not JSON/);
 });
 
-test('in the pipeline, each Virtue meets its own threshold; one below routes to IDS naming that threshold', async () => {
+test('in the pipeline, each Virtue meets its own threshold; one below routes to IDQ naming that threshold', async () => {
   const selected = thresholds(10, { Respect: 29.3, Communication: 34.7 });
   // Every reading is 30: above Respect's 29.3, below Communication's 34.7.
   const gauge = gaugeWith(fakeRuntime(() => 0.3).fetch, selected);
   assert.deepEqual(gauge.thresholds, selected);
   const result = await runReplyPipeline({ modelId: 'meta/x', content: 'hello' }, async () => { throw new Error('stop'); }, { gauge });
   assert.equal(result.ok, false);
-  const ids = result.lineage.find((e) => e.stage === 'ids');
-  assert.ok(ids && ids.stage === 'ids');
-  assert.equal(ids.observation.define.length, 1);
-  assert.match(ids.observation.define[0], /^Communication reads 30(\.\d+)?, below the threshold of 34\.7\.$/);
+  const idq = result.lineage.find((e) => e.stage === 'idq');
+  assert.ok(idq && idq.stage === 'idq');
+  assert.equal(idq.observation.define.length, 1);
+  assert.match(idq.observation.define[0], /^Communication reads 30(\.\d+)?, below the threshold of 34\.7\.$/);
   const irg = result.lineage.find((e) => e.stage === 'irg');
   assert.ok(irg && irg.stage === 'irg');
   assert.deepEqual(irg.belowThreshold, ['Communication']);

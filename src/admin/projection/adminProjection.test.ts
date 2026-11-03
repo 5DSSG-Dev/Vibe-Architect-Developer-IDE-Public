@@ -43,17 +43,17 @@ test('projects all sanitized message-flow stages without treating CORE presentat
   assert.equal(rbc?.metadata?.routingAuthority, true);
 });
 
-test('keeps Prism and IDS mutually exclusive and represents lane 2 as a direct bypass', () => {
+test('keeps Prism and IDQ mutually exclusive and represents lane 2 as a direct bypass', () => {
   const projection = createMessageFlowProjection(REPLAY_FIXTURE_EVENTS);
-  const ids = projection.transactions.find((transaction) => transaction.traceId === 'trace:ids-shortfall-return');
-  assert.equal(ids?.route.includes('prism'), false);
-  assert.equal(ids?.route.includes('ids'), true);
-  assert.equal(ids?.route[ids.route.length - 1], 'sender_return');
-  assert.equal(ids?.visualRoute.includes('pim_out_sender_projection'), true);
-  assert.equal(ids?.visualRoute.includes('pim_out_receiver_projection'), false);
-  assert.equal(ids?.exchangeDirection, 'ai_to_human');
-  const lane2 = projection.transactions.find((transaction) => transaction.traceId === 'trace:lane2-direct-ids');
-  assert.deepEqual(lane2?.route, ['sender_ingress', 'pim_in', 'ids', 'pim_out', 'sender_return']);
+  const idq = projection.transactions.find((transaction) => transaction.traceId === 'trace:idq-shortfall-return');
+  assert.equal(idq?.route.includes('prism'), false);
+  assert.equal(idq?.route.includes('idq'), true);
+  assert.equal(idq?.route[idq.route.length - 1], 'sender_return');
+  assert.equal(idq?.visualRoute.includes('pim_out_sender_projection'), true);
+  assert.equal(idq?.visualRoute.includes('pim_out_receiver_projection'), false);
+  assert.equal(idq?.exchangeDirection, 'ai_to_human');
+  const lane2 = projection.transactions.find((transaction) => transaction.traceId === 'trace:lane2-direct-idq');
+  assert.deepEqual(lane2?.route, ['sender_ingress', 'pim_in', 'idq', 'pim_out', 'sender_return']);
   assert.equal(lane2?.visualRoute.includes('pim_out_sender_projection'), true);
   assert.equal(lane2?.route.includes('irg'), false);
   assert.equal(lane2?.route.includes('rbc'), false);

@@ -98,7 +98,7 @@ const FLOW_STAGES: readonly ServicePipelineStage[] = [
   'core_transit_projection',
   'rbc',
   'prism',
-  'ids',
+  'idq',
   'pim_out',
   'receiver_delivery',
   'sender_return',
@@ -112,7 +112,7 @@ const STAGE_LABELS: Record<ServicePipelineStage, string> = {
   core_transit_projection: 'CORE Transit',
   rbc: 'RBC',
   prism: 'Prism',
-  ids: 'IDS',
+  idq: 'IDQ',
   pim_out: 'PIM Outbound',
   receiver_delivery: 'Receiver Delivery',
   sender_return: 'Return to Sender',
@@ -181,7 +181,7 @@ export function OperationsNavigation({ snapshot, events, viewMode, selected, sel
               const newest = last(active);
               const isExchangeEndpoint = stage === 'sender_ingress' || stage === 'receiver_delivery' || stage === 'sender_return';
               return (
-                <li key={stage} className={`${stage === 'prism' || stage === 'ids' ? 'is-fork' : ''} ${isExchangeEndpoint ? 'is-endpoint' : ''} ${inSelectedTrace ? 'is-in-trace' : ''}`}>
+                <li key={stage} className={`${stage === 'prism' || stage === 'idq' ? 'is-fork' : ''} ${isExchangeEndpoint ? 'is-endpoint' : ''} ${inSelectedTrace ? 'is-in-trace' : ''}`}>
                   <button
                     type="button"
                     className={newest?.operationId === selectedOperationId ? 'is-selected' : ''}
@@ -199,7 +199,7 @@ export function OperationsNavigation({ snapshot, events, viewMode, selected, sel
           </ol>
           <div className="admin-flow-truth-notes">
             <p><strong>RBC</strong> is the sole branch authority after IRG.</p>
-            <p><strong>Prism</strong> proceeds to Receiver. <strong>IDS</strong> returns to the original Sender.</p>
+            <p><strong>Prism</strong> proceeds to Receiver. <strong>IDQ</strong> returns to the original Sender.</p>
             <p><strong>CORE Transit</strong> is a noncanonical coordination projection.</p>
             <p><strong>PIM Outbound</strong> is currently a placeholder / pass-through.</p>
           </div>
@@ -326,9 +326,9 @@ export function Inspector({ snapshot, events, selectedComponent, selectedOperati
               </ol>
             )}
             <div className="admin-flow-truth-notes">
-              <p><strong>RBC</strong> is the sole branch authority. IRG does not select Prism or IDS.</p>
+              <p><strong>RBC</strong> is the sole branch authority. IRG does not select Prism or IDQ.</p>
               <p><strong>Exchange</strong> {latestFlow ? exchangeDirectionLabel(latestFlow) : 'unavailable'} · <strong>Terminal party</strong> {latestFlow ? terminalPartyLabel(latestFlow) : 'unavailable'}.</p>
-              <p><strong>Prism</strong> proceeds to Receiver. <strong>IDS</strong> returns to the original Sender.</p>
+              <p><strong>Prism</strong> proceeds to Receiver. <strong>IDQ</strong> returns to the original Sender.</p>
               <p><strong>CORE Transit</strong> is presentation-only and noncanonical.</p>
             </div>
           </section>
@@ -442,9 +442,9 @@ function stageDescription(stage: ServicePipelineStage): string {
   if (stage === 'core_transit_projection') return 'noncanonical coordination projection';
   if (stage === 'pim_out') return 'placeholder / pass-through';
   if (stage === 'prism') return 'RBC branch toward Receiver';
-  if (stage === 'ids') return 'RBC branch returning to Sender';
+  if (stage === 'idq') return 'RBC branch returning to Sender';
   if (stage === 'receiver_delivery') return 'Prism terminal · Receiver';
-  if (stage === 'sender_return') return 'IDS terminal · original Sender';
+  if (stage === 'sender_return') return 'IDQ terminal · original Sender';
   if (stage === 'unavailable') return 'explicit terminal outcome';
   return 'sanitized stage observation';
 }
@@ -463,7 +463,7 @@ function FlowSummary({ flow, event }: { flow: SanitizedMessageFlowProjection; ev
       <div><span>Evidence</span><strong>{humanize(flow.evidenceState)}</strong></div>
       <div><span>Observed</span><strong>{formatTime(Date.parse(event.observedAt))}</strong></div>
     </div>
-    <div className="admin-authority-callout"><ShieldCheck size={15} /><span><strong>RBC is the sole branch authority.</strong> Prism proceeds to Receiver; IDS returns to the original Sender. CORE Transit is a presentation-only, noncanonical coordination projection.</span></div>
+    <div className="admin-authority-callout"><ShieldCheck size={15} /><span><strong>RBC is the sole branch authority.</strong> Prism proceeds to Receiver; IDQ returns to the original Sender. CORE Transit is a presentation-only, noncanonical coordination projection.</span></div>
     {flow.stage === 'pim_out' && <div className="admin-projection-notice"><AlertTriangle size={15} />Outbound PIM is a placeholder / pass-through, not a completed screen.</div>}
   </>;
 }

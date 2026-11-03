@@ -17,6 +17,14 @@ import { LuminaryExecutor } from './luminary-executor.js';
 import { SpendLedger, createMetaAskModel } from './luminary-meta.js';
 import type { Gauge } from './luminary-pipeline/pipeline.js';
 import { composePrompt, parseReply } from '../src/luminary/blocks.js';
+import type { GovernanceRuntime } from './luminary-bidirectional.js';
+import { examine } from './luminary-pipeline/marker-route.js';
+
+function syntheticRuntime(gauge: Gauge): GovernanceRuntime {
+  return { createSession: () => ({ invokeWriter: (writer, prompt) => writer(prompt), evaluate: async candidate => examine(candidate, {
+    pim: () => ({ result: 1 }), irg: async () => { await gauge.read(candidate, []); return { result: 1 }; }, ptag: () => ({ result: 1 }),
+  }) }) };
+}
 
 const coherentGauge: Gauge = {
   read: async () => ({ Honesty: 90, Respect: 90, Attention: 90, Affection: 90, Loyalty: 90, Trust: 90, Communication: 90 }),
@@ -42,6 +50,7 @@ async function listen(extra: { gauge?: Gauge; executor?: LuminaryExecutor; rehea
     askModel: extra.rehearsal === false ? undefined : rehearsalAskModel,
     replySource: extra.rehearsal === false ? undefined : 'rehearsal',
     gauge: extra.gauge, executor: extra.executor,
+    governanceRuntime: extra.gauge ? syntheticRuntime(extra.gauge) : undefined,
   });
   const server = app.listen(0, '127.0.0.1');
   servers.push(server);
@@ -65,7 +74,7 @@ function gitRepo(): string {
 test('status names the rehearsal source, the gauge state and coding tasks off', async () => {
   const base = await listen();
   const res = await fetch(`${base}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } });
-  assert.deepEqual(await res.json(), { replySource: 'rehearsal', gauge: 'not_configured', codingTasks: 'off' });
+  assert.deepEqual(await res.json(), { replySource: 'rehearsal', gauge: 'not_configured', governance: 'unavailable', codingTasks: 'off' });
   const none = await listen({ rehearsal: false });
   assert.equal((await (await fetch(`${none}/api/luminary/status`, { headers: { [DEMO_KEY_HEADER]: KEY } })).json()).replySource, 'not_configured');
 });
@@ -75,11 +84,11 @@ test('status still needs the demo key', async () => {
   assert.equal((await fetch(`${base}/api/luminary/status`)).status, 401);
 });
 
-test('without a gauge, a rehearsal reply is withheld as gauge_error; the gauge is never faked', async () => {
+test('without a complete boundary, rehearsal is withheld before the writer; governance is never faked', async () => {
   const base = await listen();
   const res = await post(`${base}/api/luminary/ask`, { prompt: composePrompt({ mode: 'DESIGN', level: 'plain', context: [], message: 'What is this?' }) });
-  assert.equal(res.status, 502);
-  assert.equal((await res.json()).shortfall.code, 'gauge_error');
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).shortfall.code, 'governance_unavailable');
 });
 
 test('with a gauge, a rehearsal reply is delivered, labelled, and says it is a rehearsal', async () => {
@@ -160,6 +169,7 @@ test('with the Meta source, status shows the running total and a reached ceiling
   const fetchNever = (async () => { throw new Error('Meta must not be reached'); }) as unknown as typeof fetch;
   const app = await createGateway({
     config, sessions: new InMemorySessionStore(), entra, gauge: coherentGauge,
+    governanceRuntime: syntheticRuntime(coherentGauge),
     askModel: createMetaAskModel({ apiKey: 'k', ledger, fetch: fetchNever }), replySource: 'Meta · muse-spark-1.3', spend: ledger,
     knowledge: { version: 'v0.1', sha256: 'ab'.repeat(32), bytes: 30_000 },
   });

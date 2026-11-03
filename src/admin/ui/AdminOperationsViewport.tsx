@@ -251,7 +251,7 @@ export function AdminOperationsViewport({
       className="admin-viewport"
       role="application"
       aria-label={viewMode === 'flow'
-        ? 'Service message flow three-dimensional viewport. Observe Sender ingress, PIM, IRG, CORE transit, RBC, then Prism delivery to Receiver or IDS return to Sender.'
+        ? 'Service message flow three-dimensional viewport. Observe Sender ingress, PIM, IRG, CORE transit, RBC, then Prism delivery to Receiver or IDQ return to Sender.'
         : 'POD operations three-dimensional viewport. Orbit with pointer or touch. Select a component to inspect it.'}
       tabIndex={0}
       onPointerDown={handlePointerDown}

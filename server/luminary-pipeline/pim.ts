@@ -1,6 +1,6 @@
 // PIM — Pre-Injection Monitor (STP-0002 P17). A deterministic pattern screen run on every
 // structurally valid reply before it is gauged. It makes no model call. A PIM catch goes
-// straight to IDS without passing through IRG/RBC (the replay contract's "lane 2").
+// straight to IDQ without passing through IRG/RBC (the replay contract's "lane 2").
 //
 // The pattern set is a first, provisional screen for the force-injection families the
 // pipeline design names. It is meant to be tuned against real replies once M1.b wires a

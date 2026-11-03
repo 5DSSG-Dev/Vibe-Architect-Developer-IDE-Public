@@ -17,7 +17,7 @@ import {
   type Shortfall,
   type ShortfallCode,
 } from './luminary-governance.js';
-import { composeRevisionPrompt } from './luminary-pipeline/ids.js';
+import { composeRevisionPrompt } from './luminary-pipeline/idq.js';
 import { runReplyPipeline, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
 
 /**
@@ -26,7 +26,7 @@ import { runReplyPipeline, type LineageEntry, type PipelineShortfallCode, type R
  * malformed provider payload is governed, not assumed well-formed. It may throw or reject;
  * the router turns that into an `upstream_error` Shortfall rather than a 500.
  */
-export type AskModel = (prompt: string) => Promise<unknown>;
+export type AskModel = (prompt: string, control?: { signal?: AbortSignal }) => Promise<unknown>;
 
 /** The error a not-yet-wired model path throws; the router turns it into upstream_error. */
 export const MODEL_NOT_CONFIGURED_MESSAGE = 'Luminary model path is not yet configured.';
@@ -56,7 +56,7 @@ export interface LuminaryReplyRouterOptions {
 }
 
 /** An upstream failure is itself a named Shortfall, keeping the honest floor total. */
-export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode | 'spend_ceiling';
+export type ReplyShortfallCode = ShortfallCode | PipelineShortfallCode | 'spend_ceiling' | 'governance_hold' | 'governance_unavailable' | 'governance_error';
 
 export interface ReplyShortfall extends Omit<Shortfall, 'code'> {
   code: ReplyShortfallCode;
@@ -70,9 +70,12 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   missing_model_id: 502,
   upstream_error: 502,
   gauge_error: 502,
-  incoherent_after_ids: 502,
+  incoherent_after_idq: 502,
   // The Architect's spending ceiling (P21) was reached: the gateway is working, it is refusing to spend.
   spend_ceiling: 503,
+  governance_hold: 422,
+  governance_unavailable: 503,
+  governance_error: 503,
 };
 
 export type GovernedAskResult =
@@ -152,9 +155,10 @@ function readPrompt(body: unknown): string | null {
 export function createLuminaryReplyRouter(
   askModel: AskModel,
   options: LuminaryReplyRouterOptions = {},
+  productionAsk?: (prompt: string) => Promise<GovernedAskResult>,
 ): Router {
   const router = Router();
-  const governedAsk = createGovernedAsk(askModel, options);
+  const governedAsk = productionAsk ?? createGovernedAsk(askModel, options);
 
   router.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');

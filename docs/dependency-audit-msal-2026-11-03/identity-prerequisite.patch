@@ -1,0 +1,31 @@
+--- a/src/identity/kernel.ts
++++ b/src/identity/kernel.ts
+@@ -87,7 +87,9 @@
+ 
+   return {
+     identityId: commitments[0].recordId.split('/')[0] || 'identity-default',
+-    continuityId: `continuity-${Date.now()}`,
++    continuityId: `continuity-${computeHash(JSON.stringify([
++      ...commitments, ...sovereignty, ...limitations, ...tensions,
++    ]))}`,
+     version: commitments[0].version,
+     foundationalCommitments: commitments.map((r) => r.content),
+     sovereigntyParameters: sovereignty.map((r) => r.content),
+--- a/src/identity/identity.test.ts
++++ b/src/identity/identity.test.ts
+@@ -440,12 +440,14 @@
+     assert.equal(result.shortfall.failureType, 'kernel_construction');
+   });
+ 
+-  it('deterministic rebuild from identical inputs', () => {
++  it('deterministic rebuild from identical inputs across clock changes', (t) => {
++    const clock = t.mock.method(Date, 'now', () => 1000);
+     const records = makeFullRecordSet();
+     const context = makeContext({ activeIntent: 'test determinism' });
+     const envelope = ENVELOPE_PROFILES['standard-8k'];
+ 
+     const r1 = projectIdentitySurface(records, context, envelope);
++    clock.mock.mockImplementation(() => 2000);
+     const r2 = projectIdentitySurface(records, context, envelope);
+ 
+     assert.ok(r1.surface && r2.surface);

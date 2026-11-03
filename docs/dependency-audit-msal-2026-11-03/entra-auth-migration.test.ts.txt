@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { ConfidentialClientApplication } from '@azure/msal-node';
+import { MsalEntraAuth } from './entra-auth.js';
+import type { GatewayConfig } from './config.js';
+import type { AdminSession } from './session-store.js';
+
+const config: GatewayConfig = {
+  nodeEnv: 'test', port: 0, origin: 'http://127.0.0.1', sessionTtlMs: 60000,
+  cookieSecure: false, trustProxy: false,
+  entra: { tenantId: '00000000-0000-0000-0000-000000000001',
+    clientId: '00000000-0000-0000-0000-000000000002', clientSecret: 'test-only-not-a-real-secret',
+    redirectUri: 'http://127.0.0.1/auth/entra/callback' },
+};
+function session(): AdminSession {
+  return { id: 'test', createdAt: Date.now(), expiresAt: Date.now() + 60000,
+    pendingAuthorization: { state: 'test-state', nonce: 'test-nonce', codeVerifier: 'test-verifier',
+      returnTo: '/admin/operations', createdAt: Date.now() } } as AdminSession;
+}
+function claims() {
+  return { nonce: 'test-nonce', tid: config.entra!.tenantId, aud: config.entra!.clientId,
+    oid: 'test-user', roles: ['service.operations.read'] };
+}
+test('MSAL 7 adapter creates an authorization request with state, nonce and PKCE without network', async t => {
+  let request: any;
+  t.mock.method(ConfidentialClientApplication.prototype, 'getAuthCodeUrl', async (input: any) => {
+    request = input; return 'https://login.microsoftonline.com/test-authorize';
+  });
+  const auth = new MsalEntraAuth(config); const s = session();
+  await auth.createAuthorizationUrl(s);
+  assert.equal(request.codeChallengeMethod, 'S256');
+  assert.equal(request.state, s.pendingAuthorization!.state);
+  assert.equal(request.nonce, s.pendingAuthorization!.nonce);
+  assert.equal(request.redirectUri, config.entra!.redirectUri);
+  assert.ok(request.codeChallenge && s.pendingAuthorization!.codeVerifier);
+});
+test('MSAL 7 adapter constructs an allowlisted token request and consumes pending authorization', async t => {
+  let request: any;
+  t.mock.method(ConfidentialClientApplication.prototype, 'acquireTokenByCode', async (input: any) => {
+    request = input; return { idTokenClaims: claims() } as any;
+  });
+  const s = session(); const result = await new MsalEntraAuth(config).completeAuthorization(s,
+    { code: 'auth-code', state: 'test-state', tokenEndpoint: 'https://untrusted.invalid', redirectUri: 'https://untrusted.invalid' });
+  assert.deepEqual(Object.keys(request).sort(), ['code', 'codeVerifier', 'redirectUri', 'scopes']);
+  assert.equal(request.code, 'auth-code'); assert.equal(request.redirectUri, config.entra!.redirectUri);
+  assert.equal(s.pendingAuthorization, undefined); assert.equal(result.subject, 'test-user'); assert.ok(result.csrfToken);
+});
+test('wrong state and expired authorization never invoke MSAL token exchange', async t => {
+  let calls = 0;
+  t.mock.method(ConfidentialClientApplication.prototype, 'acquireTokenByCode', async () => { calls++; throw Error('unexpected'); });
+  const auth = new MsalEntraAuth(config);
+  await assert.rejects(auth.completeAuthorization(session(), { code: 'x', state: 'wrong' }), /Invalid authorization/);
+  const old = session(); old.pendingAuthorization!.createdAt = Date.now() - 700000;
+  await assert.rejects(auth.completeAuthorization(old, { code: 'x', state: 'test-state' }), /expired/);
+  assert.equal(calls, 0);
+});
+for (const [field, value] of [['nonce', 'wrong'], ['tid', 'wrong'], ['aud', 'wrong'], ['oid', ''], ['roles', []]] as const) {
+  test(`MSAL 7 adapter rejects invalid ${field} claim`, async t => {
+    t.mock.method(ConfidentialClientApplication.prototype, 'acquireTokenByCode', async () =>
+      ({ idTokenClaims: { ...claims(), [field]: value } } as any));
+    await assert.rejects(new MsalEntraAuth(config).completeAuthorization(session(), { code: 'x', state: 'test-state' }));
+  });
+}
+test('unconfigured Entra remains disabled after library migration', async () => {
+  const auth = new MsalEntraAuth({ ...config, entra: undefined });
+  assert.equal(auth.configured, false);
+  await assert.rejects(auth.createAuthorizationUrl(session()), /not configured/);
+  await assert.rejects(auth.completeAuthorization(session(), {}), /not configured/);
+});

@@ -192,6 +192,8 @@ export interface MetaAskModelOptions {
   providerName?: string;
   /** Injected for tests; defaults to the global fetch. */
   fetch?: typeof fetch;
+  /** Strict structured gate output; ordinary writer calls leave this absent. */
+  responseFormat?: unknown;
 }
 
 export function costUsd(model: string, inputTokens: number, outputTokens: number): number {
@@ -230,7 +232,8 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
   // Fails fast for an unpriced model, before any request is made.
   costUsd(model, 0, 0);
 
-  return async (prompt: string) => {
+  return async (prompt: string, control?: { signal?: AbortSignal }) => {
+    control?.signal?.throwIfAborted();
     const messages = [
       ...(options.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
       { role: 'user', content: prompt },
@@ -244,8 +247,9 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       response = await doFetch(url, {
         method: 'POST',
         headers: { 'content-type': 'application/json', authorization: `Bearer ${options.apiKey}` },
-        body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens }),
-        signal: AbortSignal.timeout(timeoutMs),
+        body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens,
+          ...(options.responseFormat ? { response_format: options.responseFormat, temperature: 0 } : {}) }),
+        signal: control?.signal ? AbortSignal.any([control.signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs),
       });
     } catch (error) {
       // The request may still have been billed, so the worst-case charge stays.

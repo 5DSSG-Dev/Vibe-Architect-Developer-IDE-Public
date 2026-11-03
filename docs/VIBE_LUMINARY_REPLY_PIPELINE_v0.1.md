@@ -1,3 +1,5 @@
+> **Superseded pipeline note (2026-11-01):** This v0.1 document records the earlier IDS (Identify, Define, Suggest) proposal. The current active vocabulary is Conscience IDQ (Identify, Define, Question). Treat IDS/Suggest wording below as historical design context; it is not current route guidance.
+
 # Vibe Luminary — Live Reply Pipeline (Design) v0.1
 
 Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P17). Not yet built; gauge model selection waits for M1.b (on hold).**

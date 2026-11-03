@@ -1,3 +1,5 @@
+> **Superseded terminology note (2026-11-01):** This v0.1 presence document records the earlier IDS terminology. Current Luminary pipeline surfaces use Conscience IDQ (Identify, Define, Question); any IDS pass wording below is historical.
+
 # Vibe Luminary — Presence and Roles v0.1
 
 Status: **APPROVED and BUILT (STP-0002 P19).** The Architect approved it on 2026-10-28 (STP-0002 status entry), and it was built on PR #9. The STP-0002 notes from N26 on record the build and its evidence; Lumin's code review of 2026-10-29 and the follow-up fixes are in N34. The Architect's verification is still to come. The original proposal text below is kept as written.

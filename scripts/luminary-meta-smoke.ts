@@ -1,5 +1,5 @@
 // Smoke test for the main Meta model (M1.b-2): sends ONE question through the real Luminary
-// reply path (governance gate -> PIM -> IRG gauge -> RBC -> Prism | IDS) with Meta's Model API
+// reply path (governance gate -> PIM -> IRG gauge -> RBC -> Prism | IDQ) with Meta's Model API
 // as the reply source and the embedded gauge on this PC reading every reply.
 //
 // Run on the Architect's PC from the repo folder:  npx tsx scripts/luminary-meta-smoke.ts ["question"]
@@ -74,10 +74,10 @@ try {
     if (entry.stage === 'irg') {
       const readings = Object.entries(entry.readings as Record<string, number>).map(([v, r]) => `${v} ${r.toFixed(1)}`).join(', ');
       console.log(`Pass ${entry.pass} gauge: ${entry.coherent ? 'coherent' : `below threshold on ${(entry.belowThreshold as string[]).join(', ')}`} (${readings})`);
-    } else if (entry.stage !== 'ids') {
+    } else if (entry.stage !== 'idq') {
       console.log(`Pass ${entry.pass} ${entry.stage}: ${JSON.stringify(Object.fromEntries(Object.entries(entry).filter(([k]) => k !== 'pass' && k !== 'stage')))}`);
     } else {
-      console.log(`Pass ${entry.pass} ids: observation returned to the model for a re-formed reply`);
+      console.log(`Pass ${entry.pass} idq: observation returned to the model for a re-formed reply`);
     }
   }
 } finally {

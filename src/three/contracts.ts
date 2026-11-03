@@ -92,7 +92,7 @@ export type MessageFlowStageId =
   | 'core_transit_projection'
   | 'rbc'
   | 'prism'
-  | 'ids'
+  | 'idq'
   | 'pim_out'
   | 'receiver_delivery'
   | 'sender_return'
@@ -119,7 +119,7 @@ export interface MessageFlowConduitProjection {
   readonly id: string;
   readonly from: MessageFlowVisualAnchorId;
   readonly to: MessageFlowVisualAnchorId;
-  readonly branch: 'shared' | 'prism' | 'ids' | 'lane_2' | 'unavailable';
+  readonly branch: 'shared' | 'prism' | 'idq' | 'lane_2' | 'unavailable';
 }
 
 export interface MessageFlowTransactionProjection {

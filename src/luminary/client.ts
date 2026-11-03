@@ -15,7 +15,7 @@ export interface GovernedReply {
 
 export interface LineageEntry {
   pass: number;
-  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'ids' | 'prism';
+  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'idq' | 'prism';
 }
 
 export interface Shortfall {
@@ -148,7 +148,7 @@ export function describeShortfall(shortfall: Shortfall): string {
     case 'upstream_error': return `No model answered. ${shortfall.message}`;
     case 'spend_ceiling': return shortfall.message;
     case 'gauge_error': return 'The reply was held back because the gauge that checks every reply is not running.';
-    case 'incoherent_after_ids': return 'The reply was held back: after two tries it still did not read as coherent.';
+    case 'incoherent_after_idq': return 'The reply was held back: after two tries it still did not read as coherent.';
     case 'empty_reply': return 'The model sent an empty reply, so nothing is shown.';
     case 'malformed_reply': return 'The model sent a reply the IDE could not read, so nothing is shown.';
     case 'oversized_reply': return 'The reply was too long to show safely.';

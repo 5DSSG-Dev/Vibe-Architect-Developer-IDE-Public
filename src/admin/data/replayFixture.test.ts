@@ -14,8 +14,8 @@ test('compact fixture duration matches its deterministic service-flow evidence',
   assert.equal(REPLAY_FIXTURE_EVENTS.some((event) => event.status === 'degraded'), true);
   assert.equal(REPLAY_FIXTURE_EVENTS.some((event) => event.componentRef.kind === 'portal'), true);
   assert.deepEqual([...new Set(REPLAY_FIXTURE_EVENTS.map((event) => event.messageFlow?.traceId))].sort(), [
-    'trace:ids-shortfall-return',
-    'trace:lane2-direct-ids',
+    'trace:idq-shortfall-return',
+    'trace:lane2-direct-idq',
     'trace:prism-delivery',
     'trace:upstream-unavailable',
   ]);

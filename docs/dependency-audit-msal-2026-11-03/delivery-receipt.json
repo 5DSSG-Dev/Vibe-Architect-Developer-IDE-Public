@@ -1,0 +1,31 @@
+{
+  "scope": "Isolated MSAL migration, no active UI/source/dependency/process changes",
+  "version": "7.1.2",
+  "MSALAdvisoryAbsent": true,
+  "remainingAuditEntries": [
+    "vite",
+    "esbuild"
+  ],
+  "focusedValidationTests": 31,
+  "serverTypecheckPassed": true,
+  "initialFullSuite": {
+    "pass": 703,
+    "fail": 1,
+    "cause": "Inherited UI identity clock nondeterminism; reproduced same code already repaired on governance branch"
+  },
+  "separatePrerequisitePatch": "identity-prerequisite.patch",
+  "delivery": [
+    "msal-package.patch",
+    "server/entra-auth-migration.test.ts",
+    "identity-prerequisite.patch"
+  ],
+  "integration": "Apply package delta to Aster exact candidate, regenerate combined lock once; never overwrite Aster lock with this candidate lock",
+  "liveEntraConfigured": false,
+  "providerCalls": 0,
+  "finalFullSuite": {
+    "pass": 704,
+    "skipped": 0,
+    "fail": 0
+  },
+  "finalBuildPassed": true
+}

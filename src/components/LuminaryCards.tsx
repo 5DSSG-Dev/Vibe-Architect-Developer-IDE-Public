@@ -177,7 +177,7 @@ export const TaskCard: React.FC<{
 /** One governed Luminary reply, drawn at the Architect's explanation level. */
 export const ReplyView: React.FC<{ content: string; modelId: string; lineage?: LineageEntry[]; level: ExplanationLevel; forTask?: boolean }> = ({ content, modelId, lineage, level, forTask }) => {
   const checked = lineage?.some((entry) => entry.stage === 'prism') ?? false;
-  const revised = lineage?.some((entry) => entry.stage === 'ids') ?? false;
+  const revised = lineage?.some((entry) => entry.stage === 'idq') ?? false;
   return (
     <div className="space-y-1.5">
       {parseReply(content).map((part, index) => {
@@ -191,7 +191,7 @@ export const ReplyView: React.FC<{ content: string; modelId: string; lineage?: L
       })}
       <p className="flex items-center gap-1 text-[9px] text-slate-500">
         {checked && <ShieldCheck className="w-3 h-3 text-emerald-400" aria-label="Checked by the gauge" />}
-        {checked ? 'checked' : 'unchecked'} · {modelId}{revised ? ' · revised once after an IDS pass' : ''}
+        {checked ? 'checked' : 'unchecked'} · {modelId}{revised ? ' · revised once after an IDQ pass' : ''}
       </p>
     </div>
   );

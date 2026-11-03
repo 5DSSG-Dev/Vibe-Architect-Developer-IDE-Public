@@ -1,3 +1,5 @@
+> **Historical divergence note (2026-11-01):** The P17/IDS references in this v0.2 Canon describe the earlier implementation proposal. Current Luminary route terminology uses Conscience IDQ (Identify, Define, Question). This notice updates current-route interpretation without changing the historical Canon record.
+
 # Vibe Luminary — Governing Canon (Operational Rendering) v0.2
 
 Status: **APPROVED by the Architect, 2026-10-27 (STP-0002 P16). Governing for the Luminary; not an amendment to Canon v2.0.**

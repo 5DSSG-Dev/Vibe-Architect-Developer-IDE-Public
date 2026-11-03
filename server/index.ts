@@ -11,16 +11,20 @@ import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
 import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 import { loadLuminaryKnowledge, systemPromptWithKnowledge } from './luminary-knowledge.js';
+import { loadProductionGovernance } from './luminary-pipeline/private-governance-loader.js';
+import { resolve, sep } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const config = loadConfig();
+const governanceRuntime = loadProductionGovernance(process.env, process.cwd());
 // A live reply source: Meta's Model API (STP-0002 P21) or Baseten's Muse Spark Open (P22). The key
 // and the Architect's ceiling come from .env. The system message is the P15 Instructions followed by
 // the P23 Knowledge Pack, the IDE's own Element descriptions.
 const liveSource = config.luminaryReplySource === 'meta' || config.luminaryReplySource === 'baseten' ? config.luminaryReplySource : undefined;
 const meta = liveSource ? parseLiveSourceEnv(liveSource, process.env) : undefined;
-const knowledge = meta ? loadLuminaryKnowledge() : undefined;
+const knowledge = meta ? loadLuminaryKnowledge(pathToFileURL(`${resolve(process.cwd())}${sep}`)) : undefined;
 const metaAskModel = meta && knowledge
-  ? createMetaAskModel({ ...meta, systemPrompt: systemPromptWithKnowledge(readFileSync(new URL('../docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md', import.meta.url), 'utf8'), knowledge) })
+  ? createMetaAskModel({ ...meta, systemPrompt: systemPromptWithKnowledge(readFileSync(resolve(process.cwd(), 'docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md'), 'utf8'), knowledge) })
   : undefined;
 const evidenceStore = config.redisUrl
   ? await RedisEvidenceStore.connect(config.redisUrl)
@@ -40,6 +44,7 @@ try {
   app = await createGateway({
     config,
     sessions,
+    governanceRuntime,
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,

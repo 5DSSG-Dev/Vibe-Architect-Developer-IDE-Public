@@ -9,6 +9,15 @@ import { InMemorySessionStore, type AdminSession, type AuthenticatedPrincipal } 
 import { DEMO_KEY_HEADER } from './luminary-access.js';
 import type { AskModel } from './luminary-reply-router.js';
 import type { Gauge } from './luminary-pipeline/pipeline.js';
+import type { GovernanceRuntime } from './luminary-bidirectional.js';
+import { examine } from './luminary-pipeline/marker-route.js';
+
+// Explicit synthetic complete boundary; a legacy gauge alone is no longer production configuration.
+function syntheticRuntime(gauge: Gauge): GovernanceRuntime {
+  return { createSession: () => ({ invokeWriter: (writer, prompt) => writer(prompt), evaluate: async (candidate) => examine(candidate, {
+    pim: () => ({ result: 1 }), irg: async () => { await gauge.read(candidate, []); return { result: 1 }; }, ptag: () => ({ result: 1 }),
+  }) }) };
+}
 
 // A fake gauge reading every virtue at 90 (no model is called).
 const coherentGauge: Gauge = {
@@ -41,7 +50,8 @@ class FakeEntra implements EntraAuth {
 }
 
 async function listen(overrides: Partial<GatewayConfig> = {}, askModel?: AskModel, gauge?: Gauge) {
-  const app = await createGateway({ config: baseConfig(overrides), sessions: new InMemorySessionStore(), entra: new FakeEntra(), askModel, gauge });
+  const app = await createGateway({ config: baseConfig(overrides), sessions: new InMemorySessionStore(), entra: new FakeEntra(), askModel, gauge,
+    governanceRuntime: gauge ? syntheticRuntime(gauge) : undefined });
   const server = app.listen(0);
   servers.push(server);
   await new Promise<void>((resolve) => server.once('listening', () => resolve()));
@@ -68,13 +78,13 @@ test('a configured endpoint rejects a request with no demo key (401)', async () 
   assert.equal((await ask(base, {})).status, 401);
 });
 
-test('with the demo key and the default placeholder model, the governed path returns a named upstream_error Shortfall (502) — never fabricated prose', async () => {
+test('without complete governance sources, even the placeholder writer is withheld before dispatch', async () => {
   const base = await listen({ luminaryDemoKey: DEMO_KEY });
   const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
-  assert.equal(res.status, 502);
+  assert.equal(res.status, 503);
   const body = await res.json();
   assert.equal(body.error, 'luminary_shortfall');
-  assert.equal(body.shortfall.code, 'upstream_error');
+  assert.equal(body.shortfall.code, 'governance_unavailable');
   assert.equal(body.reply, undefined);
 });
 
@@ -85,16 +95,16 @@ test('with the demo key, a wired reply source and a wired gauge, a coherent repl
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.deepEqual(body.reply, { modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
-  assert.deepEqual(body.lineage.map((entry: { stage: string }) => entry.stage), ['structural', 'pim', 'irg', 'rbc', 'prism']);
+  assert.deepEqual(body.lineage.map((entry: { stage: string }) => entry.stage), ['numeric', 'structural', 'numeric', 'prism']);
 });
 
-test('with a wired reply source but the default gauge, the reply is withheld as a gauge_error Shortfall (502) — never delivered ungauged', async () => {
+test('a reply source without the complete boundary is withheld as governance_unavailable', async () => {
   const askModel: AskModel = async () => ({ modelId: 'meta/muse-spark-open', content: 'Hello, Architect.' });
   const base = await listen({ luminaryDemoKey: DEMO_KEY }, askModel);
   const res = await ask(base, { [DEMO_KEY_HEADER]: DEMO_KEY });
-  assert.equal(res.status, 502);
+  assert.equal(res.status, 503);
   const body = await res.json();
-  assert.equal(body.shortfall.code, 'gauge_error');
+  assert.equal(body.shortfall.code, 'governance_unavailable');
   assert.equal(body.reply, undefined);
 });
 

@@ -10,11 +10,13 @@ import { createOperationsRouter, type OperationsProvider } from './operations-ro
 import { SessionCapacityError, type AdminSession, type SessionStore } from './session-store.js';
 import { createEvidenceRouter } from './evidence-router.js';
 import { EvidenceService, InMemoryEvidenceStore, type EvidenceStore } from './evidence-store.js';
-import { createGovernedAsk, createLuminaryReplyRouter, notConfiguredAskModel, type AskModel } from './luminary-reply-router.js';
+import { createLuminaryReplyRouter, notConfiguredAskModel, type AskModel } from './luminary-reply-router.js';
 import { createLuminaryTaskRouter, isLoopback } from './luminary-task-router.js';
 import type { LuminaryExecutor } from './luminary-executor.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
 import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
+import type { AuthenticatedNumericDeliveryInputs } from './luminary-pipeline/numeric-authenticated-delivery.js';
+import { createBidirectionalAsk, type GovernanceRuntime } from './luminary-bidirectional.js';
 
 const LOGIN_WINDOW_MS = 60_000;
 const LOGIN_ATTEMPT_LIMIT = 10;
@@ -65,6 +67,10 @@ export interface CreateGatewayOptions {
   knowledge?: { version: string; sha256: string; bytes: number };
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
+  /** Experimental delivery dependencies retained for compatibility; gateway delivery stays withheld. */
+  numericRoute?: AuthenticatedNumericDeliveryInputs;
+  /** Required for conversational delivery. Absent sources withhold before the writer. */
+  governanceRuntime?: GovernanceRuntime;
   vite?: ViteDevServer;
 }
 
@@ -135,6 +141,11 @@ export async function createGateway(options: CreateGatewayOptions) {
   app.use(express.json({ limit: '32kb' }));
 
   app.use(async (req, _res, next) => {
+    // The experimental numeric endpoint is withheld without consulting any authority/effect source.
+    if (req.path === '/api/luminary/numeric' || req.path.startsWith('/api/luminary/numeric/')) {
+      next();
+      return;
+    }
     const id = readCookie(req, sessionCookieName(config));
     if (id) req.adminSession = await sessions.get(id);
     next();
@@ -250,11 +261,16 @@ export async function createGateway(options: CreateGatewayOptions) {
   // reviewer can reach it; guarded instead by a shared demo key + a per-IP rate limit, and
   // fail-closed when no key is configured. The reply source defaults to an honest placeholder
   // that yields a named Shortfall until a real model is wired (M1.b). Every reply then passes
-  // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
+  // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDQ); the gauge defaults to not-configured.
   // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
   // that take the same governed path as /ask.
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
   const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge } };
+  const productionAsk = createBidirectionalAsk(luminaryAskModel, options.governanceRuntime);
+  // The experimental receipt/delivery router does not yet share this interaction's aggregate
+  // budget. Keep its standalone harness available to tests, but never expose an alternate
+  // production path that can reset budgets or omit either governance direction.
+  app.use('/api/luminary/numeric', (_req, res) => res.status(503).json({ status: 'governance_unavailable' }));
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),
@@ -264,16 +280,17 @@ export async function createGateway(options: CreateGatewayOptions) {
     res.setHeader('Cache-Control', 'no-store');
     res.json({
       replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
-      gauge: options.gauge ? 'configured' : 'not_configured',
+      gauge: options.governanceRuntime ? 'configured' : 'not_configured',
+      governance: options.governanceRuntime ? 'bidirectional' : 'unavailable',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
       ...(options.spend ? { spend: readSpend(options.spend) } : {}),
       ...(options.knowledge ? { knowledge: options.knowledge } : {}),
     });
   });
   if (options.executor) {
-    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
+    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, productionAsk));
   }
-  app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));
+  app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions, productionAsk));
 
   const vite = options.vite ?? (config.nodeEnv === 'development'
     ? await import('vite').then(({ createServer }) => createServer({ server: { middlewareMode: true }, appType: 'custom' }))
