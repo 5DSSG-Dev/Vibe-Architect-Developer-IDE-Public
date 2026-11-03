@@ -1,0 +1,45 @@
+﻿{
+    "date":  "2026-11-03",
+    "validatedSourceCommit":  "4fdaf5006a4dc2565bc61ddf412575ad18894aad",
+    "validatedSourceTree":  "79037c5bc0d8e15d75ac2b502d494d469398c792",
+    "isolatedWorktree":  "TEMP/vibe-cold-4fdaf50",
+    "install":  {
+                    "command":  "npm ci --no-audit --no-fund",
+                    "packages":  255,
+                    "exit":  0
+                },
+    "tests":  {
+                  "command":  "npm test",
+                  "gatewayPassed":  274,
+                  "gatewayFailed":  0,
+                  "applicationPassed":  438,
+                  "applicationFailed":  0,
+                  "exit":  0
+              },
+    "build":  {
+                  "command":  "npm run build",
+                  "exit":  0,
+                  "warnings":  [
+                                   "Large existing Vite chunk"
+                               ]
+              },
+    "integration":  {
+                        "base":  "origin/codex/core-configurator-20261102",
+                        "command":  "git merge-tree --write-tree origin/codex/core-configurator-20261102 4fdaf50",
+                        "exit":  0
+                    },
+    "browserEvidence":  [
+                            "review-d02-d03-browser-results.json",
+                            "review-authored-hierarchy-results.json",
+                            "review-d01-d14-results.json",
+                            "review-d04-d06-d11.json",
+                            "review-mobile-v2-results.json"
+                        ],
+    "disclosures":  [
+                        "Scripted local browser tests had zero provider calls",
+                        "Screenshot captures are pre-documentation, browser fixtures, not comprehensive final source UI acceptance",
+                        "V04 live-model semantic interview not completed",
+                        "V12 connected Element edit not fully verified",
+                        "Independent review and V24 Architect walkthrough pending"
+                    ]
+}

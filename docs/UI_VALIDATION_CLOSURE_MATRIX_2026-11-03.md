@@ -90,3 +90,13 @@ This section records later execution after the historical uncommitted candidate 
 - On source commit `9b1ad9209cbf0b7650a7c4f8dd35375197b2d853` a separate clean worktree was installed with `npm ci --no-audit --no-fund` (255 packages), ran `npm test` (gateway 274/274, app 432/432) and `npm run build` (exit 0, existing large bundle warning). The target base passed `git merge-tree --write-tree` with exit 0.
 
 The complete requirement-to-source-to-test disposition and attached screenshots/raw machine receipts are in [UI_VALIDATION_REVIEW_PACKET_2026-11-03.md](UI_VALIDATION_REVIEW_PACKET_2026-11-03.md) and [evidence/2026-11-03/](evidence/2026-11-03/). This is review evidence, not independent signoff or Architect final acceptance.
+
+## D01–D14 follow-up (2026-11-03)
+
+The current implemented fixes, browser receipts, and remaining semantic limits are recorded in [UI_VALIDATION_D01_D14_CLOSURE_2026-11-03.md](UI_VALIDATION_D01_D14_CLOSURE_2026-11-03.md). This follow-up supersedes earlier statements that the builder cannot author Satellites or Actuators: both tiers were authored in the isolated browser, with explicit parent selection, unique IDs, Rust/Python code frames, declarative tier contracts, export, clean import and reload. See evidence/2026-11-03/review-authored-hierarchy-results.json.
+
+The separate identity test fix and twelve-turn V04 ledger remain implemented. D01 distinctive stable sibling keys, D04 field names, D05 visible Luminary naming, D06 contrast-token changes, D07 accessible keyboard Element actions, D08 collapsed-menu inert, D09 focus restoration, D10 saved footer naming, D11 responsive footer spacing, D12 guide clearance, D13 modal background inert and D14 distinct reopen/draft-clone semantics are represented by the attached source and tests. Individual tests validate *bounded* scenarios; complete keyboard-journey and all-modal verification remain separate.
+
+The existing approved demo scope record [DEMO_SCOPE_APPROVAL_2026-11-03.md](DEMO_SCOPE_APPROVAL_2026-11-03.md) is unchanged: V13/V16/V18 Deferred; V17 Not Applicable; V07/V08 exhaustive semantic oracles Deferred; Annex excluded. A deferral never constitutes functional proof.
+
+Independent review, objective validation not yet exercised, and the Architect V24 walkthrough remain separate gates. Clean source-bound verification receipts are under evidence/2026-11-03.
