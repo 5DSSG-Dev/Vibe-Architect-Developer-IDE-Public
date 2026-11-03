@@ -61,3 +61,6 @@
 
 ## 2026-11-03 | Lumen | Explicit interview choices
 - Creation answers may include bounded decisionChoices tied exactly to unresolved questions, with 2–4 options and an optional recommendation. Legacy question-only replies remain readable. The prompt asks for concrete options, leaves unanswered questions open, and does not treat a vague endorsement as answers to separate decisions. Accepted proposal still requires no open questions. Focused tests cover valid, missing, and mismatched choices.
+
+## 2026-11-03 | Lumen | One decision per turn
+- App creation prompt sequences essential questions; parser limits open questions to one. Focused regression covers grouped response refusal.

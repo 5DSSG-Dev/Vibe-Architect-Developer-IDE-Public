@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createBlankApp, validateProposal, parseCreationAnswer, connectAppProposal, type AppProposal } from './appCreation';
+import { createBlankApp, validateProposal, parseCreationAnswer, connectAppProposal, creationPrompt, type AppProposal } from './appCreation';
 import { DEFAULT_APOTHECARY_CATALOG as catalog } from './relationEngine';
 import { closeConnectionByAgreement } from './connectionRuntime';
 const orb = catalog.find(i => i.category === 'Orbs')!;
@@ -29,6 +29,11 @@ test('open questions carry bounded choices tied to their exact wording', () => {
  assert.equal(answer.decisionChoices[0].recommended,'Title and text');
  assert.throws(()=>parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],decisionChoices:[{question:'Different?',options:['A','B']}],suggestions:[],proposal:null}),catalog),/do not match/);
  assert.deepEqual(parseCreationAnswer(JSON.stringify({message:'Choose',questions:['One?'],suggestions:[],proposal:null}),catalog).decisionChoices,[]);
+});
+test('interview asks one decision per turn and rejects grouped model questions', () => {
+ assert.match(creationPrompt([], catalog), /Ask exactly one focused question per turn/);
+ assert.match(creationPrompt([], catalog), /ask the next essential question in a new turn/);
+ assert.throws(() => parseCreationAnswer(JSON.stringify({ message: 'Choose', questions: ['First?', 'Second?'], suggestions: [], proposal: null }), catalog), /invalid list/);
 });
 test('accepted proposal uses a successful runtime handshake and preserves blank input', () => {
  const blank = createBlankApp();const result = connectAppProposal(proposal(), blank, catalog);

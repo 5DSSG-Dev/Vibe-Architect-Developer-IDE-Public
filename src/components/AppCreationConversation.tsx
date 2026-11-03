@@ -112,8 +112,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       <p className="text-sm leading-relaxed rounded-2xl bg-amber-300/5 border border-amber-300/20 p-4">{GREETING}</p>
       {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 ? latest : undefined} className={`rounded-2xl p-4 text-sm whitespace-pre-wrap ${turn.role === 'architect' ? 'bg-cyan-900/25 border border-cyan-500/20' : 'bg-slate-900 border border-amber-400/20'}`}><p className="text-xs text-slate-400 mb-2">{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>{turn.text}{turn.state && turn.state !== 'sent' && <span className="block mt-2 text-xs text-slate-400">{turn.state === 'pending' ? 'Sending to Luminary…' : turn.state === 'failed' ? 'Request failed — your message is kept here.' : 'Stopped — your message is kept here.'}</span>}</div>)}
       {answer && answer.questions.length > 0 && <section aria-label="Open app design choices" className="rounded-2xl border border-amber-300/40 bg-amber-950/10 p-4 space-y-4 text-sm">
-        <h3 className="font-semibold text-amber-200">A few choices for your app</h3>
-        <p className="text-xs text-slate-300">Choose an option for each question you know. You can also describe your own answer below. Luminary will ask again about anything left open.</p>
+        <h3 className="font-semibold text-amber-200">One choice at a time</h3>
+        <p className="text-xs text-slate-300">Choose an option or describe your own answer below. Luminary will ask the next question after you answer this one.</p>
         {answer.questions.map((question, index) => {
           const choice = answer.decisionChoices.find(item => item.question === question);
           return <fieldset key={index} className="min-w-0 rounded-xl border border-slate-700 p-3"><legend className="px-1 text-slate-100">{question}</legend>
@@ -124,10 +124,9 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
           </fieldset>;
         })}
         {Object.values(selectedDecisions).some(Boolean) && <button type="button" disabled={busy || applying} onClick={() => {
-          const chosen = answer.questions.filter(question => selectedDecisions[question]).map(question => `${question} My choice: ${selectedDecisions[question]}.`);
-          const missing = answer.questions.filter(question => !selectedDecisions[question]);
-          void sendText(`${chosen.join(' ')} ${missing.length ? `I have not answered these yet; please ask me again: ${missing.join(' / ')}.` : 'These are my answers to the open questions. Please update the starting architecture.'}`, false);
-        }} className="rounded-lg border border-amber-300/50 px-3 py-2 text-xs text-amber-100 disabled:opacity-40">Send my choices to Luminary</button>}
+          const question = answer.questions[0];
+          void sendText(`${question} My choice: ${selectedDecisions[question]}. Please continue with the next decision, or show the starting architecture if we have settled them all.`, false);
+        }} className="rounded-lg border border-amber-300/50 px-3 py-2 text-xs text-amber-100 disabled:opacity-40">Send my choice to Luminary</button>}
       </section>}
       {answer?.proposal && <div className="rounded-2xl border border-cyan-300/40 bg-cyan-950/20 p-4 space-y-3">
         <h3 className="text-lg text-cyan-200">{answer.proposal.name}</h3><p className="text-xs text-cyan-300">{answer.proposal.appType} · Starting architecture</p><p className="text-sm">{answer.proposal.purpose}</p>

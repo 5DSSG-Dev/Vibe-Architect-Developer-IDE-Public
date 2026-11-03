@@ -109,3 +109,6 @@
 
 ## 2026-11-03 | Lumen | Guided ToDo and Apothecary entry
 - AppBuildJourney now constrains its ToDo panel to viewport height/width, wraps long tokens, and shows compact task summaries with full detail on demand. Selecting a task visibly opens a short build guide and attaches its complete accepted context to Luminary. Entering Apothecary opens the guide with the next unfinished item. Guide text is deterministic local UI guidance, not a model reply or completion claim.
+
+## 2026-11-03 | Lumen | Sequential interview choice
+- AppCreationConversation presents and sends one current decision; the Luminary follows with the next needed decision or proposal.
