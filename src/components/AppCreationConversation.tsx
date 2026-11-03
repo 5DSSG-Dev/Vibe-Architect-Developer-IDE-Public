@@ -6,7 +6,7 @@ import type { ApothecaryItem } from '../engine/relationEngine';
 import { luminaryApi, readDemoKey, saveDemoKey } from '../luminary/client';
 import { setAppCreationActive } from '../luminary/appCreationPresence';
 
-type Turn = { role: string; text: string; proposal?: AppProposal | null; state?: 'pending' | 'sent' | 'failed' | 'stopped' };
+type Turn = { role: string; text: string; proposal?: AppProposal | null; suggestions?: string[]; state?: 'pending' | 'sent' | 'failed' | 'stopped' };
 const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. Tell me about the app you’d like to create: what should it help people do, and who will use it?';
 export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal) => Promise<void> }) {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -23,6 +23,7 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   const request = useRef<AbortController | null>(null);
   const accepting = useRef(false);
   const latest = useRef<HTMLDivElement>(null);
+  const scrollToCompletedAddition = useRef(false);
   useLayoutEffect(() => { setAppCreationActive(true); return () => setAppCreationActive(false); }, []);
   useEffect(() => () => request.current?.abort(), []);
   useEffect(() => {
@@ -33,11 +34,16 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   useEffect(() => {
     const reply = latest.current, container = reply?.parentElement;
     if (!reply || !container || !turns.length) return;
-    container.scrollTop = Math.max(0, reply.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20);
+    if (scrollToCompletedAddition.current) {
+      scrollToCompletedAddition.current = false;
+      container.scrollTop = container.scrollHeight;
+    } else {
+      container.scrollTop = Math.max(0, reply.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20);
+    }
   }, [turns]);
   async function copyConversation(button: HTMLButtonElement) {
     const latestAssistant = turns.map(turn => turn.role).lastIndexOf('luminary');
-    const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === latestAssistant ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
+    const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === latestAssistant ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${t.suggestions?.length ? '\n\nSuggestions\n' + t.suggestions.join('\n') : ''}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
     try { await navigator.clipboard.writeText(content); button.textContent = 'Copied'; window.setTimeout(() => { button.textContent = 'Copy conversation'; }, 2000); }
     catch { window.prompt('Copy conversation text (Ctrl+C or Command+C)', content); }
   }
@@ -75,7 +81,8 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       if (controller.signal.aborted) return;
       if (!result.ok) throw Error(result.shortfall.message);
       const response = parseCreationAnswer(result.value.reply.content, catalog);
-      setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions, ...response.suggestions.map(s => `Suggestion: ${s}`)].join('\n\n'), proposal: response.proposal }]);
+      scrollToCompletedAddition.current = Boolean(selected && response.proposal);
+      setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions].join('\n\n'), suggestions: response.suggestions, proposal: response.proposal }]);
       setAnswer(response);
       setSuggestions(selected && !response.proposal ? suggestions : nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
       if (selected && response.proposal) setUsedSuggestions(previous => [...previous, selected]);

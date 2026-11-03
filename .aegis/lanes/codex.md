@@ -334,3 +334,9 @@
 ## 2026-11-02 | Codex | Explain architecture gaps
 - Renamed remaining capability section to What the app still needs, with explicit distinction from Architect instructions and an Explain remaining work action that sends the listed gaps for explanation without silently adding features.
 - Planning prompt now requires impact and supported next steps for essential unresolved requirements, proactive explanation in the reply, and separation of unrequested enhancements into suggestions (e.g. rich-text editing versus requested plain notes). Acceptance remains architecture-only.
+
+
+## 2026-11-02 | Codex | Suggestion presentation and completion scroll
+- Suggestions remain in structured conversation data and Copy conversation but are no longer appended as duplicate Suggestion lines in the visible Luminary reply. Planning instructions also ask the model not to repeat them in message.
+- A successful selected-suggestion response with a revised proposal scrolls the transcript to the bottom so the included addition and acceptance controls are visible. Ordinary requests/replies retain beginning-of-message scroll; errors and clarification-only replies do not trigger completion scroll.
+- Earlier remote application was blocked by approval-review usage exhaustion; resumed after access returned. Local production build passed; Windows build checked separately. No live inference or workspace storage changes.
