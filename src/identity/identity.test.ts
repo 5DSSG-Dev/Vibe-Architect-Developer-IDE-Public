@@ -460,6 +460,23 @@ describe('P1.5 — Verification Suite', () => {
     }
   });
 
+  it('rebuild preserves continuity ID and hash across elapsed wall-clock time', () => {
+    const records = makeFullRecordSet();
+    const originalNow = Date.now;
+    try {
+      Date.now = () => 1_000;
+      const a = projectIdentitySurface(records, makeContext(), ENVELOPE_PROFILES['standard-8k']);
+      Date.now = () => 7_000_000;
+      const b = projectIdentitySurface(records, makeContext(), ENVELOPE_PROFILES['standard-8k']);
+      assert.ok(a.surface && b.surface);
+      assert.equal(a.surface.kernel.continuityId, 'co-1');
+      assert.equal(b.surface.kernel.continuityId, a.surface.kernel.continuityId);
+      assert.equal(b.surface.kernel.hash, a.surface.kernel.hash);
+    } finally {
+      Date.now = originalNow;
+    }
+  });
+
   it('coverage reports show domain satisfaction before consequential mutation', () => {
     const records = makeFullRecordSet();
     const context = makeContext({ proposedAction: 'consequential_mutation' });

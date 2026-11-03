@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "id": "V03-retain",
+      "status": "PASS",
+      "detail": "Build QA notes app for one user"
+    },
+    {
+      "id": "V03-retry",
+      "status": "PASS",
+      "detail": "fixture requests: 26"
+    },
+    {
+      "id": "V09-focus",
+      "status": "PASS",
+      "detail": "ToDo item selected and guide visible"
+    },
+    {
+      "id": "V09-apothecary",
+      "status": "PASS",
+      "detail": "Apothecary toggled"
+    },
+    {
+      "id": "flow-shortfall",
+      "status": "FAIL",
+      "detail": "TimeoutError: locator.waitFor: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: /Alchemist.s Reliquary/ }) to be visible\u001b[22m\n"
+    }
+  ],
+  "providerCalls": 0,
+  "scope": "isolated local fixture, UI snapshot import/export"
+}
