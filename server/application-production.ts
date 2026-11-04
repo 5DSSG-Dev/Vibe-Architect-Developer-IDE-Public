@@ -1,4 +1,4 @@
-import { validateRequirementAst, validateAssemblyAudit, type AssemblyAuditor, type AstBinding, type AssemblyAudit } from './assembly-gates.js';
+import { validateRequirementAst, validateAssemblyAudit, AssemblyAuditRejected, type AssemblyAuditor, type AstBinding, type AssemblyAudit } from './assembly-gates.js';
 import { resolveAndVerifyAssembly } from './assembly-dependencies.js';
 import express, { Router, type Request } from 'express';
 import { createHash, randomUUID } from 'node:crypto';
@@ -136,7 +136,9 @@ export class ProductionRuntime {
     const verification=await (this.options.assembly.resolve??resolveAndVerifyAssembly)(projectPath,context);
     answer.packageLock=verification.packageLock;files['package-lock.json']=verification.packageLock;
     const auditInput={files,context,answer,writerModelId:result.reply.modelId,ast:ast!};
-    const audit=await this.options.assembly.audit(auditInput);validateAssemblyAudit(audit,auditInput);
+    let audit:AssemblyAudit;
+    try {audit=await this.options.assembly.audit(auditInput);validateAssemblyAudit(audit,auditInput);}
+    catch(error){await this.note(JSON.stringify({kind:'assembly_audit_rejected',id,...(error instanceof AssemblyAuditRejected?{audit:error.audit}:{reason:(error as Error).message})}));throw error;}
     gates={ast:ast!,audit,verification};
     await this.note(JSON.stringify({kind:'assembly_gates_verified',id,artifactHash:audit.artifactHash,requirementsHash:audit.requirementsHash,auditorModel:audit.modelId,audit,ast,dependencies:verification.dependencies,tests:verification.tests,build:verification.build}));
    }
