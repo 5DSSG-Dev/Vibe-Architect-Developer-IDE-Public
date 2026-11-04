@@ -197,3 +197,23 @@ test('Baseten is its own source: its own key, ceiling and ledger, Muse Spark Ope
   assert.equal(live.ledger.summary().calls, 1);
   assert.ok(Math.abs(live.ledger.summary().spentUsd - (100 * 1.25 + 50 * 4.25) / 1_000_000) < 1e-12);
 });
+
+test('length truncation continues automatically and concatenates exact bytes before returning', async () => {
+  const chunks = ['```luminary-change\n{"summary":"x",', '"files":[{"path":"x.ts","content":"ok"}]}\n```'];
+  const meta = fakeMeta(i => ({ body: { model: 'muse-spark-1.3', choices: [{ message: { content: chunks[i - 1] }, finish_reason: i === 1 ? 'length' : 'stop' }], usage: { prompt_tokens: 100, completion_tokens: 100 } } }));
+  const ledger = new SpendLedger(ledgerPath(), 1, 4);
+  const ask = createMetaAskModel({ apiKey: 'test', ledger, fetch: meta.fetch });
+  const result = await ask('complete spec') as {content:string};
+  assert.equal(result.content, chunks.join(''));
+  assert.equal(meta.calls.length, 2);
+  assert.ok(JSON.stringify(meta.calls[1].body).includes('complete spec'));
+});
+
+test('continuation exhaustion and disabled continuation return no partial candidate', async () => {
+  for (const config of [{ maxContinuationCalls: 2 }, { auto_resume_on_max_tokens: false }]) {
+    const meta = fakeMeta(() => ({ body: { choices: [{ message: { content: 'partial' }, finish_reason: 'length' }] } }));
+    const ask = createMetaAskModel({ apiKey: 'test', ledger: new SpendLedger(ledgerPath(), 1, 8), fetch: meta.fetch, ...config });
+    await assert.rejects(ask('spec'), /truncated|exhausted/);
+    assert.equal(meta.calls.length, 'maxContinuationCalls' in config ? 2 : 1);
+  }
+});

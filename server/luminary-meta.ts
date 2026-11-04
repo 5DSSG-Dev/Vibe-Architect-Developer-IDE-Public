@@ -192,6 +192,10 @@ export interface MetaAskModelOptions {
   providerName?: string;
   /** Injected for tests; defaults to the global fetch. */
   fetch?: typeof fetch;
+  /** Strict structured gate output; ordinary writer calls leave this absent. */
+  responseFormat?: unknown;
+  auto_resume_on_max_tokens?: boolean;
+  maxContinuationCalls?: number;
 }
 
 export function costUsd(model: string, inputTokens: number, outputTokens: number): number {
@@ -230,58 +234,79 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
   // Fails fast for an unpriced model, before any request is made.
   costUsd(model, 0, 0);
 
-  return async (prompt: string) => {
+  return async (prompt: string, control?: { signal?: AbortSignal }) => {
+    control?.signal?.throwIfAborted();
     const messages = [
       ...(options.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
       { role: 'user', content: prompt },
     ];
-    const inputChars = messages.reduce((sum, m) => sum + m.content.length, 0);
-    const worstCase = costUsd(model, Math.ceil(inputChars / ESTIMATE_CHARS_PER_TOKEN) + 64, maxOutputTokens);
-    const index = options.ledger.reserve(model, worstCase);
+    let accumulated = '';
+    let continuationModel: string | undefined;
+    const maxCalls = options.maxContinuationCalls ?? 16;
+    if (!Number.isInteger(maxCalls) || maxCalls < 1 || maxCalls > 128) throw new Error('Invalid continuation call limit.');
+    for (let attempt = 0; attempt < maxCalls; attempt++) {
+      control?.signal?.throwIfAborted();
+      const inputChars = messages.reduce((sum, m) => sum + m.content.length, 0);
+      const worstCase = costUsd(model, Math.ceil(inputChars / ESTIMATE_CHARS_PER_TOKEN) + 64, maxOutputTokens);
+      const index = options.ledger.reserve(model, worstCase);
 
-    let response: Response;
-    try {
-      response = await doFetch(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${options.apiKey}` },
-        body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens }),
-        signal: AbortSignal.timeout(timeoutMs),
-      });
-    } catch (error) {
-      // The request may still have been billed, so the worst-case charge stays.
-      options.ledger.settle(index, 'failed');
-      throw new Error(`${provider} unreachable: ${error instanceof Error ? error.message : 'request failed'}.`);
-    }
+      let response: Response;
+      try {
+        response = await doFetch(url, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${options.apiKey}` },
+          body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens,
+            ...(options.responseFormat ? { response_format: options.responseFormat, temperature: 0 } : {}) }),
+          signal: control?.signal ? AbortSignal.any([control.signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs),
+        });
+      } catch (error) {
+        // The request may still have been billed, so the worst-case charge stays.
+        options.ledger.settle(index, 'failed');
+        throw new Error(`${provider} unreachable: ${error instanceof Error ? error.message : 'request failed'}.`);
+      }
 
-    let body: unknown;
-    try {
-      body = await response.json();
-    } catch {
-      body = null;
-    }
-    const usage = readUsage(body);
-    const refused = response.status >= 400 && response.status < 500;
-    options.ledger.settle(
-      index,
-      usage ? { ...usage, actualUsd: costUsd(model, usage.inputTokens, usage.outputTokens) } : response.ok ? 'no_usage' : refused ? 'refused' : 'failed',
-    );
+      let body: unknown;
+      try {
+        body = await response.json();
+      } catch {
+        body = null;
+      }
+      const usage = readUsage(body);
+      const refused = response.status >= 400 && response.status < 500;
+      options.ledger.settle(
+        index,
+        usage ? { ...usage, actualUsd: costUsd(model, usage.inputTokens, usage.outputTokens) } : response.ok ? 'no_usage' : refused ? 'refused' : 'failed',
+      );
 
-    if (!response.ok) {
-      // The key is never echoed, even if the provider quotes it back.
-      const reason = providerReason(body).split(options.apiKey).join('[key]');
-      throw new Error(`${provider} returned HTTP ${response.status}${reason ? `: ${reason}` : ''}.`);
+      if (!response.ok) {
+        // The key is never echoed, even if the provider quotes it back.
+        const reason = providerReason(body).split(options.apiKey).join('[key]');
+        throw new Error(`${provider} returned HTTP ${response.status}${reason ? `: ${reason}` : ''}.`);
+      }
+      const choice = (body as { model?: unknown; choices?: Array<{ finish_reason?: unknown; message?: { content?: unknown } }> })?.choices?.[0];
+      const declared = (body as { model?: unknown })?.model;
+      const actualModel = typeof declared === 'string' && declared.trim() ? declared : model;
+      if (continuationModel && continuationModel !== actualModel) throw new Error('Provider changed model during continuation.');
+      continuationModel = actualModel;
+      const chunk = choice?.message?.content;
+      if (typeof chunk !== 'string') {
+        if (choice?.finish_reason === 'length') throw new Error(`${provider} used its output allowance before finishing a reply; no text was available to continue.`);
+        throw new Error(`${provider} returned no readable reply (finish reason: ${typeof choice?.finish_reason === 'string' ? choice.finish_reason.slice(0, 40) : 'unknown'}).`);
+      }
+      accumulated += chunk;
+      if (Buffer.byteLength(accumulated) > 1_000_000) throw new Error('Continuation output exceeded its resource budget.');
+      if (choice?.finish_reason === 'length') {
+        if (options.responseFormat || options.auto_resume_on_max_tokens === false) throw new Error('Provider output was truncated.');
+        if (!chunk.length) throw new Error('Truncated provider output made no progress.');
+        messages.push({ role: 'assistant', content: chunk });
+        messages.push({ role: 'user', content: 'Continue from the exact next character of the preceding assistant output. Do not repeat text, add a preamble or reopen fences. Complete the original output contract.' });
+        continue;
+      }
+      if (choice?.finish_reason && choice.finish_reason !== 'stop') throw new Error('Provider did not complete generation normally.');
+      // Only the complete concatenated candidate reaches the independent governance gate.
+      return { modelId: actualModel, content: accumulated };
     }
-    const choice = (body as { model?: unknown; choices?: Array<{ finish_reason?: unknown; message?: { content?: unknown } }> })?.choices?.[0];
-    const declared = (body as { model?: unknown })?.model;
-    // A truncated completion is never a finished answer, even if it contains some text.
-    if (choice?.finish_reason === 'length') throw new Error(`${provider} used its output allowance before finishing a reply. Your message is still in the conversation; please send it again in a shorter form.`);
-    if (choice?.finish_reason === 'content_filter') throw new Error(`${provider} withheld the reply. Your message is still in the conversation.`);
-    if (typeof choice?.message?.content !== 'string') throw new Error(`${provider} returned no readable reply (finish reason: ${typeof choice?.finish_reason === 'string' ? choice.finish_reason.slice(0, 40) : 'unknown'}). Your message is still in the conversation; please retry.`);
-    // Untrusted: governReply() still validates the text and declared model id.
-    return {
-      modelId: typeof declared === 'string' && declared.trim() ? declared : model,
-      content: choice.message.content,
-    };
+    throw new Error('Automatic continuation exhausted its call budget; no partial output was delivered.');
   };
 }
 

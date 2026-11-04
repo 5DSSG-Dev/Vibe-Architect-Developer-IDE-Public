@@ -11,6 +11,9 @@ import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { resolve, sep } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 import { loadLuminaryKnowledge, systemPromptWithKnowledge } from './luminary-knowledge.js';
 
@@ -20,9 +23,10 @@ const config = loadConfig();
 // the P23 Knowledge Pack, the IDE's own Element descriptions.
 const liveSource = config.luminaryReplySource === 'meta' || config.luminaryReplySource === 'baseten' ? config.luminaryReplySource : undefined;
 const meta = liveSource ? parseLiveSourceEnv(liveSource, process.env) : undefined;
-const knowledge = meta ? loadLuminaryKnowledge() : undefined;
+const instructions = meta ? readFileSync(resolve(process.cwd(), 'docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md'), 'utf8') : undefined;
+const knowledge = meta ? loadLuminaryKnowledge(pathToFileURL(`${resolve(process.cwd())}${sep}`)) : undefined;
 const metaAskModel = meta && knowledge
-  ? createMetaAskModel({ ...meta, systemPrompt: systemPromptWithKnowledge(readFileSync(new URL('../docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md', import.meta.url), 'utf8'), knowledge) })
+  ? createMetaAskModel({ ...meta, systemPrompt: systemPromptWithKnowledge(instructions!, knowledge) })
   : undefined;
 // The review areas (STP-0005 P3): private, in the Architect's own profile unless set otherwise.
 const record = await ReviewRecord.open({ dir: config.governanceRecordDir, backupDir: config.governanceBackupDir });
@@ -58,6 +62,8 @@ try {
     askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : metaAskModel,
     replySource: meta ? (liveSource === 'baseten' ? 'Muse Spark Open · Baseten' : `Meta · ${meta.model}`) : config.luminaryReplySource,
     spend: meta?.ledger,
+    instructions: instructions ? { sha256: createHash('sha256').update(instructions).digest('hex'), bytes: Buffer.byteLength(instructions) } : undefined,
+    runtimeRevision: process.env.LUMINARY_RUNTIME_REVISION,
     knowledge: knowledge ? { version: knowledge.version, sha256: knowledge.sha256, bytes: knowledge.bytes } : undefined,
     executor: config.luminaryExecutor ? new LuminaryExecutor({ repoRoot: process.cwd() }) : undefined,
   });
@@ -66,7 +72,7 @@ try {
   throw error;
 }
 
-const server = app.listen(config.port, () => {
+const server = app.listen(config.port, '127.0.0.1', () => {
   console.log(`AEGIS Architect gateway listening at ${config.origin}`);
 });
 

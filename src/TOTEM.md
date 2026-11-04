@@ -177,3 +177,8 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-11-03 | Codex | Durable program inside CORE
 - App now wires explicit program save into CoreManifest.application. saveCoreProgram writes the validated current Workspace before state adoption; failed quota writes preserve the prior program. App-file imports validate optional programs and existing snapshots/export/reopen retain them without execution. Real browser/helper and focused persistence regressions passed.
 - Active checkout/preview edits preserved in an isolated PR52 worktree. Report docs/ACCEPTED_CORE_RUNTIME_2026-11-03.md records full test failure boundary and pending independent review. No live activation/publication.
+
+## 2026-11-03 | codex | Authorized accepted-core runtime integration
+- Architect explicitly selected this checkout for deployment/reload and public PR52 publication. Adapted source67d26bd batching/providercontinuation/append-onlymanifest permissions onto target430861f, preserving this target's existing review-record governance and production route. No numeric/bidirectional governance upgrade substituted.
+- Target fullsuite721passed/0failed/0skipped (gateway280/app441); productionbuildpassed with existingchunkwarning. HTTP26file/40KBspec fixture and transportcontinuation regressions passed. Historical provider receipts remain historical, no paidmodelcalls thisturn.
+- Compiledstartup resolves instructions/knowledge from exactworkspace root; status exposes loadedinstructionSHA/runtime revision. NodeESM imports corrected; listener pinned127.0.0.1. Cleanreload and exactsource/status smoke follow after commit. Sourcepublic67d26bd remotehashverified; no merge.

@@ -69,6 +69,8 @@ export interface CreateGatewayOptions {
   spend?: { summary(): { spentUsd: number; ceilingUsd: number; calls: number } };
   /** The Knowledge Pack sent with every question (P23), named so each answer can record it. */
   knowledge?: { version: string; sha256: string; bytes: number };
+  instructions?: { sha256: string; bytes: number };
+  runtimeRevision?: string;
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
   vite?: ViteDevServer | null;
@@ -139,7 +141,7 @@ export async function createGateway(options: CreateGatewayOptions) {
     res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()');
     next();
   });
-  app.use(express.json({ limit: '32kb' }));
+  app.use(express.json({ limit: '1mb' }));
 
   app.use(async (req, _res, next) => {
     const id = readCookie(req, sessionCookieName(config));
@@ -278,11 +280,13 @@ export async function createGateway(options: CreateGatewayOptions) {
       gauge: options.gauge ? 'configured' : 'not_configured',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
       ...(options.spend ? { spend: readSpend(options.spend) } : {}),
+      ...(options.instructions ? { instructions: options.instructions } : {}),
+      ...(options.runtimeRevision ? { runtimeRevision: options.runtimeRevision } : {}),
       ...(options.knowledge ? { knowledge: options.knowledge } : {}),
     });
   });
   if (options.executor) {
-    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
+    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions), createGovernedAsk(luminaryAskModel, { ...luminaryReplyOptions, governance: { maxContentBytes: 262_144 } })));
   }
   // The first production profile compiles only deterministic generated templates, locally.
   if (config.nodeEnv === 'development' && config.luminaryLocalSession && options.record && ['meta', 'baseten'].includes(config.luminaryReplySource ?? '')) {

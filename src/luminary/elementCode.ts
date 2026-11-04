@@ -4,8 +4,8 @@
 // beside the current code, and only Accept, then the editor's own Save, changes the Element.
 
 import type { ApothecaryItem, ElementCodeFrame } from '../engine/relationEngine';
-import { composePrompt, parseReply, type ExplanationLevel } from './blocks';
-import { describeElement } from './knowledge';
+import { composePrompt, parseReply, type ExplanationLevel } from './blocks.js';
+import { describeElement } from './knowledge.js';
 
 /** Marks a prompt as an Element code request, so the rehearsal stand-in can answer it too. */
 export const ELEMENT_CODE_MARKER = '[Element code request]';
