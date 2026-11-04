@@ -193,3 +193,6 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-04 | Lumin | UI batch wiring and encoding
 - AppwiresCommandConsoleTerminalrequestandCOREcontextcallback;knownUTF8mojibakecorrectedwithoutalteringconditionaloperators. Existing3012livechecks/full734tests/buildpass. VibeAtlasexplicitlyexcluded. Workorder/reportrecordscope;localcommitonly.
+## 2026-11-04 | Codex | Atlas in-app panel
+- Footer Atlas opens a contained iframe modal from App. Same-origin Atlas HTML receives a narrow framing exception; other pages and APIs retain DENY/none. The iframe is scaled so the illustrated entrance fits desktop height.
+- Live 3012 Chrome verified desktop navigation across all four rooms, close button/backdrop, artwork fit and no page exceptions. Gateway 289/289 and build pass. Footer intentionally hides Atlas launch below lg; mobile launch was not claimed. No push.

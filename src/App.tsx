@@ -187,6 +187,7 @@ export function App() {
   const [isApothecaryOpen, setIsApothecaryOpen] = useState(false);
   const [selectedBuildItem, setSelectedBuildItem] = useState<{ coreId: string; id: string } | null>(null);
   const [terminalRequest,setTerminalRequest]=useState(0);
+  const [atlasOpen, setAtlasOpen] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
   // Apothecary Catalog State. Built-in catalogue items are merged with restored
@@ -733,7 +734,7 @@ export function App() {
         onOpenBrowser={() => {
           openOverlay('BROWSER');
         }}
-        onOpenVibeAtlas={() => window.open('/atlas/index.html', '_blank', 'noopener')}
+        onOpenVibeAtlas={() => setAtlasOpen(true)}
         onExportCore={() => {
           const blob = new Blob([JSON.stringify(coreManifest, null, 2)], { type: 'application/json' });
           const url = URL.createObjectURL(blob);
@@ -824,6 +825,27 @@ export function App() {
 
           onClose={() => closeOverlay('CORE_MATRIX')}
         />
+      )}
+
+      {atlasOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm"
+          role="dialog" aria-modal="true" aria-label="Vibe Atlas"
+          onClick={() => setAtlasOpen(false)}
+          onKeyDown={(event) => { if (event.key === 'Escape') setAtlasOpen(false); }}
+        >
+          <div
+            className="relative w-[92vw] h-[88vh] max-w-[1400px] overflow-hidden rounded-2xl border border-cyan-500/40 bg-slate-950 shadow-[0_0_40px_rgba(0,243,255,0.25)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button" onClick={() => setAtlasOpen(false)}
+              title="Close the Vibe Atlas" aria-label="Close Vibe Atlas" autoFocus
+              className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg border border-cyan-500/40 bg-slate-900/80 text-cyan-200 hover:border-cyan-400/70 hover:text-cyan-100 transition-colors"
+            >✕</button>
+            <iframe src="/atlas/index.html" title="Vibe Atlas" className="border-0" style={{ width: "138.9%", height: "138.9%", transform: "scale(0.72)", transformOrigin: "top left" }} />
+          </div>
+        </div>
       )}
 
       {/* 4. Apothecary Studio — Orb & Satellite Builder Modal */}

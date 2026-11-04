@@ -182,6 +182,20 @@ test('security headers constrain framing, content types, referrers, and browser 
   assert.match(response.headers.get('permissions-policy') ?? '', /microphone=\(self\)/);
 });
 
+test('only same-origin Atlas HTML pages permit framing', async () => {
+  const base = await listen();
+  for (const page of ['index', 'aegis', 'explore', 'building-the-vibe']) {
+    const response = await fetch(`${base}/atlas/${page}.html`);
+    assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN');
+    assert.match(response.headers.get('content-security-policy') ?? '', /frame-ancestors 'self'/);
+  }
+  for (const path of ['/', '/atlas/atlas.js', '/api/luminary/status']) {
+    const response = await fetch(base + path);
+    assert.equal(response.headers.get('x-frame-options'), 'DENY');
+    assert.match(response.headers.get('content-security-policy') ?? '', /frame-ancestors 'none'/);
+  }
+});
+
 test('Draco decoding uses byte-identical self-hosted assets from the installed Three.js package', async () => {
   const loaderSource = await readFile(resolve(process.cwd(), 'src/utils/gltfLoaderService.ts'), 'utf8');
   assert.match(loaderSource, /DRACO_DECODER_PATH = ['"]\/draco\/gltf\/['"]/);

@@ -139,6 +139,18 @@ export async function createGateway(options: CreateGatewayOptions) {
     noSniff: true,
     referrerPolicy: { policy: 'no-referrer' },
   }));
+  // Only the four Atlas documents can be embedded by this same-origin IDE.
+  // Keep the default frame denial for the IDE, APIs, and every other route.
+  app.use((req, res, next) => {
+    if (/^\/atlas\/(?:index|aegis|explore|building-the-vibe)\.html$/.test(req.path)) {
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      const policy = res.getHeader('Content-Security-Policy');
+      if (typeof policy === 'string') {
+        res.setHeader('Content-Security-Policy', policy.replace("frame-ancestors 'none'", "frame-ancestors 'self'"));
+      }
+    }
+    next();
+  });
   app.use((_req, res, next) => {
     // The IDE's own page may use the microphone, for the Luminary's hold-to-talk (STP-0002 P27);
     // nothing else may, and the rest stays off.
