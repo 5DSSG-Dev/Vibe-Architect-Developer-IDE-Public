@@ -58,3 +58,13 @@ test('bounded interview context preserves final accepted corrections',()=>{
  assert.equal(focus.text.includes('FINAL_ACCEPTED_DECISION: Markdown notes.'),true);
  assert.ok(new TextEncoder().encode(focus.text).length<=20000);
 });
+
+test('accepted interview ToDo IDs survive acceptance into the actual production context',async()=>{
+ const {interviewRequirements}=await import('./creationLedger');
+ const requirements=interviewRequirements([{role:'architect',state:'sent',text:'1. Home page\n2. Add notes\n3. Use slugify@1.6.6'},{role:'architect',state:'failed',text:'not accepted'}]);
+ assert.deepEqual(requirements.map(r=>r.id),['R001-01','R001-02','R001-03']);
+ const plan=createBuildPlan({...proposal,requirements,dependencies:{slugify:'1.6.6'}},'Real accepted interview');
+ assert.deepEqual(plan.items.map(i=>i.id),requirements.map(r=>r.id));
+ assert.equal(plan.proposal.dependencies?.slugify,'1.6.6');
+ assert.deepEqual(JSON.parse(JSON.stringify(plan)).items,plan.items);
+});

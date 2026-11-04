@@ -1,3 +1,5 @@
+import type { resolveAndVerifyAssembly } from './assembly-dependencies.js';
+import type { AssemblyAuditor } from './assembly-gates.js';
 import { ProductionRuntime, createProductionRouter } from './application-production.js';
 import { createLocalLuminarySession } from './luminary-local-session.js';
 import express, { type NextFunction, type Request, type Response } from 'express';
@@ -71,6 +73,8 @@ export interface CreateGatewayOptions {
   knowledge?: { version: string; sha256: string; bytes: number };
   instructions?: { sha256: string; bytes: number };
   runtimeRevision?: string;
+  assemblyAuditor?: AssemblyAuditor;
+  assemblyResolver?: typeof resolveAndVerifyAssembly;
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
   vite?: ViteDevServer | null;
@@ -290,7 +294,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   }
   // The first production profile compiles only deterministic generated templates, locally.
   if (config.nodeEnv === 'development' && config.luminaryLocalSession && options.record && ['meta', 'baseten'].includes(config.luminaryReplySource ?? '')) {
-    const production = new ProductionRuntime({ root: resolve(process.cwd(), 'output/generated-projects'), record: options.record, ask: createGovernedAsk(luminaryAskModel, luminaryReplyOptions) });
+    const production = new ProductionRuntime({ root: resolve(process.cwd(), 'output/generated-projects'), record: options.record, ask: createGovernedAsk(luminaryAskModel, luminaryReplyOptions), assembly: {resolve:options.assemblyResolver,audit:options.assemblyAuditor??(async()=>{throw Error('Secondary assembly auditor is unavailable.');})} });
     app.locals.applicationProduction = production;
     app.use('/api/luminary/production', createProductionRouter(production));
   }

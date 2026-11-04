@@ -1,3 +1,5 @@
+import { artifactHash, assemblyHash } from './assembly-gates.js';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
@@ -152,25 +154,29 @@ test('gateway mount authenticates before generation and refuses cross-port brows
  const {createGateway}=await import('./app.js');
  const {InMemorySessionStore}=await import('./session-store.js');
  const f=await fixture();let modelCalls=0;
+ const strictContext={...context,requirements:[{id:'R001',text:'Add and list notes'}]};
+ const strictContent=JSON.stringify({...JSON.parse(content),requirementBindings:{R001:['notes','editor','home']}});
  const app=await createGateway({
   config:{nodeEnv:'development',port:0,origin:'http://127.0.0.1:3012',sessionTtlMs:60000,cookieSecure:false,trustProxy:false,luminaryLocalSession:true,luminaryDemoKey:'fixture-key',luminaryReplySource:'meta',entra:{tenantId:'t',clientId:'c',clientSecret:'fixture',redirectUri:'http://127.0.0.1:3012/auth/entra/callback'}},
   sessions:new InMemorySessionStore(),entra:{configured:false} as any,vite:null,record:f.record,
-  askModel:async()=>{modelCalls++;return {modelId:'fixture-only',content};},
+  askModel:async()=>{modelCalls++;return {modelId:'fixture-only',content:strictContent};},
+  assemblyAuditor:async input=>({decision:'pass',modelId:'secondary-fixture',artifactHash:artifactHash(input.files),requirementsHash:assemblyHash(input.context.requirements),coveredRequirementIds:['R001'],findings:[]}),
+  assemblyResolver:async project=>{const manifest=JSON.parse(await readFile(join(project,'package.json'),'utf8'));return {packageLock:JSON.stringify({lockfileVersion:3,packages:{'':{dependencies:manifest.dependencies,devDependencies:manifest.devDependencies}}}),dependencies:{},install:'fixture',tests:'fixture',build:'passed'};},
   gauge:{read:async()=>({Honesty:90,Respect:90,Attention:90,Affection:90,Loyalty:90,Trust:90,Communication:90})}
  });
  const server=app.listen(0,'127.0.0.1');await new Promise<void>(r=>server.once('listening',r));
  const base='http://127.0.0.1:'+(server.address() as any).port;
- const post=(headers:Record<string,string>)=>fetch(base+'/api/luminary/production/generate',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify({context,requestId:'12345678-1234-4234-8234-123456789012'})});
+ const post=(headers:Record<string,string>)=>fetch(base+'/api/luminary/production/generate',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify({context:strictContext,requestId:'12345678-1234-4234-8234-123456789012'})});
  try {
   assert.equal((await post({origin:base})).status,401);
   assert.equal((await post({origin:'http://127.0.0.1:9999','x-luminary-demo-key':'fixture-key'})).status,403);
   assert.equal(modelCalls,0);
   const response=await post({origin:base,'x-luminary-demo-key':'fixture-key'});
-  assert.equal(response.status,201);
+  assert.equal(response.status,201,await response.clone().text());
   const receipt=await response.json();
   assert.match(receipt.digest,/^[0-9a-f]{64}$/);assert.equal(modelCalls,1);
-  const application={version:1,generationId:receipt.id,sourceDigest:receipt.digest,contextHash:receipt.contextHash,context,answer:receipt.answer};
-  const restore=(headers:Record<string,string>)=>fetch(base+'/api/luminary/production/restore-core',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify({application,context})});
+  const application={version:1,generationId:receipt.id,sourceDigest:receipt.digest,contextHash:receipt.contextHash,context:strictContext,answer:receipt.answer};
+  const restore=(headers:Record<string,string>)=>fetch(base+'/api/luminary/production/restore-core',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify({application,context:strictContext})});
   assert.equal((await restore({origin:base})).status,401);
   assert.equal((await restore({origin:'http://127.0.0.1:9999','x-luminary-demo-key':'fixture-key'})).status,403);
   assert.equal((await restore({origin:base,'x-luminary-demo-key':'fixture-key'})).status,201);

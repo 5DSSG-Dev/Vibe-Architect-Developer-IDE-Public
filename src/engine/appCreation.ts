@@ -11,6 +11,8 @@ export interface AppProposal {
   name: string; appType: string; purpose: string; crystalModel: string;
   elements: { id: string; parentId: string | null; reason: string }[];
   gaps: string[];
+  requirements?: { id: string; text: string }[];
+  dependencies?: Record<string, string>;
 }
 export interface DecisionChoice { question: string; options: string[]; recommended?: string }
 export interface CreationAnswer { message: string; questions: string[]; decisionChoices: DecisionChoice[]; suggestions: string[]; proposal: AppProposal | null }
@@ -50,7 +52,11 @@ export function validateProposal(raw: unknown, catalog: ApothecaryItem[]): AppPr
     if (category === 'Orbs' && e.parentId !== null) throw Error('Orbs connect directly to the CORE.');
     if (category !== 'Orbs' && (!e.parentId || selected.get(e.parentId)?.category !== (category === 'Satellites' ? 'Orbs' : 'Satellites'))) throw Error('Satellites need a selected Orb; Actuators need a selected Satellite.');
   }
-  return { name, purpose, appType: p.appType, crystalModel: p.crystalModel, elements, gaps: texts(p.gaps) };
+  const requirements = p.requirements;
+  if (requirements !== undefined && (!Array.isArray(requirements) || requirements.length > 64 || requirements.some(r => !r || !/^[A-Za-z0-9_-]{1,160}$/.test(r.id) || typeof r.text !== 'string' || !r.text.trim() || r.text.length > 2000) || new Set(requirements.map(r => r.id)).size !== requirements.length)) throw Error('Invalid interview requirement IDs.');
+  const dependencies = p.dependencies;
+  if (dependencies !== undefined && (!dependencies || Array.isArray(dependencies) || typeof dependencies !== 'object' || Object.entries(dependencies).some(([name,version]) => name !== 'slugify' || version !== '1.6.6'))) throw Error('Dependency is outside the supported pinned generation profile.');
+  return { name, purpose, appType: p.appType, crystalModel: p.crystalModel, elements, gaps: texts(p.gaps), ...(requirements ? {requirements} : {}), ...(dependencies ? {dependencies} : {}) };
 }
 export function parseCreationAnswer(raw: string, catalog: ApothecaryItem[]): CreationAnswer {
   if (raw.length > 24_000) throw Error('The proposal is too large. Ask for a smaller starting architecture.');
@@ -123,6 +129,7 @@ export function creationPrompt(turns: { role: string; text: string }[], catalog:
     'SCOPE: Do not claim an Element, generated app, or runtime behavior has already been built, connected, verified, or accepted. Build gaps list only essential work necessary to satisfy the Architect explicit requirements; each names the required missing capability, affected Elements, concrete create/edit action in the Apothecary and what to verify. Keep unrequested enhancements in suggestions, not gaps. When discussing gaps preserve the existing proposal unless the Architect requests a change.',
     'PROPOSAL: Use only the provided catalog IDs. Pick 1-8 Orbs and at most 32 Elements; Orbs have parentId=null, Satellites reference selected Orbs, Actuators selected Satellites. Acceptance connects architecture, but code generation and deployment happen separately. Make each Element reason concise and specific. List all required implementation work still missing as concrete ToDo gaps, never inventing unavailable catalog IDs. Keep names, purposes and gaps succinct; include enough detail to preserve every requirement.',
     'SUGGESTIONS: Include 0-3 distinct optional enhancements as short, user-facing phrases (3-8 words, <=70 characters each), never repeating already requested features. The interface shows suggestions separately, so do not echo them in message.',
+    'DEPENDENCIES: The executable profile supports an explicitly requested slugify@1.6.6 dependency for title-to-slug form fields. If requested, preserve it in proposal.dependencies={"slugify":"1.6.6"} and explain it in purpose. Otherwise omit dependencies.',
     'RESPONSE SCHEMA: {"message":"brief response to Architect","questions":["an unanswered essential question"],"decisionChoices":[{"question":"exact text matching question","options":["A","B"],"recommended":"A"}],"suggestions":["optional idea"],"proposal":null}. When ready, questions=[], decisionChoices=[], proposal={"name":"short name","appType":"allowed type","purpose":"agreed purpose","crystalModel":"allowed filename","elements":[{"id":"catalog ID","parentId":null,"reason":"brief reason"}],"gaps":["concrete work and verification"]}. Keep every field present and return parseable JSON only.',
   ];
   return [

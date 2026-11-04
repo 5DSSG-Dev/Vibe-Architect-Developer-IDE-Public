@@ -2,11 +2,11 @@
 export type ApplicationObject =
   | { id: string; kind: 'Page'; path: string; title: string; children: string[] }
   | { id: string; kind: 'Component'; text: string }
-  | { id: string; kind: 'Form'; modelId: string; fields: { name: string; label: string; required?: boolean }[] }
+  | { id: string; kind: 'Form'; modelId: string; slugField?: string; fields: { name: string; label: string; required?: boolean }[] }
   | { id: string; kind: 'Data'; initialRecords: Record<string, string>[] }
   | { id: string; kind: 'Navigation'; pageIds: string[] }
   | { id: string; kind: 'API'; path: string };
-export interface ApplicationDefinition { version: 1; name: string; objects: ApplicationObject[] }
+export interface ApplicationDefinition { version: 1; name: string; objects: ApplicationObject[]; dependencies?: Record<string,string> }
 export interface GeneratedApplication { files: Record<string, string> }
 
 const identifier = /^[a-z][a-z0-9-]{0,63}$/;
@@ -17,6 +17,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').
 function validate(input: unknown): ApplicationDefinition {
   const d = input as ApplicationDefinition;
   if (!d || d.version !== 1 || typeof d.name !== 'string' || !d.name.trim() || !Array.isArray(d.objects) || d.objects.length > 200) throw new Error('Invalid application definition');
+  if (d.dependencies !== undefined && (!d.dependencies || Array.isArray(d.dependencies) || typeof d.dependencies!=='object' || Object.entries(d.dependencies).some(([name,version])=>name!=='slugify'||version!=='1.6.6'))) throw Error('Unsupported generated dependency');
   const ids = new Map<string, ApplicationObject>();
   const routes = new Set<string>();
   for (const o of d.objects) {
@@ -35,6 +36,7 @@ function validate(input: unknown): ApplicationDefinition {
         if (!Array.isArray(o.initialRecords) || !o.initialRecords.every(r => r && typeof r === 'object' && !Array.isArray(r) && Object.entries(r).every(([k, v]) => !reserved.has(k) && typeof v === 'string'))) throw new Error('Invalid data records');
         break;
       case 'Form': {
+        if (o.slugField !== undefined && (d.dependencies?.slugify!=='1.6.6' || typeof o.slugField!=='string' || !o.fields.some(f=>f.name===o.slugField))) throw Error('Slug form requires its declared field and pinned dependency');
         if (!Array.isArray(o.fields) || !o.fields.length) throw new Error('Form fields are required');
         const names = new Set<string>();
         for (const f of o.fields) {
@@ -69,7 +71,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
   files['package.json'] = JSON.stringify({
     name: 'vibe-generated-app', version: '1.0.0', private: true, type: 'module',
     scripts: { dev: 'vite --host 127.0.0.1', build: 'vite build', test: 'node --test test/*.test.mjs' },
-    dependencies: { react: '18.3.1', 'react-dom': '18.3.1' },
+    dependencies: { react: '18.3.1', 'react-dom': '18.3.1', ...d.dependencies },
     devDependencies: { vite: '5.4.21' }
   }, null, 2) + '\n';
   files['vite.config.js'] = 'export default { css: { postcss: { plugins: [] } } };\n';
@@ -112,9 +114,11 @@ export function generateApplication(input: unknown): GeneratedApplication {
       'export default function Form() {',
       '  const [, append] = useModel(' + json(o.modelId) + ');',
       '  const [error, setError] = useState("");',
-      '  const submit = event => {',
+      '  const submit = async event => {',
       '    event.preventDefault(); const form = event.currentTarget;',
-      '    try { append(prepareRecord(fields, Object.fromEntries(new FormData(form)))); form.reset(); setError(""); }',
+      '    try { const record = prepareRecord(fields, Object.fromEntries(new FormData(form)));',
+      ...(o.slugField ? ['      const { default: slugify } = await import("slugify");', '      record.slug = slugify(record['+json(o.slugField)+'], { lower: true, strict: true });'] : []),
+      '      append(record); form.reset(); setError(""); }',
       '    catch (e) { setError(e.message); }',
       '  };',
       '  return <form onSubmit={submit}>{fields.map(f => <label key={f.name}>{f.label}<input name={f.name} required={f.required} /></label>)}<button type="submit">Save</button>{error && <p role="alert">{error}</p>}</form>;',
@@ -160,6 +164,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
     "import { appendRecord, prepareRecord, resolvePage } from '../src/logic.js';",
     'test("form values append without mutating earlier records", () => { const before = []; const record = prepareRecord([{name:"text",label:"Note",required:true}], {text:" hello "}); const after = appendRecord(before,record); assert.deepEqual(before,[]); assert.deepEqual(after,[{text:"hello"}]); record.text = "changed"; assert.equal(after[0].text,"hello"); });',
     'test("required fields reject whitespace", () => { assert.throws(() => prepareRecord([{name:"text",label:"Note",required:true}],{text:"   "}), /Note is required/); });',
+    ...(d.dependencies?.slugify ? ["test('declared dynamic slug dependency resolves and normalizes a title', async () => { const {default: slugify} = await import('slugify'); assert.equal(slugify('Hello Peer Two!',{lower:true,strict:true}),'hello-peer-two'); });"] : []),
     'test("routes resolve exactly and unknown routes stay missing", () => { const pages = [{path:"/"}]; assert.equal(resolvePage(pages,"/"), pages[0]); assert.equal(resolvePage(pages,"/unknown"),undefined); });',
     ...d.objects.filter(o => o.kind === 'API').map((o, i) => "import { request as request" + i + " } from '../src/services/" + o.id + ".js';\ntest(" + json('API ' + o.id + ' uses its declared path and reports HTTP errors') + ', async () => { assert.deepEqual(await request' + i + '(async path => { assert.equal(path,' + json(o.path) + '); return {ok:true,json:async()=>({value:1})}; }),{value:1}); await assert.rejects(() => request' + i + '(async()=>({ok:false,status:503})),/503/); });')
   ].join('\n') + '\n';

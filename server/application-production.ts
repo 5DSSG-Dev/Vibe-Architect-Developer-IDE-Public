@@ -1,3 +1,5 @@
+import { validateRequirementAst, validateAssemblyAudit, type AssemblyAuditor, type AstBinding, type AssemblyAudit } from './assembly-gates.js';
+import { resolveAndVerifyAssembly } from './assembly-dependencies.js';
 import express, { Router, type Request } from 'express';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
@@ -9,7 +11,7 @@ import type { AddressInfo } from 'node:net';
 import { build } from 'vite';
 import { generateApplication } from '../src/engine/applicationGenerator.js';
 import { verifyCoreApplication } from '../src/engine/coreApplication.js';
-import { validateProductionContext, parseProductionAnswer, productionPrompt, type ProductionContext } from '../src/engine/applicationProduction.js';
+import { validateProductionContext, parseProductionAnswer, productionPrompt, productionFiles, type ProductionContext } from '../src/engine/applicationProduction.js';
 import type { ReviewRecord } from './governance-record/review.js';
 import { isLoopback } from './luminary-task-router.js';
 import type { GovernedAskResult } from './luminary-reply-router.js';
@@ -18,11 +20,13 @@ const fileDigest = (files: Record<string,string>) => hash(Object.keys(files).sor
 export interface ProductionReceipt {
  id:string; requestId:string; digest:string; contextHash:string; modelId:string; projectPath:string;
  answer:ReturnType<typeof parseProductionAnswer>; files:Record<string,string>;
+ gates?:{ast:AstBinding[];audit:AssemblyAudit;verification:Awaited<ReturnType<typeof resolveAndVerifyAssembly>>};
  state:'generated'|'building'|'running'|'stopped'|'failed'; output:string; previewUrl?:string;
  record?:Extract<GovernedAskResult,{ok:true}>['record'];
 }
 interface Entry { receipt:ProductionReceipt; server?:Server; pending?:Promise<ProductionReceipt> }
 export interface ProductionOptions {
+ assembly?: {audit:AssemblyAuditor;resolve?:typeof resolveAndVerifyAssembly};
  root:string; record:ReviewRecord; ask:(prompt:string)=>Promise<GovernedAskResult>;
 }
 export class ProductionRuntime {
@@ -66,18 +70,26 @@ export class ProductionRuntime {
   if(this.entries.size>=8)throw Error('This gateway session has reached its eight-project limit. Restart after stopping previews.');
   this.generating=true;
   try {
-   const {files}=generateApplication(application.answer.definition);
+   const files=productionFiles(application.answer);
    await mkdir(this.options.root,{recursive:true});
    const projectPath=await mkdtemp(join(resolve(this.options.root),'app-'));
    for(const [relative,source] of Object.entries(files)) {
     const target=join(projectPath,relative);
     await mkdir(dirname(target),{recursive:true});await writeFile(target,source,{flag:'wx'});
    }
-   await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({restoredFromCore:application},null,2),{flag:'wx'});
+   let gates:ProductionReceipt['gates'];
+   if(this.options.assembly) {
+    const ast=validateRequirementAst(application.context,application.answer,files);
+    const verification=await (this.options.assembly.resolve??resolveAndVerifyAssembly)(projectPath,application.context);
+    if(verification.packageLock!==application.answer.packageLock)throw Error('Restored dependency resolution changed the saved bundle; generate and review again.');
+    const input={files,context:application.context,answer:application.answer,writerModelId:JSON.parse(original.entry.text).modelId,ast};
+    const audit=await this.options.assembly.audit(input);validateAssemblyAudit(audit,input);gates={ast,audit,verification};
+   }
+   await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({restoredFromCore:application,gates},null,2),{flag:'wx'});
    await this.note(JSON.stringify({kind:'application_restored_from_core',id:application.generationId,digest:application.sourceDigest,contextHash:application.contextHash,projectPath}));
    const receipt:ProductionReceipt={id:application.generationId,requestId:randomUUID(),digest:application.sourceDigest,contextHash:application.contextHash,
-    modelId:JSON.parse(original.entry.text).modelId,projectPath,answer:application.answer,files,state:'generated',
-    output:'Saved CORE program restored against its original governed generation. No model request repeated. Review the source before launch.\nData profile: in memory only. Existing code frames are not compiled.\n'};
+    modelId:JSON.parse(original.entry.text).modelId,projectPath,answer:application.answer,files,state:'generated',...(gates?{gates}:{}),
+    output:'Saved CORE program restored against its original governed generation. No writer generation request repeated. Review the source before launch.\nData profile: in memory only. Existing code frames are not compiled.\n'};
    this.entries.set(receipt.id,{receipt});return this.get(receipt.id);
   } finally {this.generating=false;}
  }
@@ -101,7 +113,7 @@ export class ProductionRuntime {
   if([...this.entries.values()].some(e=>e.server||e.pending))throw Error('Stop the active application before generating another project.');
   if(this.entries.size>=8)throw Error('This gateway session has reached its eight-project limit. Restart after stopping previews.');
   const context=validateProductionContext(raw);
-  if(Buffer.byteLength(JSON.stringify(context))>24000)throw Error('The production context exceeds 24000 bytes.');
+  if(Buffer.byteLength(JSON.stringify(context))>524288)throw Error('The production context exceeds 524288 bytes.');
   this.generating=true;
   try {
    const result=await this.options.ask(productionPrompt(context));
@@ -109,8 +121,9 @@ export class ProductionRuntime {
    if(!result.record || result.record.state!=='sent' || !result.lineage?.some(l=>l.stage==='prism'))throw Error('The production definition lacks a recorded governed delivery.');
    this.assertOpen();
    const answer=parseProductionAnswer(result.reply.content,context);
-   const {files}=generateApplication(answer.definition);
-   const id=randomUUID(),digest=fileDigest(files),contextHash=hash(context);
+   const files=productionFiles(answer);
+   const ast=this.options.assembly ? validateRequirementAst(context,answer,files) : undefined;
+   const id=randomUUID(),contextHash=hash(context);
    await mkdir(this.options.root,{recursive:true});
    const projectPath=await mkdtemp(join(resolve(this.options.root),'app-'));
    for(const [relative,source] of Object.entries(files)) {
@@ -118,9 +131,19 @@ export class ProductionRuntime {
     await mkdir(dirname(target),{recursive:true});
     await writeFile(target,source,{flag:'wx'});
    }
-   await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({id,requestId,digest,contextHash,context,bindings:answer.bindings,modelId:result.reply.modelId,record:result.record,lineage:result.lineage},null,2),{flag:'wx'});
+   let gates:ProductionReceipt['gates'];
+   if(this.options.assembly) {
+    const verification=await (this.options.assembly.resolve??resolveAndVerifyAssembly)(projectPath,context);
+    answer.packageLock=verification.packageLock;files['package-lock.json']=verification.packageLock;
+    const auditInput={files,context,answer,writerModelId:result.reply.modelId,ast:ast!};
+    const audit=await this.options.assembly.audit(auditInput);validateAssemblyAudit(audit,auditInput);
+    gates={ast:ast!,audit,verification};
+    await this.note(JSON.stringify({kind:'assembly_gates_verified',id,artifactHash:audit.artifactHash,requirementsHash:audit.requirementsHash,auditorModel:audit.modelId,audit,ast,dependencies:verification.dependencies,tests:verification.tests,build:verification.build}));
+   }
+   const digest=fileDigest(files);
+   await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({id,requestId,digest,contextHash,context,bindings:answer.bindings,modelId:result.reply.modelId,record:result.record,lineage:result.lineage,gates},null,2),{flag:'wx'});
    await this.note(JSON.stringify({kind:'application_generated',id,requestId,digest,contextHash,modelId:result.reply.modelId,bindings:answer.bindings,projectPath}));
-   const receipt:ProductionReceipt={id,requestId,digest,contextHash,modelId:result.reply.modelId,projectPath,answer,files,state:'generated',output:'Governed definition recorded. Deterministic source assembled. Review the files before launching.\nData profile: in memory only. Existing code frames are not compiled.\n',record:result.record};
+   const receipt:ProductionReceipt={id,requestId,digest,contextHash,modelId:result.reply.modelId,projectPath,answer,files,state:'generated',...(gates?{gates}:{}),output:'Governed definition recorded. Deterministic source assembled. Review the files before launching.\nData profile: in memory only. Existing code frames are not compiled.\n',record:result.record};
    this.entries.set(id,{receipt});
    return structuredClone(receipt);
   } finally {this.generating=false;}
@@ -128,6 +151,7 @@ export class ProductionRuntime {
  async launch(id:string,raw:unknown,digest:string):Promise<ProductionReceipt> {
   this.assertOpen();
   const e=this.entry(id),r=e.receipt;
+  if(this.options.assembly && (!r.gates || r.gates.audit.artifactHash!==r.digest))throw Error('A matching complete-bundle assembly audit is required before preview.');
   if(r.digest!==digest)throw Error('The reviewed source digest does not match.');
   if(hash(validateProductionContext(raw))!==r.contextHash)throw Error('The accepted architecture or decisions changed. Generate and review again.');
   if(e.pending)return e.pending;

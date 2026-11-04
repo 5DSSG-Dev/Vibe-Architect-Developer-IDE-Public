@@ -1,5 +1,5 @@
 ﻿import { nextAppSuggestions } from '../engine/appSuggestions';
-import { buildCreationLedger, selectCreationTurns } from '../engine/creationLedger';
+import { buildCreationLedger, selectCreationTurns, interviewRequirements } from '../engine/creationLedger';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowRight, Send, Square, Sparkles } from 'lucide-react';
 import { creationPrompt, parseCreationAnswer, type AppProposal, type CreationAnswer } from '../engine/appCreation';
@@ -105,7 +105,11 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
   async function accept() {
     if (!answer?.proposal || answer.questions.length > 0 || accepting.current || request.current) return;
     accepting.current = true; setApplying(true); setError('');
-    try { await onAccept(answer.proposal, turns.filter(turn => !turn.state || turn.state === 'sent').map(turn => turn.role + ': ' + turn.text).join('\n\n')); }
+    try {
+      const sourceTurns = turns.filter(turn => turn.role === 'architect' && (!turn.state || turn.state === 'sent'));
+      const requirements = interviewRequirements(sourceTurns);
+      if (Object.keys(answer.proposal.dependencies ?? {}).length && !sourceTurns.some(turn => turn.text.includes('slugify@1.6.6'))) throw Error('The proposed dependency was not explicitly requested in the interview.');
+      await onAccept({...answer.proposal,requirements}, turns.filter(turn => !turn.state || turn.state === 'sent').map(turn => turn.role + ': ' + turn.text).join('\n\n')); }
     catch (e) { setError(e instanceof Error ? e.message : 'The architecture could not be connected.'); }
     finally { accepting.current = false; setApplying(false); }
   }

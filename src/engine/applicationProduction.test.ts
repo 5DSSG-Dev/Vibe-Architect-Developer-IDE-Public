@@ -17,7 +17,7 @@ test('reads accepted CORE and actual attached hierarchy', () => {
 });
 test('rejects missing hierarchy and malformed generation context', () => {
   assert.throws(()=>validateProductionContext({...context,elements:[context.elements[0],{...context.elements[1],parentId:'missing'}]}),/parent/);
-  assert.throws(()=>validateProductionContext({...context,decisions:'x'.repeat(12001)}),/context/);
+  assert.throws(()=>validateProductionContext({...context,decisions:'x'.repeat(48001)}),/context/);
 });
 test('requires exact object ownership, same app and no essential gaps', () => {
   assert.equal(parseProductionAnswer(JSON.stringify(answer),context).bindings.home,'core');

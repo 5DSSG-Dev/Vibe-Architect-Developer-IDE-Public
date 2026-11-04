@@ -12,8 +12,8 @@ export interface AppBuildPlan {
 }
 export function createBuildPlan(proposal: AppProposal, decisions = ''): AppBuildPlan {
   const snapshot = JSON.parse(JSON.stringify(proposal)) as AppProposal;
-  const work = [...snapshot.gaps, 'Verify the requested app works, saves its data, and reopens successfully.'];
-  return { proposal: snapshot, decisions, items: work.map(text => ({ id: crypto.randomUUID(), text })), invitation: 'pending' };
+  const work = snapshot.requirements?.length ? [] : [...snapshot.gaps, 'Verify the requested app works, saves its data, and reopens successfully.'];
+  return { proposal: snapshot, decisions, items: [...(snapshot.requirements ?? []).map(r=>({...r})), ...work.map(text => ({ id: crypto.randomUUID(), text }))], invitation: 'pending' };
 }
 export function verifyBuildItem(plan: AppBuildPlan, id: string, evidence: string): AppBuildPlan {
   if (!plan.items.some(item => item.id === id)) throw Error('ToDo item not found.');

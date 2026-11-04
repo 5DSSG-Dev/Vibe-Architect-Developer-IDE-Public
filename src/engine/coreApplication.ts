@@ -1,3 +1,4 @@
+import { productionFiles } from './applicationProduction.js';
 import type { CoreManifest, ApothecaryItem } from './relationEngine';
 import { generateApplication } from './applicationGenerator.js';
 import { parseProductionAnswer, productionContext, validateProductionContext, type ProductionAnswer, type ProductionContext } from './applicationProduction.js';
@@ -20,7 +21,7 @@ export function validateCoreApplication(raw: unknown): CoreApplication {
   if (!app || app.version !== 1 || typeof app.generationId !== 'string' || !/^[0-9a-f-]{36}$/.test(app.generationId)
     || typeof app.sourceDigest !== 'string' || !/^[a-f0-9]{64}$/.test(app.sourceDigest)
     || typeof app.contextHash !== 'string' || !/^[a-f0-9]{64}$/.test(app.contextHash)
-    || JSON.stringify(raw).length > 100000) throw Error('Invalid saved CORE application.');
+    || JSON.stringify(raw).length > 300000) throw Error('Invalid saved CORE application.');
   const context = validateProductionContext(app.context);
   const answer = parseProductionAnswer(JSON.stringify(app.answer), context);
   return { version: 1, generationId: app.generationId, sourceDigest: app.sourceDigest, contextHash: app.contextHash, context, answer };
@@ -28,7 +29,7 @@ export function validateCoreApplication(raw: unknown): CoreApplication {
 export async function verifyCoreApplication(raw: unknown, current: ProductionContext): Promise<CoreApplication> {
   const app = validateCoreApplication(raw);
   if (JSON.stringify(validateProductionContext(current)) !== JSON.stringify(app.context)) throw Error('The architecture changed. Generate, review and save a new CORE program.');
-  const { files } = generateApplication(app.answer.definition);
+  const files = productionFiles(app.answer);
   const digest = await applicationHash(Object.keys(files).sort().map(path => [path, files[path]]));
   if (digest !== app.sourceDigest || await applicationHash(app.context) !== app.contextHash) throw Error('The saved CORE program does not match its generation evidence.');
   return app;
