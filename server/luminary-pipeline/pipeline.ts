@@ -57,7 +57,7 @@ export type LineageEntry =
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
-  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
+  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[]; suggestLibrary?: { version: string; picked: string[]; fellBack: boolean } }
   | { pass: number; stage: 'ids_error'; failures: IdsFailure[] }
   | { pass: number; stage: 'prism' };
 
@@ -142,13 +142,13 @@ export async function runReplyPipeline(
     }
 
     // IDS fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
-    const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+    const ids = await runIds({ reply: reply.content, pimFindings, irg, from: 'luminary' }, options.gauge.ids, options.idsOptions);
     if (!ids.ok) {
       lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
       return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
     }
     const observation = ids.observation;
-    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures, ...(ids.suggestLibrary ? { suggestLibrary: ids.suggestLibrary } : {}) });
 
     if (pass > maxIdsPasses) {
       return {

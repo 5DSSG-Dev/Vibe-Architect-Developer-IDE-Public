@@ -271,12 +271,14 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       const reason = providerReason(body).split(options.apiKey).join('[key]');
       throw new Error(`${provider} returned HTTP ${response.status}${reason ? `: ${reason}` : ''}.`);
     }
-    const choice = (body as { model?: unknown; choices?: Array<{ message?: { content?: unknown } }> })?.choices?.[0];
+    const choice = (body as { model?: unknown; choices?: Array<{ message?: { content?: unknown }; finish_reason?: unknown }> })?.choices?.[0];
     const declared = (body as { model?: unknown })?.model;
     // Untrusted: governReply() decides whether this is a reply.
     return {
       modelId: typeof declared === 'string' && declared.trim() ? declared : model,
       content: choice?.message?.content,
+      // "length" means the output allowance ran out, often inside hidden reasoning, before any answer.
+      ...(typeof choice?.finish_reason === 'string' ? { finishReason: choice.finish_reason } : {}),
     };
   };
 }

@@ -57,7 +57,7 @@ test('an incoherent reply goes to IDS, the originator re-forms, and the re-forme
   assert.equal(result.ok, true);
   if (!result.ok) return;
   assert.equal(result.reply.content, 'second');
-  assert.deepEqual(observations, [['Respect reads 30, below the threshold of 70.']]);
+  assert.deepEqual(observations, [['Respect reads 30.0, below the threshold of 70.']]);
   assert.deepEqual(result.lineage.map((e) => `${e.pass}:${e.stage}`), [
     '1:structural', '1:pim', '1:irg', '1:rbc', '1:ids',
     '2:structural', '2:pim', '2:irg', '2:rbc', '2:prism',
@@ -75,7 +75,7 @@ test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an inc
   assert.equal(result.shortfall.code, 'incoherent_after_ids');
   assert.equal(result.shortfall.modelId, 'meta/test-model');
   assert.deepEqual(result.shortfall.readings, readings(90, { Trust: 10 }));
-  assert.deepEqual(result.shortfall.observation?.define, ['Trust reads 10, below the threshold of 70.']);
+  assert.deepEqual(result.shortfall.observation?.define, ['Trust reads 10.0, below the threshold of 70.']);
   assert.ok(!JSON.stringify(result).includes('"content"'), 'incoherent text is never returned as a reply');
   assert.equal(result.lineage.filter((e) => e.stage === 'ids').length, 3);
   assert.equal(result.lineage.at(-1)?.stage, 'ids');

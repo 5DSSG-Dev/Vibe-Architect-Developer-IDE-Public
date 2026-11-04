@@ -7,6 +7,7 @@ import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
 import { createLocalIdsWriter } from './luminary-pipeline/ids-local.js';
+import { createMetaIdsWriter, parseMetaIdsEnv } from './luminary-pipeline/ids-meta.js';
 import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
@@ -15,6 +16,8 @@ import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 import { loadLuminaryKnowledge, systemPromptWithKnowledge } from './luminary-knowledge.js';
 
 const config = loadConfig();
+// IDS_WRITER=meta: the IDS writer runs on Meta's Model API; otherwise on the gauge's local runtime.
+const metaIds = parseMetaIdsEnv(process.env);
 // A live reply source: Meta's Model API (STP-0002 P21) or Baseten's Muse Spark Open (P22). The key
 // and the Architect's ceiling come from .env. The system message is the P15 Instructions followed by
 // the P23 Knowledge Pack, the IDE's own Element descriptions.
@@ -48,10 +51,10 @@ try {
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
-    // The IDS embedded model runs on the gauge's local runtime and model (STP-0005 P2).
+    // The gauge always runs locally. The IDS writer runs there too unless IDS_WRITER=meta (STP-0005 P2).
     record,
     gauge: config.luminaryGauge
-      ? { ...createLocalGauge(config.luminaryGauge), ids: createLocalIdsWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
+      ? { ...createLocalGauge(config.luminaryGauge), ids: metaIds ? createMetaIdsWriter(metaIds) : createLocalIdsWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
       : undefined,
     askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : metaAskModel,
     replySource: meta ? (liveSource === 'baseten' ? 'Muse Spark Open · Baseten' : `Meta · ${meta.model}`) : config.luminaryReplySource,
