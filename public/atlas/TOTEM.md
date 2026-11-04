@@ -29,3 +29,6 @@
 - `atlas.js` rewritten: the visitor-event outbox and DataQuad flush adapter are removed (no visitor record of any kind). Books open from `page.html#id`, the Close button, backdrop, Escape and Back close them, and in-book links like `#first-creation` work.
 - Added a hotspot over the painted "Return to Vibe Atlas" button in each room.
 - Verified in the browser at http://127.0.0.1:8765/atlas/: cross-page deep link, close and Escape clear the address, Back closes, in-book link, no console errors. Books still hold GPT's placeholder text. Uncommitted.
+## 2026-11-04 | Codex | Remove duplicate top return link
+- AEGIS, Explore and Building the Vibe no longer show the standalone return text above the artwork. Illustrated hotspots remain, as do existing footer links. The now-unused return-link CSS rule was removed.
+- Live 3012 desktop Chrome followed each page's hotspot back to index; all three pages had zero return-link nodes. No push.

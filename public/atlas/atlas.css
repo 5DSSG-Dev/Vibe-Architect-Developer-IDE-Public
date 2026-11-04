@@ -73,12 +73,6 @@ main {
   margin-inline: auto;
 }
 
-.return-link {
-  display: inline-block;
-  min-height: 44px;
-  padding: .7rem 1rem;
-}
-
 .stage {
   position: relative;
   width: 100%;
