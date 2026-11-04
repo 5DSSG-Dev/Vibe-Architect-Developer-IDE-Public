@@ -82,7 +82,7 @@ export class ProductionRuntime {
     const ast=validateRequirementAst(application.context,application.answer,files);
     const verification=await (this.options.assembly.resolve??resolveAndVerifyAssembly)(projectPath,application.context);
     if(verification.packageLock!==application.answer.packageLock)throw Error('Restored dependency resolution changed the saved bundle; generate and review again.');
-    const input={files,context:application.context,answer:application.answer,writerModelId:JSON.parse(original.entry.text).modelId,ast};
+    const input={files,context:application.context,answer:application.answer,writerModelId:JSON.parse(original.entry.text).modelId,ast,verification};
     const audit=await this.options.assembly.audit(input);validateAssemblyAudit(audit,input);gates={ast,audit,verification};
    }
    await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({restoredFromCore:application,gates},null,2),{flag:'wx'});
@@ -135,7 +135,7 @@ export class ProductionRuntime {
    if(this.options.assembly) {
     const verification=await (this.options.assembly.resolve??resolveAndVerifyAssembly)(projectPath,context);
     answer.packageLock=verification.packageLock;files['package-lock.json']=verification.packageLock;
-    const auditInput={files,context,answer,writerModelId:result.reply.modelId,ast:ast!};
+    const auditInput={files,context,answer,writerModelId:result.reply.modelId,ast:ast!,verification};
     let audit:AssemblyAudit;
     try {audit=await this.options.assembly.audit(auditInput);validateAssemblyAudit(audit,auditInput);}
     catch(error){await this.note(JSON.stringify({kind:'assembly_audit_rejected',id,...(error instanceof AssemblyAuditRejected?{audit:error.audit}:{reason:(error as Error).message})}));throw error;}

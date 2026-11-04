@@ -413,3 +413,7 @@ Validated scripted isolation, batching, failure recovery, accepted hierarchy, re
 ## 2026-11-03 | codex | Independent small-model judgment limitation retained
 - Revisedactualclientbundlehasallten usefulinstructioncomponents/4generatedtestspass, but llama3.2:3b heldforallegedmissingblankvalidation despite actualprepareRecord.trim/requiredcheck andpassingregression. Previousnegativecontrolholdalsohadincorrecttrimmingrationale; qualifiedastransportholdonly, notmissinginstructiondetection. No passoverride orreceiptpush.
 - Assemblyauditor selection nowaccepts explicitLUMINARY_ASSEMBLY_MODEL independentofunchangedIRGgauge. Usingalreadyinstalledqwen3.5:4b for completebundle review, thinkingdisabled/schema unchanged; promptrequiresfollowingimportedhelperdefinitions before allegingmissingvalidation. Fullsource/hash/ID/decisionchecks unchanged. Focused6tests/buildpass; strongerauditorliveverificationnext.
+
+## 2026-11-03 | codex | Qwen held missing execution evidence; audit packet completed
+- Actualclientattempt4 usedqwen3.5:4b independentofBasetenwriter andunchangedIRG. Itapproved8/9IDsbutheldR001-09becausesourcebundlecontainednoexecutedtest/buildreceipt. Hosthadexecutedresolution/tests/build; packetomittedthat evidence. Holdpreserved, nooverride.
+- Assemblyinputnowincludesactualhostresolver install/test/build/dependencyreceipt alongsidecompleteartifact/AST. Regressionassertsexactexecutionevidencetransmission. Focused19checks/buildpass. Nextsameinterviewclientrunwillverifycompletepacket; remote receiptpushstillheld.
