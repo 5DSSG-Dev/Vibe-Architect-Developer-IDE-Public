@@ -74,3 +74,5 @@
 
 ## 2026-11-03 | Lumen | Validation closure mapping
 - At Architect request, produced docs/UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md from the prior autonomous report and current branch source. Twenty-four rows include environment, implementation, authorization, branch/CLI/browser/human feasibility and exact conditions. Documentary only; no new UI execution or feature claim.
+## 2026-11-04 | Codex | Interview ToDo presentation
+- Architect requested compact accordions and check marks for interview items. Implemented in isolated codex/todo-accordions-20261104 from main dc002ff. Capture is displayed as checked without marking a build verified; completion still requires evidence. App tests 445/445 and production build passed; browser review pending. Shared public checkout was not edited.
