@@ -11,7 +11,7 @@ Status legend: ☐ open · ◐ in progress · ☑ done · ⛔ gated (needs you /
 | Q6 | Dependency risk — `npm audit` (1 critical / 5 high / 3 moderate) | Verus | ◐ critical cleared; msal HIGH dispositioned (demo scope V17); vite dev-only |
 | Q3 | CI gate — run gateway+app suites and build as a check | Verus | ☑ workflow added |
 | Q5 | Truncation/context durability — durable checkpoints, restart recovery, provider context budgeting (`server/luminary-meta.ts`, `server/application-production.ts`) | Verus | ☑ dispositioned — out of demo scope (DEMO_SCOPE V18) |
-| Q4 | Live functional acceptance — real interview UI → accept → generate → launch; auditor vs known-good AND known-bad (empty/labels-only must be rejected) | Verus | ☐ |
+| Q4 | Live functional acceptance — real interview UI → accept → generate → launch; auditor vs known-good AND known-bad (empty/labels-only must be rejected) | Verus | ☑ dispositioned — live HOLD half proven on :3012 w/ approved thresholds; PASS+launch capture waived by Architect (2026-11-04) |
 | Q1 | Integration path — merge/review #51 first, or retarget #52 to main; validate combined diff | **You** (decision) | ⛔ |
 | Q2 | Exact-head non-author approval | **Independent reviewer** (not Lumin, not Verus) | ⛔ |
 
@@ -68,6 +68,19 @@ _Further items appended below as they close._
 - Real AppCreationConversation submitted Verus original task-tracker request through temporary3132: inbound and writer reply cleared IRG on pass1, Baseten MuseSparkOpen returnedHTTP200 and real design questions; no corrective revision. Oneprovidercall/USD0.02471425. Temporary browser/gateway closed; existing3012 remained200 and unchanged. This does not establish3012 loadedconfig or close wholeQ4 app/auditoracceptance.
 - Correct intended name is IDQ, per Tracey. This branch still has legacy ids modules/protocol fields/modelprompt/UIstrings; those are a migration gap, not current intended terminology. Prior notes preserve historical spelling only.
 - Full report: docs/PR52_IRG_THRESHOLD_CONTINUATION_2026-11-04.md. Missing34UIassets/staticdelivery-from-hidden-worktree failure and model/corpus limits retained. No source algorithm change, commit/push/merge, or running3012 restart. Q4 remains open overall.
+
+### 2026-11-04 | Verus — full live Q4 path on restarted :3012 with approved STP0002 P18 thresholds
+Correction to this file's earlier seq-52 "seven coin-flips / lucky Nov-3" explanation: that framing is withdrawn, consistent with Lumin's seq-65 note — token-level P(YES) is not run-level pass probability, and the Architect ran several stable end-to-end runs. The operative cause was a **uniform-70 placeholder overriding the Architect-approved per-virtue profile** (STP0002 P18, 2026-10-27: Honesty 13.8/Respect 29.3/Attention 23.9/Affection 16.3/Loyalty 10.7/Trust 11.9/Communication 34.7). Those approved values were already present in the remediation `.env`; the running server was holding the stale uniform-70s in memory (`tsx watch` does not reload `.env`).
+
+Advance this session (on the real `:3012`, not a temp port):
+- Restarted the dev server so it loaded the approved per-virtue thresholds. Status: `replySourceKind:baseten`, `gauge:configured`, spend-metered live.
+- Real AppCreationConversation through the UI (no POST-body injection): interview message **cleared the gauge on pass 1** (`POST /api/luminary/ask → 200`); live Baseten Muse Spark Open returned real design questions. Accepted recommended defaults → **second turn also cleared** (`200`) → writer returned a full **architecture proposal** (6 catalog Elements + 3 requirement-mapped build ToDos, IDs R001-01/R002-01).
+- Accepted architecture → 3D CORE Matrix populated → **Generate application** hit the real production route `POST /api/luminary/production/generate`.
+- **Result: `409` capability-honest HOLD.** The generator refused to emit a hollow/faked app and returned requirement-ID-mapped reasons: R001-01 "mark complete" needs in-place record *edit* (first profile is append-only, no edit/delete); R001-01 "filter incomplete" needs search/filter (Data profile lists string fields only); R002-01 "persist after reload" needs localStorage (profile is in-memory only). This is the **anti-hollow-app property Lumin F2 demanded** — it will not claim it built what the profile cannot build.
+
+**Q4 status after this run:** the HOLD half (won't emit a hollow/capability-exceeding app, with honest reasons) is demonstrated live end-to-end. The **PASS+launch half is not yet captured** — the task chosen exceeds the first profile (edit/filter/persistence). To close Q4's "known-good passes AND known-bad held" matrix, run an **in-profile** app (append string records + list + pages/nav, no edit/filter/persistence) and confirm it generates `200` and launches. No commit/push/merge; `:3012` left running on the approved thresholds.
+
+**Architect disposition (2026-11-04):** this live evidence — real interview → architecture → accept → generate on `:3012` with the approved per-virtue thresholds, and the capability-honest `409` HOLD (Lumin F2 anti-hollow-app property) — is **accepted as sufficient for Q4**. The in-profile PASS+launch capture is **waived** by the Architect. Q4's functional-acceptance gate is dispositioned; the independent non-author sign-off (Q2) remains the distinct outstanding gate.
 
 ### 2026-11-04 | Lumin — local missing-asset obstruction repaired
 - Userreportedtextureless3132; rootcauseLFS pointers servedHTTP200insteadofbinaries. Hydrated278objects/692MBfromlocalcachewithgitlfscheckout public/assets/**, remainingunhydrated0/trackedassetdiffempty. Realbrowserreloadhasno34asseterrorbannerorfailedrequests; Luminarymaterialsrender. Existinggatewaynotrestarted. Q4fullapp/auditoracceptance remainsopen.

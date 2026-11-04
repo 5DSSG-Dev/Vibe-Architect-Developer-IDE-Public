@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { reopenBuildItem, verifyBuildItem, type AppBuildPlan } from '../engine/appBuildPlan';
+import { journeyItems, reopenBuildItem, verifyBuildItem, type AppBuildPlan } from '../engine/appBuildPlan';
 
 interface Props {
   coreId: string;
@@ -28,10 +28,12 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
   }, [coreId]);
   useEffect(() => { if (reviewing) reviewField.current?.focus(); }, [reviewing]);
   useEffect(() => { if (isApothecaryOpen && plan.invitation === 'entered') setGuideOpen(true); }, [isApothecaryOpen, plan.invitation]);
-  const pending = plan.items.filter(item => !item.verification);
+  const tasks = journeyItems(plan);
+  const taskPlan = {...plan,items:tasks};
+  const pending = tasks.filter(item => !item.verification);
   const focused = pending.find(item => item.id === focusedId) ?? pending[0];
   const shortTask = focused?.text.split(/(?:\.\s|;\s|\n)/, 1)[0].slice(0, 110);
-  const item = plan.items.find(item => item.id === reviewing);
+  const item = tasks.find(item => item.id === reviewing);
   const focus = (id: string) => { setFocusedId(id); setGuideOpen(false); setOpen(false); onSelect(id); };
   const finishReview = () => {
     setReviewing(null); setEvidence(''); setError('');
@@ -45,13 +47,13 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
     onApothecary();
   };
   return <>
-    <aside aria-label="App build ToDo list" className="fixed z-30 left-[calc(1in+1rem)] top-32 md:top-20 w-[min(21rem,calc(100vw-1in-2rem))] min-w-0 text-slate-100 pointer-events-none [&>*]:pointer-events-auto">
+    <aside aria-label="App build ToDo list" className={`build-todo-dock ${isApothecaryOpen?'with-apothecary':''} fixed z-50 right-3 top-24 bottom-[calc(var(--workspace-footer-clearance,12rem)+4rem)] w-[min(21rem,calc(100vw-1.5rem))] min-w-0 flex flex-col items-end text-slate-100 pointer-events-none [&>*]:pointer-events-auto`}>
       <button ref={listTrigger} type="button" aria-expanded={open} aria-controls="app-build-todos"
         onClick={() => setOpen(!open)}
         className="rounded-xl border border-amber-300/40 bg-slate-950/95 px-4 py-2 text-sm shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">
-        ToDo ? {pending.length} remaining {open ? '?' : '+'}
+        ToDo · {pending.length} remaining {open ? '−' : '+'}
       </button>
-      {open && <section id="app-build-todos" className="mt-2 max-h-[calc(100dvh-7rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/30 bg-slate-950/95 p-4 space-y-3 shadow-xl">
+      {open && <section id="app-build-todos" className="mt-2 min-h-0 flex-1 w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/30 bg-slate-950/95 p-4 space-y-3 shadow-xl">
         <h2 className="font-semibold text-amber-200">{plan.proposal.name} ? build journey</h2>
         <p className="text-xs text-slate-300">Architecture accepted. Select an open item to flag Luminary with your agreed design. Completed items retain Architect or verified-build evidence. Opening a task never completes it.</p>
         <details className="rounded-xl border border-slate-700 p-3 text-xs">
@@ -60,12 +62,12 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
           <ul className="mt-2 space-y-1">{plan.proposal.elements.map(element => <li key={element.id}>{element.id}: {element.reason}</li>)}</ul>
           <pre className="mt-3 max-h-56 overflow-y-auto whitespace-pre-wrap font-sans select-text text-slate-300">{plan.decisions || 'No additional interview notes were recorded.'}</pre>
         </details>
-        <ul className="space-y-3">{plan.items.map(todo => <li key={todo.id} className="rounded-xl border border-slate-700 p-3">
+        <ul className="space-y-3">{tasks.map(todo => <li key={todo.id} className="rounded-xl border border-slate-700 p-3">
           <div className="flex items-start gap-3">
             <input type="checkbox" checked={Boolean(todo.verification)}
               aria-label={todo.verification ? 'Reopen: ' + todo.text : 'Review completion: ' + todo.text}
               onChange={event => {
-                if (todo.verification) onChange(reopenBuildItem(plan, todo.id));
+                if (todo.verification) onChange({...plan,tasks:reopenBuildItem(taskPlan, todo.id).items});
                 else { previousReviewTrigger.current = event.currentTarget; setReviewing(todo.id); setEvidence(''); setError(''); }
               }}
               className="mt-1 h-5 w-5 shrink-0 accent-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200" />
@@ -82,7 +84,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
         </li>)}</ul>
         {item && <form onSubmit={event => {
           event.preventDefault();
-          try { onChange(verifyBuildItem(plan, item.id, evidence)); finishReview(); }
+          try { onChange({...plan,tasks:verifyBuildItem(taskPlan, item.id, evidence).items}); finishReview(); }
           catch (e) { setError(e instanceof Error ? e.message : 'Verification could not be recorded.'); }
         }} className="rounded-xl border border-emerald-300/30 p-3 space-y-2">
           <h3 className="text-sm text-emerald-200">Verify completion</h3>

@@ -507,7 +507,7 @@ export const LeftDrawer: React.FC<LeftDrawerProps> = ({
           onClose();
         }
       }}
-      className={`fixed left-[calc(1in+1rem)] top-20 ${isFooterExpanded ? 'bottom-[268px]' : 'bottom-[150px] sm:bottom-24'} z-40 w-[min(26rem,calc(100vw-1in-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
+      className={`apothecary-window fixed left-[calc(1in+1rem)] top-20 ${isFooterExpanded ? 'bottom-[268px]' : 'bottom-[150px] sm:bottom-24'} z-40 w-[min(26rem,calc(100vw-1in-2rem))] ${isOpen ? 'flex' : 'hidden'} motion-safe:animate-modal-zoom`}
     >
       <div className="w-full h-full panel-glass rounded-2xl flex flex-col overflow-hidden border border-cyan-500/20 shadow-2xl">
         {/* Header */}

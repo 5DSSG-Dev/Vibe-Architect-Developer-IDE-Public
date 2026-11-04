@@ -42,6 +42,20 @@ body {
   font-family: var(--font-mono);
 }
 
+/* Construction tasks stay beside the Cabinet on wide screens and below it on narrow screens. */
+@media (min-width: 1100px) {
+  .build-todo-dock { left: 34rem; right: auto; width: clamp(14rem, calc(100vw - 56rem), 21rem); }
+}
+@media (max-width: 1099px) {
+  .build-todo-dock.with-apothecary { top: calc(6rem + (100dvh - var(--workspace-footer-clearance, 12rem) - 10rem) / 2); }
+  body:has(#app-build-todos) .apothecary-window { left: .75rem; top: 5rem; width: calc(100vw - 1.5rem); height: calc((100dvh - var(--workspace-footer-clearance, 12rem) - 10rem) / 2 - .75rem); bottom: auto; }
+}
+@media (max-width: 1099px) {
+  .luminary-label { position: fixed; right: .75rem; bottom: var(--workspace-footer-clearance, 12rem); }
+  .command-console { left: .75rem; transform: none; width: 11.5rem; }
+  .command-console > button { padding-left: .5rem; padding-right: .5rem; width: 100%; }
+}
+
 /* Glassmorphism Panel Component */
 .panel-glass {
   background: rgba(13, 19, 30, 0.72);

@@ -824,13 +824,14 @@ export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; m
             </button>
           </div>
         </section>
-      ) : docked ? null : (
+      ) : null}
+      {(
         <button
           ref={iconRef}
           onClick={() => setIsEngaged(true)}
           aria-expanded={false}
           title="Click to talk to the Vibe Luminary"
-          className="md:fixed md:right-[230px] md:bottom-[315px] md:translate-x-1/2 px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+          className="luminary-label md:fixed md:right-[230px] md:bottom-[315px] md:translate-x-1/2 px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
           {core('w-7 h-7')}
           <span className="text-left leading-tight">

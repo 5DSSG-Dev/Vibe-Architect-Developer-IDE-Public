@@ -8,7 +8,12 @@ export interface AppBuildPlan {
   proposal: AppProposal;
   decisions: string;
   items: BuildItem[];
+  /** Actionable construction tasks, separate from the lossless interview requirement ledger. */
+  tasks?: BuildItem[];
   invitation: 'pending' | 'exploring' | 'entered';
+}
+export function journeyItems(plan: AppBuildPlan): BuildItem[] {
+  return plan.tasks ?? (plan.proposal.gaps.length ? plan.proposal.gaps.map((text,index)=>({id:`build-task-${index+1}`,text})) : [{id:'build-task-verify',text:`Build and verify ${plan.proposal.name}: ${plan.proposal.purpose}`}]);
 }
 export function createBuildPlan(proposal: AppProposal, decisions = ''): AppBuildPlan {
   const snapshot = JSON.parse(JSON.stringify(proposal)) as AppProposal;
@@ -33,7 +38,8 @@ export function isBuildPlan(value: unknown): value is AppBuildPlan {
     && str(p.decisions, 2_000_000) && ['pending', 'exploring', 'entered'].includes(p.invitation)
     && Array.isArray(p.items) && p.items.length <= 64 && p.items.every(i => i && str(i.id, 160) && i.id.length > 0 && str(i.text, 2000) && i.text.trim().length > 0
       && (i.verification === undefined || (i.verification && ['Architect','Verified build'].includes(i.verification.by) && str(i.verification.evidence, 2000) && i.verification.evidence.trim().length > 0 && str(i.verification.at, 40) && Number.isFinite(Date.parse(i.verification.at)))))
-    && new Set(p.items.map(i => i.id)).size === p.items.length);
+    && new Set(p.items.map(i => i.id)).size === p.items.length
+    && (p.tasks===undefined || (Array.isArray(p.tasks) && p.tasks.length<=64 && p.tasks.every(i=>i && str(i.id,160) && i.id.length>0 && str(i.text,2000) && i.text.trim().length>0 && (i.verification===undefined || (['Architect','Verified build'].includes(i.verification.by) && str(i.verification.evidence,2000) && i.verification.evidence.trim().length>0 && str(i.verification.at,40) && Number.isFinite(Date.parse(i.verification.at))))) && new Set(p.tasks.map(i=>i.id)).size===p.tasks.length)));
 }
 export function nextBuildItem(plan: AppBuildPlan, selectedId?: string) {
   return plan.items.find(i => i.id === selectedId && !i.verification) ?? plan.items.find(i => !i.verification);
@@ -61,7 +67,7 @@ function interviewContext(value: string): string {
   return excerpt(value, 1000) + '\n[Middle discussion omitted; full interview remains saved. Later explicit decisions supersede earlier ones.]\nLatest interview decisions:\n' + value.slice(value.length - lo);
 }
 export function buildItemFocus(coreId: string, plan: AppBuildPlan, id: string, current?: ElementFocus) {
-  const item = plan.items.find(item => item.id === id);
+  const item = journeyItems(plan).find(item => item.id === id) ?? plan.items.find(item => item.id === id);
   if (!item) return undefined;
   const text = [
     'The Architect selected this ToDo for assistance. Explain the next step and guide building or editing in the Apothecary. This is context, not authorization to execute or claim completion. Preserve agreed decisions and ask before changing scope.',

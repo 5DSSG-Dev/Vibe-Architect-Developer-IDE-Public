@@ -55,11 +55,18 @@ export const Footer: React.FC<FooterProps> = ({
     wasCabinetOpen.current = isApothecaryOpen;
   }, [isApothecaryOpen]);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
+  useEffect(()=>{
+    const node=footerRef.current;if(!node)return;
+    const update=()=>document.documentElement.style.setProperty('--workspace-footer-clearance',`${node.getBoundingClientRect().height+24}px`);
+    update();const observer=new ResizeObserver(update);observer.observe(node);
+    return()=>observer.disconnect();
+  },[]);
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-20 flex flex-col font-mono select-none">
+    <footer ref={footerRef} className="fixed bottom-0 left-0 right-0 z-20 flex flex-col font-mono select-none">
       {/* Reliquary Entry Anchor / Command Console */}
-      <div className={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50 transition-all duration-300 command-console bottom-full mb-3`}>
+      <div className="fixed left-1/2 -translate-x-1/2 flex flex-col items-center z-50 command-console" style={{bottom:'var(--workspace-footer-clearance,12rem)'}}>
         
         {/* The Roll-Up Menu */}
         <div ref={node => { if (node) node.inert = !isConsoleOpen; }} aria-hidden={!isConsoleOpen} className={`w-64 bg-slate-900/95 border border-cyan-500/30 rounded-t-xl overflow-hidden transition-all duration-300 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] flex flex-col justify-end ${isConsoleOpen ? 'h-40 opacity-100 mb-0' : 'h-0 opacity-0 mb-0'}`}>

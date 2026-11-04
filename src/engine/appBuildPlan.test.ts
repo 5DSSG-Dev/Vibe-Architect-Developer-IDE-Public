@@ -1,7 +1,18 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createBuildPlan, verifyBuildItem, reopenBuildItem, buildItemFocus } from './appBuildPlan';
+import { createBuildPlan, journeyItems, isBuildPlan, verifyBuildItem, reopenBuildItem, buildItemFocus } from './appBuildPlan';
 import type { AppProposal } from './appCreation';
+
+test('construction tasks use agreed build gaps while preserving interview IDs for production coverage',()=>{
+ const p:AppProposal={name:'Notes',appType:'Web App',purpose:'Write notes',crystalModel:'AEGIS_POD_CRYSTAL.glb',elements:[{id:'orb',parentId:null,reason:'Notes'}],gaps:['Build note entry form','Verify saved note display'],requirements:[{id:'R001-01',text:'Can I make a notes app?'},{id:'R002-01',text:'Use no login'}]};
+ const plan=createBuildPlan(p,'Full interview');
+ assert.deepEqual(journeyItems(plan).map(t=>t.text),p.gaps);
+ assert.deepEqual(plan.items.map(t=>t.id),['R001-01','R002-01']);
+ assert.match(buildItemFocus('core',plan,'build-task-1')!.text,/Build note entry form/);
+ const saved={...plan,tasks:verifyBuildItem({...plan,items:journeyItems(plan)},'build-task-1','Checked form entry').items};
+ assert.equal(isBuildPlan(saved),true);assert.equal(journeyItems(saved)[0].verification?.by,'Architect');
+ assert.equal(isBuildPlan({...saved,tasks:[{id:'broken',text:''}]}),false);
+});
 const proposal: AppProposal = {name:'Notebook',appType:'Web App',purpose:'Save project notes',crystalModel:'AEGIS_POD_CRYSTAL.glb',elements:[{id:'orb',parentId:null,reason:'Store notes'}],gaps:['Create notes table','Build notes view']};
 test('build lists are app-local snapshots and survive JSON save/reopen',()=>{
  const first=createBuildPlan(proposal,'Plain notes'),other=createBuildPlan(proposal,'Other decisions');

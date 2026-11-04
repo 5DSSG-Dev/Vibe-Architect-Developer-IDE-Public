@@ -761,7 +761,7 @@ export function App() {
         setApothecaryCatalog(built.catalog);
         setCoreManifest(built.manifest);
       }} />}
-      <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged); }} aria-hidden={activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged)}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
+      <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft'; }} aria-hidden={activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft'}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
 
       {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={`production:${coreManifest.coreId}`} core={coreManifest} catalog={apothecaryCatalog} onVerified={receipt => setCoreManifest(current => current.coreId===coreManifest.coreId && current.appBuildPlan ? {...current,appBuildPlan:completeVerifiedBuildItems(current.appBuildPlan,receipt)} : current)} onSaveCore={application => {
         saveCoreProgram(window.localStorage, application);
