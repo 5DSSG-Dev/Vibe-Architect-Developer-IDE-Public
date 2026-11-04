@@ -94,7 +94,7 @@ function modelLabel(status: LuminaryStatus | null): string {
   return status.replySource;
 }
 
-export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelection; nameOf?: (elementId: string) => string | undefined }> = ({ mode, selection, nameOf }) => {
+export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?: LuminarySelection; nameOf?: (elementId: string) => string | undefined }> = ({ docked = false, mode, selection, nameOf }) => {
   // Shared with the Presence in the Aether workspace, so clicking either one engages the Luminary.
   const isEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
   const setIsEngaged = setLuminaryEngaged;
@@ -828,7 +828,7 @@ export const LuminaryHost: React.FC<{ mode: string; selection?: LuminarySelectio
             </button>
           </div>
         </section>
-      ) : (
+      ) : docked ? null : (
         <button
           ref={iconRef}
           onClick={() => setIsEngaged(true)}

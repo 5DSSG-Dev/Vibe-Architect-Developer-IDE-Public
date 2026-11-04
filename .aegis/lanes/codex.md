@@ -269,3 +269,17 @@
 ## 2026-11-02 | Codex | PR 50 main synchronization
 - Merged main 569ef3d into the isolated UI/App-menu branch at Tracey's request. Automatic merge required no manual conflict edits; both parent lane histories verified in order. Lumin's active checkout untouched.
 - Combined production build, 23 focused tests and staged diff check pass. Existing Vite chunk warning remains; browser verification outstanding. Publishing branch update only, not merging PR 50 into main.
+
+
+## 2026-11-02 | Codex | CORE Configurator review preview
+- Added app details persisted inside CORE manifest, app-type crystal defaults and selectable isolated GLB preview. Removed CyberPeer daemon controls from this modal and clarified resource budget wording.
+- Prepared on isolated current-main worktree for Architect visual review. Existing active checkout untouched.
+
+
+## 2026-11-02 | Codex | Crystal picker feedback
+- Added visual thumbnail choices in expandable crystal picker. Seed preview uses shared workspace loader with Meshopt/KTX2 support and shared cache ownership; preview no longer disposes cached assets.
+- Retains separate scene, environment and renderer cleanup. Browser interaction review remains pending.
+
+
+## 2026-11-02 | Codex | CORE footer Luminary
+- Docked the Luminary trigger in the CORE modal footer, centered beside Done. Suppressed floating paused trigger only while CORE modal is open; shared conversation state and workspace placement preserved.

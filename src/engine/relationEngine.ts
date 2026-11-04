@@ -379,6 +379,7 @@ export interface ActiveDaemons {
 }
 
 export interface CoreManifest {
+  appConfiguration?: { appType: string; purpose: string; crystalModel: string; updatedAt: string };
   coreId: string;
   name: string;
   version: string;

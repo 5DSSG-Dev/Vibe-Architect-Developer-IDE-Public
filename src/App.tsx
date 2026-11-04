@@ -201,7 +201,7 @@ export function App() {
 
   // Apothecary Studio Orb Builder payload
   const [orbBuilderTargetItem, setOrbBuilderTargetItem] = useState<ApothecaryItem | undefined>(undefined);
-  
+
   // Drill-down Environment navigation: CORE (empty) → Orb → Satellite → Actuator.
   // Each entry is the Element centred in that Environment.
   const [environmentStack, setEnvironmentStack] = useState<ApothecaryItem[]>([]);
@@ -700,7 +700,7 @@ export function App() {
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
       <LuminaryBubble />
-      <LuminaryHost mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
+      <LuminaryHost docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} />
 
       {/* 3. Interactive Modals */}
       {activeOverlay === 'HANDSHAKE' && attachingItem && (
@@ -722,9 +722,10 @@ export function App() {
       {activeOverlay === 'CORE_MATRIX' && (
         <CoreMatrixModal
           hardwareBudget={coreManifest.hardwareBudget}
-          activeDaemons={coreManifest.activeDaemons}
+          manifest={coreManifest}
+          onUpdateApp={(patch) => setCoreManifest(previous => ({ ...previous, ...patch }))}
           onUpdateHardwareBudget={handleUpdateHardwareBudget}
-          onToggleDaemon={handleToggleDaemon}
+
           onClose={() => closeOverlay('CORE_MATRIX')}
         />
       )}

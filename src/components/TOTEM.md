@@ -26,3 +26,17 @@
 ## 2026-11-02 | Codex | Isolated verification complete
 - Supersedes pending-check notes above: combined isolated UI/App-menu production build passes, including client/server TypeScript and Vite; focused lifecycle and spatial-state tests pass 23/23; git diff --check passes. Existing Vite chunk-size warning remains. No browser visual/gesture verification.
 - Both active checkouts retained their source files, branches and indexes; Lumin continues work in the public checkout. Pending files were backed up with byte verification before isolation. Two scoped local commits contain UI and App menu only, with temporary assets and peer pipeline/admin changes excluded. No push or merge performed.
+
+
+## 2026-11-02 | Codex | CORE Configurator review preview
+- Added app details persisted inside CORE manifest, app-type crystal defaults and selectable isolated GLB preview. Removed CyberPeer daemon controls from this modal and clarified resource budget wording.
+- Prepared on isolated current-main worktree for Architect visual review. Existing active checkout untouched.
+
+
+## 2026-11-02 | Codex | Crystal picker feedback
+- Added visual thumbnail choices in expandable crystal picker. Seed preview uses shared workspace loader with Meshopt/KTX2 support and shared cache ownership; preview no longer disposes cached assets.
+- Retains separate scene, environment and renderer cleanup. Browser interaction review remains pending.
+
+
+## 2026-11-02 | Codex | CORE footer Luminary
+- Docked the Luminary trigger in the CORE modal footer, centered beside Done. Suppressed floating paused trigger only while CORE modal is open; shared conversation state and workspace placement preserved.
