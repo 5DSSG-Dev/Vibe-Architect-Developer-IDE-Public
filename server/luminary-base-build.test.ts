@@ -84,3 +84,17 @@ test('HTTP base build carries 40KB spec, pages 25 files plus manifest, writes on
     rmSync(dir,{recursive:true,force:true});
   }
 });
+
+test('a malformed page is regenerated as smaller governed pages without losing any requirements or files', async () => {
+  const paths = ['a.mjs','b.mjs','c.mjs'];
+  const prompts: string[] = [];
+  const built = await generateBaseBuild('WHOLE SPEC',paths,async prompt => {
+    prompts.push(prompt);
+    const requested = JSON.parse(prompt.match(/exactly these files: (\[[^\n]+\])/)! [1]) as string[];
+    return {ok:true,reply:{modelId:'fixture',content:requested.length>1 ? '```luminary-change\n{malformed}\n```' : '```luminary-change\n'+JSON.stringify({summary:'single',files:requested.map(path=>({path,content:'export const complete = true;'}))})+'\n```'}};
+  });
+  assert.deepEqual(built.change.files.map(file=>file.path),paths);
+  assert.equal(prompts.length,5);
+  assert.ok(prompts.every(prompt=>prompt.includes('WHOLE SPEC')));
+  assert.equal(built.pages.length,5);
+});
