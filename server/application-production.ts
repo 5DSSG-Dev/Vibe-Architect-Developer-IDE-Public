@@ -244,7 +244,12 @@ export function createProductionRouter(runtime:ProductionRuntime):Router {
   if(!localProductionRequest(req)){res.status(403).json({error:'production_local_only'});return;}
   next();
  });
- const reply=(res:express.Response,error:unknown)=>res.status(409).json({error:'production_shortfall',message:error instanceof Error?error.message:'Application production could not finish.'});
+ const reply=(res:express.Response,error:unknown)=>{
+  const detail=error instanceof AssemblyAuditRejected
+    ? error.audit.findings.filter(Boolean).slice(0,3).join(' ') || 'The independent auditor held the generated bundle without a specific finding.'
+    : '';
+  return res.status(409).json({error:'production_shortfall',message:(error instanceof Error?error.message:'Application production could not finish.')+(detail?' Audit findings: '+detail:'')});
+ };
  router.post('/generate',async(req,res)=>{try{if(typeof req.body?.requestId!=='string')throw Error('A recoverable request ID is required.');res.status(201).json(await runtime.generate(req.body?.context,req.body.requestId));}catch(error){reply(res,error);}});
  router.post('/restore-core',async(req,res)=>{try{res.status(201).json(await runtime.restoreCore(req.body?.application,req.body?.context));}catch(error){reply(res,error);}});
  router.get('/requests/:id',async(req,res)=>{try{res.json(await runtime.recover(String(req.params.id)));}catch(error){reply(res,error);}});

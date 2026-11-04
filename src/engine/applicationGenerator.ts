@@ -68,6 +68,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
   const files: Record<string, string> = {};
   const pages = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Page' }> => o.kind === 'Page');
   const models = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Data' }> => o.kind === 'Data');
+  const forms = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Form' }> => o.kind === 'Form');
   files['package.json'] = JSON.stringify({
     name: 'vibe-generated-app', version: '1.0.0', private: true, type: 'module',
     scripts: { dev: 'vite --host 127.0.0.1', build: 'vite build', test: 'node --test test/*.test.mjs' },
@@ -78,10 +79,13 @@ export function generateApplication(input: unknown): GeneratedApplication {
   const title = d.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   files['index.html'] = '<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>\n';
   files['src/logic.js'] = [
+    'export const formFields = ' + json(Object.fromEntries(forms.map(form=>[form.id,form.fields]))) + ';',
     'export function appendRecord(records, record) { return [...records, { ...record }]; }',
     'export function prepareRecord(fields, values) {',
     '  return Object.fromEntries(fields.map(f => {',
-    '    const value = String(values[f.name] ?? "").trim();',
+    '    const supplied = values[f.name];',
+    '    if (supplied != null && typeof supplied !== "string") throw new Error("Only text values are supported");',
+    '    const value = (supplied ?? "").trim();',
     '    if (f.required && !value) throw new Error(f.label + " is required");',
     '    return [f.name, value];',
     '  }));',
@@ -109,8 +113,8 @@ export function generateApplication(input: unknown): GeneratedApplication {
     if (o.kind === 'Form') files['src/components/' + o.id + '.jsx'] = [
       "import React, { useState } from 'react';",
       "import { useModel } from '../runtime.jsx';",
-      "import { prepareRecord } from '../logic.js';",
-      'export const fields = ' + json(o.fields) + ';',
+      "import { prepareRecord, formFields } from '../logic.js';",
+      'export const fields = formFields[' + json(o.id) + '];',
       'export default function Form() {',
       '  const [, append] = useModel(' + json(o.modelId) + ');',
       '  const [error, setError] = useState("");',
@@ -121,7 +125,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
       '      append(record); form.reset(); setError(""); }',
       '    catch (e) { setError(e.message); }',
       '  };',
-      '  return <form onSubmit={submit}>{fields.map(f => <label key={f.name}>{f.label}<input name={f.name} required={f.required} /></label>)}<button type="submit">Save</button>{error && <p role="alert">{error}</p>}</form>;',
+      '  return <form onSubmit={submit}>{fields.map(f => <label key={f.name}>{f.label}<input type="text" name={f.name} required={f.required} /></label>)}<button type="submit">Save</button>{error && <p role="alert">{error}</p>}</form>;',
       '}'
     ].join('\n') + '\n';
     if (o.kind === 'Page') {
@@ -164,6 +168,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
     "import { appendRecord, prepareRecord, resolvePage } from '../src/logic.js';",
     'test("form values append without mutating earlier records", () => { const before = []; const record = prepareRecord([{name:"text",label:"Note",required:true}], {text:" hello "}); const after = appendRecord(before,record); assert.deepEqual(before,[]); assert.deepEqual(after,[{text:"hello"}]); record.text = "changed"; assert.equal(after[0].text,"hello"); });',
     'test("required fields reject whitespace", () => { assert.throws(() => prepareRecord([{name:"text",label:"Note",required:true}],{text:"   "}), /Note is required/); });',
+    'test("non-text form values are rejected", () => { assert.throws(() => prepareRecord([{name:"text",label:"Note",required:true}],{text:{file:"image.png"}}), /Only text values/); });',
     ...(d.dependencies?.slugify ? ["test('declared dynamic slug dependency resolves and normalizes a title', async () => { const {default: slugify} = await import('slugify'); assert.equal(slugify('Hello Peer Two!',{lower:true,strict:true}),'hello-peer-two'); });"] : []),
     'test("routes resolve exactly and unknown routes stay missing", () => { const pages = [{path:"/"}]; assert.equal(resolvePage(pages,"/"), pages[0]); assert.equal(resolvePage(pages,"/unknown"),undefined); });',
     ...d.objects.filter(o => o.kind === 'API').map((o, i) => "import { request as request" + i + " } from '../src/services/" + o.id + ".js';\ntest(" + json('API ' + o.id + ' uses its declared path and reports HTTP errors') + ', async () => { assert.deepEqual(await request' + i + '(async path => { assert.equal(path,' + json(o.path) + '); return {ok:true,json:async()=>({value:1})}; }),{value:1}); await assert.rejects(() => request' + i + '(async()=>({ok:false,status:503})),/503/); });')

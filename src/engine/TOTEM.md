@@ -98,3 +98,15 @@
 
 ## 2026-11-04 | Lumin | Construction guidance distinct from requirement ledger
 - journeyItems usesagreedproposal.gapsforactionableUI;optionalplan.tasksstoresmanualconstructionverification. plan.itemsandproposal.requirementsretainoriginalIDsforproductioncoverageandinterviewtrace. Existingplansprojecttaskswithoutdestructivemigration;isBuildPlanvalidatesoptionaltasks;regressionprovesquestionsnotshownastasksandIDsretained. LocalUIbranch/full734tests/buildpass;no publication.
+
+## 2026-11-04 | Lumin | Production scope and prompt repair
+- NoteKeep live attempt returned malformed model JSON; accepted rich-text/search/pin/archive scope exceeds current executable profile. applicationProduction now surfaces this known mismatch before provider spend and omits uncompiled Element code frames from the model prompt. Focused tests, TypeScript and build passed; no successful NoteKeep artifact claimed.
+
+## 2026-11-04 | Lumin | Explicit preview baseline
+- Architect approved a reduced NoteKeep demo scope. productionBaselineContext preserves original accepted CORE and creates a plain-text/in-memory preview context. UI labels pending full-scope features and blocks false ToDo completion/full CORE save. Focused seven tests and build passed; live generation still pending.
+
+## 2026-11-04 | Lumin | NoteKeep generator and audit shortfall
+- Generated form fields are now shared from logic.js; only text inputs render and non-string form values reject. Exact observed doubled-quote JSON typo can be repaired before all strict gates; raw governed reply remains recorded. Six original supported interview IDs retained in the reduced preview context; folders/tags and advanced features remain pending. Several generated bundles passed local build but independent model audit held, including findings contradicted by source. No delivery or preview claimed.
+
+## 2026-11-04 | Lumin | Audit retry source facts
+- Assembly auditor receives explicit generated-source facts about ModelProvider useState/setModels and Records useModel/records.map; must ground any static-list claim in bundle. Fail-closed checks remain.

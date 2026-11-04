@@ -180,3 +180,9 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 - Base788c809+productpatch92167605d07a; authenticated3133statusmatches. Explicitdependencyobject/fieldidentifierprompt+parsererrors addedwithoutcoercion; startupawaitsactual-listeningandthrowsbinderror.733repo tests(288gateway445app)0fail/skip/buildpass;realoccupiedsocketcompiledexit1/EADDRINUSE/no false success.
 - ActualUIinterview→explicitbaselinependingcomplete/filter→accept→generateHTTP201 ID03c3f285,20files/6IDs/22ASTbindings/3generatedtestspass/buildpass. Source0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c. MountedQwenpass;CLIpositiveexit0/pass;realincomplete-form+emptycontentnegativeexit0/holdwithcorrectsemanticfindings.10browserchecks passedincludingpendingnotice/navigation/reload/Stop.
 - Reportdocs/Q4_REMEDIATION_SUCCESS_2026-11-04.md;private candidatebinding/receipt/audits/traffic .luminary/q4-repair-20261104. ReceiptSHAa893a27be40c2c19af3103464d8a0b6aa262f05ac5e7f640f348863c0d42bfbf. Baselineonly;complete/filterpending,IDQmigrationseparate. Previewstopped;3133gatewayavailable. Localuncommitted;no push/merge/nonauthorapproval.
+
+## 2026-11-04 | Lumin | NoteKeep live generation audit shortfall
+- In active 3012 worktree, reduced plain-text NoteKeep request now preserves supported original interview IDs, and generated bundles reached dependency resolution, tests and build. Independent local auditor held every fresh bundle; qwen3.5:4b findings included source-contradicted claims, while qwen3:14b fetch failed. No delivered generation or preview receipt. Production parser handles only the observed doubled-quote kind typo before strict validation; gateway now exposes audit findings. Full live acceptance remains open. No commit/push/merge.
+
+## 2026-11-04 | Lumin | 3012 restarted after audit correction
+- Production build passes and app gateway verified HTTP 200 on localhost:3012.

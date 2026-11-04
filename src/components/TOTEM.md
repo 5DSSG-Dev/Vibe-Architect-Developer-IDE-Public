@@ -145,3 +145,9 @@
 
 ## 2026-11-04 | Lumin | Footer batch live3012
 - TerminalCommandConsoleentryopens/focusesexistingApplicationTerminalevenbeforegeneration;helpworks/startstopremainfenced. COREcrystalrightclickopensCoreMatrix;Orbcontextstillinspects;duplicateP0selectorremoved;knowncorruptseparatorsfixed. Real3012browserchecks/full734tests/buildpass. VibeAtlasexcludedbyArchitect. Singlelocalcommit/no push or merge.
+
+## 2026-11-04 | Lumin | NoteKeep preview scope control
+- ApplicationProduction offers an explicit supported text-and-list baseline when accepted NoteKeep scope exceeds the executable profile. It labels pending features and keeps baseline receipts from auto-completing original ToDos or saving as full CORE application. Build passed; live generation pending.
+
+## 2026-11-04 | Lumin | Visible production holds
+- Build & Preview offers explicit text-and-list baseline and keeps pending scope visible. Failed assembly audit findings now surface in the gateway response instead of a generic reset. Baseline cannot auto-complete full interview ToDos or save as full CORE app. Full live acceptance remains blocked by independent audit.

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Play } from 'lucide-react';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
-import { productionContext, type ProductionAnswer } from '../engine/applicationProduction';
+import { productionContext, productionBaselineContext, type ProductionAnswer } from '../engine/applicationProduction';
 import { luminaryApi, readDemoKey, saveDemoKey, anchorDetail, type TurnRecord } from '../luminary/client';
 import { appendLuminaryExchangeEvidence } from '../engine/evidenceArchive';
 import { acceptedCoreContext, saveCoreApplication, verifyCoreApplication, type CoreApplication } from '../engine/coreApplication';
@@ -15,6 +15,7 @@ import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGener
 export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified,terminalRequest=0}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void;terminalRequest?:number}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [baselineMode,setBaselineMode]=useState(false);
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
  const terminalEnd=useRef<HTMLDivElement>(null);
  const [outcomeUnknown,setOutcomeUnknown]=useState(false);
@@ -46,7 +47,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  };
 
  let context:ReturnType<typeof productionContext>|undefined,problem='';
- try {context=productionContext(core,catalog);}catch(e){problem=(e as Error).message;}
+ try {context=baselineMode?productionBaselineContext(core,catalog):productionContext(core,catalog);}catch(e){problem=(e as Error).message;}
  const contextText=JSON.stringify(context ?? null);
  const live=useRef(contextText);live.current=contextText;
  const reviewed=Boolean(receipt && reviewedFor===receiptKey(receipt));
@@ -73,7 +74,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  }
  function adopt(next:Receipt) {
   setReceipt(next);setReviewedFor('');setEvidenceFor('');setOutcomeUnknown(false);
-  onRemember({id:next.id,digest:next.digest,contextHash:next.contextHash});
+  if(!baselineMode)onRemember({id:next.id,digest:next.digest,contextHash:next.contextHash});
   try{sessionStorage.removeItem(pendingKey);}catch{/* The known receipt is also kept in the app. */}
   setPendingId('');
  }
@@ -94,7 +95,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
   }).catch(e=>{if(!controller.signal.aborted&&epoch.current===startedAt)setError('The earlier generated project could not be restored: '+e.message+' Your architecture is retained.');});
   return()=>controller.abort();
  },[core.coreId]);
- useEffect(()=>{if(receipt && context && receipt.contextHash===fingerprint.hash)onVerified?.({...receipt,context});},[receipt?.id,receipt?.digest,fingerprint.hash]);
+ useEffect(()=>{if(!baselineMode && receipt && context && receipt.contextHash===fingerprint.hash)onVerified?.({...receipt,context});},[receipt?.id,receipt?.digest,fingerprint.hash,baselineMode]);
  const stale=!receipt || fingerprint.text!==contextText || receipt.contextHash!==fingerprint.hash;
  const replaceable=canReplaceProduction(receipt?.state,outcomeUnknown);
  async function saveToCore() {
@@ -103,6 +104,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
   const sentContext=contextText;
   try {
     if(!receipt || !reviewed || stale || !evidenceSaved || outcomeUnknown)throw Error('Review the current generated source and save its evidence before saving to CORE.');
+    if(baselineMode)throw Error('This preview baseline leaves accepted features pending and cannot be saved as the complete CORE application.');
     const application=await saveCoreApplication(core,catalog,receipt);
     await appendLuminaryExchangeEvidence({exchangeId:crypto.randomUUID(),event:'task_accepted',conversationId:core.coreId,detail:{generationId:receipt.id,sourceDigest:receipt.digest,contextHash:receipt.contextHash,action:'save_core_program'}});
     if(live.current!==sentContext)throw Error('The architecture changed before saving. Review again.');
@@ -212,6 +214,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
    <p className="my-3 text-sm text-slate-300">Generate from your accepted architecture, review the files, then launch. This first profile supports text, forms, in-memory records, pages and navigation. Reloading clears app data. Existing Element code frames are not compiled.</p>
    <details className="my-3"><summary>Gateway connection</summary><label className="block text-sm">Local demo key, if needed<input type="password" value={key} onChange={e=>setKey(e.target.value)} className="ml-3 rounded bg-slate-800 p-2" autoComplete="off" /></label></details>
    {problem && <p className="my-3 text-amber-200">{problem}</p>}
+   {!baselineMode && problem && <button type="button" className={button} onClick={()=>{setBaselineMode(true);setError('');}}>Generate supported text-and-list baseline</button>}
+   {baselineMode && <p className="my-3 text-amber-200">Preview baseline only: plain-text notes and an in-memory list. Folders, tags, rich text, search, pinning and archiving remain pending in the accepted interview; this preview does not complete those ToDos or replace the full CORE program. <button type="button" className="underline" onClick={()=>setBaselineMode(false)}>Return to full scope</button></p>}
    <div className="flex flex-wrap items-center gap-3">
     <button type="button" className={button} disabled={busy||!context||!replaceable||Boolean(pendingId)} onClick={()=>void act('generate')}>{busy?'Working…':'Generate application'}</button>
     {pendingId && <button type="button" className={button} disabled={busy} onClick={()=>void act('recover')}>Recover last request</button>}
@@ -226,8 +230,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
     <h3 className="mb-2">CORE application</h3>
     <p className="mb-3 text-sm text-slate-300">Save the reviewed program inside this app. After reopening, restore it without another model request, review its source, then launch above. The local gateway and its original review record are required. App records remain in memory; Element code frames are not compiled.</p>
     <div className="flex flex-wrap gap-3">
-     <button type="button" className={button} disabled={busy||stale||!reviewed||!evidenceSaved||outcomeUnknown} onClick={()=>void saveToCore()}>Save reviewed app to CORE</button>
-     <button type="button" className={button} disabled={busy||!context||!core.application||!replaceable||Boolean(pendingId)} onClick={()=>void act('restore-core')}>Restore saved CORE app</button>
+     <button type="button" className={button} disabled={baselineMode||busy||stale||!reviewed||!evidenceSaved||outcomeUnknown} onClick={()=>void saveToCore()}>Save reviewed app to CORE</button>
+     <button type="button" className={button} disabled={baselineMode||busy||!context||!core.application||!replaceable||Boolean(pendingId)} onClick={()=>void act('restore-core')}>Restore saved CORE app</button>
     </div>
     {core.application && <p className="mt-2 text-xs text-slate-400">Saved program: {core.application.answer?.definition?.name} · Run is always explicit.</p>}
    </section>
