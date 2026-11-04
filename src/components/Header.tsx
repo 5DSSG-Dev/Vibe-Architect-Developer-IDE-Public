@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AppMenu } from './AppMenu';
 import { Cpu, HardDrive, Zap, Sliders, Box } from 'lucide-react';
 import { HardwareBudget } from '../engine/relationEngine';
@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   const usedMemory = Math.max(0, hardwareBudget.memoryMB - availableResources.memoryMB);
   const usedThreads = Math.max(0, hardwareBudget.threads - availableResources.threads);
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 h-16 panel-glass-header px-4 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 panel-glass-header px-4 flex items-center justify-between">
       {/* Branding & Logo */}
       <div className="flex items-center space-x-3">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-600/30 border border-cyan-400/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.4)]">

@@ -1,3 +1,5 @@
+import { createLuminaryPresence } from '../three/luminaryPresence';
+import { isLuminaryEngaged, setLuminaryEngaged } from '../luminary/presence';
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -52,6 +54,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    let disposed = false;
     const width = container.clientWidth;
     const height = container.clientHeight;
 
@@ -78,6 +81,10 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     labelRenderer.domElement.style.left = '0';
     labelRenderer.domElement.style.pointerEvents = 'none';
     container.appendChild(labelRenderer.domElement);
+
+    const luminary = createLuminaryPresence();
+    scene.add(luminary.root);
+    luminary.applyModel();
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -169,7 +176,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     // Swap procedural fallbacks for real .glb models once the shared cache is warm.
     const preload = preloadAllGltfModels(renderer);
-    preload.then(() => buildEnv());
+    preload.then(() => { if (!disposed) { buildEnv(); luminary.applyModel(); } });
 
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
@@ -271,8 +278,16 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       navigationFrame = requestAnimationFrame(animateEntry);
     };
 
+    const hitsLuminary = (clientX: number, clientY: number) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+      scene.updateMatrixWorld(true);
+      raycaster.setFromCamera(mouse, camera);
+      return raycaster.intersectObject(luminary.pickProxy, true).length > 0;
+    };
+
     const handlePointerDown = (event: PointerEvent) => {
-      if (event.button !== 0 || navigationPending) return;
+      if (event.button !== 0 || navigationPending || hitsLuminary(event.clientX, event.clientY)) return;
       suppressedDragClick = null;
       const hit = findElementHit(event.clientX, event.clientY);
       if (!hit) return;
@@ -289,6 +304,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     const handlePointerMove = (event: PointerEvent) => {
       if (!pendingInteraction) {
+        if (hitsLuminary(event.clientX, event.clientY)) { setHoveredElement(); renderer.domElement.style.cursor = 'pointer'; return; }
         const hit = findElementHit(event.clientX, event.clientY);
         if (hit) {
           setHoveredElement(hit.item);
@@ -364,6 +380,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     };
 
     const handleClick = (event: MouseEvent) => {
+      if (hitsLuminary(event.clientX, event.clientY)) { setLuminaryEngaged(!isLuminaryEngaged()); return; }
       if (suppressedDragClick) {
         const dx = event.clientX - suppressedDragClick.x;
         const dy = event.clientY - suppressedDragClick.y;
@@ -401,9 +418,12 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
 
     let frameId: number;
     const clock = new THREE.Clock();
+    let lastFrameTime = 0;
     const animate = () => {
       frameId = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
+      const dt = Math.min(0.05, t - lastFrameTime);
+      lastFrameTime = t;
       // Gentle rotation of the whole environment ring so children read as orbiting.
       envRoot.rotation.z = t * 0.05;
       if (centerSettleStartedAt !== null) {
@@ -416,6 +436,7 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
         if (progress >= 1) centerSettleStartedAt = null;
       }
       controls.update();
+      luminary.update(t, dt, !prefersReducedMotion(), isLuminaryEngaged(), camera, renderer.domElement.clientWidth, renderer.domElement.clientHeight);
       composer.render();
       labelRenderer.render(scene, camera);
     };
@@ -434,6 +455,9 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
     window.addEventListener('resize', handleResize);
 
     return () => {
+      disposed = true;
+      luminary.dispose();
+      composer.dispose();
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       renderer.domElement.removeEventListener('pointermove', handlePointerMove);

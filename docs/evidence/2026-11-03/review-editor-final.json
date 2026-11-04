@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "id": "V20-modal",
+      "status": "PASS",
+      "detail": "focus contained"
+    },
+    {
+      "id": "V10-custom-orb",
+      "status": "PASS",
+      "detail": "synthetic-mw0xtdxk"
+    },
+    {
+      "id": "flow",
+      "status": "FAIL",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /Open App/ })\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"block w-full text-left px-4 py-2.5 text-xs text-slate-100 hover:bg-cyan-500/15 focus-visible:bg-cyan-500/15 disabled:opacity-40 disabled:cursor-not-allowed\">Open App…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <header class=\"p-3 sm:p-5 border-b border-amber-300/20 shrink-0\">…</header> from <section aria-label=\"Create an app with Luminary\" class=\"fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <header class=\"p-3 sm:p-5 border-b border-amber-300/20 shrink-0\">…</header> from <section aria-label=\"Create an app with Luminary\" class=\"fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    53 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <header class=\"p-3 sm:p-5 border-b border-amber-300/20 shrink-0\">…</header> from <section aria-label=\"Create an app with Luminary\" class=\"fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text\">…</section> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+    }
+  ],
+  "providerCalls": 0,
+  "scope": "isolated local scripted browser run"
+}

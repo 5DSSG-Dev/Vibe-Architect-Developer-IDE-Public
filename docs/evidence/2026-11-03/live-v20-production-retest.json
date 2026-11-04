@@ -1,0 +1,10 @@
+{
+  "todoContext": true,
+  "guide": true,
+  "productionTab": {
+    "presses": 48,
+    "escapes": []
+  },
+  "productionClosed": true,
+  "focusReturned": true
+}

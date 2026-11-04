@@ -1,3 +1,4 @@
+import { isAppCreationActive } from '../luminary/appCreationPresence';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -82,6 +83,9 @@ import { createSceneOwnedAdapter, ThreeRuntime, type ContextLossRecoveryContract
 import type { EnvironmentEntryView } from '../utils/environmentScene';
 
 interface ThreeCanvasProps {
+  creationMode?: boolean;
+  hideWorkspaceControls?: boolean;
+  coreModel?: string;
   sockets: SocketBinding[];
   portals?: PortalPlacement[];
   onSelectSocket: (socket: SocketBinding, item?: ApothecaryItem) => void;
@@ -1166,7 +1170,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       )}
 
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">CORE</span>
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
         {CORE_CRYSTAL_VARIANTS.map((variant) => (
           <button
             key={variant.key}
@@ -1183,7 +1187,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       </div>
 
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">VIEW</span>
         {selectedEntityId && (
           <span className="text-[9px] font-mono font-bold text-emerald-300/90 tracking-widest px-1.5">
             {selectedEntityId.toUpperCase()}
@@ -1220,6 +1224,9 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
 };
 
 const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
+  creationMode = false,
+  hideWorkspaceControls = false,
+  coreModel,
   sockets,
   portals = [],
   onSelectSocket,
@@ -1272,6 +1279,10 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   }, [portals]);
 
   const [crystalVariant, setCrystalVariant] = useState<string>(CORE_CRYSTAL_VARIANTS[0].key);
+  useEffect(() => {
+    const keys: Record<string, string> = { 'AEGIS_POD_CRYSTAL.glb': 'coreCrystal', 'CORE_CRYSTAL_CAGED.glb': 'coreCaged', 'CORE_CRYSTAL_CAGED2.glb': 'coreCaged2', 'crystals.glb': 'coreCluster' };
+    if (coreModel && keys[coreModel]) setCrystalVariant(keys[coreModel]);
+  }, [coreModel]);
   const crystalVariantRef = useRef(crystalVariant);
   crystalVariantRef.current = crystalVariant;
 
@@ -2201,6 +2212,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       const dt = Math.min(0.05, elapsedTime - lastFrameTime);
       lastFrameTime = elapsedTime;
 
+      assemblyPivot.visible = !isAppCreationActive();
+      coreTotem.visible = !isAppCreationActive();
       luminaryPresence.update(elapsedTime, dt, motionEnabledRef.current, isLuminaryEngaged(), camera, renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
       // Decorative motion is gated on the reduced-motion control. When motion is
@@ -2781,9 +2794,9 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
       {/* View quality / motion / bloom controls (display-only). Lifted clear of
           the bottom command bar so both rows stay visible. */}
-      <div className="absolute bottom-24 right-4 z-20 flex flex-col items-end space-y-1.5">
+      {!creationMode && !hideWorkspaceControls && <div className="absolute top-80 lg:top-auto lg:bottom-28 right-2 lg:right-4 z-20 flex flex-col items-end space-y-1.5">
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">QUALITY</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">QUALITY</span>
           {QUALITY_PRESET_ORDER.map((p) => (
             <button
               key={p}
@@ -2837,7 +2850,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         {/* Saved-camera navigation: frame the whole assembly, save the current
             viewpoint, and fly to (or delete) a saved one. */}
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">VIEW</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">VIEW</span>
           <button
             onClick={handleFrameAll}
             title="Frame the whole assembly in view"
@@ -2868,7 +2881,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         {/* Durable spatial edits: undo/redo drag placements, toggle grid snap,
             and reset every override back to the default layout. */}
         <div className="flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-          <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">EDITS</span>
+          <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">EDITS</span>
           <button
             onClick={handleUndoEdit}
             disabled={!canUndo(spatialEdits)}
@@ -2905,11 +2918,11 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             RESET
           </button>
         </div>
-      </div>
+      </div>}
 
       {/* CORE Crystal selector */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5">CORE</span>
+      {!creationMode && !hideWorkspaceControls && <div className="absolute bottom-[170px] lg:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
+        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
         {CORE_CRYSTAL_VARIANTS.map((v) => (
           <button
             key={v.key}
@@ -2923,7 +2936,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
             {v.label}
           </button>
         ))}
-      </div>
+      </div>}
 
     </div>
   );
@@ -2932,7 +2945,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 export const ThreeCanvas: React.FC<ThreeCanvasProps> = (props) => {
   // The experimental P0 renderer does not draw the 3D Luminary Presence (STP-0002 P19 is built on the
   // legacy renderer); the Luminary stays reachable through LuminaryHost's icon and Full Form.
-  if (isThreeRuntimeMainViewP0Enabled()) {
+  if (!props.creationMode && isThreeRuntimeMainViewP0Enabled()) {
     return (
       <ThreeRuntimeMainViewP0
         sockets={props.sockets}

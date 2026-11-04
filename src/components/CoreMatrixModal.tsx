@@ -188,7 +188,7 @@ export const CoreMatrixModal: React.FC<CoreMatrixModalProps> = ({
         {/* Modal Footer */}
         <div className="p-4 border-t border-cyan-500/20 bg-slate-950/60 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <span aria-hidden="true" />
-          <button type="button" onClick={() => setLuminaryEngaged(!luminaryEngaged)} aria-expanded={luminaryEngaged} aria-label={luminaryEngaged ? 'Minimize Luminary conversation' : 'Talk to the Vibe Luminary'} className="px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300">
+          <button type="button" onClick={() => setLuminaryEngaged(!luminaryEngaged)} aria-expanded={luminaryEngaged} className="px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300">
             <img src="/assets/luminary/luminary-codeglass-96.webp" alt="" className="w-7 h-7 object-contain" />
             <span className="text-left leading-tight"><span className="block text-xs font-bold text-amber-100">Luminary</span><span className="block text-[10px] text-amber-200/80">{luminaryEngaged ? 'Minimize conversation' : 'Click to talk'}</span></span>
           </button>

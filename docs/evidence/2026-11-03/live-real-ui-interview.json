@@ -1,0 +1,36 @@
+{
+  "source": "Live Baseten via actual application gateway 3014; no mock gateway",
+  "events": [
+    {
+      "at": "2026-11-03T20:00:43.239Z",
+      "event": "live_reply",
+      "details": {
+        "round": 1,
+        "http": 200,
+        "alerts": []
+      }
+    },
+    {
+      "at": "2026-11-03T20:00:43.253Z",
+      "event": "proposal_ready",
+      "details": {
+        "round": 1
+      }
+    },
+    {
+      "at": "2026-11-03T20:00:46.286Z",
+      "event": "accepted",
+      "details": {
+        "name": "Field Journal",
+        "mode": "ready",
+        "contracts": 2,
+        "planItems": 6
+      }
+    },
+    {
+      "at": "2026-11-03T20:00:46.502Z",
+      "event": "storage_state",
+      "details": "Saved local browser context for continued live-connected UI checks; not a synthetic response."
+    }
+  ]
+}

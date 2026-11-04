@@ -1,0 +1,9 @@
+{
+  "algorithm": "sha256 UTF8 with LF line endings",
+  "files": {
+    "server/index.ts": "ce3bcbc021af3dce20d37043224144b89a8c5a9ade8dbe503e97bf5f4e768788",
+    "src/engine/applicationProduction.ts": "fb817f9837bdec3d9131b1671253a94be9417ba0bf1f45936680568841162e5c",
+    "src/engine/applicationProduction.test.ts": "cd644194ae037fb9ba7bb53cd83e122850246961c038e24dca26d8efaafb50eb",
+    "scripts/audit-assembly.ts": "a3773c8b6251bcc2cfb9babada0b144b588e302ff06ee223e7694d9ea691bed7"
+  }
+}

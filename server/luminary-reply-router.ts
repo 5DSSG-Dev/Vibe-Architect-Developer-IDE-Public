@@ -29,7 +29,7 @@ import { runReplyPipeline, type Gauge, type LineageEntry, type PipelineShortfall
  * malformed provider payload is governed, not assumed well-formed. It may throw or reject;
  * the router turns that into an `upstream_error` Shortfall rather than a 500.
  */
-export type AskModel = (prompt: string) => Promise<unknown>;
+export type AskModel = (prompt: string, control?: { signal?: AbortSignal }) => Promise<unknown>;
 
 /** The error a not-yet-wired model path throws; the router turns it into upstream_error. */
 export const MODEL_NOT_CONFIGURED_MESSAGE = 'Luminary model path is not yet configured.';

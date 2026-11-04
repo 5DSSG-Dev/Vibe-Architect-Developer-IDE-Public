@@ -1,0 +1,150 @@
+{
+  "type": "local synthetic browser fixture; no provider calls",
+  "results": [
+    {
+      "id": "V20-guide-navigation",
+      "status": "FAIL",
+      "details": {
+        "guideBefore": 1,
+        "expanded": "",
+        "guideAfter": 1
+      }
+    },
+    {
+      "id": "V20-keyboard-enter",
+      "status": "PASS",
+      "details": {
+        "back": 1
+      }
+    },
+    {
+      "id": "V20-modal-focus",
+      "status": "PASS",
+      "details": {
+        "inside": true,
+        "restored": "+ Create New Element"
+      }
+    },
+    {
+      "id": "V21-workspace-no-confirmed-violations",
+      "status": "PASS",
+      "details": {
+        "violations": [],
+        "contrastIncomplete": [
+          76
+        ]
+      }
+    },
+    {
+      "id": "V22-workspace-390",
+      "status": "FAIL",
+      "details": {
+        "width": 390,
+        "scroll": 390,
+        "hitTargets": 40,
+        "blocked": [
+          "High",
+          "Balanced",
+          "Low",
+          "MOTION ON",
+          "BLOOM ON",
+          "LOCK",
+          "FRAME",
+          "SAVE",
+          "UNDO",
+          "REDO",
+          "SNAP OFF",
+          "SEED",
+          "CAGED",
+          "CAGED II",
+          "CLUSTER",
+          "HAZE",
+          "HTTP API Gateway, Orbs",
+          "Auth & Session Service, Orbs",
+          "Relational Database Engine, Orbs",
+          "Task Scheduler, Orbs",
+          "Event Bus, Orbs",
+          "File Storage Service, Orbs",
+          "HTTP API Gateway, Orbs",
+          "Return to CORE",
+          "Enter HTTP API Gateway",
+          "Inspect HTTP API Gateway",
+          "Alchemist's Reliquary",
+          "Launch Built-In Browser",
+          "Show ToDo and full task"
+        ]
+      }
+    },
+    {
+      "id": "V22-workspace-768",
+      "status": "FAIL",
+      "details": {
+        "width": 768,
+        "scroll": 768,
+        "hitTargets": 42,
+        "blocked": [
+          "SEED",
+          "CAGED",
+          "CAGED II",
+          "CLUSTER",
+          "HAZE",
+          "Event Bus, Orbs",
+          "File Storage Service, Orbs",
+          "HTTP API Gateway, Orbs",
+          "Auth & Session Service, Orbs",
+          "Relational Database Engine, Orbs",
+          "Return to CORE",
+          "Enter HTTP API Gateway",
+          "Inspect HTTP API Gateway",
+          "Alchemist's Reliquary",
+          "Launch Built-In Browser",
+          "Command Console"
+        ]
+      }
+    },
+    {
+      "id": "V22-workspace-1100",
+      "status": "FAIL",
+      "details": {
+        "width": 1100,
+        "scroll": 1100,
+        "hitTargets": 41,
+        "blocked": [
+          "SEED",
+          "CAGED",
+          "CAGED II",
+          "CLUSTER",
+          "HAZE",
+          "Auth & Session Service, Orbs",
+          "Return to CORE",
+          "Enter HTTP API Gateway",
+          "Inspect HTTP API Gateway",
+          "Alchemist's Reliquary",
+          "Launch Built-In Browser"
+        ]
+      }
+    },
+    {
+      "id": "V22-workspace-1440",
+      "status": "FAIL",
+      "details": {
+        "width": 1440,
+        "scroll": 1440,
+        "hitTargets": 41,
+        "blocked": [
+          "SEED",
+          "CAGED",
+          "CAGED II",
+          "CLUSTER",
+          "HAZE",
+          "Auth & Session Service, Orbs",
+          "Return to CORE",
+          "Enter HTTP API Gateway",
+          "Inspect HTTP API Gateway",
+          "Alchemist's Reliquary",
+          "Launch Built-In Browser"
+        ]
+      }
+    }
+  ]
+}

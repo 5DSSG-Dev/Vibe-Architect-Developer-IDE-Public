@@ -1,0 +1,15 @@
+{
+  "V06": {
+    "pass": true,
+    "path": {
+      "environmentIds": [
+        "orb-http-gateway"
+      ]
+    },
+    "buildControls": 1
+  },
+  "V09": {
+    "context": 0
+  },
+  "nav": "Navigate 3D Elements by keyboard"
+}

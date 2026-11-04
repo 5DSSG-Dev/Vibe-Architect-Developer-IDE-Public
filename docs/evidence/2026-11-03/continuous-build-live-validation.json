@@ -1,0 +1,491 @@
+{
+  "runtimeRevision": "c9576ff080562cb6443b525cd7a6695b61cbf8f4",
+  "runtimePid": 49384,
+  "baseUrl": "http://localhost:3102",
+  "specificationSha256": "45740e1fd4df6f5c0ddb97347ab2970b7fab0f311a01271326cc12477711a0da",
+  "requestedFiles": 14,
+  "uiComponents": 10,
+  "attempts": [
+    {
+      "httpStatus": 422,
+      "elapsedSeconds": 156.37,
+      "runtimeRevision": "cbb228bbd57289d27b6af1fe3c8c91a32b95148d",
+      "taskId": null,
+      "taskCommit": null,
+      "files": null,
+      "checks": null,
+      "pages": 0,
+      "shortfall": {
+        "code": "no_change",
+        "message": "Base-build governance stopped page 2: upstream_error: Baseten used its output allowance before finishing a reply; no text was available to continue."
+      },
+      "providerCallDelta": 3,
+      "providerSpendDeltaUsd": 0.22235524999999967,
+      "responseSha256": "67894e78f3bdd7c1767c8b351de4efc029e09472352293bca8f3340f3ee7a9c6",
+      "requestSha256": "4d1779169a0719b26d57aabed0b49963249f7cb17a30038aabcb62a3738cc16e"
+    },
+    {
+      "httpStatus": 422,
+      "elapsedSeconds": 106.06,
+      "runtimeRevision": "8ed05fad835f176e402696531bc11ef7c3cdbd9d",
+      "taskId": null,
+      "taskCommit": null,
+      "files": null,
+      "checks": null,
+      "pages": 0,
+      "shortfall": {
+        "code": "no_change",
+        "message": "The block is not valid JSON."
+      },
+      "providerCallDelta": 3,
+      "providerSpendDeltaUsd": 0.17298674999999974,
+      "responseSha256": "af6b4801ab02b3d20653cb65ceb4cbe8dac4d16abf6bb698dde48fc756500baf",
+      "requestSha256": "235b60b7daa027bb4cf68986a4dfb8300eb8b4364f2192bd038ba10fae693811"
+    },
+    {
+      "httpStatus": 201,
+      "elapsedSeconds": 178.75,
+      "runtimeRevision": "c9576ff080562cb6443b525cd7a6695b61cbf8f4",
+      "taskId": "27d37631",
+      "taskCommit": "df8f5eb5b7a7e7c12fe9214f9cdc90c50924623e",
+      "files": [
+        "validation/continuous-todo-20261103/Header.mjs",
+        "validation/continuous-todo-20261103/Summary.mjs",
+        "validation/continuous-todo-20261103/TaskForm.mjs",
+        "validation/continuous-todo-20261103/FilterBar.mjs",
+        "validation/continuous-todo-20261103/SearchBox.mjs",
+        "validation/continuous-todo-20261103/TaskList.mjs",
+        "validation/continuous-todo-20261103/TaskRow.mjs",
+        "validation/continuous-todo-20261103/EmptyState.mjs",
+        "validation/continuous-todo-20261103/StatusMessage.mjs",
+        "validation/continuous-todo-20261103/Footer.mjs",
+        "validation/continuous-todo-20261103/model.mjs",
+        "validation/continuous-todo-20261103/app.mjs",
+        "validation/continuous-todo-20261103/index.html",
+        "validation/continuous-todo-20261103/model.test.mjs"
+      ],
+      "checks": [
+        {
+          "name": "Type check (app)",
+          "ok": true,
+          "output": ""
+        },
+        {
+          "name": "Type check (gateway)",
+          "ok": true,
+          "output": ""
+        }
+      ],
+      "pages": 2,
+      "shortfall": null,
+      "providerCallDelta": 4,
+      "providerSpendDeltaUsd": 0.26115625,
+      "responseSha256": "711e887904d53c6a3b3a8dad865e72e26151be7c5918632c8feb24be909b63ec",
+      "requestSha256": "235b60b7daa027bb4cf68986a4dfb8300eb8b4364f2192bd038ba10fae693811"
+    }
+  ],
+  "successfulTransportEntries": [
+    {
+      "at": "2026-11-04T05:09:38.064Z",
+      "model": "meta-models/muse-spark-open-1026",
+      "reservedUsd": 0.10028625,
+      "actualUsd": 0.048604,
+      "inputTokens": 11911,
+      "outputTokens": 7933,
+      "status": "settled"
+    },
+    {
+      "at": "2026-11-04T05:10:08.650Z",
+      "model": "meta-models/muse-spark-open-1026",
+      "reservedUsd": 0.10330125,
+      "actualUsd": 0.08450125,
+      "inputTokens": 13201,
+      "outputTokens": 16000,
+      "status": "settled"
+    },
+    {
+      "at": "2026-11-04T05:10:59.929Z",
+      "model": "meta-models/muse-spark-open-1026",
+      "reservedUsd": 0.1034875,
+      "actualUsd": 0.08457,
+      "inputTokens": 13256,
+      "outputTokens": 16000,
+      "status": "settled"
+    },
+    {
+      "at": "2026-11-04T05:11:51.278Z",
+      "model": "meta-models/muse-spark-open-1026",
+      "reservedUsd": 0.11302,
+      "actualUsd": 0.043481,
+      "inputTokens": 17608,
+      "outputTokens": 5052,
+      "status": "settled"
+    }
+  ],
+  "generatedTask": {
+    "id": "27d37631",
+    "commit": "df8f5eb5b7a7e7c12fe9214f9cdc90c50924623e",
+    "state": "proposed",
+    "fileSha256": {
+      "app.mjs": "11df3063eb32c5a03afcbfdd337964c123bc6ad912e0772772859df0d351a16c",
+      "EmptyState.mjs": "7320f9fb01278e195c3a08991302a0f31bb4bf1b103655668b4c6fb41ed24a66",
+      "FilterBar.mjs": "9ad67f34137c20207ffd6abeb5925b487682ecf831e21ca81106f66d41bbce8b",
+      "Footer.mjs": "961408e64bdbedabefe5646d4ccb0c4bc3e9b20202a8f1af95af44e3902d0818",
+      "Header.mjs": "a81183da45ce12221d067da1f7616ab676f5594acd7e78960b16052312a6b12c",
+      "index.html": "4daef2446d4c1adb4bb7829e7d50f78f61fa6190fc3af677ab7d4ae98189c0e8",
+      "model.mjs": "6a83cc2612cb0fa84a2f13315b365f83678334f1425d7e73ef0890ff375baef1",
+      "model.test.mjs": "5338fd3a655629cc7d9d4e100b3d4d4301357f3d09d1b3ff8c9e3691a07c7b3e",
+      "SearchBox.mjs": "e902840e35d355c97c70c074f57b921b7f36bcc392f3f6606faf3653bf4bc129",
+      "StatusMessage.mjs": "cd2df6512b4d30ebae1bd123a3935cf945928cb20be978222a7eb8a46e26fe00",
+      "Summary.mjs": "6c055126a50ed77ce2dc3befec37e9b0a7fd33bdd0a05d6f5b51aa3a74d2a525",
+      "TaskForm.mjs": "a9e26786d3eee2565451de29bf60a346fc1bc3bfd9329c7904ef9370e6dfabd8",
+      "TaskList.mjs": "01c741b30f5d3c98bced2f290d82783278e9f747ae1a0e643e55d3ce9181fe00",
+      "TaskRow.mjs": "e673957f55d492f1ac91477d6f3765bdfa60b2745f641c5d070f670cf08b90a2"
+    },
+    "gitBlobBytesMatch": true,
+    "merged": false
+  },
+  "checks": {
+    "repositoryTests": {
+      "passed": 723,
+      "failed": 0,
+      "skipped": 0
+    },
+    "productionBuild": "passed; existing chunk warning",
+    "executorChecks": [
+      {
+        "name": "Type check (app)",
+        "ok": true,
+        "output": ""
+      },
+      {
+        "name": "Type check (gateway)",
+        "ok": true,
+        "output": ""
+      }
+    ],
+    "hostAssertions": {
+      "author": "host-authored assertions; not an independent peer sign-off",
+      "checks": [
+        {
+          "name": "empty initial state",
+          "passed": true
+        },
+        {
+          "name": "three adds trim text and assign stable string ids",
+          "passed": true
+        },
+        {
+          "name": "prior state is immutable",
+          "passed": true
+        },
+        {
+          "name": "blank input is rejected with feedback",
+          "passed": true
+        },
+        {
+          "name": "toggle changes exactly the matching task",
+          "passed": true
+        },
+        {
+          "name": "unknown ids leave task data unchanged",
+          "passed": true
+        },
+        {
+          "name": "completed filter selects Beta",
+          "passed": true
+        },
+        {
+          "name": "combined case-insensitive search and filter",
+          "passed": true
+        },
+        {
+          "name": "delete removes matching id and preserves prior state",
+          "passed": true
+        },
+        {
+          "name": "reset returns empty default state",
+          "passed": true
+        },
+        {
+          "name": "escape encodes markup and quotes",
+          "passed": true
+        },
+        {
+          "name": "Header exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "Summary exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "TaskForm exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "FilterBar exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "SearchBox exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "TaskList exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "TaskRow exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "EmptyState exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "StatusMessage exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "Footer exports complete renderer",
+          "passed": true
+        },
+        {
+          "name": "assembled HTML has app controls, task data, and no unescaped injection",
+          "passed": true
+        },
+        {
+          "name": "empty app renders the EmptyState component",
+          "passed": true
+        }
+      ],
+      "passed": 23
+    },
+    "browser": {
+      "checks": [
+        "blankInputFeedback",
+        "addThreeTasks",
+        "liveCounts",
+        "toggleCompleted",
+        "completedFilter",
+        "combinedFilterAndSearch",
+        "caseInsensitiveSearch",
+        "deleteTask",
+        "stableInsertionOrder",
+        "resetState",
+        "markupEscaped"
+      ],
+      "passed": 11,
+      "consoleErrors": [
+        {
+          "url": "/favicon.ico",
+          "status": 404
+        }
+      ],
+      "functionalErrors": 0,
+      "method": "Playwright UI fill/click and DOM assertions on exact generated artifact"
+    },
+    "generatedTests": {
+      "passed": 26,
+      "failed": 2,
+      "skipped": 0,
+      "findings": [
+        {
+          "test": "TaskList stable order and EmptyState",
+          "reason": "Compares letters in full HTML markup instead of task text/order."
+        },
+        {
+          "test": "renderApp composes all ten markers",
+          "reason": "Expects EmptyState while the visible list is nonempty, contrary to conditional empty-state requirement."
+        }
+      ]
+    }
+  },
+  "governanceTrace": {
+    "chains": {
+      "architect": {
+        "records": 57,
+        "headHash": "1d59f0e5007b59e52902ce1dfafdf150e3ac7b1c4bcd82daf86f28a6ce649d3f",
+        "verified": true
+      },
+      "luminary": {
+        "records": 53,
+        "headHash": "76e72302bf7386d47032ecb64b12ce0e7ea1e1439a71a27ce5566c14283acbbc",
+        "verified": true
+      }
+    },
+    "architect": [
+      {
+        "seq": 52,
+        "id": "e25512cd-8be3-488f-8219-cc82c8ea053e",
+        "at": "2026-11-04T05:00:41.835Z",
+        "state": "sent",
+        "hash": "df96146f54bc91d9588ee878df1537b928a4c525fe5b0892bac033ee3b62dbd2",
+        "promptSha256": "b7336df6869e4ae54543912a7d7c9e225912f76f3f4a005b4549fcfcc2b096ac"
+      },
+      {
+        "seq": 53,
+        "id": "5108e1df-a877-4c01-ab8b-e5b7a00c9784",
+        "at": "2026-11-04T05:02:15.971Z",
+        "state": "sent",
+        "hash": "0a4be691f8cbedfb37a702124a5048ea9bafa58f836942de8154a5fecb2b138a",
+        "promptSha256": "c7626d3a3c72f89de714804854fbde6432091649d8d69d9cd604494d8644f83c"
+      },
+      {
+        "seq": 54,
+        "id": "dc557a4f-b5d8-46d7-9a81-f5eaba463c35",
+        "at": "2026-11-04T05:05:47.831Z",
+        "state": "sent",
+        "hash": "5fe7622e2ff89f1eb7f764ff3f6e08fc5e103c606d8fc8275c6669994afd7916",
+        "promptSha256": "b7336df6869e4ae54543912a7d7c9e225912f76f3f4a005b4549fcfcc2b096ac"
+      },
+      {
+        "seq": 55,
+        "id": "cbe66163-2b0f-4c0f-acf1-ea257a2a3214",
+        "at": "2026-11-04T05:06:14.624Z",
+        "state": "sent",
+        "hash": "41665cd02b74d964b2a9af81a1251ed283897826bb4272006b55ae1bc22a02a2",
+        "promptSha256": "c72684356b5fdad304e110cbe47e87b76f97d3edeb2f004c93d7144fbd20943d"
+      },
+      {
+        "seq": 56,
+        "id": "1feb798f-56f7-4305-a848-9acb7c409d89",
+        "at": "2026-11-04T05:09:38.059Z",
+        "state": "sent",
+        "hash": "e310a03d04741fd96a0a31381a5d817871def759436318db586f3dce17f41f51",
+        "promptSha256": "b7336df6869e4ae54543912a7d7c9e225912f76f3f4a005b4549fcfcc2b096ac"
+      },
+      {
+        "seq": 57,
+        "id": "65f4a9d5-3374-450e-91ad-41b0c2f7790d",
+        "at": "2026-11-04T05:10:08.463Z",
+        "state": "sent",
+        "hash": "1d59f0e5007b59e52902ce1dfafdf150e3ac7b1c4bcd82daf86f28a6ce649d3f",
+        "promptSha256": "d5d8581d719a49418daf4a40e146d8f2137c6ad247e97fe40b2e2b42fd954636"
+      }
+    ],
+    "luminary": [
+      {
+        "seq": 48,
+        "id": "17047e2c-d015-4962-aadd-f9897b5153e3",
+        "architectEntryId": "e25512cd-8be3-488f-8219-cc82c8ea053e",
+        "at": "2026-11-04T05:02:12.984Z",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "hash": "ed78cd82f6692b0ebf0e5d3c26fbb49a2a21efeab608dcac80897f38e41f64ae",
+        "passesSha256": [
+          "2dcf1a6d393c0e0bd30001a102fd475cdd994ba19de14ba7c55d0d5ed090f41f"
+        ]
+      },
+      {
+        "seq": 49,
+        "id": "475b3158-f770-48bb-8618-d8a82ba7d9d6",
+        "architectEntryId": "5108e1df-a877-4c01-ab8b-e5b7a00c9784",
+        "at": "2026-11-04T05:03:09.455Z",
+        "state": "upstream_error",
+        "modelId": null,
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        },
+        "hash": "4301a7887f8fd9452678c6fb9c1a58f68bc94722a436047316d3f1cef9a859b0",
+        "passesSha256": []
+      },
+      {
+        "seq": 50,
+        "id": "4e8a9d99-fc53-44b8-8a48-2f2b21697fdf",
+        "architectEntryId": "dc557a4f-b5d8-46d7-9a81-f5eaba463c35",
+        "at": "2026-11-04T05:06:12.263Z",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "hash": "56b1ac6d961204e6283b73fd835a2c4e78ad6a403b663fadb7df1d43c10063d7",
+        "passesSha256": [
+          "7c89fa3fc8f6774bd32adcb50675885b9e440384b6d5f16e4edb77d29c7b1ac6"
+        ]
+      },
+      {
+        "seq": 51,
+        "id": "bc260561-ba8c-4615-a43a-1f3b2e98c930",
+        "architectEntryId": "cbe66163-2b0f-4c0f-acf1-ea257a2a3214",
+        "at": "2026-11-04T05:07:28.655Z",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "hash": "9bb45671ee1b4b7d8540ad9b9b5aea04ba887b3a1f254d735a93d376cbef14c2",
+        "passesSha256": [
+          "ed77943a9cb2f3cd5ea9541ed25bc9f906554f8886aafc94dfb489d7e0f36406"
+        ]
+      },
+      {
+        "seq": 52,
+        "id": "f10f4ebf-36b6-4645-a7a5-3ae65bdf70dc",
+        "architectEntryId": "1feb798f-56f7-4305-a848-9acb7c409d89",
+        "at": "2026-11-04T05:10:05.694Z",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "hash": "be9b65e3939818edf73eb9d1c044f5398c334a6e0aa3f125711d722e958cef92",
+        "passesSha256": [
+          "ad9faa98cb9ff2ccc57dcfbf9ad9e1fac4598f9977f236e2a0c559bf0d965ad5"
+        ]
+      },
+      {
+        "seq": 53,
+        "id": "8113293b-be82-4157-bf66-bebe1796de06",
+        "architectEntryId": "65f4a9d5-3374-450e-91ad-41b0c2f7790d",
+        "at": "2026-11-04T05:12:17.075Z",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "hash": "76e72302bf7386d47032ecb64b12ce0e7ea1e1439a71a27ce5566c14283acbbc",
+        "passesSha256": [
+          "462a51dc352948c7ac7f57c6924983a524acfc7aefc617f494dd2c602b864880"
+        ]
+      }
+    ]
+  },
+  "cost": {
+    "successfulAttemptUsd": 0.26115625,
+    "allAttemptsUsd": 0.65649825,
+    "providerCalls": 10,
+    "attribution": "Shared provider-ledger deltas; no claim of isolated billing."
+  },
+  "limits": [
+    "Generator-provided tests are not an independent oracle.",
+    "Host checks are not Peer2 sign-off.",
+    "No final assembled-artifact dual-model audit was added.",
+    "Legacy target review-record gates preserved; no numeric/PTAG activation.",
+    "Two generated test assertion defects remain.",
+    "Generated proposal remains isolated and unaccepted."
+  ]
+}

@@ -50,6 +50,16 @@ export interface ApothecaryItem {
    * Consumed by getElementChildren to drill into the next hierarchy level.
    */
   satellites?: string[];
+  /** Explicit parent for authored Satellite/Actuator; no implicit attachment until Architect selects it. */
+  parentElementId?: string;
+  /** Declarative authoring contract; not a claim that a live runtime attachment occurred. */
+  authoringContract?: {
+    version: 1;
+    kind: 'OrbUmbilical' | 'SatelliteTether' | 'ActuatorOperation';
+    parentId: string | null;
+    capabilities: string[];
+    requirements: string[];
+  };
   /**
    * Child actuator element ids bound to this Satellite (Satellite -> Actuator
    * tier). Consumed by getElementChildren to drill into the concrete operations.
@@ -179,8 +189,7 @@ export function getElementChildren(item: ApothecaryItem, catalog: ApothecaryItem
       .filter((c): c is ApothecaryItem => Boolean(c));
 
   if (item.category === 'Orbs') {
-    const linked = resolveIds(item.satellites);
-    if (linked.length > 0) return linked;
+    if (item.satellites !== undefined) return resolveIds(item.satellites);
     // Fallback: derive satellites from any catalog item flagged with a class.
     return catalog.filter((c) => Boolean(c.satelliteClass));
   }
@@ -207,8 +216,10 @@ export function inferElementCodeLanguage(item: Pick<ApothecaryItem, 'category' |
   return 'TypeScript';
 }
 
-export function createDefaultElementCodeFrame(item: ApothecaryItem): ElementCodeFrame {
-  const language = inferElementCodeLanguage(item);
+export function createDefaultElementCodeFrame(item: ApothecaryItem, selectedLanguage?: ElementCodeLanguage): ElementCodeFrame {
+  const language = selectedLanguage ?? inferElementCodeLanguage(item);
+  if (!['Python', 'Rust', 'TypeScript', 'JSON'].includes(language))
+    throw new Error(`Unsupported code template language: ${String(language)}`);
   const safeName = fileSafeElementName(item);
   const capabilities = item.capabilities.length > 0 ? item.capabilities : ['identity_packet'];
   const requirements = item.requirements.length > 0 ? item.requirements : ['invariant_guard'];
@@ -379,6 +390,10 @@ export interface ActiveDaemons {
 }
 
 export interface CoreManifest {
+  application?: import('./coreApplication').CoreApplication;
+  applicationProduction?: { id: string; digest: string; contextHash: string };
+  appBuildPlan?: import('./appBuildPlan').AppBuildPlan;
+  appCreation?: 'draft' | 'ready';
   appConfiguration?: { appType: string; purpose: string; crystalModel: string; updatedAt: string };
   coreId: string;
   name: string;

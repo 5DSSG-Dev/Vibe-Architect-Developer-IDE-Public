@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-03",
+  "codeCommit": "cf2574c78104224dac44703942eb363a6fcfbdd9",
+  "codeTree": "17faec252e1e417ac3404514f5b4198f79318c7e",
+  "fixture": "synthetic local browser only, no model/provider calls",
+  "coldInstall": {
+    "command": "npm ci --no-audit --no-fund",
+    "packages": 255,
+    "exit": 0
+  },
+  "gateway": {
+    "command": "npm test (gateway phase)",
+    "passed": 274,
+    "failed": 0,
+    "exit": 0
+  },
+  "app": {
+    "command": "npm test (app phase)",
+    "passed": 441,
+    "failed": 0,
+    "exit": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exit": 0,
+    "warning": "existing chunk-size warning"
+  },
+  "integration": {
+    "target": "origin/codex/core-configurator-20261102",
+    "mergeTreeExit": 0
+  },
+  "artifactHashes": [
+    {
+      "path": "review-authored-hierarchy-results.json",
+      "sha256": "e4b8f2beeab1354c67574470ceaec7411ca9bcac8b16fcdbbaaa727ae3be606e",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "review-v11-v22-results.json",
+      "sha256": "c50273c667e2906f231a912d468a7c8ab4ce20589a80669177426bf5e035f020",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-connected-edit.json",
+      "sha256": "e15e916c8c9700896ba0665d2b3bec62c8d99bcd40a8db04c42bc1e360ac91e4",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-todo-context.json",
+      "sha256": "07d73f5125bccbcfef0ee032dadaeac8d60f894f4fa68f459fe4528c74d10e0f",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-keyboard-modal.json",
+      "sha256": "bdd4e6615ca49518761d326b7c138b667900299883922db087483db04bde88b8",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-workflow-results.json",
+      "sha256": "e656e5d5e5749587876809c6a9a9783e8cb4769a3ddd5333c46c9ef87044a7d9",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "keyboard-guide-retest.json",
+      "sha256": "ba3e254b47d021ecd45222dcb361d3fab65c8beb6aaf29be9db4a553abecf792",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "v12-final-ui-qa.json",
+      "sha256": "a881ccba65ae181738e56eed299abb63eec31cead8d23cb401096031ef540cee",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-production-audit.json",
+      "sha256": "c3ec12354662c68f67a8e7da9dabe5775a049fe38cf19c808d7f0fbfbd000734",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-code-editor-audit.json",
+      "sha256": "745ae8e0e9b842cd4f30c43a2dd339db387995bf509532d354826c6cc5c78da2",
+      "source": "scripted fixture; preserve original source revision metadata"
+    },
+    {
+      "path": "peer-review/qa-current-workspace-audit.json",
+      "sha256": "30a8af8df7abe84b2dbe08bec7a6452fa4c9515d3631e2905f778a9db7e4d573",
+      "source": "scripted fixture; preserve original source revision metadata"
+    }
+  ],
+  "limitations": [
+    "Live-model final-proposal semantics not verified",
+    "V20 exhaustive keyboard journey incomplete",
+    "V21 contrast on translucent and gradient surfaces unresolved from axe incomplete results",
+    "V22 all-state hit-target coverage not exhaustive",
+    "V24 requires Architect acceptance"
+  ]
+}

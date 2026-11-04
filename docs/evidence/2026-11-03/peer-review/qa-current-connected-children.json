@@ -1,0 +1,21 @@
+{
+  "children": [
+    {
+      "name": "Request Validator",
+      "retained": true
+    },
+    {
+      "name": "SQL Query Executor",
+      "retained": true
+    }
+  ],
+  "path": {
+    "environmentIds": [
+      "orb-http-gateway",
+      "sat-request-validator"
+    ]
+  },
+  "contracts": [
+    "SUCCESS"
+  ]
+}

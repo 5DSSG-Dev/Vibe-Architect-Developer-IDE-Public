@@ -87,7 +87,7 @@ export function extractKernelRecords(records: IdentityRecord[]): KernelSource | 
 
   return {
     identityId: commitments[0].recordId.split('/')[0] || 'identity-default',
-    continuityId: `continuity-${Date.now()}`,
+    continuityId: records.filter(r => r.domain === 'continuity').sort((a, b) => b.priority - a.priority || a.recordId.localeCompare(b.recordId))[0]?.recordId ?? `continuity-${commitments[0].recordId}`,
     version: commitments[0].version,
     foundationalCommitments: commitments.map((r) => r.content),
     sovereigntyParameters: sovereignty.map((r) => r.content),

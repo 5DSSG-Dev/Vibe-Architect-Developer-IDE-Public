@@ -71,6 +71,7 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
           </div>
 
           <button
+            aria-label="Close Element Properties"
             onClick={onClose}
             className="p-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
           >
@@ -82,8 +83,9 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
         <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
           {/* Element Name */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase">Element Name</label>
+            <label htmlFor="edit-element-name" className="text-[10px] font-bold text-slate-300 uppercase">Element Name</label>
             <input
+              id="edit-element-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -93,8 +95,9 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
 
           {/* Description */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase">Description</label>
+            <label htmlFor="edit-element-description" className="text-[10px] font-bold text-slate-300 uppercase">Description</label>
             <textarea
+              id="edit-element-description"
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -112,6 +115,7 @@ export const EditObjectModal: React.FC<EditObjectModalProps> = ({
               <span className="font-bold text-cyan-300 font-orbitron">{memoryReq} MB</span>
             </div>
             <input
+              aria-label="Element working memory in megabytes"
               type="range"
               min="32"
               max="2048"

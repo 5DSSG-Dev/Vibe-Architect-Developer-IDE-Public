@@ -1,3 +1,7 @@
+import type { resolveAndVerifyAssembly } from './assembly-dependencies.js';
+import type { AssemblyAuditor } from './assembly-gates.js';
+import { ProductionRuntime, createProductionRouter } from './application-production.js';
+import { createLocalLuminarySession } from './luminary-local-session.js';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import type { ViteDevServer } from 'vite';
@@ -67,9 +71,13 @@ export interface CreateGatewayOptions {
   spend?: { summary(): { spentUsd: number; ceilingUsd: number; calls: number } };
   /** The Knowledge Pack sent with every question (P23), named so each answer can record it. */
   knowledge?: { version: string; sha256: string; bytes: number };
+  instructions?: { sha256: string; bytes: number };
+  runtimeRevision?: string;
+  assemblyAuditor?: AssemblyAuditor;
+  assemblyResolver?: typeof resolveAndVerifyAssembly;
   /** The Luminary's code-production executor (P19). Absent = coding tasks are off. */
   executor?: LuminaryExecutor;
-  vite?: ViteDevServer;
+  vite?: ViteDevServer | null;
 }
 
 /** Reviewer-facing Luminary endpoint throttle: 30 requests per IP per minute. */
@@ -120,6 +128,7 @@ export async function createGateway(options: CreateGatewayOptions) {
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         frameAncestors: ["'none'"],
+        frameSrc: config.nodeEnv === 'development' && config.luminaryLocalSession ? ["'self'", 'http://127.0.0.1:*'] : ["'self'"],
         formAction: ["'self'", 'https://login.microsoftonline.com'],
         upgradeInsecureRequests: config.nodeEnv === 'production' ? [] : null,
       },
@@ -136,7 +145,7 @@ export async function createGateway(options: CreateGatewayOptions) {
     res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()');
     next();
   });
-  app.use(express.json({ limit: '32kb' }));
+  app.use(express.json({ limit: '1mb' }));
 
   app.use(async (req, _res, next) => {
     const id = readCookie(req, sessionCookieName(config));
@@ -257,6 +266,9 @@ export async function createGateway(options: CreateGatewayOptions) {
   // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
   // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
   // that take the same governed path as /ask.
+  if (config.nodeEnv === 'development' && config.luminaryLocalSession && config.luminaryDemoKey) {
+    app.use('/api/luminary', createLocalLuminarySession(config.origin, config.luminaryDemoKey));
+  }
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
   const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge }, record: options.record };
   app.use(
@@ -267,20 +279,29 @@ export async function createGateway(options: CreateGatewayOptions) {
   app.get('/api/luminary/status', (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.json({
+      replySourceKind: options.askModel ? (config.luminaryReplySource ?? 'configured') : 'not_configured',
       replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
       gauge: options.gauge ? 'configured' : 'not_configured',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
       ...(options.spend ? { spend: readSpend(options.spend) } : {}),
+      ...(options.instructions ? { instructions: options.instructions } : {}),
+      ...(options.runtimeRevision ? { runtimeRevision: options.runtimeRevision } : {}),
       ...(options.knowledge ? { knowledge: options.knowledge } : {}),
     });
   });
   if (options.executor) {
-    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions)));
+    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, createGovernedAsk(luminaryAskModel, luminaryReplyOptions), createGovernedAsk(luminaryAskModel, { ...luminaryReplyOptions, governance: { maxContentBytes: 262_144 } })));
+  }
+  // The first production profile compiles only deterministic generated templates, locally.
+  if (config.nodeEnv === 'development' && config.luminaryLocalSession && options.record && ['meta', 'baseten'].includes(config.luminaryReplySource ?? '')) {
+    const production = new ProductionRuntime({ root: resolve(process.cwd(), 'output/generated-projects'), record: options.record, ask: createGovernedAsk(luminaryAskModel, luminaryReplyOptions), assembly: {resolve:options.assemblyResolver,audit:options.assemblyAuditor??(async()=>{throw Error('Secondary assembly auditor is unavailable.');})} });
+    app.locals.applicationProduction = production;
+    app.use('/api/luminary/production', createProductionRouter(production));
   }
   if (options.record) app.use('/api/luminary/review', createReviewRouter(options.record));
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));
 
-  const vite = options.vite ?? (config.nodeEnv === 'development'
+  const vite = options.vite === null ? undefined : options.vite ?? (config.nodeEnv === 'development'
     ? await import('vite').then(({ createServer }) => createServer({ server: { middlewareMode: true }, appType: 'custom' }))
     : undefined);
   if (vite) app.use(vite.middlewares);

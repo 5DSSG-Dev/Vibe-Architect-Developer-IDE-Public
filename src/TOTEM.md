@@ -139,3 +139,51 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-02 | Codex | CORE footer Luminary
 - Docked the Luminary trigger in the CORE modal footer, centered beside Done. Suppressed floating paused trigger only while CORE modal is open; shared conversation state and workspace placement preserved.
+
+
+## 2026-11-02 | Codex | Guided New App demo
+- New App preserves the departing snapshot and creates a unique vacant draft CORE without starter contracts or CyberPeer daemons. First launch without saved workspace enters the same draft conversation; existing workspaces are preserved.
+- Added live-gateway app planning conversation, bounded catalog-only proposal validation, explicit Architect acceptance, runtime Orb handshakes, requested Satellite/Actuator hierarchy, and rollback on connection/evidence failure. No model call occurs until Send. Rehearsal is rejected for this planning flow.
+- The creation bubble enlarges and the 3D Luminary eases to 1.4x at the same screen anchor while assembly is hidden. Selected crystal updates the workspace CORE. Optional loopback-only preview gateway proxy keeps provider credentials server-side.
+- Production build and 356 app tests passed before final added empty-child regression. Desktop Commander has stopped responding; Windows application, browser interaction and live-provider validation remain pending. This creates starting architecture, not working app code or production acceptance.
+
+## 2026-11-02 | Codex | Guided creation verification
+- Final production build passes, including TypeScript checks. Full app suite: 358 passed, zero failed/skipped. Rejects uncontracted model-only Orbs before proposal acceptance; explicit empty child lists stay empty. No provider calls or browser visual tests performed. Desktop Commander remains unresponsive; preview application pending.
+
+
+## 2026-11-02 | Codex | Local preview gateway session
+- Explicit opt-in development-only loopback session authenticates same-origin local preview without exposing demo/provider keys. Existing public header authentication unchanged. Provider type now has machine-readable status separate from display name.
+- Windows build and ten local-session/access tests pass; real HTTP session204/status200/cross-origin403 verified. Baseten live source and gauge configured; no model inference requested.
+
+
+## 2026-11-02 | Codex | Local hostname session repair
+- Reproduced localhost:3012 bootstrap403 while 127.0.0.1:3012 returned204. Accept explicit loopback aliases on configured port only, while Origin must match request Host. Cross-origin, wrong-port and remote restrictions remain. Added regression.
+
+
+## 2026-11-02 | Codex | Static local demo preview
+- Reproduced browser dependency failure: served dev main module referenced React optimizer URLs returning504. Added explicit null Vite override and development/local-session-only LUMINARY_STATIC_PREVIEW launcher opt-in to serve verified dist assets through the existing gateway.
+- Windows production build passes. Real HTTP checks: root200 with no Vite client; referenced JS200 JavaScript and CSS200 CSS. No workspace storage changed. Live gateway session checked separately; visual reload confirmation remains with Architect.
+
+
+## 2026-11-02 | Aster | Workspace ToDo and Apothecary handoff
+- Architect approved the interview -> accepted architecture -> Workspace reveal -> optional Apothecary journey. Implementation is local and uncommitted on codex/guided-new-app-20261102 (base79c1443).
+- Accepted proposals preserve agreed work, full interview and architecture in CoreManifest.appBuildPlan. App-local ToDo items flag Luminary through its existing selection chip; current Element context is retained. Apothecary entry preserves the selected pending task. No automatic model request or execution.
+- Workspace reveal precedes a nonmodal one-second invitation. Not yet retains exploration; ToDo offers Continue to Apothecary. Checkboxes require explicit Architect verification evidence; opening editors never completes work. Full decisions remain inspectable. Imported metadata is validated; corrupt restored ToDo metadata displays a warning without discarding the Workspace.
+- Fresh verification: focused23/23, application406/406, production build and git diff --check pass. Existing large-bundle warning remains. Full npm test stopped at unchanged server/luminary-p19.test.ts:65 (259/260 gateway pass; extra replySourceKind field). Earlier app suite also reproduced the previously recorded intermittent identity.test.ts:443 deterministic-rebuild failure; final app rerun passed406. Neither server nor identity source was changed.
+- Supplemental independent GPT reviewer found four issues plus final-decision truncation; all repaired with regressions and re-reviewed with no remaining substantive findings. This does not satisfy the named final Verus/Libra outside-pair gate. Browser visual, keyboard interaction and live interview behavior remain unverified. No provider calls, gateway restart, commit, push, merge or deployment.
+- Return point: final outside-pair review and local browser rehearsal on a newly accepted proposal; older already-accepted apps are preserved and are not retroactively assigned invented work.
+
+
+## 2026-11-03 | Codex | Durable program inside CORE
+- App now wires explicit program save into CoreManifest.application. saveCoreProgram writes the validated current Workspace before state adoption; failed quota writes preserve the prior program. App-file imports validate optional programs and existing snapshots/export/reopen retain them without execution. Real browser/helper and focused persistence regressions passed.
+- Active checkout/preview edits preserved in an isolated PR52 worktree. Report docs/ACCEPTED_CORE_RUNTIME_2026-11-03.md records full test failure boundary and pending independent review. No live activation/publication.
+
+## 2026-11-03 | codex | Authorized accepted-core runtime integration
+- Architect explicitly selected this checkout for deployment/reload and public PR52 publication. Adapted source67d26bd batching/providercontinuation/append-onlymanifest permissions onto target430861f, preserving this target's existing review-record governance and production route. No numeric/bidirectional governance upgrade substituted.
+- Target fullsuite721passed/0failed/0skipped (gateway280/app441); productionbuildpassed with existingchunkwarning. HTTP26file/40KBspec fixture and transportcontinuation regressions passed. Historical provider receipts remain historical, no paidmodelcalls thisturn.
+- Compiledstartup resolves instructions/knowledge from exactworkspace root; status exposes loadedinstructionSHA/runtime revision. NodeESM imports corrected; listener pinned127.0.0.1. Cleanreload and exactsource/status smoke follow after commit. Sourcepublic67d26bd remotehashverified; no merge.
+
+## 2026-11-03 | codex | Six UI fixes retained locally
+- Lowered keyboard navigation banner; renamed APP to MENU; local-session-aware Luminary connection reports Active/Standby; anchored Command Console above footer with 12px clearance; New App Luminary trigger focuses actual interview input. ToDo selection opens coding mode with full task/context.
+- Exact requirement ID/text, AST binding, artifact hash, independent audit pass and successful build/tests gate automatic completion; mismatch/failed/partial cases covered. Live existing audited nine-requirement receipt restored all nine checked states; selecting task enabled coding mode and real local status Active DESIGN. New App trigger focus verified at390x700 without horizontal overflow.
+- Full731tests passed (288 gateway/443 app), final TypeScript/build/diff checks passed. Existing Vite chunk warning remains. No new model calls, server restart, commit, push or merge; UI changes remain local per bundling request.

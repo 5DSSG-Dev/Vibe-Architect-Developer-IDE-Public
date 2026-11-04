@@ -95,3 +95,104 @@ Architect decision D4 (STP-0002 P7) resolves the six conflicts between VIBE_LUMI
 ## 2026-11-01 | Codex | Atlas branch conflict resolution
 - At Tracey's request, merged main 29a831b into the Atlas branch. Resolved the sole conflict in docs/TOTEM.md by retaining both sets of historical entries; the codex lane merged automatically. Atlas articles and supplied sources are unchanged.
 - Verified both parents' history lines are preserved, all Atlas local Markdown links resolve, and the Atlas directory matches its pre-merge version byte-for-byte. Documentation reconciliation only; application tests not run. PR #30 remains for review, not merged into main.
+
+
+## 2026-11-02 | Aster | Workspace build journey
+- docs/APP_BUILD_JOURNEY.md records approved design and implementation sequence. Actual code/test evidence and exact hashes are in .aegis/lanes/aster.md. Final Verus/Libra review and browser rehearsal remain pending.
+
+
+## 2026-11-02 | Lumen | Application production plan
+- APPLICATION_PRODUCTION_PLAN.md records the directive, source gap, first generator slice, verification approach and pending IDE/runtime/governance integration. Fresh generator7/app413/generated4 checks pass; IDE and generated builds pass. Full npm test retains the existing gateway status mismatch. Detailed evidence/limitations in .aegis/lanes/chatgpt-work.md.
+
+## 2026-11-03 | Lumen | Autonomous validation evidence
+- AUTONOMOUS_UI_VALIDATION_2026-11-03.md records live interview, full regression, generated-app build/preview, stress generation, phase coverage and browser/implementation blockers. It does not claim a human walkthrough or complete generated note app.
+
+## 2026-11-03 | Lumen | UI validation closure matrix
+- UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md maps 24 unexecuted claims to exact prerequisites, CLI/browser feasibility, authorization and human review. It distinguishes unavailable local browser from missing generated-app features and deferred objective oracles.
+
+
+## 2026-11-03 | Codex | Accepted CORE runtime implementation handoff
+- ACCEPTED_CORE_RUNTIME_2026-11-03.md records PR52 source findings, minimal persisted-program/restoration path, exact verification (focused21pass/gateway274pass/buildpass/app427pass1baselinefail), browser fixture scope, original-review-record boundary, unsupported capabilities and independent-review return point. Raw private test evidence remains outside tracked source. No active routes or publication changed.
+
+
+## 2026-11-03 | Codex | UI validation matrix current disposition
+- Appended a24rowcurrent-status reassessment to UI_VALIDATION_CLOSURE_MATRIX_2026-11-03.md without rewriting its historical baseline. Threeboundedsyntheticclosures:review/Terminal/Preview, form/list/navigation,1000recordinteraction. Fourrows partial and17others unclosed. Distinguishes savedCORE programrecovery from stillmissingdurableappdata; browsernowavailablebutuntestedIDEflowsremainopen. Browsermetrics1000→invalid1000→valid1001→navigation1001, TerminalStopremovesiframe, providers0. Productsourceunchanged; no liveactivation/publication.
+
+## 2026-11-03 | Codex | UI follow-up
+See UI_VALIDATION_REVIEW_PACKET_2026-11-03.md for scripted retests, Architect scope decisions, and outstanding accessibility limits. No provider calls or route activation.
+
+## 2026-11-03 | codex | Full-scope base-build mandate adopted in prompt source
+- Architect supplied complete-interview-ToDo build mandate. Appended supplied system directive verbatim and completion/evidence rules to docs/VIBE_LUMINARY_INSTRUCTIONS_v0.1.md, preserving previous text; added docs/LUMINARY_FULL_SCOPE_BASE_BUILD_MANDATE_2026-11-03.md with lifecycle, acceptance evidence and inspected integration gaps.
+- server/index.ts startup live-model initialization reads this instructions document through systemPromptWithKnowledge. Existing knowledge/prompt tests 3/3 pass; direct actual-document composition assertion passes; scoped diff whitespace check passes.
+- Prompt policy only: existing eight-file/16KiB-per-file parser, eight-file executor/dependency exclusions and 24KB context limit remain. No complete builder orchestration, generated application or dual-model final-app audit executed. Existing processes not restarted; other UI worktrees not modified. No commit/push/deploy/provider call.
+
+## 2026-11-03 | codex | Continuous base-build runtime constraints implemented
+- Authorized runtime implementation: explicit baseBuild task mode pages up to128scoped files through sequential governed batches, preserves fullspec/priorfiles and creates one isolated proposal. Basecontext512KiB, prompt1MiB, reply256KiB; normaltask limits retained. Added provider length-triggered automatic continuation with percall spend/cancellation, bounded exhaustion/no-progress/model-change errors and no partial delivery.
+- Scoped package.json reads and append-only registry dependency/devDependency writes enabled for basebuild; existing metadata/scripts/versions preserved, unsafepaths/lockfiles remainfenced. No automatic installation or generated lifecycle execution. Functionalcoverage/clientcaller/durable crashresume/finalassembledartifactaudit remain separate capabilities.
+- HTTPfixture40KBspec/26files/fourpages passed; focused37tests passed. Finalworkspacesuite676passed/0failed/8skipped; buildpassed with existingchunkwarning. Syntheticgovernance/fakeprovider evidence only; no paidcall. Exactcommitcandidate verification follows.
+- No activeLuminaryserver found in publiccheckout. Three serverprocesses rooted in separate vibe-accepted-core-runtime had nolisteners; no substitutecheckout restart. Userauthorizes scopedcommit; no push/merge requested. UnrelatedUI/licensing edits excluded.
+- Exact staged-file snapshot independently passed676tests/0failures/8skipped and fullproductionbuild, reusing installeddependencies read-only via junction rather than fresh npmci. Existinglargechunkwarning retained. No sourcechanges after this snapshot run; only this verification note appended before commit. Finalscopeddiffcheck passes.
+
+## 2026-11-03 | codex | Authorized accepted-core runtime integration
+- Architect explicitly selected this checkout for deployment/reload and public PR52 publication. Adapted source67d26bd batching/providercontinuation/append-onlymanifest permissions onto target430861f, preserving this target's existing review-record governance and production route. No numeric/bidirectional governance upgrade substituted.
+- Target fullsuite721passed/0failed/0skipped (gateway280/app441); productionbuildpassed with existingchunkwarning. HTTP26file/40KBspec fixture and transportcontinuation regressions passed. Historical provider receipts remain historical, no paidmodelcalls thisturn.
+- Compiledstartup resolves instructions/knowledge from exactworkspace root; status exposes loadedinstructionSHA/runtime revision. NodeESM imports corrected; listener pinned127.0.0.1. Cleanreload and exactsource/status smoke follow after commit. Sourcepublic67d26bd remotehashverified; no merge.
+
+## 2026-11-03 | codex | Continuous-build local deployment verified
+- Publishedsource67d26bd and PR52integratedcodecbb228b; exactremotehashverified. TargetcompiledruntimePID52312 respondslocalhost3102; authenticatedstatusrevision/instructionSHA matches, codingTaskson. Root/authdenial/ledger/fencechecks pass, localgaugemodels reachable, no providerrequests/spenddelta. Duplicate source/watch entrypoints stopped; historical QAfixtures preserved.
+- Windows socketenumeration omittedLISTEN rows despite successful loopbackTCP/occupiedport/HTTP probes; prior enumeration-only absence is not reliable availability evidence. Fulltarget721tests/build passed. Reportdocs/LUMINARY_CONTINUOUS_BUILD_DEPLOYMENT_2026-11-03.md records evidence/limits. Documentation-onlyreceiptcommit follows; runtime executablecbb228b unchanged. Peer2 independentaudit remains pending; earlierclearance notcarriedforward.
+
+## 2026-11-03 | codex | Live full-scope validation exposed empty truncation
+- Architect authorized live multi-itembuild verification/DataQuadtrace. Initialcbb228b run14files/10UIcomponents: page1 completed through internalcontinuation, page2 hitlengthlimit withnullcontent; HTTP422, no partialproposal. ThreeBasetencalls sharedledgerdeltaUSD0.22235525; rawrequest/response retained in .luminary/validation/full-scope-1793768435. Failure remains partof evidence.
+- Providerdriver now retries empty/null length-limited completions internally atmosttwice within existingtotal/spend/cancellation budgets; repeated no-progress still errors. StrictgateJSON and explicitlydisabledcontinuations remainfailclosed. Regressioncoversnull/empty; finalfocused17pass, priorfull722pass0fail0skip; finalbuildpass. Live exactspec rerun follows compiledreload. No governancebypass/merge.
+
+## 2026-11-03 | codex | Malformed continuation batch recovery
+- Same14filespec attempt2 on8ed05fa: page1 delivered; page2 delivered a malformedJSON change after token-limit continuation. HTTP422, no proposal; threeprovidercalls/USD0.17298675 sharedledgerdelta. No payload repairedbyguessing or parserweakened.
+- Basebuilder now splits invalid JSON/filecoverage batches into smaller governed groups, retains all priorvalid files/fullspec and bounded singlefileretry. Governanceholds remainterminal; every regeneration re-entersgovernance. Regressionexercisesmalformedmulti-filepages becoming completeorderedfiles. Fullsuite723pass0fail0skip and buildpass; nextliveattempt keeps exact originalspec.
+
+## 2026-11-03 | codex | Live full-scope runtime validation and audit trace
+- Exact14files/10UIcomponents specification finally returnedHTTP201 through activec9576ff/PID49384/3102, task27d37631/generatedcommitdf8f5eb. Twogovernedpages/fourmeteredprovidercalls178.75s, tokenlimits16000twice resumed internally, no confirmationpauses. Priorcbb/8ed failures retained; boundedemptyretry/adaptivemalformedpaging repairs have723regressions0fail0skip/buildpass.
+- All14fileshashmatchGitblobbytes; proposalunaccepted/unmerged. Executor2typecheckspass; host23assertionspass; browser11behaviorcheckspass (favicon404only). Generatedtests26pass/2failedinvalidassertions retained, no blanketacceptance. Fullreviewrecordchains57Architect/53Luminary verified; successfulrecordIDs56/57↔52/53. Tenprovidercalls sharedledgerdeltaUSD0.65649825 allattempts, notisolatedbilling.
+- Reportsdocs/LUMINARY_FULL_SCOPE_LIVE_VALIDATION_2026-11-03.md and docs/evidence/2026-11-03/continuous-build-live-validation.json; private rawtrace .luminary/validation/full-scope-1793768435. DataQuadpublishincludesexecutionevents/assertionfindings/hashes. Peer2independent signoff pending; no finalassembledartifactaudit/numericPTAGupgrade/mergeclaim.
+
+## 2026-11-03 | codex | Peer2 five-gate remediation candidate (not published)
+- Architect authorized assertionrepairs, actualInterviewClient ingestion, ToDoID→realAST gate, fullbundle secondarymodel audit and dynamicdependencyresolution. Historicalgeneratedsuite repaired inisolatedproposalcommit26c8f36:28/28pass, originaldf8 failures preserved. No UIlayout/class changes; functionalclient acceptance carries source-derivedinterviewIDs and explicitpinneddependency into existingCOREproductionpath.
+- Added AST/exportnode binding with runtime-onlydynamicimport/manifest checks; isolatednpmignore-scripts install+lock+test/build; localindependent fullbundle auditor hash/ID/model gates before receipt/preview; savedCORE carriesdependencylock and restores revalidate. Liveproductionmount always configures assemblygate; no numericgovernance substitution.
+- Candidateprecheck729tests0fail0skip/buildpass; gate regressions cover omissions/comments/invalidsyntax/stalehash/samewriter/dependencyimport-in-test-only/auth/origin and gateordering. Actualinterview/dependency/auditor liveverification stillpending; no updatedreceipt pushed. Existing UIlayoutwork preserved locally.
+
+## 2026-11-03 | codex | Full-bundle auditor transport correction (local only)
+- ActualInterviewClient acceptedPeerGateNotes with9source-derivedToDoIDs andslugify1.6.6. Itsproductionmountgenerated28files/13components, isolatednpmresolutionmatchedregistryintegrity,4generatedtests/buildpassed; fullbundleauditor timedout240s, returning409withno emittedreceipt/preview. Rawclienttrace preserved; no syntheticproductionpayloadinjected.
+- Removedduplicate package-lock data from answer metadata while retaining everyartifactfile. Nativeauditor nowusesJSONschema/bounded2048tokenresponse, 480stimeout andhash/byte/token telemetry; unchanged65536context andfullfilecoverage. ExplicitAEGISvirtue/hiddeneffect/scope-integrity checks added; no passdecisionforced. Negativeholdtestprovesno registered/recoverable receipt aftersuccessfulcheckswhen auditdisagrees. Prelive2730tests0fail0skip; buildpass. Receiptpush remainshelduntilfivepointsverified.
+
+## 2026-11-03 | codex | Retained false assembly approval and content remediation
+- Secondactualclientrun emitted27filebundle after730repo tests/4generatedtests/build and independentllama3.2:3b pass (72,274inputbytes/24,752prompttokens193.734s). BrowserverifiedrealtrimmedTitle→slugifydynamicimport→hello-peer-two, but onboardingcomponents containedonlylabels, missingrequestedusefulinstructions. This is retainedasfalseapproval, notclosure; preview stopped and receiptpushheld.
+- Productionpromptnowexplicitlypreservesfullrequestedexplanatorycontent. Auditorreceives focusedactualASTsourceperrequirement plusentirebundle, explicitheadings-only incompleteness check; schema constrainsidentityfields/allowedIDs, neverdecision. Rejectedmodeldecisions/findings retainedprivately, stillno emittedreceipt. Focused19checks/buildpass; originalbadartifactwillbe a live negativecontrol beforeupdatedclientrun.
+- Countqualification: prior phrase Prelive2730 meant pre-live attempt2 with730tests, not2,730tests. Source/generation failures and latency remainevidence; no layoutadjustment/sourceCSSchange or remote receiptpush.
+
+## 2026-11-03 | codex | Independent small-model judgment limitation retained
+- Revisedactualclientbundlehasallten usefulinstructioncomponents/4generatedtestspass, but llama3.2:3b heldforallegedmissingblankvalidation despite actualprepareRecord.trim/requiredcheck andpassingregression. Previousnegativecontrolholdalsohadincorrecttrimmingrationale; qualifiedastransportholdonly, notmissinginstructiondetection. No passoverride orreceiptpush.
+- Assemblyauditor selection nowaccepts explicitLUMINARY_ASSEMBLY_MODEL independentofunchangedIRGgauge. Usingalreadyinstalledqwen3.5:4b for completebundle review, thinkingdisabled/schema unchanged; promptrequiresfollowingimportedhelperdefinitions before allegingmissingvalidation. Fullsource/hash/ID/decisionchecks unchanged. Focused6tests/buildpass; strongerauditorliveverificationnext.
+
+## 2026-11-03 | codex | Qwen held missing execution evidence; audit packet completed
+- Actualclientattempt4 usedqwen3.5:4b independentofBasetenwriter andunchangedIRG. Itapproved8/9IDsbutheldR001-09becausesourcebundlecontainednoexecutedtest/buildreceipt. Hosthadexecutedresolution/tests/build; packetomittedthat evidence. Holdpreserved, nooverride.
+- Assemblyinputnowincludesactualhostresolver install/test/build/dependencyreceipt alongsidecompleteartifact/AST. Regressionassertsexactexecutionevidencetransmission. Focused19checks/buildpass. Nextsameinterviewclientrunwillverifycompletepacket; remote receiptpushstillheld.
+
+## 2026-11-03 | codex | Complete audit packet made inspectable without duplicate lock
+- Qwenactualclientrun5heldR001-09claimingtestsourceabsent, despiteactualfiles['test/application.test.mjs']andexecuted4passlog. Retainedasunsupportedfinding; nooverride. Executionreceiptpassedwhole resolverobject and duplicatedlockfile, increasinginput123405bytes45293tokens.
+- Packetnowselectsinstall/tests/build/dependencyexecutionfields explicitly, keepsonecompleteartifactlock, includesfileinventorywithhashesandtestsourceupfront, sortslarge locklast. Everyoriginalfilepreserved; noscopeclippingorforcedpass. Regressionchecksmanifest/testinventory/source andexecutionreceipt. Focused6/buildpass; finalsameinterviewclientrun follows.
+
+## 2026-11-03 | codex | Allfive mandatory remediation points verified before publication
+- ActualInterviewClient→acceptedCORE→BuildPreview produced28fileapp on05b0392/PID31164/3102, IDb3875560, digest0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8. NineToDoIDs map29realASTnodes; independentQwen3.5:4b fullbundlepass precedesHTTP201/preview,32,184prompttokens/91,385inputbytes167.723s. Basetenwriter/IRGgauge remainseparate.
+- Historicalgeneratedsuite28/28afterassertionrepair26c8f36; newgeneratedsuite4/4; full730regressions0fail0skip/buildpass. Actualisolatedslugify1.6.6install/lock/integrity/dynamicASTandliveHelloPeerTwo→hello-peer-two verified. Browserinstructions/blank/order/navigation/reload/Stop passed; hostlayoutunchanged. Previewstopped; Luminaryactive.
+- Prior3Bfalseapproval/falseholds/Qwenpacketfindings/timeout retained, notrelabeledpass; modelreliabilitylimited. No humanoffsignoff ormergeclaim. Fullsource/evidence reportdocs/PR52_FIVE_GATE_REMEDIATION_RECEIPT_2026-11-03.md; publicbundle/receipt/trace underdocs/evidence/2026-11-03/pr52-five-gates/. Verified79Architect/60Luminarychains; DataQuadtraceappendfollows. Receiptpush onlynowafterfiveverified.
+
+## 2026-11-04 | Lumin | PR52 IRG profile continuation evidence
+- docs/PR52_IRG_THRESHOLD_CONTINUATION_2026-11-04.md records live evidence for uniform70-versus-recordedselected system-one threshold mismatch. Restored localremediation config only; realinterview writerHTTP200 with bothIRGpass1. No new calibration or fullQ4closure. IDQ is intendedname; branchlegacyids implementation is a separate migrationgap. Existing3012process notchanged; no merge/approval inferred.
+
+## 2026-11-04 | Lumin | Q4 live verification report
+- docs/Q4_LIVE_APP_VERIFICATION_2026-11-04.md recordsactualHEAD788c809 compiled3133run, authorizedportchange, successfulhydratedbuild/interview/acceptanceandtwofailedproductiondefinitions. dependencies[]anddue-dateviolatetheexistingcontract;noappreceipt/AST/auditor/previewPASS. Explicitpendingcomplete/filterpreserved. scripts/audit-assembly.ts added/typechecked;missingreceiptcommandUNVERIFIEDexit2,livebranchesunexecuted. Q4remainsopen.
+
+## 2026-11-04 | Lumin | Q4 repaired local candidate verified
+- Base788c809+productpatch92167605d07a; authenticated3133statusmatches. Explicitdependencyobject/fieldidentifierprompt+parsererrors addedwithoutcoercion; startupawaitsactual-listeningandthrowsbinderror.733repo tests(288gateway445app)0fail/skip/buildpass;realoccupiedsocketcompiledexit1/EADDRINUSE/no false success.
+- ActualUIinterview→explicitbaselinependingcomplete/filter→accept→generateHTTP201 ID03c3f285,20files/6IDs/22ASTbindings/3generatedtestspass/buildpass. Source0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c. MountedQwenpass;CLIpositiveexit0/pass;realincomplete-form+emptycontentnegativeexit0/holdwithcorrectsemanticfindings.10browserchecks passedincludingpendingnotice/navigation/reload/Stop.
+- Reportdocs/Q4_REMEDIATION_SUCCESS_2026-11-04.md;private candidatebinding/receipt/audits/traffic .luminary/q4-repair-20261104. ReceiptSHAa893a27be40c2c19af3103464d8a0b6aa262f05ac5e7f640f348863c0d42bfbf. Baselineonly;complete/filterpending,IDQmigrationseparate. Previewstopped;3133gatewayavailable. Localuncommitted;no push/merge/nonauthorapproval.

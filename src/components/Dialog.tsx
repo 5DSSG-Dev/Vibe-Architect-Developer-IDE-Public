@@ -24,6 +24,19 @@ export const Dialog: React.FC<DialogProps> = ({ label, onClose, className, child
   useEffect(() => {
     const root = rootRef.current;
     const previouslyFocused = document.activeElement as HTMLElement | null;
+    // A modal makes every outside application branch inert, including the
+    // persistent Luminary companion. Keep the modal and its ancestors live.
+    const changes: { element: HTMLElement; wasInert: boolean }[] = [];
+    let branch: HTMLElement | null = root;
+    while (branch?.parentElement) {
+      for (const sibling of Array.from(branch.parentElement.children)) {
+        if (sibling === branch || !(sibling instanceof HTMLElement)) continue;
+        changes.push({ element: sibling, wasInert: sibling.inert });
+        sibling.inert = true;
+      }
+      branch = branch.parentElement;
+    }
+
     if (root && !root.contains(document.activeElement)) {
       const first = root.querySelector<HTMLElement>(FOCUSABLE);
       (first ?? root).focus();
@@ -57,6 +70,7 @@ export const Dialog: React.FC<DialogProps> = ({ label, onClose, className, child
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      for (const change of changes) change.element.inert = change.wasInert;
       if (previouslyFocused && document.contains(previouslyFocused)) previouslyFocused.focus();
     };
   }, []);

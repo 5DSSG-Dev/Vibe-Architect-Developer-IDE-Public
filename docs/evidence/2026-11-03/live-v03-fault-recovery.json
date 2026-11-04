@@ -1,0 +1,15 @@
+{
+  "source": "Actual Baseten gateway; deliberate Chrome network abort only, then real provider retry; no mock JSON or mocked gateway",
+  "result": {
+    "fault": {
+      "alert": "The IDE gateway could not be reached.",
+      "draftRetained": true
+    },
+    "retry": {
+      "http": 200,
+      "realGateway": true,
+      "success": true
+    },
+    "pass": true
+  }
+}

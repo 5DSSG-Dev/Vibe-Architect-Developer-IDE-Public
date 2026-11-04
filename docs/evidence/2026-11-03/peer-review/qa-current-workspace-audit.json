@@ -1,0 +1,405 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "workspace",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "App",
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Apothecary",
+          "x": 43.453125,
+          "y": 747,
+          "w": 136.203125,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Inspector Deck",
+          "x": 187.65625,
+          "y": 747,
+          "w": 158.890625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Build & Preview",
+          "x": 256.5,
+          "y": 80,
+          "w": 117.5,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 644,
+          "scrollHeight": 5590
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 768,
+        "h": 1024
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "App",
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Apothecary",
+          "x": 228.453125,
+          "y": 919,
+          "w": 136.203125,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Inspector Deck",
+          "x": 380.65625,
+          "y": 919,
+          "w": 158.890625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Build & Preview",
+          "x": 634.5,
+          "y": 80,
+          "w": 117.5,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 824,
+          "scrollHeight": 5590
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 1000
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "App",
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Apothecary",
+          "x": 64,
+          "y": 925,
+          "w": 136.203125,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Inspector Deck",
+          "x": 216.203125,
+          "y": 925,
+          "w": 158.890625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Build & Preview",
+          "x": 1306.5,
+          "y": 80,
+          "w": 117.5,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 800,
+          "scrollHeight": 5590
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "App",
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Apothecary",
+          "x": 64,
+          "y": 1023,
+          "w": 136.203125,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Inspector Deck",
+          "x": 216.203125,
+          "y": 1023,
+          "w": 158.890625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        },
+        {
+          "text": "Build & Preview",
+          "x": 1786.5,
+          "y": 80,
+          "w": 117.5,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 880,
+          "scrollHeight": 5590
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": [
+              ".md\\:fixed"
+            ],
+            "html": "<button aria-label=\"Luminary — Click to ...\" aria-expanded=\"false\" title=\"Click to talk to the...\" class=\"md:fixed md:right-[2...\">",
+            "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 55,
+        "nodes": [
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .text-cyan-500\\/70.tracking-widest.px-1\\.5"
+            ],
+            "html": "<span class=\"text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5\">QUALITY</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .bg-cyan-500\\/25.text-cyan-200.border-cyan-400\\/50"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors bg-cyan-500/25 text-cyan-200 border border-cyan-400/50\">High</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .hover\\:text-slate-100.hover\\:bg-slate-800\\/60.border-transparent:nth-child(3)"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent\">Balanced</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .hover\\:text-slate-100.hover\\:bg-slate-800\\/60.border-transparent:nth-child(4)"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent\">Low</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".text-emerald-200"
+            ],
+            "html": "<button title=\"Toggle decorative motion (honours OS reduced-motion by default)\" class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors border bg-emerald-500/20 text-emerald-200 border-emerald-400/50\">MOTION ON</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-hidden-body",
+      "aria-hidden-focus",
+      "aria-prohibited-attr",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "button-name",
+      "color-contrast",
+      "duplicate-id-aria",
+      "form-field-multiple-labels",
+      "label-content-name-mismatch",
+      "label",
+      "list",
+      "listitem",
+      "nested-interactive",
+      "scrollable-region-focusable",
+      "select-name",
+      "summary-name"
+    ]
+  }
+}

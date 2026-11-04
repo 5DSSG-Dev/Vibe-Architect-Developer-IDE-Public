@@ -1,0 +1,45 @@
+{
+  "provider": "Baseten",
+  "workflow": "Actual 3D keyboard navigated connected Satellite edit, save, reload, no mocks",
+  "record": {
+    "before": {
+      "orb": "HTTP API Gateway",
+      "satellite": "Request Validator",
+      "id": "sat-request-validator",
+      "version": "1.5.0",
+      "contractId": "ctr-orb-http-gateway-socket-alpha-1793736043494-1",
+      "attached": [
+        "sat-request-validator"
+      ]
+    },
+    "inspectorButtons": [
+      "",
+      "Close",
+      "Edit",
+      "View Code"
+    ],
+    "editorButtons": [
+      "",
+      "Low1 Cores",
+      "Medium2 Cores",
+      "High4 Cores",
+      "Dedicated8 Cores",
+      "Draft",
+      "Experimental",
+      "Formulated",
+      "Validated",
+      "Canonical",
+      "Cancel",
+      "Edit Code",
+      "Save & Re-Validate Contract"
+    ],
+    "after": {
+      "name": "Request Validator QA Edited",
+      "version": "1.5.0",
+      "contractId": "ctr-orb-http-gateway-socket-alpha-1793736043494-1",
+      "satelliteId": "sat-request-validator"
+    },
+    "passed": true,
+    "reloadPersisted": true
+  }
+}

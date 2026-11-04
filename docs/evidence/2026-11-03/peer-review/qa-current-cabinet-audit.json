@@ -1,0 +1,277 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "cabinet",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 112,
+        "y": 80,
+        "w": 262,
+        "h": 496
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "+ Create New Element",
+          "x": 125,
+          "y": 188,
+          "w": 236,
+          "h": 30,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 211,
+          "scrollHeight": 2672
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 112,
+        "y": 80,
+        "w": 416,
+        "h": 676
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "+ Create New Element",
+          "x": 125,
+          "y": 180,
+          "w": 390,
+          "h": 30,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 444,
+          "scrollHeight": 2587
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 112,
+        "y": 80,
+        "w": 416,
+        "h": 652
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "+ Create New Element",
+          "x": 125,
+          "y": 180,
+          "w": 390,
+          "h": 30,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 420,
+          "scrollHeight": 2587
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 112,
+        "y": 80,
+        "w": 416,
+        "h": 732
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "+ Create New Element",
+          "x": 125,
+          "y": 180,
+          "w": 390,
+          "h": 30,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "DIV",
+          "clientHeight": 500,
+          "scrollHeight": 2587
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 39,
+        "nodes": [
+          {
+            "target": [
+              ".left-\\[calc\\(1in\\+1rem\\)\\] > .shadow-2xl.panel-glass.rounded-2xl > .bg-slate-950\\/40.border-b.p-3 > .space-x-2.items-center > h2"
+            ],
+            "html": "<h2 class=\"font-orbitron text-xs font-bold tracking-wider text-slate-100 uppercase\">The Apothecary Cabinet</h2>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".pl-9"
+            ],
+            "html": "<input type=\"text\" placeholder=\"Search Orbs, Satellites &amp; Constellations...\" class=\"w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400/60 font-mono\" value=\"\" style=\"\">",
+            "failureSummary": "Fix any of the following:\n  Element has no value; test color contrast with a value entered"
+          },
+          {
+            "target": [
+              ".shadow-md.btn-cyber.justify-center > span"
+            ],
+            "html": "<span>+ Create New Element</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+          },
+          {
+            "target": [
+              ".hover\\:bg-slate-800\\/40.hover\\:text-slate-200.rounded-md:nth-child(1)"
+            ],
+            "html": "<button aria-pressed=\"false\" class=\"py-1 px-1.5 rounded-md text-[9px] font-mono font-medium whitespace-nowrap transition-colors text-slate-400 hover:bg-slate-800/40 hover:text-slate-200\">T1: Ingredients</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".hover\\:bg-slate-800\\/40.hover\\:text-slate-200.rounded-md:nth-child(2)"
+            ],
+            "html": "<button aria-pressed=\"false\" class=\"py-1 px-1.5 rounded-md text-[9px] font-mono font-medium whitespace-nowrap transition-colors text-slate-400 hover:bg-slate-800/40 hover:text-slate-200\">T2: Formulas</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-deprecated-role",
+      "aria-hidden-focus",
+      "aria-prohibited-attr",
+      "aria-required-attr",
+      "aria-roles",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "button-name",
+      "duplicate-id-aria",
+      "form-field-multiple-labels",
+      "label",
+      "nested-interactive",
+      "scrollable-region-focusable"
+    ]
+  }
+}

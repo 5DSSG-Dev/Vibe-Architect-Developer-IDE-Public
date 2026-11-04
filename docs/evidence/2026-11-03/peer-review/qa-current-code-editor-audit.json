@@ -1,0 +1,259 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "code-editor",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Save Code Frame",
+          "x": 248.171875,
+          "y": 697.6875,
+          "w": 108.828125,
+          "h": 66,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "TEXTAREA",
+          "clientHeight": 394,
+          "scrollHeight": 484
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 768,
+        "h": 1024
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Save Code Frame",
+          "x": 552.84375,
+          "y": 880.1875,
+          "w": 182.15625,
+          "h": 50,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 1000
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Save Code Frame",
+          "x": 965.34375,
+          "y": 874,
+          "w": 185.65625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Save Code Frame",
+          "x": 1205.34375,
+          "y": 948,
+          "w": 185.65625,
+          "h": 34,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 5,
+        "nodes": [
+          {
+            "target": [
+              ".text-base"
+            ],
+            "html": "<h2 class=\"font-orbitron text-base font-bold text-slate-100 glow-cyan\">ELEMENT CODE FRAME</h2>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".p-4.border-b.bg-slate-950\\/80 > .space-x-3.items-center.flex > div:nth-child(2) > p"
+            ],
+            "html": "<p class=\"text-[10px] text-slate-400\">QA Connected Orb Edited • container locked • source frame editable</p>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".border-slate-700"
+            ],
+            "html": "<textarea rows=\"2\" placeholder=\"Ask the Luminary: wh...\" aria-label=\"Ask the Luminary to ...\" class=\"flex-1 min-w-0 bg-sl...\" style=\"\">",
+            "failureSummary": "Fix any of the following:\n  Element has no value; test color contrast with a value entered"
+          },
+          {
+            "target": [
+              ".space-x-2.text-\\[10px\\].text-slate-400 > span"
+            ],
+            "html": "<span>Editing functional source only; manifest properties are read-only here.</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".px-5 > span"
+            ],
+            "html": "<span>Save Code Frame</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-deprecated-role",
+      "aria-hidden-focus",
+      "aria-prohibited-attr",
+      "aria-required-attr",
+      "aria-roles",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "avoid-inline-spacing",
+      "button-name",
+      "color-contrast",
+      "form-field-multiple-labels",
+      "label",
+      "nested-interactive"
+    ]
+  }
+}

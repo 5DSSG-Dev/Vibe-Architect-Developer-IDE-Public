@@ -1,0 +1,267 @@
+{
+  "commit": "09b85a8 + final UI patch",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "pageOverflow": false,
+      "header": [
+        {
+          "text": "App",
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "display": "flex"
+        },
+        {
+          "text": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28,
+          "outside": false,
+          "display": "flex"
+        }
+      ],
+      "planner": {
+        "text": "A NEW BEGINNING\n\nLetâ€™s build your app\n\nDescribe it. Shape it together. Review your starting architecture.\n\nWelcome, Architect. Iâ€™m Luminary, your building companion. Tell me about the app youâ€™d like to create: what should it help people do, and who will use it?\n\nArchitect\n\nLEDGER-01 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-02 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-03 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-04 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-05 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-06 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-07 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-08 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-09 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-10 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-11 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-12 preserve this requirement\n\nLuminary\n\nReview the agreed starting architecture. App implementation remains separate work.\n\nArchitect\n\nQA batched questions for accessibility.\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\nChoose your app details\n\nEach question has its own box. Choose an option or type your own answer for every box, then send them together.\n\nWho will use this app?\nJust meLuminary suggests this\nA small team\nHow should notes be organized?\nOne listLuminary suggests this\nBy project\nSend all answers to Luminary\n\nConnected through your local gateway\n\nDescribe your app or answer Luminary\nCopy conversation\nSend\nChoose a suggested addition to send to Luminary\nSuggestions will appear after Luminary replies",
+        "x": 16,
+        "y": 96,
+        "w": 358,
+        "h": 652,
+        "outside": false,
+        "display": "flex"
+      },
+      "send": {
+        "text": "Send",
+        "x": 288.03125,
+        "y": 659.21875,
+        "w": 72.96875,
+        "h": 31.78125,
+        "outside": false,
+        "display": "flex"
+      }
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "pageOverflow": false,
+      "header": [
+        {
+          "text": "App",
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "display": "flex"
+        },
+        {
+          "text": "CORE Matrix",
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30,
+          "outside": false,
+          "display": "flex"
+        }
+      ],
+      "planner": {
+        "text": "A NEW BEGINNING\n\nLetâ€™s build your app\n\nDescribe it. Shape it together. Review your starting architecture.\n\nWelcome, Architect. Iâ€™m Luminary, your building companion. Tell me about the app youâ€™d like to create: what should it help people do, and who will use it?\n\nArchitect\n\nLEDGER-01 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-02 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-03 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-04 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-05 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-06 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-07 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-08 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-09 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-10 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-11 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-12 preserve this requirement\n\nLuminary\n\nReview the agreed starting architecture. App implementation remains separate work.\n\nArchitect\n\nQA batched questions for accessibility.\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\nChoose your app details\n\nEach question has its own box. Choose an option or type your own answer for every box, then send them together.\n\nWho will use this app?\nJust meLuminary suggests this\nA small team\nHow should notes be organized?\nOne listLuminary suggests this\nBy project\nSend all answers to Luminary\n\nConnected through your local gateway\n\nDescribe your app or answer Luminary\nCopy conversation\nSend\nChoose a suggested addition to send to Luminary\nSuggestions will appear after Luminary replies",
+        "x": 48,
+        "y": 96,
+        "w": 672,
+        "h": 832,
+        "outside": false,
+        "display": "flex"
+      },
+      "send": {
+        "text": "Send",
+        "x": 620.171875,
+        "y": 833.0625,
+        "w": 86.828125,
+        "h": 37.9375,
+        "outside": false,
+        "display": "flex"
+      }
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "pageOverflow": false,
+      "header": [
+        {
+          "text": "App",
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "display": "flex"
+        },
+        {
+          "text": "CORE Matrix",
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30,
+          "outside": false,
+          "display": "flex"
+        }
+      ],
+      "planner": {
+        "text": "A NEW BEGINNING\n\nLetâ€™s build your app\n\nDescribe it. Shape it together. Review your starting architecture.\n\nWelcome, Architect. Iâ€™m Luminary, your building companion. Tell me about the app youâ€™d like to create: what should it help people do, and who will use it?\n\nArchitect\n\nLEDGER-01 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-02 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-03 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-04 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-05 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-06 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-07 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-08 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-09 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-10 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-11 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-12 preserve this requirement\n\nLuminary\n\nReview the agreed starting architecture. App implementation remains separate work.\n\nArchitect\n\nQA batched questions for accessibility.\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\nChoose your app details\n\nEach question has its own box. Choose an option or type your own answer for every box, then send them together.\n\nWho will use this app?\nJust meLuminary suggests this\nA small team\nHow should notes be organized?\nOne listLuminary suggests this\nBy project\nSend all answers to Luminary\n\nConnected through your local gateway\n\nDescribe your app or answer Luminary\nCopy conversation\nSend\nChoose a suggested addition to send to Luminary\nSuggestions will appear after Luminary replies",
+        "x": 384,
+        "y": 96,
+        "w": 672,
+        "h": 808,
+        "outside": false,
+        "display": "flex"
+      },
+      "send": {
+        "text": "Send",
+        "x": 956.0625,
+        "y": 808.1239013671875,
+        "w": 86.9375,
+        "h": 38,
+        "outside": false,
+        "display": "flex"
+      }
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "pageOverflow": false,
+      "header": [
+        {
+          "text": "App",
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34,
+          "outside": false,
+          "display": "flex"
+        },
+        {
+          "text": "CORE Matrix",
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30,
+          "outside": false,
+          "display": "flex"
+        }
+      ],
+      "planner": {
+        "text": "A NEW BEGINNING\n\nLetâ€™s build your app\n\nDescribe it. Shape it together. Review your starting architecture.\n\nWelcome, Architect. Iâ€™m Luminary, your building companion. Tell me about the app youâ€™d like to create: what should it help people do, and who will use it?\n\nArchitect\n\nLEDGER-01 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-02 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-03 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-04 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-05 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-06 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-07 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-08 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-09 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-10 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-11 preserve this requirement\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\n\nArchitect\n\nLEDGER-12 preserve this requirement\n\nLuminary\n\nReview the agreed starting architecture. App implementation remains separate work.\n\nArchitect\n\nQA batched questions for accessibility.\n\nLuminary\n\nChoose the essential details for the validation app.\n\nWho will use this app?\n\nHow should notes be organized?\nChoose your app details\n\nEach question has its own box. Choose an option or type your own answer for every box, then send them together.\n\nWho will use this app?\nJust meLuminary suggests this\nA small team\nHow should notes be organized?\nOne listLuminary suggests this\nBy project\nSend all answers to Luminary\n\nConnected through your local gateway\n\nDescribe your app or answer Luminary\nCopy conversation\nSend\nChoose a suggested addition to send to Luminary\nSuggestions will appear after Luminary replies",
+        "x": 624,
+        "y": 96,
+        "w": 672,
+        "h": 888,
+        "outside": false,
+        "display": "flex"
+      },
+      "send": {
+        "text": "Send",
+        "x": 1196.0625,
+        "y": 888.9677124023438,
+        "w": 86.9375,
+        "h": 38,
+        "outside": false,
+        "display": "flex"
+      }
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 67,
+        "nodes": [
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .text-cyan-500\\/70.tracking-widest.px-1\\.5"
+            ],
+            "html": "<span class=\"text-[9px] font-mono font-bold text-cyan-500/70 tracking-widest px-1.5\">QUALITY</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .bg-cyan-500\\/25.text-cyan-200.border-cyan-400\\/50"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors bg-cyan-500/25 text-cyan-200 border border-cyan-400/50\">High</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .hover\\:text-slate-100.hover\\:bg-slate-800\\/60.border-transparent:nth-child(3)"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent\">Balanced</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".bg-slate-950\\/80.backdrop-blur-md.px-2:nth-child(1) > .hover\\:text-slate-100.hover\\:bg-slate-800\\/60.border-transparent:nth-child(4)"
+            ],
+            "html": "<button class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent\">Low</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".text-emerald-200"
+            ],
+            "html": "<button title=\"Toggle decorative motion (honours OS reduced-motion by default)\" class=\"px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors border bg-emerald-500/20 text-emerald-200 border-emerald-400/50\">MOTION ON</button>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-hidden-body",
+      "aria-hidden-focus",
+      "aria-prohibited-attr",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "button-name",
+      "color-contrast",
+      "document-title",
+      "duplicate-id-aria",
+      "form-field-multiple-labels",
+      "html-has-lang",
+      "html-lang-valid",
+      "label-content-name-mismatch",
+      "label",
+      "list",
+      "listitem",
+      "meta-viewport",
+      "nested-interactive",
+      "scrollable-region-focusable",
+      "select-name"
+    ]
+  }
+}

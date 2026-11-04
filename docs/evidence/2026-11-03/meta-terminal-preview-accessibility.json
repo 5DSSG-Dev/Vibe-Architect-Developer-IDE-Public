@@ -1,0 +1,29 @@
+{
+  "mode": "Live Meta governed generated app with running Preview, no mock",
+  "out": {
+    "production": {
+      "violations": [],
+      "incompleteContrast": []
+    },
+    "preview390": {
+      "scroll": 390,
+      "w": 390,
+      "blocked": []
+    },
+    "preview768": {
+      "scroll": 768,
+      "w": 768,
+      "blocked": []
+    },
+    "preview1100": {
+      "scroll": 1100,
+      "w": 1100,
+      "blocked": []
+    },
+    "preview1440": {
+      "scroll": 1440,
+      "w": 1440,
+      "blocked": []
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { createInitialCoreManifest } from '../engine/relationEngine';
-import { WORKSPACE_KEY, readApps, saveCurrentApp, activateApp, closeApp, deleteApp, readAppFile, type SavedApp } from '../utils/appFiles';
+import { createBlankApp } from '../engine/appCreation';
+import { WORKSPACE_KEY, readApps, saveCurrentApp, activateApp, closeApp, deleteApp, readAppFile, reopenImportedApp, cloneImportedDraft, type SavedApp } from '../utils/appFiles';
 
 export function AppMenu() {
   const [open, setOpen] = useState(false);
@@ -11,6 +11,7 @@ export function AppMenu() {
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const file = useRef<HTMLInputElement>(null);
+  const [importMode, setImportMode] = useState<'reopen' | 'clone'>('reopen');
   const closed = localStorage.getItem('vibe.apps.closed') === 'true';
   useEffect(() => {
     if (!open) return;
@@ -24,21 +25,20 @@ export function AppMenu() {
   const reload = () => window.location.reload();
   const itemClass = 'block w-full text-left px-4 py-2.5 text-xs text-slate-100 hover:bg-cyan-500/15 focus-visible:bg-cyan-500/15 disabled:opacity-40 disabled:cursor-not-allowed';
   return <div ref={root} className="relative font-mono">
-    <button ref={trigger} type="button" aria-expanded={open} aria-controls="app-menu" onClick={() => { setRecent(false); setOpen(!open); }} className="btn-cyber px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2">App <ChevronDown className="w-3 h-3" /></button>
+    <button ref={trigger} type="button" aria-expanded={open} aria-controls="app-menu" onClick={() => { setRecent(false); setOpen(!open); }} className="btn-cyber px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2">MENU <ChevronDown className="w-3 h-3" /></button>
     <input ref={file} type="file" accept=".json,application/json" className="hidden" aria-label="Open App file" onChange={async e => {
       const selected = e.target.files?.[0]; e.target.value = ''; if (!selected) return;
-      try { if (selected.size > 10_000_000) throw new Error('Choose an app file smaller than 10 MB.'); const snapshot = readAppFile(await selected.text()); saveCurrentApp(localStorage); activateApp(localStorage, snapshot); reload(); }
+      try { if (selected.size > 10_000_000) throw new Error('Choose an app file smaller than 10 MB.'); const snapshot = readAppFile(await selected.text()); if (importMode === 'clone') cloneImportedDraft(localStorage, snapshot); else reopenImportedApp(localStorage, snapshot); reload(); }
       catch (e) { setError((e as Error).message); }
     }} />
     {open && <div id="app-menu" className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-xl border border-cyan-500/30 bg-slate-950 shadow-2xl py-1 z-50" aria-label="App actions">
       <button className={itemClass} onClick={() => run(() => {
-        const name = window.prompt('Name your new app', 'Untitled App'); if (name === null) return;
-        if (!name.trim() || name.trim().length > 80) throw new Error('Use an app name of 1–80 characters.');
         saveCurrentApp(localStorage);
-        const coreManifest = createInitialCoreManifest(); coreManifest.name = name.trim();
+        const coreManifest = createBlankApp();
         activateApp(localStorage, { version: 2, coreManifest, apothecaryCatalog: [], navigation: { environmentIds: [] } }); reload();
       })}>New App</button>
-      <button className={itemClass} onClick={() => { file.current?.click(); setOpen(false); }}>Open App…</button>
+      <button className={itemClass} onClick={() => { setImportMode('reopen'); file.current?.click(); setOpen(false); }}>Open App (Reopen)…</button>
+      <button className={itemClass} onClick={() => { setImportMode('clone'); file.current?.click(); setOpen(false); }}>Import Draft as Clone</button>
       <button className={itemClass} aria-expanded={recent} onClick={() => { try { setApps(readApps(localStorage)); setRecent(!recent); } catch (e) { setError((e as Error).message); } }}>Open Recent <span className="float-right">{recent ? '−' : '+'}</span></button>
       {recent && <div className="bg-slate-900/70 border-y border-slate-800 py-1">
         {apps.length === 0 && <p className="px-4 py-2 text-xs text-slate-400">No saved apps yet.</p>}

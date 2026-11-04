@@ -94,7 +94,7 @@ function modelLabel(status: LuminaryStatus | null): string {
   return status.replySource;
 }
 
-export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?: LuminarySelection; nameOf?: (elementId: string) => string | undefined }> = ({ docked = false, mode, selection, nameOf }) => {
+export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; mode: string; selection?: LuminarySelection; nameOf?: (elementId: string) => string | undefined }> = ({ creatingApp = false, docked = false, mode, selection, nameOf }) => {
   // Shared with the Presence in the Aether workspace, so clicking either one engages the Luminary.
   const isEngaged = useSyncExternalStore(subscribeLuminaryEngaged, isLuminaryEngaged);
   const setIsEngaged = setLuminaryEngaged;
@@ -120,6 +120,7 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
   const [pasting, setPasting] = useState(false);
   const [pasteDraft, setPasteDraft] = useState('');
   const [taskMode, setTaskMode] = useState(false);
+  useEffect(() => { if(selection?.key.startsWith('todo:')) { setTaskMode(true); setMessage(selection.text.match(/Selected work: ([\s\S]*?)\n\nApp:/)?.[1] ?? selection.label.replace(/^ToDo: /,'')); } }, [selection?.key]);
   const [allowedFiles, setAllowedFiles] = useState('');
   // Where the Luminary speaks (P26): the panel, the bubble by the Presence, or both.
   const [speakIn, setSpeakInState] = useState<SpeakIn>(readSpeakIn);
@@ -300,13 +301,8 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
   // The status read happens only when the Architect engages the Luminary, never while paused.
   useEffect(() => {
     if (!isEngaged) return;
-    if (!demoKey) {
-      setNeedsKey(true);
-      setActivity('unavailable');
-      return;
-    }
     let cancelled = false;
-    luminaryApi.status(demoKey).then((result) => {
+    (async () => { if (!demoKey) await luminaryApi.localSession(); return luminaryApi.status(demoKey); })().then((result) => {
       if (cancelled) return;
       if (result.ok) {
         setStatus(result.value);
@@ -318,10 +314,8 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
         setNeedsKey(result.kind === 'key_required');
         setActivity('unavailable');
       }
-    });
-    return () => {
-      cancelled = true;
-    };
+    }).catch(() => { if(!cancelled){setStatus(null);setActivity('unavailable');} });
+    return () => { cancelled = true; };
   }, [isEngaged, demoKey]);
 
   const setLevel = (next: ExplanationLevel) => {
@@ -462,6 +456,8 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
     />
   );
 
+  if (creatingApp) return null;
+
   const codingTasksOn = status?.codingTasks === 'on';
 
   return (
@@ -512,7 +508,7 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
           </header>
 
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[9px]">
-            <span role="status" aria-live="polite" className={`shrink-0 whitespace-nowrap ${activity === 'unavailable' ? 'text-rose-300' : 'text-slate-300'}`}>{ACTIVITY_LABEL[activity]} · {mode}</span>
+            <span role="status" aria-live="polite" className={`shrink-0 whitespace-nowrap ${activity === 'unavailable' ? 'text-rose-300' : 'text-slate-300'}`}>{activity === 'resting' ? (status && status.replySource !== 'not_configured' && status.gauge === 'configured' ? 'Active' : 'Standby') : activity === 'unavailable' ? 'Standby — connection unavailable' : ACTIVITY_LABEL[activity]} · {mode}</span>
             <div className="flex flex-wrap items-center justify-end gap-1">
             {level !== 'plain' && (
               <button type="button" onClick={() => { saveLevel(null); setLevelState('plain'); }} title="Clear the saved level" className="text-slate-500 hover:text-slate-300">reset</button>
@@ -832,7 +828,6 @@ export const LuminaryHost: React.FC<{ docked?: boolean; mode: string; selection?
         <button
           ref={iconRef}
           onClick={() => setIsEngaged(true)}
-          aria-label="Talk to the Vibe Luminary"
           aria-expanded={false}
           title="Click to talk to the Vibe Luminary"
           className="md:fixed md:right-[230px] md:bottom-[315px] md:translate-x-1/2 px-3 py-2 rounded-xl flex items-center gap-2 bg-slate-950/85 border border-amber-400/40 hover:border-amber-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"

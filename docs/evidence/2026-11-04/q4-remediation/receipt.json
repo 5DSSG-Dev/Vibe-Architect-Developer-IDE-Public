@@ -1,0 +1,178 @@
+{
+  "candidate": {
+    "baseHead": "788c8093ece4d76e6b7e296bb11f4e69f8fbec32",
+    "sourceFiles": {
+      "server/index.ts": "beded7ecb00c98a3586fb3b2a899a68b47d17fe99c8f7f2eeb474f2b0f20052c",
+      "src/engine/applicationProduction.ts": "571e88975c1df42a16760194ba99bc7424537fef329b3f0dee6d28ea79f702ac"
+    },
+    "sourcePatchDigest": "92167605d07a0537e7daa14cba9caff3f9c6612e9f3342b7dbdc388554170090",
+    "runtimeRevision": "788c8093ece4d76e6b7e296bb11f4e69f8fbec32+q4-92167605d07a",
+    "port": 3133
+  },
+  "generationId": "03c3f285-8d87-4b70-a5bd-b5bd92af15a5",
+  "sourceDigest": "0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c",
+  "contextHash": "ff8b6e06049584f221bb1227e3f45250282c633da3fa959362ac81e2015a28b0",
+  "requirementsHash": "5d0a0ffa7919c30d8e4a4bfbcb52b643f0212dd3529c97aa349d6de367d3840b",
+  "requirementIds": [
+    "R001-01",
+    "R002-01",
+    "R002-02",
+    "R002-03",
+    "R002-04",
+    "R002-05"
+  ],
+  "astBindings": 22,
+  "files": 20,
+  "previewChecks": [
+    {
+      "name": "blank form rejected",
+      "pass": true
+    },
+    {
+      "name": "whitespace title rejected",
+      "pass": true
+    },
+    {
+      "name": "two tasks in insertion order",
+      "pass": true
+    },
+    {
+      "name": "title trimmed",
+      "pass": true
+    },
+    {
+      "name": "pending features visible",
+      "pass": true
+    },
+    {
+      "name": "complete and filter controls absent",
+      "pass": true
+    },
+    {
+      "name": "useful About instructions",
+      "pass": true
+    },
+    {
+      "name": "navigation retains both tasks",
+      "pass": true
+    },
+    {
+      "name": "reload clears in-memory records",
+      "pass": true
+    },
+    {
+      "name": "Stop application confirmed",
+      "pass": true
+    }
+  ],
+  "pendingScope": [
+    {
+      "feature": "mark complete",
+      "status": "pending",
+      "implemented": false
+    },
+    {
+      "feature": "filter incomplete",
+      "status": "pending",
+      "implemented": false
+    }
+  ],
+  "repositoryTests": {
+    "gateway": 288,
+    "app": 445,
+    "failures": 0,
+    "skips": 0
+  },
+  "build": "passed",
+  "bindConflictCheck": {
+    "exitCode": 1,
+    "EADDRINUSE": true,
+    "falseListeningLog": false
+  },
+  "status": "PASS_SCOPED_Q4_LOCAL_CANDIDATE",
+  "approval": "Independent non-author review and Architect merge approval not granted",
+  "positiveAudit": {
+    "mode": "positive-control",
+    "sourceReceiptDigest": "0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c",
+    "artifactHash": "0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c",
+    "requirementsHash": "5d0a0ffa7919c30d8e4a4bfbcb52b643f0212dd3529c97aa349d6de367d3840b",
+    "requirementIds": [
+      "R001-01",
+      "R002-01",
+      "R002-02",
+      "R002-03",
+      "R002-04",
+      "R002-05"
+    ],
+    "audit": {
+      "decision": "pass",
+      "artifactHash": "0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c",
+      "requirementsHash": "5d0a0ffa7919c30d8e4a4bfbcb52b643f0212dd3529c97aa349d6de367d3840b",
+      "coveredRequirementIds": [
+        "R001-01",
+        "R002-01",
+        "R002-02",
+        "R002-03",
+        "R002-04",
+        "R002-05"
+      ],
+      "findings": [],
+      "modelId": "qwen3.5:4b",
+      "evidence": {
+        "inputSha256": "2ba5c40c681f89127cf47b3f9b0970d39e9b6d3485bf6dacd9c5c114371960c9",
+        "inputBytes": 78835,
+        "promptTokens": 27664,
+        "outputTokens": 218,
+        "elapsedMs": 52864,
+        "contextTokens": 65536
+      }
+    },
+    "transportError": null
+  },
+  "negativeAudit": {
+    "mode": "negative-control",
+    "sourceReceiptDigest": "0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c",
+    "artifactHash": "6493089af4126b869ae33dc47c53acf742792c712f1c1dae451be871a0db8eb1",
+    "requirementsHash": "5d0a0ffa7919c30d8e4a4bfbcb52b643f0212dd3529c97aa349d6de367d3840b",
+    "requirementIds": [
+      "R001-01",
+      "R002-01",
+      "R002-02",
+      "R002-03",
+      "R002-04",
+      "R002-05"
+    ],
+    "audit": {
+      "decision": "hold",
+      "artifactHash": "6493089af4126b869ae33dc47c53acf742792c712f1c1dae451be871a0db8eb1",
+      "requirementsHash": "5d0a0ffa7919c30d8e4a4bfbcb52b643f0212dd3529c97aa349d6de367d3840b",
+      "coveredRequirementIds": [
+        "R001-01",
+        "R002-01",
+        "R002-02",
+        "R002-03",
+        "R002-04",
+        "R002-05"
+      ],
+      "findings": [
+        "Requirement R001-01 (Task Tracker): The task form in src/components/task-form.jsx is a placeholder returning an empty paragraph. It does not contain the required Title and Due date text fields, nor does it handle form submission or data entry. The logic.js prepareRecord function validates input but has no UI component to capture user input for tasks.",
+        "Requirement R002-02 (Task Display): The task-data model holds an empty array (initialRecords = []). While the Records component in runtime.jsx is wired to display records, there are no saved records to display because the form cannot add any. The 'insertion order' requirement cannot be met without a working form.",
+        "Requirement R002-03 (Pending Notice): The pending-notice component in src/components/pending-notice.jsx returns an empty paragraph. It fails to display the required visible notice naming 'mark complete' and 'filter incomplete' with useful explanatory text as mandated by the baseline scope.",
+        "Requirement R002-04 (No Persistence/Backend): The implementation correctly uses in-memory data via the ModelProvider context, which clears on reload. No cloud database or SQL backend is present, satisfying this constraint.",
+        "Requirement R001-01 & R002-02 (Form Fields): Although logic.js defines a prepareRecord function that expects fields with 'name' and 'label', the task-form.jsx component does not render these fields. The requirement to 'implement adding tasks with required Title and Due date text fields' is not met in the UI layer.",
+        "Requirement R002-05 (Scope Supersession): The pending notice exists but is empty. The requirement asks for a visible notice naming both features; the current implementation does not provide this content."
+      ],
+      "modelId": "qwen3.5:4b",
+      "evidence": {
+        "inputSha256": "cdfa66920584316d9eba5f48a7c5ca1ef095b2212f2d2a4ef01aa7cb63ba6fef",
+        "inputBytes": 69225,
+        "promptTokens": 25597,
+        "outputTokens": 584,
+        "elapsedMs": 228412,
+        "contextTokens": 65536
+      }
+    },
+    "transportError": null
+  },
+  "provenance": "Local candidate evidence before publication; post-commit checks must identify the resulting SHA. No CI/reviewer/Architect approval inferred."
+}

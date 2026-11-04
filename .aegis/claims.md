@@ -43,3 +43,13 @@ RELEASE | 2026-10-31 | lumin | squad coordination document/navigation/charter po
 
 CLAIM | 2026-10-31 | lumin | docs/team-drafts/rev19-peer-review-lumin-2026-10-31.md, docs/team-drafts/squad-lane-observations-lumin-2026-10-31.md, docs/team-drafts/aster-review-brief-squad-lane-2026-10-31.md | rev19 review and contributor observations, separate Aster brief | codex/rev19-and-squad-review | release on commit
 RELEASE | 2026-10-31 | lumin | three rev19/squad review documents claimed above | published with this commit; peer examination pending
+
+CLAIM | 2026-11-03 | aster | src/App.tsx, src/components/AppCreationConversation.tsx, src/components/AppBuildJourney.tsx, src/engine/appCreation.ts, src/engine/appCreation.test.ts, src/engine/appBuildPlan.ts, src/engine/appBuildPlan.test.ts, src/engine/relationEngine.ts, docs/APP_BUILD_JOURNEY.md | Architect approved Workspace ToDo and Apothecary handoff | codex/guided-new-app-20261102 | after checked handoff
+
+CLAIM | 2026-11-03 | aster | src/utils/appFiles.ts, src/utils/appFiles.test.ts | Validate newly added optional build plan before imported activation; same feature scope | codex/guided-new-app-20261102 | after checked handoff
+
+RELEASE | 2026-11-03 | aster | Workspace ToDo/Apothecary feature paths and optional import-validation paths claimed above | local implementation and checked handoff in .aegis/lanes/aster.md; uncommitted for review | codex/guided-new-app-20261102 | final Verus/Libra review pending
+
+CLAIM | 2026-11-02 | lumen | src/engine/applicationProduction.ts, src/engine/applicationProduction.test.ts, src/components/ApplicationProduction.tsx, server/application-production.ts, server/application-production.test.ts; surgical production mount in server/app.ts and shutdown in server/index.ts; component mount in src/App.tsx | Architect explicitly requested continuation of generation/governance/local launch; no edits to existing governance/admission implementation or LuminaryHost | codex/guided-new-app-20261102 | checked handoff; named cross-pair review pending
+
+RELEASE | 2026-11-02 | lumen | production context/client guards and tests, ApplicationProduction, server application-production runtime/tests, surgical server/app/index and src/App/CoreManifest mounts, appFiles receipt-persistence test, generated-output ignore patterns | checked local handoff in chatgpt-work lane; code remains uncommitted; named cross-pair review and configured gateway reload/browser rehearsal pending | codex/guided-new-app-20261102

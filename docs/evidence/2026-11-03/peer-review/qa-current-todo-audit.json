@@ -1,0 +1,275 @@
+{
+  "commit": "09b85a8 + navigation patch",
+  "surface": "todo",
+  "views": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "root": {
+        "x": 16,
+        "y": 126,
+        "w": 336,
+        "h": 555.25
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Continue to Apothecary",
+          "x": 33,
+          "y": 626.25,
+          "w": 302,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "PRE",
+          "clientHeight": 224,
+          "scrollHeight": 736
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 259.640625,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "",
+          "name": null,
+          "x": 343.25,
+          "y": 17.5,
+          "w": 40,
+          "h": 28
+        }
+      ]
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "root": {
+        "x": 16,
+        "y": 126,
+        "w": 336,
+        "h": 555.25
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Continue to Apothecary",
+          "x": 33,
+          "y": 626.25,
+          "w": 302,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "PRE",
+          "clientHeight": 224,
+          "scrollHeight": 736
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 538.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 621.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "viewport": {
+        "w": 1440,
+        "h": 1000
+      },
+      "root": {
+        "x": 16,
+        "y": 126,
+        "w": 336,
+        "h": 555.25
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Continue to Apothecary",
+          "x": 33,
+          "y": 626.25,
+          "w": 302,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "PRE",
+          "clientHeight": 224,
+          "scrollHeight": 736
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1210.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1293.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    },
+    {
+      "name": "large",
+      "width": 1920,
+      "height": 1080,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "root": {
+        "x": 16,
+        "y": 126,
+        "w": 336,
+        "h": 555.25
+      },
+      "pageOverflow": false,
+      "buttons": [
+        {
+          "text": "Continue to Apothecary",
+          "x": 33,
+          "y": 626.25,
+          "w": 302,
+          "h": 38,
+          "outside": false,
+          "hitAtCenter": true
+        }
+      ],
+      "scrollContainers": [
+        {
+          "tag": "PRE",
+          "clientHeight": 224,
+          "scrollHeight": 736
+        }
+      ],
+      "headerButtons": [
+        {
+          "text": "App",
+          "name": null,
+          "x": 1690.09375,
+          "y": 14.5,
+          "w": 67.609375,
+          "h": 34
+        },
+        {
+          "text": "CORE Matrix",
+          "name": null,
+          "x": 1773.703125,
+          "y": 16.5,
+          "w": 130.296875,
+          "h": 30
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "count": 10,
+        "nodes": [
+          {
+            "target": [
+              ".text-amber-200"
+            ],
+            "html": "<h2 class=\"font-semibold text-amber-200\">QA Constellation ? build journey</h2>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+          },
+          {
+            "target": [
+              "#app-build-todos > p"
+            ],
+            "html": "<p class=\"text-xs text-slate-300\">Architecture accepted. Select an open item to flag Luminary with your agreed design. Checked items record your verification, not automated app certification.</p>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              "#app-build-todos > details > .cursor-pointer"
+            ],
+            "html": "<summary class=\"cursor-pointer text-cyan-200\">Review agreed design and interview</summary>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          },
+          {
+            "target": [
+              ".border-slate-700.p-3:nth-child(1) > .items-start.gap-3 > .flex-1.min-w-0 > .leading-relaxed.\\[overflow-wrap\\:anywhere\\].hover\\:text-amber-100 > span:nth-child(1)"
+            ],
+            "html": "<span class=\"\">Implement plain-note entry in the selected Elements and verify valid input.</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+          },
+          {
+            "target": [
+              ".border-slate-700.p-3:nth-child(1) > .items-start.gap-3 > .flex-1.min-w-0 > .leading-relaxed.\\[overflow-wrap\\:anywhere\\].hover\\:text-amber-100 > .mt-1.text-cyan-200.block"
+            ],
+            "html": "<span class=\"block mt-1 text-xs text-cyan-200\">Select for guidance →</span>",
+            "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because element contains an image node"
+          }
+        ]
+      }
+    ],
+    "passes": [
+      "aria-allowed-attr",
+      "aria-conditional-attr",
+      "aria-prohibited-attr",
+      "aria-valid-attr-value",
+      "aria-valid-attr",
+      "button-name",
+      "duplicate-id-aria",
+      "form-field-multiple-labels",
+      "label",
+      "list",
+      "listitem",
+      "nested-interactive",
+      "summary-name"
+    ]
+  }
+}
