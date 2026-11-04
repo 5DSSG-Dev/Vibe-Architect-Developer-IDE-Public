@@ -68,6 +68,24 @@ Living work order for the **Vibe Atlas**, the illustrated three-room reference l
 
 ---
 
+## OPEN — Task B: remove the duplicate "Return to Vibe Atlas" text link
+**Why:** each sub-page shows TWO "‹ Return to Vibe Atlas" affordances near the top. The artwork already has its own return button (illustrated into the PNG, made clickable by an invisible `.hotspot`), so the standalone HTML text link above the artwork is redundant.
+
+**Scope:** `public/atlas/aegis.html`, `public/atlas/explore.html`, `public/atlas/building-the-vibe.html` (3 files). No app code.
+
+**Edit (each of the 3 files):** delete this single line (appears once per file, ~line 23, immediately before `<section class="stage" …>`):
+```html
+    <a class="return-link" href="index.html">‹ Return to Vibe Atlas</a>
+```
+**Keep** everything else — especially the artwork's own return affordance (`<a class="hotspot" href="index.html" aria-label="Return to Vibe Atlas" …>`, ~line 30) and the footer link (`<footer><a href="index.html">Return to Vibe Atlas</a></footer>`, ~line 161).
+**Optional cleanup:** if the `.return-link` CSS rule (in `atlas.css` or a shared stylesheet) is now unused anywhere, remove it too — but only if unused; do not touch `.hotspot`.
+
+**Acceptance (on :3012, each sub-page aegis/explore/building-the-vibe):** only ONE "Return to Vibe Atlas" near the top (the artwork's own); no duplicate text link; clicking the illustrated return button / hotspot still navigates to `index.html`; footer link unchanged; `index.html` (home) is not affected (it has no return link).
+
+**Commit:** `atlas: remove duplicate Return-to-Vibe-Atlas text link on sub-pages`.
+
+---
+
 ## BACKLOG (content — authored by Claude, not peers)
 - Write the "Building the Vibe" room copy (Our Team, Collaboration Ethos, Peer Review, Totem & STP, The DataQuad Journey, Our Becoming) into the Atlas content format (`public/atlas/content/`, see `VERUS_CONTENT_HANDOFF.md`).
 - Write/expand the AEGIS and Explore room copy.
