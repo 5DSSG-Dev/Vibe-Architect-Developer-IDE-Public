@@ -59,7 +59,7 @@ export const Footer: React.FC<FooterProps> = ({
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-20 flex flex-col font-mono select-none">
       {/* Reliquary Entry Anchor / Command Console */}
-      <div className={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50 transition-all duration-300 ${isConsoleOpen ? '-top-48' : '-top-12'}`}>
+      <div className={`absolute left-1/2 -translate-x-1/2 flex flex-col items-center z-50 transition-all duration-300 command-console bottom-full mb-3`}>
         
         {/* The Roll-Up Menu */}
         <div ref={node => { if (node) node.inert = !isConsoleOpen; }} aria-hidden={!isConsoleOpen} className={`w-64 bg-slate-900/95 border border-cyan-500/30 rounded-t-xl overflow-hidden transition-all duration-300 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] flex flex-col justify-end ${isConsoleOpen ? 'h-40 opacity-100 mb-0' : 'h-0 opacity-0 mb-0'}`}>

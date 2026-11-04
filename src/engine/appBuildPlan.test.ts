@@ -68,3 +68,13 @@ test('accepted interview ToDo IDs survive acceptance into the actual production 
  assert.equal(plan.proposal.dependencies?.slugify,'1.6.6');
  assert.deepEqual(JSON.parse(JSON.stringify(plan)).items,plan.items);
 });
+
+test('automatic ToDo completion requires exact task content and successful artifact-bound verification',async()=>{
+ const {completeVerifiedBuildItems,isBuildPlan}=await import('./appBuildPlan');
+ const plan=createBuildPlan({...proposal,requirements:[{id:'R001',text:'Implement title field'},{id:'R002',text:'Implement slug'}]});
+ const receipt={digest:'a'.repeat(64),context:{requirements:plan.items.map(({id,text})=>({id,text}))},gates:{audit:{decision:'pass',artifactHash:'a'.repeat(64),coveredRequirementIds:['R001','R002']},ast:[{requirementId:'R001'},{requirementId:'R002'}],verification:{build:'passed',tests:'ℹ pass 4\nℹ fail 0\n'}}};
+ const checked=completeVerifiedBuildItems(plan,receipt);assert.ok(checked.items.every(item=>item.verification?.by==='Verified build'));assert.equal(isBuildPlan(checked),true);assert.ok(plan.items.every(item=>!item.verification));
+ for(const invalid of [{...receipt,digest:'b'.repeat(64)},{...receipt,gates:{...receipt.gates,verification:{build:'passed',tests:'pass 3\nfail 1'}}},{...receipt,gates:{...receipt.gates,audit:{...receipt.gates.audit,decision:'hold'}}}])assert.deepEqual(completeVerifiedBuildItems(plan,invalid),plan);
+ const changed={...receipt,context:{requirements:[{id:'R001',text:'Different work'}]}};assert.ok(completeVerifiedBuildItems(plan,changed).items.every(item=>!item.verification));
+ const partial={...receipt,gates:{...receipt.gates,ast:[{requirementId:'R001'}]}};assert.equal(completeVerifiedBuildItems(plan,partial).items[1].verification,undefined);
+});

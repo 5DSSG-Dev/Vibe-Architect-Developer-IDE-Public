@@ -1,15 +1,16 @@
+import type { VerifiedBuildReceipt } from '../engine/appBuildPlan';
 import React, { useEffect, useRef, useState } from 'react';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
 import { productionContext, type ProductionAnswer } from '../engine/applicationProduction';
 import { luminaryApi, readDemoKey, saveDemoKey, anchorDetail, type TurnRecord } from '../luminary/client';
 import { appendLuminaryExchangeEvidence } from '../engine/evidenceArchive';
 import { acceptedCoreContext, saveCoreApplication, verifyCoreApplication, type CoreApplication } from '../engine/coreApplication';
-interface Receipt {
+interface Receipt extends Omit<VerifiedBuildReceipt,'context'> {
  id:string;requestId:string;digest:string;contextHash:string;modelId:string;projectPath:string;
  answer:ProductionAnswer;files:Record<string,string>;state:string;output:string;previewUrl?:string;record?:TurnRecord;
 }
 import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction } from '../engine/productionClientState';
-export function ApplicationProduction({core,catalog,onRemember,onSaveCore}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void}) {
+export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
@@ -87,6 +88,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore}:{core
   }).catch(e=>{if(!controller.signal.aborted&&epoch.current===startedAt)setError('The earlier generated project could not be restored: '+e.message+' Your architecture is retained.');});
   return()=>controller.abort();
  },[core.coreId]);
+ useEffect(()=>{if(receipt && context && receipt.contextHash===fingerprint.hash)onVerified?.({...receipt,context});},[receipt?.id,receipt?.digest,fingerprint.hash]);
  const stale=!receipt || fingerprint.text!==contextText || receipt.contextHash!==fingerprint.hash;
  const replaceable=canReplaceProduction(receipt?.state,outcomeUnknown);
  async function saveToCore() {

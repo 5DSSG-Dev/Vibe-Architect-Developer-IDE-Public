@@ -1,6 +1,6 @@
 import { ApplicationProduction } from './components/ApplicationProduction';
 import { AppBuildJourney } from './components/AppBuildJourney';
-import { buildItemFocus, isBuildPlan, nextBuildItem } from './engine/appBuildPlan';
+import { buildItemFocus, isBuildPlan, nextBuildItem, completeVerifiedBuildItems } from './engine/appBuildPlan';
 import { setLuminaryEngaged, isLuminaryEngaged, subscribeLuminaryEngaged } from './luminary/presence';
 import { AppCreationConversation } from './components/AppCreationConversation';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
@@ -669,7 +669,7 @@ export function App() {
 
       {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
       {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && !isApothecaryOpen && <nav aria-label="Keyboard Element navigation"
-        className="fixed top-56 right-2 z-50 max-h-[calc(100dvh-16rem)] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+        className="keyboard-nav-banner fixed top-[min(52vh,26rem)] right-2 z-20 max-h-[max(6rem,calc(100dvh-28rem))] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
         <details onToggle={event => setKeyboardNavExpanded(event.currentTarget.open)}>
           <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
           <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
@@ -749,6 +749,7 @@ export function App() {
 
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
       {coreManifest.appCreation !== 'draft' && <LuminaryBubble />}
+      {coreManifest.appCreation === 'draft' && <button type="button" aria-label="Luminary — Click to talk" onClick={() => { const input=document.querySelector<HTMLTextAreaElement>('#app-idea'); input?.focus(); input?.scrollIntoView({block:'nearest'}); }} className="fixed bottom-5 right-5 z-50 rounded-xl border border-amber-400/50 bg-slate-950 px-4 py-3 text-left text-amber-100 shadow-lg focus-visible:ring-2 focus-visible:ring-amber-300"><span className="block text-sm font-bold">Luminary</span><span className="block text-xs">Click to talk</span></button>}
       {coreManifest.appCreation === 'draft' && <AppCreationConversation catalog={apothecaryCatalog} onAccept={async (proposal, decisions) => {
         const built = connectAppProposal(proposal, coreManifest, apothecaryCatalog, decisions);
         try {
@@ -762,13 +763,13 @@ export function App() {
       }} />}
       <div ref={node => { if (node) node.inert = activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged); }} aria-hidden={activeOverlay !== 'NONE' || coreManifest.appCreation === 'draft' || (isApothecaryOpen && !luminaryEngaged)}><LuminaryHost creatingApp={coreManifest.appCreation === 'draft'} docked={activeOverlay === 'CORE_MATRIX'} mode="DESIGN" selection={buildSelection ?? luminarySelection} nameOf={(id) => apothecaryCatalog.find((item) => item.id === id)?.name} /></div>
 
-      {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={`production:${coreManifest.coreId}`} core={coreManifest} catalog={apothecaryCatalog} onSaveCore={application => {
+      {coreManifest.appCreation !== 'draft' && <ApplicationProduction key={`production:${coreManifest.coreId}`} core={coreManifest} catalog={apothecaryCatalog} onVerified={receipt => setCoreManifest(current => current.coreId===coreManifest.coreId && current.appBuildPlan ? {...current,appBuildPlan:completeVerifiedBuildItems(current.appBuildPlan,receipt)} : current)} onSaveCore={application => {
         saveCoreProgram(window.localStorage, application);
         setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, application } : current);
       }} onRemember={pointer => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, applicationProduction: pointer } : current)} />}
       {coreManifest.appCreation !== 'draft' && buildPlan && <AppBuildJourney key={`journey:${coreManifest.coreId}`} coreId={coreManifest.coreId} plan={buildPlan} keyboardNavExpanded={keyboardNavExpanded} isApothecaryOpen={isApothecaryOpen && environmentStack.length === 0}
         onChange={plan => setCoreManifest(current => current.coreId === coreManifest.coreId ? { ...current, appBuildPlan: plan } : current)}
-        onSelect={id => { setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
+        onSelect={id => { setEnvironmentStack([]); setActiveOverlay('NONE'); setIsApothecaryOpen(true); setSelectedBuildItem({ coreId: coreManifest.coreId, id }); setLuminaryEngaged(true); }}
         onApothecary={() => {
           setEnvironmentStack([]); setActiveOverlay('NONE'); setIsApothecaryOpen(true);
           const next = nextBuildItem(buildPlan, selectedBuildItem?.coreId === coreManifest.coreId ? selectedBuildItem.id : undefined);

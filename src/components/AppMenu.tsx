@@ -25,7 +25,7 @@ export function AppMenu() {
   const reload = () => window.location.reload();
   const itemClass = 'block w-full text-left px-4 py-2.5 text-xs text-slate-100 hover:bg-cyan-500/15 focus-visible:bg-cyan-500/15 disabled:opacity-40 disabled:cursor-not-allowed';
   return <div ref={root} className="relative font-mono">
-    <button ref={trigger} type="button" aria-expanded={open} aria-controls="app-menu" onClick={() => { setRecent(false); setOpen(!open); }} className="btn-cyber px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2">App <ChevronDown className="w-3 h-3" /></button>
+    <button ref={trigger} type="button" aria-expanded={open} aria-controls="app-menu" onClick={() => { setRecent(false); setOpen(!open); }} className="btn-cyber px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2">MENU <ChevronDown className="w-3 h-3" /></button>
     <input ref={file} type="file" accept=".json,application/json" className="hidden" aria-label="Open App file" onChange={async e => {
       const selected = e.target.files?.[0]; e.target.value = ''; if (!selected) return;
       try { if (selected.size > 10_000_000) throw new Error('Choose an app file smaller than 10 MB.'); const snapshot = readAppFile(await selected.text()); if (importMode === 'clone') cloneImportedDraft(localStorage, snapshot); else reopenImportedApp(localStorage, snapshot); reload(); }

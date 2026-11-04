@@ -2,7 +2,7 @@ import type { AppProposal } from './appCreation';
 export interface BuildItem {
   id: string;
   text: string;
-  verification?: { by: 'Architect'; evidence: string; at: string };
+  verification?: { by: 'Architect' | 'Verified build'; evidence: string; at: string };
 }
 export interface AppBuildPlan {
   proposal: AppProposal;
@@ -32,7 +32,7 @@ export function isBuildPlan(value: unknown): value is AppBuildPlan {
     && Array.isArray(a.gaps) && a.gaps.length <= 8 && a.gaps.every(g => str(g, 700))
     && str(p.decisions, 2_000_000) && ['pending', 'exploring', 'entered'].includes(p.invitation)
     && Array.isArray(p.items) && p.items.length <= 64 && p.items.every(i => i && str(i.id, 160) && i.id.length > 0 && str(i.text, 2000) && i.text.trim().length > 0
-      && (i.verification === undefined || (i.verification && i.verification.by === 'Architect' && str(i.verification.evidence, 2000) && i.verification.evidence.trim().length > 0 && str(i.verification.at, 40) && Number.isFinite(Date.parse(i.verification.at)))))
+      && (i.verification === undefined || (i.verification && ['Architect','Verified build'].includes(i.verification.by) && str(i.verification.evidence, 2000) && i.verification.evidence.trim().length > 0 && str(i.verification.at, 40) && Number.isFinite(Date.parse(i.verification.at)))))
     && new Set(p.items.map(i => i.id)).size === p.items.length);
 }
 export function nextBuildItem(plan: AppBuildPlan, selectedId?: string) {
@@ -77,4 +77,19 @@ export function buildItemFocus(coreId: string, plan: AppBuildPlan, id: string, c
     label: 'ToDo: ' + item.text.slice(0, 50) + (current ? ' ? ' + current.label : ''),
     text: excerpt(text, 20000)
   };
+}
+
+export interface VerifiedBuildReceipt {
+ digest:string;context:{requirements?:{id:string;text:string}[]};
+ gates?:{audit:{decision:string;artifactHash:string;coveredRequirementIds:string[]};ast:{requirementId:string}[];verification:{build:string;tests:string}};
+}
+/** A checkbox follows exact-task, exact-artifact successful execution evidence, never model prose. */
+export function completeVerifiedBuildItems(plan:AppBuildPlan,receipt:VerifiedBuildReceipt):AppBuildPlan {
+ const gates=receipt.gates;
+ if(!gates || gates.audit.decision!=='pass' || gates.audit.artifactHash!==receipt.digest || gates.verification.build!=='passed' || !/pass\s+[1-9]/.test(gates.verification.tests) || !/fail\s+0(?:\s|$)/.test(gates.verification.tests))return plan;
+ const at=new Date().toISOString();
+ return {...plan,items:plan.items.map(item=>{
+  if(item.verification || !receipt.context.requirements?.some(r=>r.id===item.id&&r.text===item.text) || !gates.audit.coveredRequirementIds.includes(item.id) || !gates.ast.some(n=>n.requirementId===item.id))return item;
+  return {...item,verification:{by:'Verified build' as const,at,evidence:`Requirement ${item.id}: generated tests and build passed; AST mapping and secondary audit approved artifact ${receipt.digest}.`}};
+ })};
 }

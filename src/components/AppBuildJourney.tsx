@@ -32,7 +32,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
   const focused = pending.find(item => item.id === focusedId) ?? pending[0];
   const shortTask = focused?.text.split(/(?:\.\s|;\s|\n)/, 1)[0].slice(0, 110);
   const item = plan.items.find(item => item.id === reviewing);
-  const focus = (id: string) => { setFocusedId(id); setGuideOpen(true); setOpen(false); onSelect(id); };
+  const focus = (id: string) => { setFocusedId(id); setGuideOpen(false); setOpen(false); onSelect(id); };
   const finishReview = () => {
     setReviewing(null); setEvidence(''); setError('');
     previousReviewTrigger.current?.focus();
@@ -53,7 +53,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
       </button>
       {open && <section id="app-build-todos" className="mt-2 max-h-[calc(100dvh-7rem)] w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/30 bg-slate-950/95 p-4 space-y-3 shadow-xl">
         <h2 className="font-semibold text-amber-200">{plan.proposal.name} ? build journey</h2>
-        <p className="text-xs text-slate-300">Architecture accepted. Select an open item to flag Luminary with your agreed design. Checked items record your verification, not automated app certification.</p>
+        <p className="text-xs text-slate-300">Architecture accepted. Select an open item to flag Luminary with your agreed design. Completed items retain Architect or verified-build evidence. Opening a task never completes it.</p>
         <details className="rounded-xl border border-slate-700 p-3 text-xs">
           <summary className="cursor-pointer text-cyan-200">Review agreed design and interview</summary>
           <p className="mt-2 text-slate-200">{plan.proposal.purpose}</p>
@@ -73,7 +73,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
               <button type="button" onClick={() => focus(todo.id)}
                 className="block w-full min-w-0 break-words [overflow-wrap:anywhere] text-left text-sm leading-relaxed hover:text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">
                 <span className={todo.verification ? 'text-emerald-200' : ''}>{todo.text.slice(0, 110)}{todo.text.length > 110 ? '…' : ''}</span>
-                <span className="block mt-1 text-xs text-cyan-200">{todo.verification ? 'Architect verified · ' + new Date(todo.verification.at).toLocaleDateString() : 'Select for guidance →'}</span>
+                <span className="block mt-1 text-xs text-cyan-200">{todo.verification ? todo.verification.by + ' · ' + new Date(todo.verification.at).toLocaleDateString() : 'Open Luminary coding →'}</span>
               </button>
               {todo.text.length > 110 && <details className="mt-2 text-xs text-slate-300"><summary className="cursor-pointer">Read full task</summary><p className="mt-2 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{todo.text}</p></details>}
             </div>
