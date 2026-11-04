@@ -142,3 +142,6 @@
 
 ## 2026-11-04 | Lumin | Bottom bar Build Preview
 - BuildPreviewtriggernowrendersinfooterhostnexttoApothecary/Inspectorwithmatchingbuttonclasses/icon;existingproductiondialogandclosefocusretained. Browsermatchingheight/dialog/focus/one-triggerpass;buildpass. Localonly.
+
+## 2026-11-04 | Lumin | Footer batch live3012
+- TerminalCommandConsoleentryopens/focusesexistingApplicationTerminalevenbeforegeneration;helpworks/startstopremainfenced. COREcrystalrightclickopensCoreMatrix;Orbcontextstillinspects;duplicateP0selectorremoved;knowncorruptseparatorsfixed. Real3012browserchecks/full734tests/buildpass. VibeAtlasexcludedbyArchitect. Singlelocalcommit/no push or merge.

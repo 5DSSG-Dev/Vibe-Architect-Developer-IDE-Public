@@ -54,7 +54,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
         ToDo · {pending.length} remaining {open ? '−' : '+'}
       </button>
       {open && <section id="app-build-todos" className="mt-2 min-h-0 flex-1 w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/30 bg-slate-950/95 p-4 space-y-3 shadow-xl">
-        <h2 className="font-semibold text-amber-200">{plan.proposal.name} ? build journey</h2>
+        <h2 className="font-semibold text-amber-200">{plan.proposal.name} · build journey</h2>
         <p className="text-xs text-slate-300">Architecture accepted. Select an open item to flag Luminary with your agreed design. Completed items retain Architect or verified-build evidence. Opening a task never completes it.</p>
         <details className="rounded-xl border border-slate-700 p-3 text-xs">
           <summary className="cursor-pointer text-cyan-200">Review agreed design and interview</summary>
@@ -106,7 +106,7 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
     </section>}
     {revealed && plan.invitation === 'pending' && pending.length > 0 && <section role="region" aria-labelledby="apothecary-invitation" aria-live="polite"
       className="fixed z-40 top-28 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-lg rounded-2xl border border-amber-300/40 bg-slate-950/95 p-5 text-slate-100 shadow-2xl">
-      <p className="text-xs text-amber-200">Luminary ? your next step</p>
+      <p className="text-xs text-amber-200">Luminary · your next step</p>
       <h2 id="apothecary-invitation" className="mt-2 text-lg font-semibold">Your starting architecture is in place.</h2>
       <p className="mt-3 text-sm leading-relaxed">Take a look at your CORE and its connected Elements. Your app still has work to complete and verify before it is ready. I have added that work to my ToDo list, including any Elements to build or edit.</p>
       <p className="mt-3 text-sm">Ready to enter the Apothecary?</p>

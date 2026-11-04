@@ -474,3 +474,7 @@ Validated scripted isolation, batching, failure recovery, accepted hierarchy, re
 
 ## 2026-11-04 | Lumin | Keyboard navigation clears Luminary
 - UserannotatedbaroverLuminary. MovedkeyboardnavigationfrommidrighttopleftWorkspace,16pxrightofElementsrail/top80;expandedheightboundedabovefooter. Actualbrowserx112/y80andexpandReturntoCOREverified. LocalUIbranch/no publication;Luminarypositionunchanged.
+
+## 2026-11-04 | Lumin | UI batch on active3012 completed
+- Verified3012PIDcwdthisworktree. RemovedinactiveP0selector;fixedknownmojibake;wiredFooterTerminal→existingproductiondialog/inputfocus/helpbeforegeneration;taggedCOREraycasthits→CoreMatrixwhileOrb/satelliteinspectionunchanged. Actualbrowser3012Terminalhelp/focus/CORErightclick/Orbcontext/banner/noSelector/noPageErrorspassed. No mockmodel/providercalls or userbrowserstoragechange.
+- Full734tests(288gateway446app)0fail/skip/buildpass. TraceyexplicitlyexcludedVibeAtlas;ToDopreserved. SinglelocalbatchcommitperUI_BATCH_WORKORDER.md,includingrequestedClaudeCoAuthorline. No push/merge/3133restart;3012leftactive. Reportsdocs/UI_BATCH_COMPLETION_2026-11-04.md andlocalui-batch-browser.json/logs.

@@ -92,6 +92,7 @@ interface ThreeCanvasProps {
   /** Click a docked Orb or a Satellite to drill into its Environment. */
   onEnterElement?: (item: ApothecaryItem, entryView?: EnvironmentEntryView) => void;
   onDropAttachItem?: (item: ApothecaryItem, targetSocketId: string) => void;
+  onOpenCoreMatrix?: () => void;
   onRightClickElement?: (socket?: SocketBinding, item?: ApothecaryItem) => void;
   onAttachSatellite?: (satellite: ApothecaryItem, hostSocketId: string) => void;
   onSelectSatellite?: (satellite: ApothecaryItem) => void;
@@ -653,7 +654,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
   const [contextLost, setContextLost] = useState(false);
   const [sceneRemountKey, setSceneRemountKey] = useState(0);
   const [isModelsLoaded, setIsModelsLoaded] = useState(false);
-  const [crystalVariant, setCrystalVariant] = useState<string>(CORE_CRYSTAL_VARIANTS[0].key);
+  const [crystalVariant] = useState<string>(CORE_CRYSTAL_VARIANTS[0].key);
   const [savedViews, setSavedViews] = useState<SavedViews>(() => loadSavedViews());
   const [spatialEdits] = useState<SpatialEdits>(() => loadSpatialEdits());
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
@@ -791,6 +792,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
       new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.001, depthWrite: false })
     );
     corePickTarget.name = 'runtime-main-core-pick-target';
+    corePickTarget.userData.isCoreCrystal = true;
     corePickTarget.userData.proceduralGeometry = true;
     corePickTarget.userData.ownedMaterial = true;
     coreGroup.add(corePickTarget);
@@ -1015,7 +1017,8 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
         if (coreCrystalGLTF && coreCrystalGLTF.children.length > 0) {
           setEmissiveIntensity(coreCrystalGLTF, 0.16);
           coreCrystalGLTF.scale.setScalar(5.6 * variant.fit);
-          coreGroup.add(coreCrystalGLTF);
+          coreCrystalGLTF.userData.isCoreCrystal = true;
+        coreGroup.add(coreCrystalGLTF);
         } else {
           const crystalGeo = new THREE.IcosahedronGeometry(1.9, 0);
           const glassMaterial = new THREE.MeshStandardMaterial({
@@ -1028,7 +1031,8 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
             opacity: 0.88
           });
           const crystalMesh = new THREE.Mesh(crystalGeo, glassMaterial);
-          crystalMesh.userData.proceduralGeometry = true;
+          crystalMesh.userData.isCoreCrystal = true;
+        crystalMesh.userData.proceduralGeometry = true;
           crystalMesh.userData.ownedMaterial = true;
           coreGroup.add(crystalMesh);
 
@@ -1169,22 +1173,7 @@ const ThreeRuntimeMainViewP0: React.FC<Pick<
         </div>
       )}
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
-        {CORE_CRYSTAL_VARIANTS.map((variant) => (
-          <button
-            key={variant.key}
-            onClick={() => setCrystalVariant(variant.key)}
-            className={`px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors ${
-              crystalVariant === variant.key
-                ? 'bg-cyan-500/25 text-cyan-200 border border-cyan-400/50'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
-            }`}
-          >
-            {variant.label}
-          </button>
-        ))}
-      </div>
+
 
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
         <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">VIEW</span>
@@ -1233,6 +1222,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
   onEnterElement,
   onDropAttachItem,
   onRightClickElement,
+  onOpenCoreMatrix,
   onAttachSatellite,
   onSelectSatellite,
   onAddPortal,
@@ -1560,6 +1550,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         // Held down to compensate — size unchanged, glow reduced.
         setEmissiveIntensity(coreCrystalGLTF, 0.16);
         coreCrystalGLTF.scale.setScalar(5.6 * variant.fit);
+        coreCrystalGLTF.userData.isCoreCrystal = true;
         coreGroup.add(coreCrystalGLTF);
         let tris = 0;
         coreCrystalGLTF.traverse((n) => {
@@ -1580,6 +1571,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
           opacity: 0.88
         });
         const crystalMesh = new THREE.Mesh(crystalGeo, glassMaterial);
+        crystalMesh.userData.isCoreCrystal = true;
         crystalMesh.userData.proceduralGeometry = true; // crystalGeo is shared with wireframeMesh
         crystalMesh.userData.ownedMaterial = true;
         coreGroup.add(crystalMesh);
@@ -2710,12 +2702,14 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
     raycaster.setFromCamera(new THREE.Vector2(x, y), cameraRef.current);
     const intersects = raycaster.intersectObjects(sceneRef.current.children, true);
 
-    if (intersects.length === 0 || !onRightClickElement) return;
+    if (intersects.length === 0) return;
 
     let currentObj: THREE.Object3D | null = intersects[0].object;
     let satellite: ApothecaryItem | undefined;
     let socketId: string | undefined;
+    let coreHit = false;
     while (currentObj) {
+      if (currentObj.userData?.isCoreCrystal) coreHit = true;
       if (!satellite && currentObj.userData?.satelliteItem) {
         satellite = currentObj.userData.satelliteItem as ApothecaryItem;
       }
@@ -2727,7 +2721,9 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
     const foundSocket = socketId ? socketsRef.current.find((socket) => socket.id === socketId) : undefined;
     if (satellite || foundSocket?.connectedItem) {
-      onRightClickElement(foundSocket, satellite ?? foundSocket?.connectedItem);
+      onRightClickElement?.(foundSocket, satellite ?? foundSocket?.connectedItem);
+    } else if (coreHit && !socketId) {
+      onOpenCoreMatrix?.();
     }
   };
 

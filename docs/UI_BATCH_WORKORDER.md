@@ -40,3 +40,14 @@
 - One commit, sensible message. Co-author line per house rule:
   `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
 - Governance cap reminder: ≤3 active agents, 5–6 open PRs — fold this into existing PR #52 follow-up branch, don't open a new PR unless needed.
+
+
+## 2026-11-04 Lumin execution receipt — live3012
+- Items1–4 completed as a single batch: removed inactive-renderer duplicate selector too; repaired known UTF8/mojibake labels including build-journey banner; Terminal added to Command Console and opens/focuses existing application terminal even before generation; central CORE right-click opens Core Matrix, Orb right-click retains inspector.
+- Item5 Vibe Atlas remains BLOCKED awaiting Architect destination/action. Clarification requested; no destination invented and no inert placeholder added.
+- Item6 ToDo remains visible on3012; no persistence behavior changed.
+- Fresh live browser3012 used a copy of an actual previously accepted workspace, with real assets and handlers; no model/provider calls or mocked network. Verified Terminal focus/help, CORE Matrix, Orb inspector, selectorabsence, correctedbanner/savebullets, no pageerrors. Userbrowserstorageuntouched. Fullrepo734tests0fail/skip/buildpass.
+- This batch does not change3133, publish/merge PR52, or close Vibe Atlas. One local commit contains implementation and review artifacts; reportdocs/UI_BATCH_COMPLETION_2026-11-04.md.
+
+### Architect scope decision — 2026-11-04
+- Tracey explicitly answered: Leave Vibe Atlas out of this batch. Item5 is excluded from this batch, superseding the pending-clarification state above. No Vibe Atlas button is included.

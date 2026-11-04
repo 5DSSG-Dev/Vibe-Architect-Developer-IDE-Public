@@ -190,3 +190,6 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-04 | Lumin | Keyboard navigation placement correction
 - ArchitectrequestmoveskeyboardnavfromLuminaryarea totopleftWorkspace(left1in+1rem/top80),boundedscrollheight. Browserpositionandexpandcontrolverified;Luminaryuntouched. Localonly.
+
+## 2026-11-04 | Lumin | UI batch wiring and encoding
+- AppwiresCommandConsoleTerminalrequestandCOREcontextcallback;knownUTF8mojibakecorrectedwithoutalteringconditionaloperators. Existing3012livechecks/full734tests/buildpass. VibeAtlasexplicitlyexcluded. Workorder/reportrecordscope;localcommitonly.

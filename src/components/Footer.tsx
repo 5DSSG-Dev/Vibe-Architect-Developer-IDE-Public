@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity, Pencil } from 'lucide-react';
+import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity, Pencil, Terminal } from 'lucide-react';
 import { CoreManifest } from '../engine/relationEngine';
 
 export interface WorkspaceSaveStatus {
@@ -20,6 +20,7 @@ interface FooterProps {
   onToggleTelemetryDeck?: () => void;
   onOpenReliquary?: () => void;
   onOpenBrowser?: () => void;
+  onOpenTerminal?: () => void;
   /** The Apothecary Cabinet window, opened and closed from the bar's Apothecary button. */
   isApothecaryOpen?: boolean;
   onToggleApothecary?: () => void;
@@ -39,6 +40,7 @@ export const Footer: React.FC<FooterProps> = ({
   onToggleTelemetryDeck,
   onOpenReliquary,
   onOpenBrowser,
+  onOpenTerminal,
   isApothecaryOpen = false,
   onToggleApothecary,
   isInspectorOpen = false,
@@ -74,6 +76,9 @@ export const Footer: React.FC<FooterProps> = ({
         {/* The Roll-Up Menu */}
         <div ref={node => { if (node) node.inert = !isConsoleOpen; }} aria-hidden={!isConsoleOpen} className={`w-64 bg-slate-900/95 border border-cyan-500/30 rounded-t-xl overflow-hidden transition-all duration-300 shadow-[0_-10px_30px_rgba(0,243,255,0.15)] flex flex-col justify-end ${isConsoleOpen ? 'h-40 opacity-100 mb-0' : 'h-0 opacity-0 mb-0'}`}>
           <div className="p-2 flex flex-col space-y-1 w-full h-full justify-end">
+            <button type="button" onClick={()=>{setIsConsoleOpen(false);onOpenTerminal?.();}} className="w-full text-left px-3 py-2 rounded-lg hover:bg-cyan-500/20 text-cyan-300 transition-colors flex items-center space-x-2 text-xs font-orbitron font-bold">
+              <Terminal className="w-4 h-4" /><span>Terminal</span>
+            </button>
             <button
               onClick={() => {
                 setIsConsoleOpen(false);

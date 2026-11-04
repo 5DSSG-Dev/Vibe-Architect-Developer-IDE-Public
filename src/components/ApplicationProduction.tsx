@@ -12,7 +12,7 @@ interface Receipt extends Omit<VerifiedBuildReceipt,'context'> {
  answer:ProductionAnswer;files:Record<string,string>;state:string;output:string;previewUrl?:string;record?:TurnRecord;
 }
 import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction } from '../engine/productionClientState';
-export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void}) {
+export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified,terminalRequest=0}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void;terminalRequest?:number}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
@@ -27,6 +27,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  const trigger=useRef<HTMLButtonElement>(null);
  const [triggerHost,setTriggerHost]=useState<HTMLElement|null>(null);
  useEffect(()=>{setTriggerHost(document.getElementById('footer-build-preview'));},[]);
+ useEffect(()=>{if(terminalRequest>0)setOpen(true);},[terminalRequest]);
+ useEffect(()=>{if(!open||terminalRequest===0)return;const timer=window.setTimeout(()=>document.getElementById('production-terminal-input')?.focus(),0);return()=>window.clearTimeout(timer);},[open,terminalRequest]);
  const keepModalFocus=(event:React.KeyboardEvent<HTMLDialogElement>)=>{
   if(event.key!=='Tab')return;
   const root=event.currentTarget;
@@ -238,9 +240,10 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
      <pre tabIndex={0} className="mt-2 max-h-64 overflow-auto rounded bg-black p-3 text-xs">{receipt.files[file] ?? 'Select a generated file.'}</pre>
     </details>
     <label className="my-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={reviewed} disabled={stale||busy} onChange={e=>setReviewedFor(e.target.checked?receiptKey(receipt):'')}/>I reviewed this generated app against the agreed requirements.</label>
+   </>}
     <section className="my-4" aria-label="Application Terminal"><h3 className="mb-2 text-sm font-semibold">Terminal</h3>
      <div role="log" aria-live="polite" aria-relevant="additions text" tabIndex={0} className="max-h-52 overflow-auto rounded bg-black p-3 font-mono text-xs whitespace-pre-wrap text-emerald-100">
-      {terminalLines.join('\n')}{'\n'}{receipt.output}<div ref={terminalEnd}/>
+      {terminalLines.join('\n')}{'\n'}{receipt?.output ?? 'Generate an application before using start or stop.'}<div ref={terminalEnd}/>
      </div>
      <form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();runTerminal(terminalInput);}}>
       <label htmlFor="production-terminal-input" className="sr-only">Terminal command</label>
@@ -251,7 +254,6 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
      <p className="mt-2 text-xs text-slate-400">Commands operate only on this generated app. Start runs its tests and build before opening Preview.</p>
     </section>
     {preview && <section className="mt-4"><h3 className="mb-2">Application Preview</h3><iframe title={core.name+' application preview'} src={preview} sandbox="allow-scripts allow-forms" referrerPolicy="no-referrer" className="h-[55vh] w-full rounded bg-white" /><p className="mt-2 text-xs text-slate-400">Closing this panel keeps the app running. Stop application closes its local preview.</p></section>}
-   </>}
   </dialog>
  </>;
 }
