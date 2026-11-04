@@ -65,7 +65,7 @@ try {
     spend: meta?.ledger,
     instructions: instructions ? { sha256: createHash('sha256').update(instructions).digest('hex'), bytes: Buffer.byteLength(instructions) } : undefined,
     runtimeRevision: process.env.LUMINARY_RUNTIME_REVISION,
-    assemblyAuditor: config.luminaryGauge ? createLocalAssemblyAuditor(config.luminaryGauge.endpoint, config.luminaryGauge.model) : undefined,
+    assemblyAuditor: config.luminaryGauge ? createLocalAssemblyAuditor(config.luminaryGauge.endpoint, process.env.LUMINARY_ASSEMBLY_MODEL?.trim() || config.luminaryGauge.model) : undefined,
     knowledge: knowledge ? { version: knowledge.version, sha256: knowledge.sha256, bytes: knowledge.bytes } : undefined,
     executor: config.luminaryExecutor ? new LuminaryExecutor({ repoRoot: process.cwd() }) : undefined,
   });
