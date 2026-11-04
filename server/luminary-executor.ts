@@ -19,6 +19,7 @@ import { dirname, join, posix, relative, isAbsolute } from 'node:path';
 import type { ChangeBlock } from '../src/luminary/blocks.js';
 
 export const MAX_ALLOWED_FILES = 8;
+export const MAX_BASE_BUILD_FILES = 128;
 const CHECK_TIMEOUT_MS = 180_000;
 const OUTPUT_TAIL_CHARS = 4_000;
 /** The most diff the Architect is shown whole. A larger change cannot be accepted, because it cannot be reviewed whole. */
@@ -38,13 +39,14 @@ const FORBIDDEN: { pattern: RegExp; reason: string }[] = [
 ];
 
 /** Normalize a task path, or say why the fence refuses it. */
-export function checkFencePath(raw: string): { ok: true; path: string } | { ok: false; reason: string } {
+export function checkFencePath(raw: string, baseBuild = false): { ok: true; path: string } | { ok: false; reason: string } {
   const trimmed = raw.trim().replace(/\\/g, '/');
   if (!trimmed) return { ok: false, reason: 'an empty path' };
   if (trimmed.startsWith('/') || /^[A-Za-z]:/.test(trimmed)) return { ok: false, reason: `${raw} is not inside the project` };
   const path = posix.normalize(trimmed);
   if (path === '.' || path.startsWith('../') || path === '..') return { ok: false, reason: `${raw} is not inside the project` };
   for (const { pattern, reason } of FORBIDDEN) {
+    if (baseBuild && reason === 'dependencies are the Architect\'s decision' && posix.basename(path) === 'package.json') continue;
     if (pattern.test(path)) return { ok: false, reason: `${path} is outside the fence (${reason})` };
   }
   return { ok: true, path };
@@ -166,13 +168,13 @@ export class LuminaryExecutor {
   }
 
   /** Validate a task's allowed files against the fence. */
-  static fenceTask(allowedFiles: unknown): string[] {
+  static fenceTask(allowedFiles: unknown, baseBuild = false): string[] {
     if (!Array.isArray(allowedFiles) || allowedFiles.length === 0) throw new ExecutorShortfall('fence', 'A coding task needs at least one allowed file.');
-    if (allowedFiles.length > MAX_ALLOWED_FILES) throw new ExecutorShortfall('fence', `A coding task may allow at most ${MAX_ALLOWED_FILES} files.`);
+    if (allowedFiles.length > (baseBuild ? MAX_BASE_BUILD_FILES : MAX_ALLOWED_FILES)) throw new ExecutorShortfall('fence', `A coding task may allow at most ${MAX_ALLOWED_FILES} files.`);
     const paths: string[] = [];
     for (const raw of allowedFiles) {
       if (typeof raw !== 'string') throw new ExecutorShortfall('fence', 'An allowed file is not a path.');
-      const checked = checkFencePath(raw);
+      const checked = checkFencePath(raw, baseBuild);
       if (!checked.ok) throw new ExecutorShortfall('fence', `The fence refuses ${checked.reason}.`);
       paths.push(checked.path);
     }
@@ -181,6 +183,15 @@ export class LuminaryExecutor {
 
   get(id: string): TaskRecord | undefined {
     return this.tasks.get(id);
+  }
+
+  /** Read only explicitly scoped package manifests; never follow a symlink outside the repo. */
+  manifestContext(paths: string[]): string {
+    return paths.filter(path => posix.basename(path) === 'package.json').map(path => {
+      const checked = checkWriteTarget(this.options.repoRoot, path);
+      if (!checked.ok) throw new ExecutorShortfall('fence', checked.reason);
+      return `${path}:\n${existsSync(checked.target) ? readFileSync(checked.target, 'utf8') : '{}'}`;
+    }).join('\n');
   }
 
   /** The ledger, read back and chain-checked. */
@@ -223,15 +234,16 @@ export class LuminaryExecutor {
    * Put the Luminary's proposed change on its own new branch, run the checks, and return the
    * evidence. Nothing joins the project here.
    */
-  async propose(input: { goal: string; allowedFiles: string[]; modelId: string; change: ChangeBlock | string }): Promise<TaskRecord> {
+  async propose(input: { goal: string; allowedFiles: string[]; modelId: string; change: ChangeBlock | string; baseBuild?: boolean }): Promise<TaskRecord> {
     const id = randomUUID().slice(0, 8);
     const { goal, allowedFiles, modelId, change } = input;
     if (typeof change === 'string') {
       this.record('refused', id, { goal, modelId, reason: change });
       throw new ExecutorShortfall('no_change', change);
     }
+    LuminaryExecutor.fenceTask(allowedFiles, input.baseBuild);
     for (const file of change.files) {
-      const checked = checkFencePath(file.path);
+      const checked = checkFencePath(file.path, input.baseBuild);
       const reason = !checked.ok ? checked.reason : allowedFiles.includes(checked.path) ? null : `${checked.path} is not one of the task's allowed files`;
       if (reason) {
         this.record('refused', id, { goal, modelId, reason });
@@ -251,6 +263,9 @@ export class LuminaryExecutor {
         if (!checked.ok) throw new ExecutorShortfall('fence', `The fence refused the change: ${checked.reason}.`);
         mkdirSync(dirname(checked.target), { recursive: true });
         if (!within(realWorktree, realpathSync(dirname(checked.target)))) throw new ExecutorShortfall('fence', `The fence refused the change: ${file.path} would land outside the project.`);
+        if (input.baseBuild && posix.basename(file.path) === 'package.json') {
+          validateManifestAppend(existsSync(checked.target) ? readFileSync(checked.target, 'utf8') : '{}', file.content);
+        }
         writeFileSync(checked.target, file.content);
       }
     } catch (error) {
@@ -344,5 +359,26 @@ export class LuminaryExecutor {
     task.status = 'declined';
     await this.removeWorktree(id);
     return task;
+  }
+}
+
+/** Permit dependency additions, without executing package scripts or changing existing settings. */
+export function validateManifestAppend(before: string, after: string): void {
+  const old = JSON.parse(before);
+  const next = JSON.parse(after);
+  if (!old || !next || Array.isArray(old) || Array.isArray(next) || typeof next !== 'object') throw new ExecutorShortfall('fence', 'Invalid package manifest.');
+  for (const key of new Set([...Object.keys(old), ...Object.keys(next)])) {
+    if (key !== 'dependencies' && key !== 'devDependencies') {
+      if (JSON.stringify(old[key]) !== JSON.stringify(next[key])) throw new ExecutorShortfall('fence', `Manifest field ${key} is not appendable.`);
+      continue;
+    }
+    const values = next[key];
+    if (!values || typeof values !== 'object' || Array.isArray(values)) throw new ExecutorShortfall('fence', 'Invalid dependency map.');
+    for (const [name, version] of Object.entries(old[key] ?? {})) {
+      if (values[name] !== version) throw new ExecutorShortfall('fence', `Existing dependency ${name} cannot be changed.`);
+    }
+    for (const [name, version] of Object.entries(values)) {
+      if (!/^(@[a-z0-9._-]+\/)?[a-z0-9._-]+$/.test(name) || typeof version !== 'string' || !/^[~^]?[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-zA-Z0-9.-]+)?$/.test(version)) throw new ExecutorShortfall('fence', 'Dependencies need registry package names and explicit versions.');
+    }
   }
 }

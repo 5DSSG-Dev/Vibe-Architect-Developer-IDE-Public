@@ -138,7 +138,7 @@ export async function createGateway(options: CreateGatewayOptions) {
     res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()');
     next();
   });
-  app.use(express.json({ limit: '32kb' }));
+  app.use(express.json({ limit: '1mb' }));
 
   app.use(async (req, _res, next) => {
     // The experimental numeric endpoint is withheld without consulting any authority/effect source.
@@ -288,7 +288,8 @@ export async function createGateway(options: CreateGatewayOptions) {
     });
   });
   if (options.executor) {
-    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, productionAsk));
+    const baseBuildAsk = createBidirectionalAsk(luminaryAskModel, options.governanceRuntime, { promptBytes: 1_048_576, replyBytes: 262_144 });
+    app.use('/api/luminary/tasks', createLuminaryTaskRouter(options.executor, productionAsk, baseBuildAsk));
   }
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions, productionAsk));
 

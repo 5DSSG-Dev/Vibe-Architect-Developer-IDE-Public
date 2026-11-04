@@ -1,3 +1,4 @@
+import { generateBaseBuild } from './luminary-base-build.js';
 // Coding-task routes for the Luminary (STP-0002 P19, N24, N25), mounted under /api/luminary/tasks.
 // The Architect assigns a task; the Luminary's reply takes the same governed path as /ask; the
 // executor puts the proposed change on the Luminary's own branch and runs the checks; only the
@@ -54,9 +55,10 @@ export function requireLoopback(req: Request, res: Response, next: NextFunction)
 
 /** Context chips sent with a coding task: the same shape and limit the Ask path uses. */
 export const TASK_CONTEXT_LIMIT_BYTES = 24_000;
-export function readTaskContext(raw: unknown): { label: string; text: string }[] | null {
+export const BASE_BUILD_CONTEXT_LIMIT_BYTES = 524_288;
+export function readTaskContext(raw: unknown, baseBuild = false): { label: string; text: string }[] | null {
   if (raw === undefined) return [];
-  if (!Array.isArray(raw) || raw.length > 16) return null;
+  if (!Array.isArray(raw) || raw.length > (baseBuild ? 256 : 16)) return null;
   const items: { label: string; text: string }[] = [];
   let size = 0;
   for (const item of raw) {
@@ -66,7 +68,7 @@ export function readTaskContext(raw: unknown): { label: string; text: string }[]
     size += Buffer.byteLength(text, 'utf8');
     items.push({ label: label.slice(0, 80), text });
   }
-  return size > TASK_CONTEXT_LIMIT_BYTES ? null : items;
+  return size > (baseBuild ? BASE_BUILD_CONTEXT_LIMIT_BYTES : TASK_CONTEXT_LIMIT_BYTES) ? null : items;
 }
 
 const SHORTFALL_HTTP: Record<ExecutorShortfall['code'], number> = {
@@ -89,7 +91,7 @@ function sendExecutorShortfall(res: Response, error: unknown): void {
   res.status(500).json({ error: 'executor_shortfall', shortfall: { code: 'git_error', message: error instanceof Error ? error.message : 'The executor failed.' } });
 }
 
-export function createLuminaryTaskRouter(executor: LuminaryExecutor, governedAsk: (prompt: string) => Promise<GovernedAskResult>): Router {
+export function createLuminaryTaskRouter(executor: LuminaryExecutor, governedAsk: (prompt: string) => Promise<GovernedAskResult>, governedBaseBuildAsk = governedAsk): Router {
   const router = Router();
   router.use(requireLoopback);
 
@@ -102,7 +104,7 @@ export function createLuminaryTaskRouter(executor: LuminaryExecutor, governedAsk
     }
     const level: ExplanationLevel = (EXPLANATION_LEVELS as readonly unknown[]).includes(body.level) ? (body.level as ExplanationLevel) : 'plain';
     const mode = typeof body.mode === 'string' && body.mode.trim() ? body.mode.trim().slice(0, 32) : 'CODE';
-    const context = readTaskContext(body.context);
+    const context = readTaskContext(body.context, body.baseBuild === true);
     if (!context) {
       res.status(400).json({ error: 'malformed_request', detail: `Context must be a list of labelled notes, ${TASK_CONTEXT_LIMIT_BYTES} bytes at most.` });
       return;
@@ -110,12 +112,21 @@ export function createLuminaryTaskRouter(executor: LuminaryExecutor, governedAsk
 
     let allowedFiles: string[];
     try {
-      allowedFiles = LuminaryExecutor.fenceTask(body.allowedFiles);
+      allowedFiles = LuminaryExecutor.fenceTask(body.allowedFiles, body.baseBuild === true);
     } catch (error) {
       sendExecutorShortfall(res, error);
       return;
     }
 
+    if (body.baseBuild === true) {
+      try {
+        const prompt = `${composePrompt({ mode, level, context, message: goal, task: { allowedFiles } })}\nScoped existing manifests (append dependencies/devDependencies only; retain all other fields):\n${executor.manifestContext(allowedFiles)}`;
+        const built = await generateBaseBuild(prompt, allowedFiles, governedBaseBuildAsk);
+        const task = await executor.propose({ goal, allowedFiles, modelId: built.modelId, change: built.change, baseBuild: true });
+        res.status(201).json({ task, pages: built.pages });
+      } catch (error) { sendExecutorShortfall(res, error); }
+      return;
+    }
     const result = await governedAsk(composePrompt({ mode, level, context, message: goal, task: { allowedFiles } }));
     if (!result.ok) {
       res.status(shortfallStatus(result.shortfall.code)).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...(result.lineage ? { lineage: result.lineage } : {}) });

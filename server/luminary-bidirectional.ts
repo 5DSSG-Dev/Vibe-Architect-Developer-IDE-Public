@@ -33,12 +33,12 @@ function admitted(outcome: RouteOutcome, candidate: string): boolean {
 }
 
 /** Mandatory production ask/task seam. There is no legacy fallback and no silent inbound rewriting. */
-export function createBidirectionalAsk(writer: AskModel, runtime?: GovernanceRuntime) {
+export function createBidirectionalAsk(writer: AskModel, runtime?: GovernanceRuntime, limits = { promptBytes: 32_768, replyBytes: 32_768 }) {
   return async (prompt: string): Promise<GovernedAskResult> => {
     const lineage: LineageEntry[] = [];
     if (!runtime) return shortfall('governance_unavailable', lineage);
     try {
-      if (typeof prompt !== 'string' || !prompt.trim() || Buffer.byteLength(prompt, 'utf8') > 32_768)
+      if (typeof prompt !== 'string' || !prompt.trim() || Buffer.byteLength(prompt, 'utf8') > limits.promptBytes)
         return shortfall('governance_error', lineage);
       const session = runtime.createSession();
       const incoming = await session.evaluate(prompt, 'inbound');
@@ -53,7 +53,7 @@ export function createBidirectionalAsk(writer: AskModel, runtime?: GovernanceRun
       }, prompt); }
       catch (error) { return shortfall(error instanceof SpendCapError ? 'spend_ceiling'
         : writerFailed && !writerAborted ? 'upstream_error' : 'governance_error', lineage); }
-      const structural = governReply(raw);
+      const structural = governReply(raw, { maxContentBytes: limits.replyBytes });
       lineage.push({ pass: 1, stage: 'structural', ok: structural.ok, ...(!structural.ok ? { code: structural.shortfall.code } : {}) });
       if (!structural.ok) return { ok: false, shortfall: structural.shortfall, lineage };
       const outgoing = await session.evaluate(structural.reply.content, 'outbound');
