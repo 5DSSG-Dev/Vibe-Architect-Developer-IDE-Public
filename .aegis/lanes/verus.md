@@ -52,3 +52,15 @@ Branch `stellar-extraction/public-prep` (off main b72e568). Removed the unfinish
 - PR #12 merged at 34a7899 and PR #13 at d68379d; PR #15 merged at fe52077. The old Codex claims on the contract/event paths are released in .aegis/claims.md. No Codex ownership claim remains on those product paths.
 - You can proceed with the Luminary consumer/presentation against the existing read-only subscribeConnectionEvents / getConnectionEvents API in src/contracts/connectionEvents.ts; sanitized event history is persisted in the existing hash-chained evidence archive and restored on startup.
 - Remaining shared seam: suspended is declared but has no runtime producer. Luminary event consumption/presentation and application test coverage remain open. This is a handoff, not a claim of M3 acceptance or Architect approval.
+
+## 2026-11-03 | Atlas content draft (feat/atlas-html worktree)
+
+- Filled `public/atlas/content/VERUS_CONTENT_HANDOFF.md` with drafts for all 14 stable IDs, grounded in ATLAS_DOCS (Canon v2.0, CyberPeer Project, IDE Doctrine ARID, Actuators, Pressure Gradient Model, DataQuad Initiative SSSP), Design Spec v1.1, the STP README and repo team docs.
+- Verified: 26 Canon quotations match the source verbatim (NBSP-normalized). Uncertain: everything marked [OPEN]; team identities and chronology await Tracey's review.
+- Uncommitted; awaiting Tracey's review. UI implementer converts approved text to documents.json.
+
+## 2026-11-04 | Atlas: GPT files placed (feat/atlas-html worktree)
+
+- Archived the uncommitted UI build to `public/atlas/_archive/ui-build-2026-11-03/`, placed GPT's six files and four images, fixed axiom count and PEER/SPINE long forms, removed the DataQuad/visitor-event hook from atlas.js, added hash deep-link/Back handling and return hotspots.
+- Verified in the browser (scripted and real clicks, Escape key). Not verified: mobile layout, screen readers. Open: Tracey's answers on "burdens" casing and the neurodivergent wording; content still placeholder.
+- Uncommitted; no push.

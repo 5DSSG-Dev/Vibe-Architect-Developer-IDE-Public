@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b25">
+  <title>Explore — Your Adventure Begins Here</title>
+  <link rel="stylesheet" href="atlas.css">
+  <script src="atlas.js" defer></script>
+</head>
+<body data-page="explore">
+  <header class="site-header">
+    <nav aria-label="Primary">
+      <a href="index.html">Vibe Atlas</a>
+      <a href="aegis.html">AEGIS</a>
+      <a href="explore.html" aria-current="page">Explore</a>
+      <a href="building-the-vibe.html">Building the Vibe</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <h1 class="sr-only">Explore — Your adventure begins here</h1>
+    <a class="return-link" href="index.html">‹ Return to Vibe Atlas</a>
+
+    <section class="stage adventure" aria-label="Interactive Explore library">
+      <img src="assets/explore.png" width="1536" height="1024"
+           alt="Six guidebooks surround an expedition table and an open gateway to a luminous world of floating islands."
+           fetchpriority="high">
+
+      <a class="hotspot" href="index.html" aria-label="Return to Vibe Atlas" style="--x:1.5%;--y:1.5%;--w:19%;--h:5.5%"></a>
+
+
+      <button class="hotspot" type="button" data-reader="compass"
+              aria-label="Your Compass"
+              style="--x:6%;--y:17.5%;--w:18%;--h:20.5%"></button>
+      <button class="hotspot" type="button" data-reader="workspace"
+              aria-label="The Workspace"
+              style="--x:6%;--y:39%;--w:18%;--h:19.5%"></button>
+      <button class="hotspot" type="button" data-reader="elements"
+              aria-label="The Elements"
+              style="--x:6%;--y:60.5%;--w:18%;--h:20%"></button>
+
+      <button class="hotspot gateway" type="button" data-reader="gateway"
+              aria-label="Begin your adventure"
+              style="--x:33%;--y:22%;--w:34%;--h:38%"></button>
+
+      <button class="hotspot" type="button" data-reader="luminary"
+              aria-label="Meet the Luminary"
+              style="--x:77%;--y:17.5%;--w:17%;--h:20.5%"></button>
+      <button class="hotspot" type="button" data-reader="apothecary"
+              aria-label="The Apothecary"
+              style="--x:77%;--y:39%;--w:17%;--h:19.5%"></button>
+      <button class="hotspot" type="button" data-reader="first-creation"
+              aria-label="Your First Creation"
+              style="--x:77%;--y:60.5%;--w:18%;--h:20%"></button>
+    </section>
+
+    <section class="directory" aria-labelledby="explore-title">
+      <h2 id="explore-title">Gather your tools. Follow your curiosity.</h2>
+      <div class="link-grid">
+        <button type="button" data-reader="compass">Your Compass</button>
+        <button type="button" data-reader="workspace">The Workspace</button>
+        <button type="button" data-reader="elements">The Elements</button>
+        <button type="button" data-reader="luminary">Meet the Luminary</button>
+        <button type="button" data-reader="apothecary">The Apothecary</button>
+        <button type="button" data-reader="first-creation">Your First Creation</button>
+        <button type="button" data-reader="gateway">Begin your adventure</button>
+      </div>
+    </section>
+
+    <template id="content-compass" data-title="Your Compass">
+      <p>
+        Begin wherever your curiosity lands. These guides introduce the
+        spaces, objects, and conversations of the Vibe Architect IDE.
+      </p>
+      <h3>Find your bearings</h3>
+      <p>
+        Visit the Workspace to understand the creative space, explore the
+        Elements to learn its objects, or meet the Luminary.
+      </p>
+      <p>You can return to the Atlas whenever you want a wider view.</p>
+    </template>
+
+    <template id="content-workspace" data-title="The Workspace">
+      <p>
+        The Workspace is the place to see your creation take shape through
+        objects and their relationships.
+      </p>
+      <h3>See what is taking shape</h3>
+      <p>
+        This guide introduces the spatial environment and the visible
+        results that help you understand your developing project.
+      </p>
+      <p class="content-status">
+        Detailed controls and screenshots await verification against the
+        current IDE build.
+      </p>
+    </template>
+
+    <template id="content-elements" data-title="The Elements">
+      <p>
+        Elements are the objects through which a creation gains structure,
+        behavior, and relationships.
+      </p>
+      <h3>Discover their meaning</h3>
+      <p>
+        The reference will explain each reviewed Element, what it represents,
+        and how it relates to the rest of a project.
+      </p>
+      <p class="content-status">
+        The current Element catalog will be supplied with verified examples.
+      </p>
+    </template>
+
+    <template id="content-luminary" data-title="Meet the Luminary">
+      <p>
+        The Luminary is designed as a Peer and Mentor: a companion for
+        questions, proposals, reflection, and discovery.
+      </p>
+      <h3>Bring your idea</h3>
+      <p>
+        Describe what you want to create, ask about an unfamiliar object,
+        or explore a possibility together. Your choices shape the journey.
+      </p>
+      <p>Pause is available whenever you want space to consider.</p>
+    </template>
+
+    <template id="content-apothecary" data-title="The Apothecary">
+      <p>
+        The Apothecary is the intended place to create or modify Elements
+        your project needs.
+      </p>
+      <h3>Prepare what your creation needs</h3>
+      <p>
+        This reference will connect missing or changing Elements with the
+        relevant authoring workflow.
+      </p>
+      <p class="content-status">
+        Available actions will be documented after verification in the
+        current IDE build.
+      </p>
+    </template>
+
+    <template id="content-first-creation" data-title="Your First Creation">
+      <p>Start with something you would enjoy seeing come to life.</p>
+      <ol>
+        <li>Describe its purpose in your own words.</li>
+        <li>Identify the objects and relationships it needs.</li>
+        <li>Explore a proposal with the Luminary.</li>
+        <li>Review the visible result and choose what comes next.</li>
+      </ol>
+      <p>
+        This is an introductory path. Build-specific instructions will be
+        added after the complete workflow has been verified.
+      </p>
+    </template>
+
+    <template id="content-gateway" data-title="Your Adventure Begins Here">
+      <p>
+        The gateway opens this introduction to your creative journey.
+        Choose a guide, gather your bearings, and begin with an idea that
+        matters to you.
+      </p>
+      <p>
+        This portal is an illustrated reference. A launch connection to
+        the IDE has not been configured.
+      </p>
+      <a href="#first-creation">Explore Your First Creation</a>
+    </template>
+  </main>
+
+  <footer>Follow your curiosity.</footer>
+</body>
+</html>

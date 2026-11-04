@@ -617,3 +617,9 @@ Tracey clarifies: a message flagged by PIM goes directly to Conscience IDQ, whic
 - HTTPfixture40KBspec/26files/fourpages passed; focused37tests passed. Finalworkspacesuite676passed/0failed/8skipped; buildpassed with existingchunkwarning. Syntheticgovernance/fakeprovider evidence only; no paidcall. Exactcommitcandidate verification follows.
 - No activeLuminaryserver found in publiccheckout. Three serverprocesses rooted in separate vibe-accepted-core-runtime had nolisteners; no substitutecheckout restart. Userauthorizes scopedcommit; no push/merge requested. UnrelatedUI/licensing edits excluded.
 - Exact staged-file snapshot independently passed676tests/0failures/8skipped and fullproductionbuild, reusing installeddependencies read-only via junction rather than fresh npmci. Existinglargechunkwarning retained. No sourcechanges after this snapshot run; only this verification note appended before commit. Finalscopeddiffcheck passes.
+
+
+## 2026-11-03 | Codex | Atlas implementation plan added
+- `docs/plans/atlas-html-implementation.md` records the approved visual direction, proposed static HTML architecture, twelve book mappings, content contract, responsive/accessibility checks, and separate IDE integration gate.
+- `public/atlas/content/VERUS_CONTENT_HANDOFF.md` is the authoring surface for Verus; branch `feat/atlas-html`, isolated worktree `.claude/worktrees/atlas-html`.
+- Documentation/setup only; runtime implementation and validation have not started.

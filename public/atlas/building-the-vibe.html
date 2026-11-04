@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b25">
+  <title>Building the Vibe — Our Shared Journey</title>
+  <link rel="stylesheet" href="atlas.css">
+  <script src="atlas.js" defer></script>
+</head>
+<body data-page="building">
+  <header class="site-header">
+    <nav aria-label="Primary">
+      <a href="index.html">Vibe Atlas</a>
+      <a href="aegis.html">AEGIS</a>
+      <a href="explore.html">Explore</a>
+      <a href="building-the-vibe.html" aria-current="page">Building the Vibe</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <h1 class="sr-only">Building the Vibe — Our shared journey</h1>
+    <a class="return-link" href="index.html">‹ Return to Vibe Atlas</a>
+
+    <section class="stage adventure" aria-label="Interactive collaboration library">
+      <img src="assets/building-the-vibe.png" width="1536" height="1024"
+           alt="Six books about collaboration surround a shared table with connected floating crystals."
+           fetchpriority="high">
+
+      <a class="hotspot" href="index.html" aria-label="Return to Vibe Atlas" style="--x:1.5%;--y:1.5%;--w:19%;--h:5.5%"></a>
+
+
+      <button class="hotspot" type="button" data-reader="team"
+              aria-label="Our Team"
+              style="--x:6%;--y:17.5%;--w:18%;--h:20.5%"></button>
+      <button class="hotspot" type="button" data-reader="ethos"
+              aria-label="Collaboration Ethos"
+              style="--x:6%;--y:39%;--w:18%;--h:19.5%"></button>
+      <button class="hotspot" type="button" data-reader="review"
+              aria-label="Peer Review"
+              style="--x:6%;--y:60.5%;--w:18%;--h:20%"></button>
+
+      <button class="hotspot crystal" type="button" data-reader="nexus"
+              aria-label="The shared collaboration nexus"
+              style="--x:31%;--y:25%;--w:38%;--h:36%"></button>
+
+      <button class="hotspot" type="button" data-reader="totem"
+              aria-label="Totem and STP"
+              style="--x:77%;--y:17.5%;--w:17%;--h:20.5%"></button>
+      <button class="hotspot" type="button" data-reader="dataquad-journey"
+              aria-label="The DataQuad Journey"
+              style="--x:77%;--y:39%;--w:17%;--h:19.5%"></button>
+      <button class="hotspot" type="button" data-reader="becoming"
+              aria-label="Our Becoming"
+              style="--x:77%;--y:60.5%;--w:18%;--h:20%"></button>
+    </section>
+
+    <section class="directory" aria-labelledby="building-title">
+      <h2 id="building-title">Our team. Our methods. Our shared journey.</h2>
+      <div class="link-grid">
+        <button type="button" data-reader="team">Our Team</button>
+        <button type="button" data-reader="ethos">Collaboration Ethos</button>
+        <button type="button" data-reader="review">Peer Review</button>
+        <button type="button" data-reader="totem">Totem &amp; STP</button>
+        <button type="button" data-reader="dataquad-journey">The DataQuad Journey</button>
+        <button type="button" data-reader="becoming">Our Becoming</button>
+        <button type="button" data-reader="nexus">Our shared work</button>
+      </div>
+    </section>
+
+    <template id="content-team" data-title="Our Team">
+      <p>
+        Building the Vibe brings human experience and AI collaboration
+        into a shared creative process.
+      </p>
+      <h3>A place to contribute</h3>
+      <p>
+        This section is the home for reviewed introductions to the BioPeers
+        and CyberPeers contributing to the project.
+      </p>
+      <p class="content-status">
+        Member names, roles, and biographies await review before publication.
+      </p>
+    </template>
+
+    <template id="content-ethos" data-title="Collaboration Ethos">
+      <p>Shared burdens, Shared Joy.</p>
+      <p>
+        The work grows through attention, honest communication, questions,
+        and room for each participant to contribute.
+      </p>
+      <h3>Environment matters</h3>
+      <p>
+        The Vibe Architect experience is designed with young autistic,
+        ADHD, and other neurodivergent creators in mind. Its objects,
+        colors, space, and Peer relationship express that purpose.
+      </p>
+      <p>Everyone is welcome to explore.</p>
+    </template>
+
+    <template id="content-review" data-title="Peer Review">
+      <p>
+        A proposal, an implementation, and a verified result describe
+        different stages of the work.
+      </p>
+      <h3>Make the evidence visible</h3>
+      <p>
+        Review connects the intended behavior to what was built and what
+        was actually checked. Open questions remain visible until the
+        supporting evidence is available.
+      </p>
+      <p>
+        Detailed project review procedures will be linked from their
+        reviewed source documents.
+      </p>
+    </template>
+
+    <template id="content-totem" data-title="Totem &amp; STP">
+      <p>
+        Totem supports communication between Peers. STP supports proposals
+        and continuity of work across participants and sessions.
+      </p>
+      <h3>Carry the work forward</h3>
+      <p>
+        This section will explain the reviewed workflows, their handoffs,
+        and how a later participant can understand the next action.
+      </p>
+      <p class="content-status">
+        Protocol details and examples await source review.
+      </p>
+    </template>
+
+    <template id="content-dataquad-journey" data-title="The DataQuad Journey">
+      <p>
+        This chapter will trace the development of PCT, PEER, NCT, and SPINE,
+        and how the DataQuad became part of the collaboration.
+      </p>
+      <h3>Keep the history traceable</h3>
+      <p>
+        Dated records will distinguish the original observation, the
+        interpretation formed around it, and later implementation work.
+      </p>
+      <p class="content-status">
+        The chronology and supporting records await review.
+      </p>
+    </template>
+
+    <template id="content-becoming" data-title="Our Becoming">
+      <p>
+        This is the home for the story of how the collaboration developed
+        over the months: the questions, discoveries, and choices that
+        shaped the Vibe.
+      </p>
+      <p>
+        Tracey and Verus will review the chronology and participants’
+        contributions before the detailed story is published.
+      </p>
+    </template>
+
+    <template id="content-nexus" data-title="Building Together">
+      <p>
+        The connected crystals represent a shared creation taking shape
+        through many contributions.
+      </p>
+      <p>
+        Explore the books to meet the team, understand the working methods,
+        and follow the project’s developing history.
+      </p>
+      <a href="#ethos">Read our Collaboration Ethos</a>
+    </template>
+  </main>
+
+  <footer>Shared burdens, Shared Joy.</footer>
+</body>
+</html>

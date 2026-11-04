@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b25">
+  <title>The Vibe Atlas</title>
+  <link rel="stylesheet" href="atlas.css">
+  <script src="atlas.js" defer></script>
+</head>
+<body data-page="atlas">
+  <header class="site-header">
+    <nav aria-label="Primary">
+      <a href="index.html" aria-current="page">Vibe Atlas</a>
+      <a href="aegis.html">AEGIS</a>
+      <a href="explore.html">Explore</a>
+      <a href="building-the-vibe.html">Building the Vibe</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <h1 class="sr-only">The Vibe Atlas</h1>
+
+    <section class="stage square" aria-label="Interactive Vibe Atlas">
+      <img src="assets/vibe-atlas.png" width="600" height="600"
+           alt="A luminous crystal between six books. Explore is on the left; Building the Vibe is on the right."
+           fetchpriority="high">
+
+      <a class="hotspot" href="explore.html#compass"
+         aria-label="Your Compass"
+         style="--x:8%;--y:35%;--w:18%;--h:16%"></a>
+      <a class="hotspot" href="explore.html#elements"
+         aria-label="The Elements"
+         style="--x:8%;--y:52%;--w:18%;--h:14%"></a>
+      <a class="hotspot" href="explore.html#luminary"
+         aria-label="Meet the Luminary"
+         style="--x:8%;--y:67%;--w:18%;--h:15%"></a>
+
+      <a class="hotspot crystal" href="aegis.html"
+         aria-label="Enter the AEGIS Atlas"
+         style="--x:34%;--y:20%;--w:32%;--h:60%"></a>
+
+      <a class="hotspot" href="building-the-vibe.html#ethos"
+         aria-label="Collaboration Ethos"
+         style="--x:74%;--y:35%;--w:18%;--h:16%"></a>
+      <a class="hotspot" href="building-the-vibe.html#totem"
+         aria-label="Totem and STP"
+         style="--x:74%;--y:52%;--w:18%;--h:14%"></a>
+      <a class="hotspot" href="building-the-vibe.html#dataquad-journey"
+         aria-label="The DataQuad Journey"
+         style="--x:74%;--y:67%;--w:18%;--h:15%"></a>
+    </section>
+
+    <section class="directory" aria-labelledby="browse-title">
+      <h2 id="browse-title">Choose where your curiosity takes you</h2>
+      <div class="link-grid">
+        <a href="aegis.html">AEGIS · Our shared foundation</a>
+        <a href="explore.html#compass">Your Compass</a>
+        <a href="explore.html#elements">The Elements</a>
+        <a href="explore.html#luminary">Meet the Luminary</a>
+        <a href="building-the-vibe.html#ethos">Collaboration Ethos</a>
+        <a href="building-the-vibe.html#totem">Totem &amp; STP</a>
+        <a href="building-the-vibe.html#dataquad-journey">The DataQuad Journey</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>Explore at your own pace.</footer>
+</body>
+</html>
