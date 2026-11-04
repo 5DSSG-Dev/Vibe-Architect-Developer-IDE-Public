@@ -2920,23 +2920,8 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
         </div>
       </div>}
 
-      {/* CORE Crystal selector */}
-      {!creationMode && !hideWorkspaceControls && <div className="core-crystal-selector absolute bottom-[170px] lg:bottom-28 left-[calc(1in+1rem)] z-20 max-w-[calc(100%-1in-2rem)] overflow-x-auto flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
-        <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
-        {CORE_CRYSTAL_VARIANTS.map((v) => (
-          <button
-            key={v.key}
-            onClick={() => setCrystalVariant(v.key)}
-            className={`px-2.5 py-1 rounded-full text-[9px] font-mono font-bold tracking-wide transition-colors ${
-              crystalVariant === v.key
-                ? 'bg-cyan-500/25 text-cyan-200 border border-cyan-400/50'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent'
-            }`}
-          >
-            {v.label}
-          </button>
-        ))}
-      </div>}
+      {/* CORE Crystal selector removed — the core is changed in the CORE Matrix. The
+          crystalVariant state is still set automatically from the accepted core model. */}
 
     </div>
   );
