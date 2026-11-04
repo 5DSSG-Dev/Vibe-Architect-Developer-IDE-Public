@@ -89,3 +89,12 @@ Living work order for the **Vibe Atlas**, the illustrated three-room reference l
 ## BACKLOG (content — authored by Claude, not peers)
 - Write the "Building the Vibe" room copy (Our Team, Collaboration Ethos, Peer Review, Totem & STP, The DataQuad Journey, Our Becoming) into the Atlas content format (`public/atlas/content/`, see `VERUS_CONTENT_HANDOFF.md`).
 - Write/expand the AEGIS and Explore room copy.
+
+## OPEN — Task C: integrate the 12-book restructure into Atlas content
+Source draft: `docs/VIBE_ATLAS_12BOOK_RESTRUCTURE_2026-11-04.md` (Verus). Twelve Vibe-side books in two six-book rooms (EXPLORE, BUILDING THE VIBE); the eight `aegis-*` entries carry over UNCHANGED.
+
+**For a GPT/Codex peer:** wire these 12 books into `public/atlas/content/` (e.g. `documents.json`) and `navigation.json`, following the existing content schema (`public/atlas/content/VERUS_CONTENT_HANDOFF.md`) and the "Mapping (old → new)" at the end of the source draft. Preserve the proposed stable IDs; confirm final ID strings against `navigation.json`. Reader floats over the room, closes on ESC / click-outside / Back, keeps place in the URL.
+
+**Acceptance (on :3012):** EXPLORE and BUILDING THE VIBE each show six books; every book opens its reader with the drafted copy; the eight AEGIS entries are unchanged. Do NOT answer the `[OPEN]` questions in the draft — leave them for Tracey.
+
+**Commit:** `atlas: restructure Vibe-side content into two six-book rooms (12 books)`.
