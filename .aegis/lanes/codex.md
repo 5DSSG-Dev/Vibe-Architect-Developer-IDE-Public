@@ -417,3 +417,7 @@ Validated scripted isolation, batching, failure recovery, accepted hierarchy, re
 ## 2026-11-03 | codex | Qwen held missing execution evidence; audit packet completed
 - Actualclientattempt4 usedqwen3.5:4b independentofBasetenwriter andunchangedIRG. Itapproved8/9IDsbutheldR001-09becausesourcebundlecontainednoexecutedtest/buildreceipt. Hosthadexecutedresolution/tests/build; packetomittedthat evidence. Holdpreserved, nooverride.
 - Assemblyinputnowincludesactualhostresolver install/test/build/dependencyreceipt alongsidecompleteartifact/AST. Regressionassertsexactexecutionevidencetransmission. Focused19checks/buildpass. Nextsameinterviewclientrunwillverifycompletepacket; remote receiptpushstillheld.
+
+## 2026-11-03 | codex | Complete audit packet made inspectable without duplicate lock
+- Qwenactualclientrun5heldR001-09claimingtestsourceabsent, despiteactualfiles['test/application.test.mjs']andexecuted4passlog. Retainedasunsupportedfinding; nooverride. Executionreceiptpassedwhole resolverobject and duplicatedlockfile, increasinginput123405bytes45293tokens.
+- Packetnowselectsinstall/tests/build/dependencyexecutionfields explicitly, keepsonecompleteartifactlock, includesfileinventorywithhashesandtestsourceupfront, sortslarge locklast. Everyoriginalfilepreserved; noscopeclippingorforcedpass. Regressionchecksmanifest/testinventory/source andexecutionreceipt. Focused6/buildpass; finalsameinterviewclientrun follows.
