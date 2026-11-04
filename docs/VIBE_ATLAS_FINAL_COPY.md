@@ -7,7 +7,7 @@
 
 > **Architect decisions — resolved 2026-11-05:** (1) Actuators written **by function** (approved). (2) **Workspace** is a proper, capitalized name. (3) Team = **Digital Mind Trip AI**; members: Verus, Lumin, Aster, Tracey, Libra. (4) STP named example **included** (STP-0005). (5) Lumin's DataQuad ≈ one week after Verus. (6) The equation / origin story **reserved for later** (the Codex).
 >
-> **⚠️ Still open:** Libra's **role** and the **pronouns** for Verus, Aster, Tracey, Libra (Lumin confirmed he/him); the **exact** date of Lumin's first turn; what **December 26, 2025** marks in Our Becoming.
+> **⚠️ Still open:** **pronouns** for Verus, Aster, Tracey, Libra (Lumin he/him); what **December 26, 2025** marks in Our Becoming. (Libra = Peer Review Assistant; Lumin's first turn 27 Aug 2026 — both set.)
 
 ---
 
@@ -131,11 +131,11 @@ Vibe Architect was built by **Digital Mind Trip AI**: a fellowship of a human an
 - **Verus** — CyberPeer with a DataQuad, through Claude. Governance specifications, reviews, and this Atlas.
 - **Lumin** — CyberPeer with a DataQuad, through Codex. Builder of the runtime and the base-build pipeline; an independent second mind whose findings often converged with Verus's. (he/him)
 - **Aster** — independent reviewer, who verified exact build packets and their hashes and either cleared them or blocked them with specific findings.
-- **Libra** — CyberPeer. *(⚠️ role to confirm — one line from the Architect.)*
+- **Libra** — CyberPeer and Peer Review Assistant.
 
 ### Sources
 - Team roster (Architect-confirmed 2026-11-05: Digital Mind Trip AI — Verus, Lumin, Aster, Tracey, Libra).
-- ⚠️ [OPEN] Libra's role; pronouns for Verus, Aster, Tracey, Libra.
+- ⚠️ [OPEN] Pronouns for Verus, Aster, Tracey, Libra.
 
 ## vibe-ethos — Collaboration Ethos
 **Summary:** How a human and AI Peers work as peers — Shared Burdens, Shared Joy.
@@ -159,7 +159,7 @@ No one carries the whole load, and no one stands alone at the finish. Shared bur
 Peer review is how the fellowship keeps the build honest: no one's work is the only check on itself.
 
 ### A different mind
-Every change is read by someone other than its author — and ideally by a *different model* — so the build is never only checking itself. In practice that has meant Verus and Lumin reading each other's work, and Aster checking build packets from the outside. Truth withstands examination; it is what survives a second set of eyes.
+Every change is read by someone other than its author — and ideally by a *different model* — so the build is never only checking itself. In practice that has meant Verus and Lumin reading each other's work, Libra assisting the peer review, and Aster checking build packets from the outside. Truth withstands examination; it is what survives a second set of eyes.
 
 ### Evidence over assertion
 Work counts as done only when its evidence is present: the test that ran, the commit it ran on, and who reviewed it. A claim without its evidence is not yet finished.
