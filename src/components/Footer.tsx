@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity } from 'lucide-react';
+import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity, Pencil } from 'lucide-react';
 import { CoreManifest } from '../engine/relationEngine';
 
 export interface WorkspaceSaveStatus {
@@ -25,6 +25,8 @@ interface FooterProps {
   onToggleApothecary?: () => void;
   isInspectorOpen?: boolean;
   onToggleInspector?: () => void;
+  /** Keyboard 3D-navigation control, rendered as a button in the footer toolbar next to Build & Preview. */
+  keyboardNav?: React.ReactNode;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -40,7 +42,8 @@ export const Footer: React.FC<FooterProps> = ({
   isApothecaryOpen = false,
   onToggleApothecary,
   isInspectorOpen = false,
-  onToggleInspector
+  onToggleInspector,
+  keyboardNav
 }) => {
   const [localShowDeck, setLocalShowDeck] = useState(true);
   const showTelemetryDeck = propShowTelemetryDeck !== undefined ? propShowTelemetryDeck : localShowDeck;
@@ -153,26 +156,34 @@ export const Footer: React.FC<FooterProps> = ({
             </button>
           )}
           <span id="footer-build-preview" className="contents" />
+          {keyboardNav}
           <div className="min-w-0">{wayfinder}</div>
         </div>
 
         {/* Right: Version, Auto Save & Export CORE Button */}
         <div className="flex flex-wrap w-full lg:w-auto items-center justify-center lg:justify-end gap-2 sm:gap-3">
-          {/* CORE Name Input */}
-          <input
-            type="text"
-            value={coreName}
-            onChange={(e) => setCoreName(e.target.value)}
-            onBlur={() => { if (coreName.trim() && coreName.trim() !== coreManifest?.name) onRenameCore?.(coreName.trim()); else setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); }}
-            onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur(); if (event.key === 'Escape') { setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); event.currentTarget.blur(); } }}
-            aria-label="CORE name"
-            className="bg-transparent border-none text-slate-200 font-orbitron font-bold text-xs focus:outline-none focus:ring-1 focus:ring-cyan-400/50 rounded px-1 w-24 sm:w-44 text-right"
-          />
+          {/* CORE/Project name — editable, styled to match the toolbar controls so it reads as an interactive "rename" field, not a dead label. */}
+          <label
+            title="Click to rename your project"
+            className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron transition-colors cursor-text bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200 focus-within:border-cyan-400/70 focus-within:text-cyan-200"
+          >
+            <Pencil className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-cyan-400/70 shrink-0 hidden sm:inline">Project</span>
+            <input
+              type="text"
+              value={coreName}
+              onChange={(e) => setCoreName(e.target.value)}
+              onBlur={() => { if (coreName.trim() && coreName.trim() !== coreManifest?.name) onRenameCore?.(coreName.trim()); else setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); }}
+              onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur(); if (event.key === 'Escape') { setCoreName(coreManifest?.name ?? 'My AEGIS CORE'); event.currentTarget.blur(); } }}
+              aria-label="Project name (click to rename)"
+              className="bg-transparent border-none font-bold text-xs focus:outline-none rounded w-24 sm:w-40 truncate"
+            />
+          </label>
 
           <div className="w-px h-3.5 bg-slate-800" />
 
           <span className="text-[10px] text-slate-400 hidden sm:inline">
-            v0.1.0 â€¢ AUTO SAVE{' '}
+            v0.1.0 • AUTO SAVE{' '}
             {saveStatus?.state === 'saved' ? (
               <span className="text-emerald-400 font-bold" title={`Last saved to this browser at ${saveStatus.at}`}>
                 SAVED {saveStatus.at}

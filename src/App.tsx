@@ -5,6 +5,7 @@ import { setLuminaryEngaged, isLuminaryEngaged, subscribeLuminaryEngaged } from 
 import { AppCreationConversation } from './components/AppCreationConversation';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
 import React, { useState, useEffect, useSyncExternalStore } from 'react';
+import { Keyboard } from 'lucide-react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
 import { LeftDrawer } from './components/LeftDrawer';
@@ -667,25 +668,41 @@ export function App() {
         </div>
       )}
 
-      {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
-      {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && !isApothecaryOpen && <nav aria-label="Keyboard Element navigation"
-        className="keyboard-nav-banner fixed top-20 left-[calc(1in+1rem)] z-20 max-h-[calc(100dvh-var(--workspace-footer-clearance,12rem)-12rem)] overflow-y-auto max-w-[min(18rem,calc(100vw-1in-2rem))] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
-        <details onToggle={event => setKeyboardNavExpanded(event.currentTarget.open)}>
-          <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
-          <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
-          {(currentEnvironment ? getElementChildren(currentEnvironment, apothecaryCatalog) :
-            coreManifest.sockets.flatMap(socket => socket.connectedItem ? [socket.connectedItem] : [])).map(item =>
-              <div key={item.id} className="flex flex-wrap gap-2 mt-2">
-                <button type="button" className="rounded border border-cyan-500/40 p-1" onClick={() => handleEnterElement(item)}>Enter {item.name}</button>
-                <button type="button" className="rounded border border-amber-500/40 p-1" onClick={() => handleRightClickElement(undefined, item)}>Inspect {item.name}</button>
-              </div>)}
-        </details>
-      </nav>}
+      {/* Keyboard 3D navigation now lives as a footer toolbar button (see <Footer keyboardNav=...> below). */}
       {/* Footer HUD */}
       {coreManifest.appCreation !== 'draft' && <Footer
         coreManifest={coreManifest}
         onRenameCore={name => setCoreManifest(prev => ({ ...prev, name }))}
         saveStatus={saveStatus}
+        keyboardNav={activeOverlay === 'NONE' ? (
+          <div className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setKeyboardNavExpanded(open => !open)}
+              aria-expanded={keyboardNavExpanded}
+              title="Navigate 3D Elements by keyboard"
+              className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors ${
+                keyboardNavExpanded
+                  ? 'bg-cyan-500/20 border-cyan-400/70 text-cyan-200'
+                  : 'bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200'
+              }`}
+            >
+              <Keyboard className="w-4 h-4 text-cyan-300" />
+              <span className="hidden sm:inline">Keyboard</span>
+            </button>
+            {keyboardNavExpanded && (
+              <div aria-label="Keyboard Element navigation" className="absolute bottom-full mb-2 left-0 z-50 w-[min(20rem,80vw)] max-h-[60vh] overflow-y-auto rounded-lg border border-cyan-500/40 bg-slate-950/98 p-2 text-xs text-slate-100 shadow-xl">
+                <button type="button" className="block p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>
+                {(currentEnvironment ? getElementChildren(currentEnvironment, apothecaryCatalog) :
+                  coreManifest.sockets.flatMap(socket => socket.connectedItem ? [socket.connectedItem] : [])).map(item =>
+                    <div key={item.id} className="flex flex-wrap gap-2 mt-2">
+                      <button type="button" className="rounded border border-cyan-500/40 p-1" onClick={() => handleEnterElement(item)}>Enter {item.name}</button>
+                      <button type="button" className="rounded border border-amber-500/40 p-1" onClick={() => handleRightClickElement(undefined, item)}>Inspect {item.name}</button>
+                    </div>)}
+              </div>
+            )}
+          </div>
+        ) : null}
         wayfinder={
           <Wayfinder
             path={environmentStack.map((el) => el.name)}
