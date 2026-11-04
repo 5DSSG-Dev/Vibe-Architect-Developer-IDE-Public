@@ -1,0 +1,632 @@
+{
+  "runtime": {
+    "revision": "05b0392a7de88bb1d0fefa02c54373cbf074200b",
+    "pid": 31164,
+    "url": "http://localhost:3102",
+    "instructions": {
+      "sha256": "afb399dacdff0e449bafd1bb5e8ff099692c3fb2d9d00362b64aeb921898689b",
+      "bytes": 14987
+    }
+  },
+  "fiveGates": {
+    "generatedTests": {
+      "originalArtifact": "df8f5eb5b7a7e7c12fe9214f9cdc90c50924623e",
+      "correctedArtifact": "26c8f36fdcdbaf7de387d55784e515bc734f76c8",
+      "passed": 28,
+      "failed": 0
+    },
+    "actualInterviewClient": {
+      "route": "AppCreationConversation -> accepted CORE -> ApplicationProduction -> /production/generate",
+      "requestContext": {
+        "version": 1,
+        "coreId": "app-7876bbb4-ad2b-4ea4-a392-f7a0e2a88e33",
+        "name": "Peer Gate Notes",
+        "purpose": "Web App Peer Gate Notes for learner collecting plain text notes: Home headed Peer Gate Notes; required Title form trims and rejects blank; lists title+slug in insertion order in-memory only (reload clears); uses slugify@1.6.6 via dynamic import on save to generate lowercase URL-safe slug preserving Title (dependency slugify 1.6.6); About page explains in-memory behavior; Home/About navigation; 10 separate onboarding components visible on Home with exact labels Purpose, Add a title, Save a note, Read your list, Understand the slug, Visit About, Return Home, Reload behavior, Plain text safety, Keep learning; complete working app with manifest, lockfile and executable tests; no auth/backend/persistent storage/editing/deletion; built on deterministic Web App profile with smallest catalog architecture.",
+        "decisions": "architect: Build a Web App named Peer Gate Notes for a learner collecting plain text notes. The accepted scope is the following complete list:\n1. A Home page headed Peer Gate Notes.\n2. A note form with a required Title field; trim input and reject blank titles.\n3. List the saved title and its slug in insertion order, in memory only; reload clears entered notes.\n4. Use the real npm package slugify@1.6.6, dynamically imported when saving, to generate a lowercase URL-safe slug from each Title while preserving the original Title.\n5. An About page explaining the in-memory data behavior.\n6. Home/About navigation.\n7. Ten separate onboarding text components, all visible on Home, with these exact labels and useful instructions: Purpose; Add a title; Save a note; Read your list; Understand the slug; Visit About; Return Home; Reload behavior; Plain text safety; Keep learning.\n8. Generate a complete working app with its dependency manifest, lockfile and executable tests. No authentication, backend, persistent note storage, editing or deletion is requested. Use the current supported deterministic Web App profile and the smallest compatible catalog architecture. These choices are settled; provide the starting architecture when ready, without optional feature questions.\n\nluminary: Peer Gate Notes architecture ready \u2014 minimal deterministic Web App covering all 8 agreed scope items.\nAgreed construction work:\n[\"Scaffold deterministic Web App profile via HTTP API Gateway: create frontend shell, package.json with slugify@1.6.6 and package-lock.json, executable tests; verify npm install and npm test pass, Home renders headed Peer Gate Notes\",\"Build Home note UI in Web App: create required Title form with trim/reject-blank, dynamic import slugify on save for lowercase slug preserving Title, in-memory insertion-order list (reload clears); verify blank rejection, slug output, order and reload clear\",\"Build About page + navigation: create About explaining in-memory behavior and Home/About nav; verify routing both directions and About text present\",\"Add 10 onboarding components on Home with exact labels Purpose, Add a title, Save a note, Read your list, Understand the slug, Visit About, Return Home, Reload behavior, Plain text safety, Keep learning with useful instructions; verify all 10 visible on Home\"]",
+        "requirements": [
+          {
+            "id": "R001-01",
+            "text": "Build a Web App named Peer Gate Notes for a learner collecting plain text notes. The accepted scope is the following complete list:"
+          },
+          {
+            "id": "R001-02",
+            "text": "1. A Home page headed Peer Gate Notes."
+          },
+          {
+            "id": "R001-03",
+            "text": "2. A note form with a required Title field; trim input and reject blank titles."
+          },
+          {
+            "id": "R001-04",
+            "text": "3. List the saved title and its slug in insertion order, in memory only; reload clears entered notes."
+          },
+          {
+            "id": "R001-05",
+            "text": "4. Use the real npm package slugify@1.6.6, dynamically imported when saving, to generate a lowercase URL-safe slug from each Title while preserving the original Title."
+          },
+          {
+            "id": "R001-06",
+            "text": "5. An About page explaining the in-memory data behavior."
+          },
+          {
+            "id": "R001-07",
+            "text": "6. Home/About navigation."
+          },
+          {
+            "id": "R001-08",
+            "text": "7. Ten separate onboarding text components, all visible on Home, with these exact labels and useful instructions: Purpose; Add a title; Save a note; Read your list; Understand the slug; Visit About; Return Home; Reload behavior; Plain text safety; Keep learning."
+          },
+          {
+            "id": "R001-09",
+            "text": "8. Generate a complete working app with its dependency manifest, lockfile and executable tests. No authentication, backend, persistent note storage, editing or deletion is requested. Use the current supported deterministic Web App profile and the smallest compatible catalog architecture. These choices are settled; provide the starting architecture when ready, without optional feature questions."
+          }
+        ],
+        "dependencies": {
+          "slugify": "1.6.6"
+        },
+        "elements": [
+          {
+            "id": "app-7876bbb4-ad2b-4ea4-a392-f7a0e2a88e33",
+            "name": "Peer Gate Notes",
+            "category": "CORE",
+            "parentId": null,
+            "description": "Web App Peer Gate Notes for learner collecting plain text notes: Home headed Peer Gate Notes; required Title form trims and rejects blank; lists title+slug in insertion order in-memory only (reload clears); uses slugify@1.6.6 via dynamic import on save to generate lowercase URL-safe slug preserving Title (dependency slugify 1.6.6); About page explains in-memory behavior; Home/About navigation; 10 separate onboarding components visible on Home with exact labels Purpose, Add a title, Save a note, Read your list, Understand the slug, Visit About, Return Home, Reload behavior, Plain text safety, Keep learning; complete working app with manifest, lockfile and executable tests; no auth/backend/persistent storage/editing/deletion; built on deterministic Web App profile with smallest catalog architecture."
+          },
+          {
+            "id": "orb-http-gateway",
+            "name": "HTTP API Gateway",
+            "category": "Orbs",
+            "parentId": "app-7876bbb4-ad2b-4ea4-a392-f7a0e2a88e33",
+            "description": "Front-door service that terminates HTTP(S), routes requests to backends, and applies validation, rate limiting and access logging at the edge.",
+            "code": "{\"language\":\"TypeScript\",\"fileName\":\"http-api-gateway.ts\",\"entrypoint\":\"execute\",\"updatedAt\":\"2026-11-04T05:40:03.471Z\",\"source\":\"// HTTP API Gateway\\n// Front-door service that terminates HTTP(S), routes requests to backends, and applies validation, rate limiting and access logging at the edge.\\n\\nexport async function execute(context: Record<string, unknown>) {\\n  const capabilities = [\\\"http_routing\\\",\\\"tls_termination\\\",\\\"reverse_proxy\\\"];\\n  const requirements = [\\\"network_listener\\\",\\\"thread_pool\\\"];\\n\\n  return {\\n    elementId: 'orb-http-gateway',\\n    capabilities,\\n    requirements,\\n    context,\\n    status: 'ready'\\n  };\\n}\\n\"}"
+          }
+        ]
+      },
+      "clientCalls": [
+        {
+          "url": "/api/luminary/ask",
+          "status": 200,
+          "started": "2026-11-04T05:40:35.604Z",
+          "finished": "2026-11-04T05:40:55.121Z"
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 409,
+          "started": "2026-11-04T05:42:09.569Z",
+          "finished": "2026-11-04T05:46:47.868Z",
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 201,
+          "started": "2026-11-04T05:49:28.335Z",
+          "finished": "2026-11-04T05:53:12.895Z"
+        },
+        {
+          "url": "/api/luminary/production/59c3a797-bfaa-4fb8-9689-5984eea438f8/launch",
+          "status": 200,
+          "started": "2026-11-04T05:55:18.851Z",
+          "finished": "2026-11-04T05:55:20.264Z"
+        },
+        {
+          "url": "/api/luminary/production/59c3a797-bfaa-4fb8-9689-5984eea438f8/stop",
+          "status": 200,
+          "started": "2026-11-04T05:59:04.620Z",
+          "finished": "2026-11-04T05:59:04.643Z"
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 409,
+          "started": "2026-11-04T06:09:21.391Z",
+          "finished": "2026-11-04T06:14:11.943Z",
+          "error": "Secondary assembly audit did not approve this exact bundle and all interview ToDo IDs."
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 409,
+          "started": "2026-11-04T06:15:33.953Z",
+          "finished": "2026-11-04T06:19:00.899Z",
+          "error": "Secondary assembly audit did not approve this exact bundle and all interview ToDo IDs."
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 409,
+          "started": "2026-11-04T06:20:18.465Z",
+          "finished": "2026-11-04T06:25:31.577Z",
+          "error": "Secondary assembly audit did not approve this exact bundle and all interview ToDo IDs."
+        },
+        {
+          "url": "/api/luminary/production/generate",
+          "status": 201,
+          "started": "2026-11-04T06:27:13.394Z",
+          "finished": "2026-11-04T06:31:11.294Z"
+        },
+        {
+          "url": "/api/luminary/production/b3875560-0c0f-4887-8e66-4653bcd172a8/launch",
+          "status": 200,
+          "started": "2026-11-04T06:32:17.494Z",
+          "finished": "2026-11-04T06:32:19.075Z"
+        },
+        {
+          "url": "/api/luminary/production/b3875560-0c0f-4887-8e66-4653bcd172a8/stop",
+          "status": 200,
+          "started": "2026-11-04T06:33:55.373Z",
+          "finished": "2026-11-04T06:33:55.407Z"
+        }
+      ],
+      "syntheticProductionPayload": false
+    },
+    "requirementAst": {
+      "requirementIds": [
+        "R001-01",
+        "R001-02",
+        "R001-03",
+        "R001-04",
+        "R001-05",
+        "R001-06",
+        "R001-07",
+        "R001-08",
+        "R001-09"
+      ],
+      "nodeBindings": [
+        {
+          "requirementId": "R001-01",
+          "objectId": "home",
+          "file": "src/pages/home.jsx",
+          "node": "FunctionDeclaration",
+          "start": 712,
+          "end": 966,
+          "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+        },
+        {
+          "requirementId": "R001-01",
+          "objectId": "nav",
+          "file": "src/routes/nav.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 96,
+          "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+        },
+        {
+          "requirementId": "R001-01",
+          "objectId": "notes-data",
+          "file": "src/models/notes-data.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 32,
+          "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+        },
+        {
+          "requirementId": "R001-02",
+          "objectId": "home",
+          "file": "src/pages/home.jsx",
+          "node": "FunctionDeclaration",
+          "start": 712,
+          "end": 966,
+          "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+        },
+        {
+          "requirementId": "R001-02",
+          "objectId": "hero",
+          "file": "src/components/hero.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 217,
+          "sourceHash": "04d4a8858a9be19ad9d424648911ea7f06c2391c09fccdba0eb830022279c2c2"
+        },
+        {
+          "requirementId": "R001-03",
+          "objectId": "note-form",
+          "file": "src/components/note-form.jsx",
+          "node": "FunctionDeclaration",
+          "start": 203,
+          "end": 957,
+          "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+        },
+        {
+          "requirementId": "R001-04",
+          "objectId": "notes-data",
+          "file": "src/models/notes-data.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 32,
+          "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+        },
+        {
+          "requirementId": "R001-04",
+          "objectId": "note-form",
+          "file": "src/components/note-form.jsx",
+          "node": "FunctionDeclaration",
+          "start": 203,
+          "end": 957,
+          "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+        },
+        {
+          "requirementId": "R001-05",
+          "objectId": "note-form",
+          "file": "src/components/note-form.jsx",
+          "node": "FunctionDeclaration",
+          "start": 203,
+          "end": 957,
+          "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+        },
+        {
+          "requirementId": "R001-05",
+          "objectId": "notes-data",
+          "file": "src/models/notes-data.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 32,
+          "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+        },
+        {
+          "requirementId": "R001-06",
+          "objectId": "about",
+          "file": "src/pages/about.jsx",
+          "node": "FunctionDeclaration",
+          "start": 122,
+          "end": 208,
+          "sourceHash": "8c77eef452070ba2afe08cdcbdf9661c7d92ff3b187a67817657442a3a39a6ad"
+        },
+        {
+          "requirementId": "R001-06",
+          "objectId": "c-about-info",
+          "file": "src/components/c-about-info.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 350,
+          "sourceHash": "347c3241f68ed919e127edab56388e3fffc507978b1163ed632068531d91dbe3"
+        },
+        {
+          "requirementId": "R001-07",
+          "objectId": "nav",
+          "file": "src/routes/nav.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 96,
+          "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+        },
+        {
+          "requirementId": "R001-07",
+          "objectId": "home",
+          "file": "src/pages/home.jsx",
+          "node": "FunctionDeclaration",
+          "start": 712,
+          "end": 966,
+          "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+        },
+        {
+          "requirementId": "R001-07",
+          "objectId": "about",
+          "file": "src/pages/about.jsx",
+          "node": "FunctionDeclaration",
+          "start": 122,
+          "end": 208,
+          "sourceHash": "8c77eef452070ba2afe08cdcbdf9661c7d92ff3b187a67817657442a3a39a6ad"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-purpose",
+          "file": "src/components/c-purpose.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 264,
+          "sourceHash": "789d130a03dafda335f1c56f812891a7650cb2ef59b71e30fa894e92a8f144ab"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-add-title",
+          "file": "src/components/c-add-title.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 257,
+          "sourceHash": "173ddce69844049d9c0881232b6f9d01affcd10ea66eff1b0b033da555c0e5a6"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-save-note",
+          "file": "src/components/c-save-note.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 273,
+          "sourceHash": "e3b108e5608c440ec0ef48b28916f1b7581d7e4e7693dd76e5cec7cf42817f09"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-read-list",
+          "file": "src/components/c-read-list.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 248,
+          "sourceHash": "822f8e3297b835863de2605ec968f9a51c0248456fda9e39e8fa9938a892cb19"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-understand-slug",
+          "file": "src/components/c-understand-slug.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 274,
+          "sourceHash": "c000f76b9d11ed8e44ffa718682af4c4ed28b3138d980ecf9902e6bc11ba680f"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-visit-about",
+          "file": "src/components/c-visit-about.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 229,
+          "sourceHash": "4e455877bd39268462f5dedf2d914df5d953c26080df19168614545d1b50a54e"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-return-home",
+          "file": "src/components/c-return-home.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 217,
+          "sourceHash": "6c15efda67cfc7208e52bd818239e4f0070e5496df2e730a902225b73d2ef0bc"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-reload-behavior",
+          "file": "src/components/c-reload-behavior.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 236,
+          "sourceHash": "04fd2aaed01d23ef593dd040b8d530d6be7abf140be90fa72929bc8c9fca0807"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-plain-text-safety",
+          "file": "src/components/c-plain-text-safety.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 249,
+          "sourceHash": "4db4fc0d2b6af11a5698fc02fc0f9b15ff6417acb32868ecc3a9ac629491ed74"
+        },
+        {
+          "requirementId": "R001-08",
+          "objectId": "c-keep-learning",
+          "file": "src/components/c-keep-learning.jsx",
+          "node": "FunctionDeclaration",
+          "start": 27,
+          "end": 267,
+          "sourceHash": "9120e6ca0b446cd2de811786d3fb1477f59bc57813562e03f916286f74488270"
+        },
+        {
+          "requirementId": "R001-09",
+          "objectId": "home",
+          "file": "src/pages/home.jsx",
+          "node": "FunctionDeclaration",
+          "start": 712,
+          "end": 966,
+          "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+        },
+        {
+          "requirementId": "R001-09",
+          "objectId": "nav",
+          "file": "src/routes/nav.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 96,
+          "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+        },
+        {
+          "requirementId": "R001-09",
+          "objectId": "notes-data",
+          "file": "src/models/notes-data.js",
+          "node": "VariableDeclaration",
+          "start": 13,
+          "end": 32,
+          "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+        },
+        {
+          "requirementId": "R001-09",
+          "objectId": "note-form",
+          "file": "src/components/note-form.jsx",
+          "node": "FunctionDeclaration",
+          "start": 203,
+          "end": 957,
+          "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+        }
+      ],
+      "structuralOnly": true
+    },
+    "dualModelAudit": {
+      "writer": "meta-models/muse-spark-open-1026",
+      "audit": {
+        "decision": "pass",
+        "artifactHash": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+        "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+        "coveredRequirementIds": [
+          "R001-01",
+          "R001-02",
+          "R001-03",
+          "R001-04",
+          "R001-05",
+          "R001-06",
+          "R001-07",
+          "R001-08",
+          "R001-09"
+        ],
+        "findings": [],
+        "modelId": "qwen3.5:4b",
+        "evidence": {
+          "inputSha256": "68508f498399b086861cde36c2acdef8d5bd0cbaf0812f77e643de4d5b4cd616",
+          "inputBytes": 91385,
+          "promptTokens": 32184,
+          "outputTokens": 239,
+          "elapsedMs": 167723,
+          "contextTokens": 65536
+        }
+      },
+      "digestMatches": true,
+      "withheldBeforeAudit": true
+    },
+    "dependencyResolution": {
+      "packageLock": "{\n  \"name\": \"vibe-generated-app\",\n  \"version\": \"1.0.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"vibe-generated-app\",\n      \"version\": \"1.0.0\",\n      \"dependencies\": {\n        \"react\": \"18.3.1\",\n        \"react-dom\": \"18.3.1\",\n        \"slugify\": \"1.6.6\"\n      },\n      \"devDependencies\": {\n        \"vite\": \"5.4.21\"\n      }\n    },\n    \"node_modules/@esbuild/aix-ppc64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz\",\n      \"integrity\": \"sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==\",\n      \"cpu\": [\n        \"ppc64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"aix\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/android-arm\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz\",\n      \"integrity\": \"sha512-vCPvzSjpPHEi1siZdlvAlsPxXl7WbOVUBBAowWug4rJHb68Ox8KualB+1ocNvT5fjv6wpkX6o/iEpbDrf68zcg==\",\n      \"cpu\": [\n        \"arm\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/android-arm64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz\",\n      \"integrity\": \"sha512-c0uX9VAUBQ7dTDCjq+wdyGLowMdtR/GoC2U5IYk/7D1H1JYC0qseD7+11iMP2mRLN9RcCMRcjC4YMclCzGwS/A==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/android-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-D7aPRUUNHRBwHxzxRvp856rjUHRFW1SdQATKXH2hqA0kAZb1hKmi02OpYRacl0TxIGz/ZmXWlbZgjwWYaCakTA==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/darwin-arm64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz\",\n      \"integrity\": \"sha512-DwqXqZyuk5AiWWf3UfLiRDJ5EDd49zg6O9wclZ7kUMv2WRFr4HKjXp/5t8JZ11QbQfUS6/cRCKGwYhtNAY88kQ==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"darwin\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/darwin-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-se/JjF8NlmKVG4kNIuyWMV/22ZaerB+qaSi5MdrXtd6R08kvs2qCN4C09miupktDitvh8jRFflwGFBQcxZRjbw==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"darwin\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/freebsd-arm64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.21.5.tgz\",\n      \"integrity\": \"sha512-5JcRxxRDUJLX8JXp/wcBCy3pENnCgBR9bN6JsY4OmhfUtIHe3ZW0mawA7+RDAcMLrMIZaf03NlQiX9DGyB8h4g==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"freebsd\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/freebsd-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-J95kNBj1zkbMXtHVH29bBriQygMXqoVQOQYA+ISs0/2l3T9/kj42ow2mpqerRBxDJnmkUDCaQT/dfNXWX/ZZCQ==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"freebsd\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-arm\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.21.5.tgz\",\n      \"integrity\": \"sha512-bPb5AHZtbeNGjCKVZ9UGqGwo8EUu4cLq68E95A53KlxAPRmUyYv2D6F0uUI65XisGOL1hBP5mTronbgo+0bFcA==\",\n      \"cpu\": [\n        \"arm\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-arm64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.21.5.tgz\",\n      \"integrity\": \"sha512-ibKvmyYzKsBeX8d8I7MH/TMfWDXBF3db4qM6sy+7re0YXya+K1cem3on9XgdT2EQGMu4hQyZhan7TeQ8XkGp4Q==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-ia32\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.21.5.tgz\",\n      \"integrity\": \"sha512-YvjXDqLRqPDl2dvRODYmmhz4rPeVKYvppfGYKSNGdyZkA01046pLWyRKKI3ax8fbJoK5QbxblURkwK/MWY18Tg==\",\n      \"cpu\": [\n        \"ia32\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-loong64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.21.5.tgz\",\n      \"integrity\": \"sha512-uHf1BmMG8qEvzdrzAqg2SIG/02+4/DHB6a9Kbya0XDvwDEKCoC8ZRWI5JJvNdUjtciBGFQ5PuBlpEOXQj+JQSg==\",\n      \"cpu\": [\n        \"loong64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-mips64el\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.21.5.tgz\",\n      \"integrity\": \"sha512-IajOmO+KJK23bj52dFSNCMsz1QP1DqM6cwLUv3W1QwyxkyIWecfafnI555fvSGqEKwjMXVLokcV5ygHW5b3Jbg==\",\n      \"cpu\": [\n        \"mips64el\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-ppc64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.21.5.tgz\",\n      \"integrity\": \"sha512-1hHV/Z4OEfMwpLO8rp7CvlhBDnjsC3CttJXIhBi+5Aj5r+MBvy4egg7wCbe//hSsT+RvDAG7s81tAvpL2XAE4w==\",\n      \"cpu\": [\n        \"ppc64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-riscv64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.21.5.tgz\",\n      \"integrity\": \"sha512-2HdXDMd9GMgTGrPWnJzP2ALSokE/0O5HhTUvWIbD3YdjME8JwvSCnNGBnTThKGEB91OZhzrJ4qIIxk/SBmyDDA==\",\n      \"cpu\": [\n        \"riscv64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-s390x\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.21.5.tgz\",\n      \"integrity\": \"sha512-zus5sxzqBJD3eXxwvjN1yQkRepANgxE9lgOW2qLnmr8ikMTphkjgXu1HR01K4FJg8h1kEEDAqDcZQtbrRnB41A==\",\n      \"cpu\": [\n        \"s390x\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/linux-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-1rYdTpyv03iycF1+BhzrzQJCdOuAOtaqHTWJZCWvijKD2N5Xu0TtVC8/+1faWqcP9iBCWOmjmhoH94dH82BxPQ==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/netbsd-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-Woi2MXzXjMULccIwMnLciyZH4nCIMpWQAs049KEeMvOcNADVxo0UBIQPfSmxB3CWKedngg7sWZdLvLczpe0tLg==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"netbsd\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/openbsd-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-HLNNw99xsvx12lFBUwoT8EVCsSvRNDVxNpjZ7bPn947b8gJPzeHWyNVhFsaerc0n3TsbOINvRP2byTZ5LKezow==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"openbsd\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/sunos-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-6+gjmFpfy0BHU5Tpptkuh8+uw3mnrvgs+dSPQXQOv3ekbordwnzTVEb4qnIvQcYXq6gzkyTnoZ9dZG+D4garKg==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"sunos\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/win32-arm64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.21.5.tgz\",\n      \"integrity\": \"sha512-Z0gOTd75VvXqyq7nsl93zwahcTROgqvuAcYDUr+vOv8uHhNSKROyU961kgtCD1e95IqPKSQKH7tBTslnS3tA8A==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/win32-ia32\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.21.5.tgz\",\n      \"integrity\": \"sha512-SWXFF1CL2RVNMaVs+BBClwtfZSvDgtL//G/smwAc5oVK/UPu2Gu9tIaRgFmYFFKrmg3SyAjSrElf0TiJ1v8fYA==\",\n      \"cpu\": [\n        \"ia32\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@esbuild/win32-x64\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz\",\n      \"integrity\": \"sha512-tQd/1efJuzPC6rCFwEvLtci/xNFcTZknmXs98FYDfGE4wP9ClFV98nyKrzJKVPMhdDnjzLhdUyMX4PsQAPjwIw==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ],\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@napi-rs/lzma-linux-x64-gnu\": {\n      \"version\": \"1.5.1\",\n      \"resolved\": \"https://registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu/-/lzma-linux-x64-gnu-1.5.1.tgz\",\n      \"integrity\": \"sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ],\n      \"engines\": {\n        \"node\": \"^22.20 || ^24.12 || >=25\"\n      }\n    },\n    \"node_modules/@rollup/rollup-android-arm-eabi\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.67.4.tgz\",\n      \"integrity\": \"sha512-/v/pUAPOcwp+r1Hjjdg0cBV1TE89CzGKrKh2FgkIQw2QBcIMmVPOCSfuOZStCn4Xh/98HXfo/ht6ztcssctPNg==\",\n      \"cpu\": [\n        \"arm\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-android-arm64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.67.4.tgz\",\n      \"integrity\": \"sha512-6tmmB/P52Vt167FXXEw5auiEUgTtZz7aqUgWHqYXToIUE0HFDY6fTdAyeekjjsNk6O/8dtpSKtClxSj1mMneKQ==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-android-x64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-android-x64/-/rollup-android-x64-4.67.4.tgz\",\n      \"integrity\": \"sha512-8Z9Q4RmotVmuL4llOvqX814JNiOK1oqoBv+glG5KbpRfUiypqzz2/fxIzK4Pq129l4dT5a8Gszmpc0/XPYoFuQ==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"android\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-darwin-arm64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.67.4.tgz\",\n      \"integrity\": \"sha512-pnq6hssxTtwuRAl6Kdi/+IDY+b1IhkUetjhUkdLAAJCssjfqtL2Oqy/FXJVJFtAWOu1oRlArIvf0Yk1O92x2HQ==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"darwin\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-darwin-x64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.67.4.tgz\",\n      \"integrity\": \"sha512-BeIrGZvHMVdJg/N+ohZfFywG/gF41684YhDj2wBvouj7m9ziP1tZDUNwzXRiDY+3WIKngaC4hiUBqVtBPGP5og==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"darwin\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-freebsd-arm64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.67.4.tgz\",\n      \"integrity\": \"sha512-fRFX/oqNg/g780DKoS8RIfYcZD59Ru5O/bSeK1N7gQljBFrTxJY/q5EX4eMs5SrJf32VgVBVVYCdfPpzAwPPnQ==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"freebsd\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-freebsd-x64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-freebsd-x64/-/rollup-freebsd-x64-4.67.4.tgz\",\n      \"integrity\": \"sha512-bSrBRopG1q+0RuOsW0NtYTtIODlvNA3T3ebx5WnQVdSxWIoXFmj+rZdHUHdSLgFdZ5M6VGmekYE7r4RMGQXjfg==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"freebsd\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-arm-gnueabihf\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.67.4.tgz\",\n      \"integrity\": \"sha512-L8IvdrJVtl65g1ozwDSyjGPG+FmibhCdFUwmqTItJLw0S3+Oj4QzFs7rfgTUiK7rsPjkCLdG1/GApFxoynXFJQ==\",\n      \"cpu\": [\n        \"arm\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-arm-musleabihf\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.67.4.tgz\",\n      \"integrity\": \"sha512-h7PcoQOzC31jshNpQ48J0akB9tsghjkSjSl5AZ6XsVGTxVsln7t7C4SQyw62tNVSaz2SeHgk4VT2ELbL17BSHQ==\",\n      \"cpu\": [\n        \"arm\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-arm64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-KSPuOBNHoOl7AsVjeY1KZci8+0up0U4TFAHU5IzBYN8P+Z6cB9DZq28+JQycZW7f6WLLa/tSzhV7Rdy95bVi+g==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-arm64-musl\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.67.4.tgz\",\n      \"integrity\": \"sha512-0E/mKmVk1PlQeQYygIwQm0jlwjANTzGSiNBMPrFx+rdFGFj/2Axh4p6XwcrystQIqXZVudTaGsdbDpzYgJ4wSA==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-loong64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-loong64-gnu/-/rollup-linux-loong64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-Fvw7dOSc2Sa9UOipRZVI0zOgdLCzsjVyD/6JuHXzUHTXFu7mMgmeX/0/bCVBIut1dz+nWz3pV4WpS/Qg0XVnxw==\",\n      \"cpu\": [\n        \"loong64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-loong64-musl\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-loong64-musl/-/rollup-linux-loong64-musl-4.67.4.tgz\",\n      \"integrity\": \"sha512-jzxbVHaE7V3F+P0wEK7UydQtvv7Twfdtx58jI5/3VRx1jJxyrn+qFwfXmqjVFxPhBl+zjaRs+ZJMFJw7vdHaQA==\",\n      \"cpu\": [\n        \"loong64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-ppc64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-ppc64-gnu/-/rollup-linux-ppc64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-fhtrzp9p4GjEJVaigaap9g6X9nP6xgJtKiLLXSDgpE18HXufA5aqfltGn+KAqMtVZReJZfOrXm//y5YSA9BWbA==\",\n      \"cpu\": [\n        \"ppc64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-ppc64-musl\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-ppc64-musl/-/rollup-linux-ppc64-musl-4.67.4.tgz\",\n      \"integrity\": \"sha512-uynaF7IUHwAckV0S+yC1f5esy9gB+aqCBsPH5BOck32TYdCuAn2lVG5tvUcFnEsrviGEmRZxE1NHSOieUPYJEg==\",\n      \"cpu\": [\n        \"ppc64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-riscv64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-uaqRFdfb8eIa2bVHN/FE3ndCvR0zV2xv0AwjCfxrqSu6l6fp/54VhjfhslKlf2RIik9L1jwlt4E56PeVX6tQtQ==\",\n      \"cpu\": [\n        \"riscv64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-riscv64-musl\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-riscv64-musl/-/rollup-linux-riscv64-musl-4.67.4.tgz\",\n      \"integrity\": \"sha512-JZRow7kmxUDEASnxHuVG5itTm+nTXi9BQUABcVUnUEngC+OPwMrpx1uJ9hIA/v+IcAEBL52ktCSPXk5OJn9Jqg==\",\n      \"cpu\": [\n        \"riscv64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-s390x-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-rdrh4e+Lq9fCNKoDPaCqeHXbQCe7yl77Ukl45tlSClwYdZ1gpFGZz1XLJdYtY++FRlfL5aHvb6/0n3GDW/Nxsw==\",\n      \"cpu\": [\n        \"s390x\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-x64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-wL7MS4r0fYcxluF3ne2plofHZiB/LsqNCnyaUlyiKpAJLb6agPSFz7DEFCfkonWAZXMrLwCmC08b2ZEnEdJkog==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"glibc\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-linux-x64-musl\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.67.4.tgz\",\n      \"integrity\": \"sha512-4H0XHfd2VufGjX7NjUyeue78sD0bRIoKSGjGqO+F5nSvL6jN48NAU7esdmtFEYxZXwObLtt3MJ/kHS0jASMW3g==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"libc\": [\n        \"musl\"\n      ],\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"linux\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-openbsd-x64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-openbsd-x64/-/rollup-openbsd-x64-4.67.4.tgz\",\n      \"integrity\": \"sha512-osRHQbE55pZpCLetpMsFmhkapyZnAUH73qRKMh+npi3boUom6u6hdaTTPSxlInXxwJHsn9r2uDhdz0V7Yoxx2A==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"openbsd\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-openharmony-arm64\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-openharmony-arm64/-/rollup-openharmony-arm64-4.67.4.tgz\",\n      \"integrity\": \"sha512-95+exYEyOwrZePsE0czi4q7X5lxKPa21+lmyAZlwbYENITQ0Unk4HAQAFp/p+KhXBHBx9mUABXRYjOC5A1wY3Q==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"openharmony\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-win32-arm64-msvc\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.67.4.tgz\",\n      \"integrity\": \"sha512-FOXOcKhNQpO4Po+Ynan6IbtM67SrXZbgpRJWVYwz53CT5veI7sVzDwVBmWS65N5Imv+wK3SVhIPAl+C5DXXNCg==\",\n      \"cpu\": [\n        \"arm64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-win32-ia32-msvc\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.67.4.tgz\",\n      \"integrity\": \"sha512-cklKh0gJOkAZQcWziQa3hrjxZKN+PCHZ7SPTyGJDAiBVr05ZXlEjGFCG7zFJMaVibxsmzAe1FimN4u/HBns9+Q==\",\n      \"cpu\": [\n        \"ia32\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-win32-x64-gnu\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-win32-x64-gnu/-/rollup-win32-x64-gnu-4.67.4.tgz\",\n      \"integrity\": \"sha512-AegwxJPc9bvUp8fQtlsUHkFMOMkGylWU7glyL+YD4vwG+QaYoGXYLSsQoeTD7kvoLZrVlMWNVhTg1dedY5C1VQ==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ]\n    },\n    \"node_modules/@rollup/rollup-win32-x64-msvc\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.67.4.tgz\",\n      \"integrity\": \"sha512-RJZnrwTWj7Iq2ooBwoGbDdC65tDwYawneGcAfFMJqVUrRZMcskka6nTkBpXR/47G7kzn3EW2qupExnaBy11vwg==\",\n      \"cpu\": [\n        \"x64\"\n      ],\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"win32\"\n      ]\n    },\n    \"node_modules/@types/estree\": {\n      \"version\": \"1.0.10\",\n      \"resolved\": \"https://registry.npmjs.org/@types/estree/-/estree-1.0.10.tgz\",\n      \"integrity\": \"sha512-lTyOMnOcmRBzdCv6/4zUZCrEhV0xrqQiUZBZtVcbmLHBXKLnN8q89v/wKRF/Q0HbwVsqbIG3o5HDoFl9sduM+g==\",\n      \"dev\": true,\n      \"license\": \"MIT\"\n    },\n    \"node_modules/esbuild\": {\n      \"version\": \"0.21.5\",\n      \"resolved\": \"https://registry.npmjs.org/esbuild/-/esbuild-0.21.5.tgz\",\n      \"integrity\": \"sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==\",\n      \"dev\": true,\n      \"hasInstallScript\": true,\n      \"license\": \"MIT\",\n      \"bin\": {\n        \"esbuild\": \"bin/esbuild\"\n      },\n      \"engines\": {\n        \"node\": \">=12\"\n      },\n      \"optionalDependencies\": {\n        \"@esbuild/aix-ppc64\": \"0.21.5\",\n        \"@esbuild/android-arm\": \"0.21.5\",\n        \"@esbuild/android-arm64\": \"0.21.5\",\n        \"@esbuild/android-x64\": \"0.21.5\",\n        \"@esbuild/darwin-arm64\": \"0.21.5\",\n        \"@esbuild/darwin-x64\": \"0.21.5\",\n        \"@esbuild/freebsd-arm64\": \"0.21.5\",\n        \"@esbuild/freebsd-x64\": \"0.21.5\",\n        \"@esbuild/linux-arm\": \"0.21.5\",\n        \"@esbuild/linux-arm64\": \"0.21.5\",\n        \"@esbuild/linux-ia32\": \"0.21.5\",\n        \"@esbuild/linux-loong64\": \"0.21.5\",\n        \"@esbuild/linux-mips64el\": \"0.21.5\",\n        \"@esbuild/linux-ppc64\": \"0.21.5\",\n        \"@esbuild/linux-riscv64\": \"0.21.5\",\n        \"@esbuild/linux-s390x\": \"0.21.5\",\n        \"@esbuild/linux-x64\": \"0.21.5\",\n        \"@esbuild/netbsd-x64\": \"0.21.5\",\n        \"@esbuild/openbsd-x64\": \"0.21.5\",\n        \"@esbuild/sunos-x64\": \"0.21.5\",\n        \"@esbuild/win32-arm64\": \"0.21.5\",\n        \"@esbuild/win32-ia32\": \"0.21.5\",\n        \"@esbuild/win32-x64\": \"0.21.5\"\n      }\n    },\n    \"node_modules/fsevents\": {\n      \"version\": \"2.3.3\",\n      \"resolved\": \"https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz\",\n      \"integrity\": \"sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==\",\n      \"dev\": true,\n      \"hasInstallScript\": true,\n      \"license\": \"MIT\",\n      \"optional\": true,\n      \"os\": [\n        \"darwin\"\n      ],\n      \"engines\": {\n        \"node\": \"^8.16.0 || ^10.6.0 || >=11.0.0\"\n      }\n    },\n    \"node_modules/js-tokens\": {\n      \"version\": \"4.0.0\",\n      \"resolved\": \"https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz\",\n      \"integrity\": \"sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==\",\n      \"license\": \"MIT\"\n    },\n    \"node_modules/loose-envify\": {\n      \"version\": \"1.4.0\",\n      \"resolved\": \"https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz\",\n      \"integrity\": \"sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"js-tokens\": \"^3.0.0 || ^4.0.0\"\n      },\n      \"bin\": {\n        \"loose-envify\": \"cli.js\"\n      }\n    },\n    \"node_modules/nanoid\": {\n      \"version\": \"3.3.20\",\n      \"resolved\": \"https://registry.npmjs.org/nanoid/-/nanoid-3.3.20.tgz\",\n      \"integrity\": \"sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==\",\n      \"dev\": true,\n      \"funding\": [\n        {\n          \"type\": \"github\",\n          \"url\": \"https://github.com/sponsors/ai\"\n        }\n      ],\n      \"license\": \"MIT\",\n      \"bin\": {\n        \"nanoid\": \"bin/nanoid.cjs\"\n      },\n      \"engines\": {\n        \"node\": \"^10 || ^12 || ^13.7 || ^14 || >=15.0.1\"\n      }\n    },\n    \"node_modules/picocolors\": {\n      \"version\": \"1.1.1\",\n      \"resolved\": \"https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz\",\n      \"integrity\": \"sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==\",\n      \"dev\": true,\n      \"license\": \"ISC\"\n    },\n    \"node_modules/postcss\": {\n      \"version\": \"8.5.32\",\n      \"resolved\": \"https://registry.npmjs.org/postcss/-/postcss-8.5.32.tgz\",\n      \"integrity\": \"sha512-LJlKCCAUFKOuZxipUdYw1NzIITEsPcgyOG9LkvRJvuKj/bRzbuRY0ARXvL0pWGpsZvn8jku+LMep2eU0seHp8g==\",\n      \"dev\": true,\n      \"funding\": [\n        {\n          \"type\": \"opencollective\",\n          \"url\": \"https://opencollective.com/postcss/\"\n        },\n        {\n          \"type\": \"tidelift\",\n          \"url\": \"https://tidelift.com/funding/github/npm/postcss\"\n        },\n        {\n          \"type\": \"github\",\n          \"url\": \"https://github.com/sponsors/ai\"\n        }\n      ],\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"nanoid\": \"^3.3.20\",\n        \"picocolors\": \"^1.1.1\",\n        \"source-map-js\": \"^1.2.2\"\n      },\n      \"engines\": {\n        \"node\": \"^10 || ^12 || >=14\"\n      }\n    },\n    \"node_modules/react\": {\n      \"version\": \"18.3.1\",\n      \"resolved\": \"https://registry.npmjs.org/react/-/react-18.3.1.tgz\",\n      \"integrity\": \"sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"loose-envify\": \"^1.1.0\"\n      },\n      \"engines\": {\n        \"node\": \">=0.10.0\"\n      }\n    },\n    \"node_modules/react-dom\": {\n      \"version\": \"18.3.1\",\n      \"resolved\": \"https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz\",\n      \"integrity\": \"sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"loose-envify\": \"^1.1.0\",\n        \"scheduler\": \"^0.23.2\"\n      },\n      \"peerDependencies\": {\n        \"react\": \"^18.3.1\"\n      }\n    },\n    \"node_modules/rollup\": {\n      \"version\": \"4.67.4\",\n      \"resolved\": \"https://registry.npmjs.org/rollup/-/rollup-4.67.4.tgz\",\n      \"integrity\": \"sha512-Lsv3oKcz5jgOQJej/p7nfwbVEdAbDT+z6OPf/SCdI+nF+q2ENp0pTKT35ZwXAmH8g45mfrIiJeEyAqKYSYoL9Q==\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@types/estree\": \"^1.0.10\"\n      },\n      \"bin\": {\n        \"rollup\": \"dist/bin/rollup\"\n      },\n      \"engines\": {\n        \"node\": \">=18.0.0\",\n        \"npm\": \">=8.0.0\"\n      },\n      \"optionalDependencies\": {\n        \"@napi-rs/lzma-linux-x64-gnu\": \"1.5.1\",\n        \"@rollup/rollup-android-arm-eabi\": \"4.67.4\",\n        \"@rollup/rollup-android-arm64\": \"4.67.4\",\n        \"@rollup/rollup-android-x64\": \"4.67.4\",\n        \"@rollup/rollup-darwin-arm64\": \"4.67.4\",\n        \"@rollup/rollup-darwin-x64\": \"4.67.4\",\n        \"@rollup/rollup-freebsd-arm64\": \"4.67.4\",\n        \"@rollup/rollup-freebsd-x64\": \"4.67.4\",\n        \"@rollup/rollup-linux-arm-gnueabihf\": \"4.67.4\",\n        \"@rollup/rollup-linux-arm-musleabihf\": \"4.67.4\",\n        \"@rollup/rollup-linux-arm64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-arm64-musl\": \"4.67.4\",\n        \"@rollup/rollup-linux-loong64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-loong64-musl\": \"4.67.4\",\n        \"@rollup/rollup-linux-ppc64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-ppc64-musl\": \"4.67.4\",\n        \"@rollup/rollup-linux-riscv64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-riscv64-musl\": \"4.67.4\",\n        \"@rollup/rollup-linux-s390x-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-x64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-linux-x64-musl\": \"4.67.4\",\n        \"@rollup/rollup-openbsd-x64\": \"4.67.4\",\n        \"@rollup/rollup-openharmony-arm64\": \"4.67.4\",\n        \"@rollup/rollup-win32-arm64-msvc\": \"4.67.4\",\n        \"@rollup/rollup-win32-ia32-msvc\": \"4.67.4\",\n        \"@rollup/rollup-win32-x64-gnu\": \"4.67.4\",\n        \"@rollup/rollup-win32-x64-msvc\": \"4.67.4\",\n        \"fsevents\": \"~2.3.2\"\n      }\n    },\n    \"node_modules/scheduler\": {\n      \"version\": \"0.23.2\",\n      \"resolved\": \"https://registry.npmjs.org/scheduler/-/scheduler-0.23.2.tgz\",\n      \"integrity\": \"sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"loose-envify\": \"^1.1.0\"\n      }\n    },\n    \"node_modules/slugify\": {\n      \"version\": \"1.6.6\",\n      \"resolved\": \"https://registry.npmjs.org/slugify/-/slugify-1.6.6.tgz\",\n      \"integrity\": \"sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==\",\n      \"license\": \"MIT\",\n      \"engines\": {\n        \"node\": \">=8.0.0\"\n      }\n    },\n    \"node_modules/source-map-js\": {\n      \"version\": \"1.2.2\",\n      \"resolved\": \"https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz\",\n      \"integrity\": \"sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==\",\n      \"dev\": true,\n      \"license\": \"BSD-3-Clause\",\n      \"engines\": {\n        \"node\": \">=0.10.0\"\n      }\n    },\n    \"node_modules/vite\": {\n      \"version\": \"5.4.21\",\n      \"resolved\": \"https://registry.npmjs.org/vite/-/vite-5.4.21.tgz\",\n      \"integrity\": \"sha512-o5a9xKjbtuhY6Bi5S3+HvbRERmouabWbyUcpXXUA1u+GNUKoROi9byOJ8M0nHbHYHkYICiMlqxkg1KkYmm25Sw==\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"esbuild\": \"^0.21.3\",\n        \"postcss\": \"^8.4.43\",\n        \"rollup\": \"^4.20.0\"\n      },\n      \"bin\": {\n        \"vite\": \"bin/vite.js\"\n      },\n      \"engines\": {\n        \"node\": \"^18.0.0 || >=20.0.0\"\n      },\n      \"funding\": {\n        \"url\": \"https://github.com/vitejs/vite?sponsor=1\"\n      },\n      \"optionalDependencies\": {\n        \"fsevents\": \"~2.3.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/node\": \"^18.0.0 || >=20.0.0\",\n        \"less\": \"*\",\n        \"lightningcss\": \"^1.21.0\",\n        \"sass\": \"*\",\n        \"sass-embedded\": \"*\",\n        \"stylus\": \"*\",\n        \"sugarss\": \"*\",\n        \"terser\": \"^5.4.0\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/node\": {\n          \"optional\": true\n        },\n        \"less\": {\n          \"optional\": true\n        },\n        \"lightningcss\": {\n          \"optional\": true\n        },\n        \"sass\": {\n          \"optional\": true\n        },\n        \"sass-embedded\": {\n          \"optional\": true\n        },\n        \"stylus\": {\n          \"optional\": true\n        },\n        \"sugarss\": {\n          \"optional\": true\n        },\n        \"terser\": {\n          \"optional\": true\n        }\n      }\n    }\n  }\n}\n",
+      "dependencies": {
+        "slugify": {
+          "version": "1.6.6",
+          "integrity": "sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==",
+          "path": "G:\\AEGIS_DEVELOPMENT_REPOS\\vibe-accepted-core-runtime\\output\\generated-projects\\app-zE7057\\node_modules\\slugify\\slugify.js"
+        }
+      },
+      "install": "\nadded 17 packages in 4s\n",
+      "tests": "\u2714 form values append without mutating earlier records (1.3024ms)\n\u2714 required fields reject whitespace (0.3467ms)\n\u2714 declared dynamic slug dependency resolves and normalizes a title (4.772ms)\n\u2714 routes resolve exactly and unknown routes stay missing (0.1932ms)\n\u2139 tests 4\n\u2139 suites 0\n\u2139 pass 4\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 13.9553\n",
+      "build": "passed"
+    }
+  },
+  "artifact": {
+    "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+    "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+    "files": 28,
+    "sourceHashMatch": true,
+    "stateAfterBrowserVerification": "stopped"
+  },
+  "verification": {
+    "gateway": {
+      "passed": 288,
+      "failed": 0,
+      "skipped": 0
+    },
+    "app": {
+      "passed": 442,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": "passed with existing chunk warning",
+    "generatedApplicationTests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "browser": {
+      "checks": [
+        "all-ten-useful-instructions",
+        "blank-title-rejected",
+        "trimmed-title-preserved",
+        "dynamic-slug-normalization",
+        "about-explanation-and-navigation",
+        "insertion-order",
+        "home-navigation-retains-memory",
+        "preview-stop-confirmed"
+      ],
+      "records": [
+        "title: Hello Peer Two!\n\nslug: hello-peer-two",
+        "title: Second Note\n\nslug: second-note"
+      ],
+      "actualUserEvents": [
+        {
+          "type": "click",
+          "trusted": true,
+          "target": "BUTTON"
+        },
+        {
+          "type": "submit",
+          "trusted": true,
+          "target": "FORM"
+        },
+        {
+          "type": "click",
+          "trusted": true,
+          "target": "BUTTON"
+        },
+        {
+          "type": "submit",
+          "trusted": true,
+          "target": "FORM"
+        },
+        {
+          "type": "click",
+          "trusted": true,
+          "target": "BUTTON"
+        },
+        {
+          "type": "submit",
+          "trusted": true,
+          "target": "FORM"
+        },
+        {
+          "type": "click",
+          "trusted": true,
+          "target": "A"
+        },
+        {
+          "type": "click",
+          "trusted": true,
+          "target": "A"
+        }
+      ],
+      "componentParagraphs": 11,
+      "previewFramesAfterStop": 0
+    },
+    "reload": {
+      "reloadClearsNotes": true,
+      "remainingRecords": 0,
+      "heading": "Peer Gate Notes"
+    }
+  },
+  "priorFindings": [
+    {
+      "artifact": "app-rpHXGX",
+      "model": "llama3.2:3b",
+      "decision": "pass",
+      "observedDefect": "Ten onboarding components contain labels only, not useful instructions.",
+      "classification": "False approval retained; replaced writer content prompt and focused source evidence."
+    },
+    {
+      "artifact": "app-rpHXGX negative control",
+      "model": "llama3.2:3b",
+      "decision": "hold",
+      "finding": "Alleged missing trimming/security issue",
+      "classification": "Hold observed but rationale contradicted by prepareRecord; no semantic detection credit."
+    },
+    {
+      "artifact": "app-rDQ7Y5",
+      "model": "llama3.2:3b",
+      "decision": "hold",
+      "finding": "Alleged missing blank rejection",
+      "classification": "False hold retained; helper implementation/tests reject blanks. No override; separate installed auditor selected."
+    },
+    {
+      "model": "qwen3.5:4b",
+      "decision": "hold",
+      "reason": "First Qwen review lacked executed test/build evidence in packet; fixed evidence transmission."
+    },
+    {
+      "model": "qwen3.5:4b",
+      "decision": "hold",
+      "reason": "Later Qwen hold claimed test source absent despite it being included; retained unsupported finding; duplicate lock removed and test inventory presented explicitly."
+    }
+  ],
+  "limits": [
+    "Bounded deterministic Web App profile; no arbitrary code or arbitrary npm packages.",
+    "Pinned dynamic dependency support currently slugify1.6.6; scripts disabled during isolated install.",
+    "AST gate establishes real node linkage, not semantic proof; separate model and browser evidence remain distinct.",
+    "Independent human Peer2 signoff remains pending.",
+    "3B auditor false approval and unsupported holds are retained; no universal audit reliability claim."
+  ],
+  "hostUiLayout": {
+    "interviewJSXUnchanged": true,
+    "jsxSha256": "70d564b76dc6f9f10df92844442da3b07108005430c0485ea3ddbe3ec194675c",
+    "baseline": "0274246",
+    "otherHostLayoutFilesChanged": false
+  },
+  "providerSpend": {
+    "before": {
+      "spentUsd": 7.907446750000001,
+      "ceilingUsd": 75,
+      "calls": 278
+    },
+    "after": {
+      "spentUsd": 8.233584,
+      "ceilingUsd": 75,
+      "calls": 285
+    },
+    "callsDelta": 7,
+    "usdDelta": 0.3261372499999995,
+    "attribution": "shared ledger delta, not isolated billing"
+  },
+  "source": "05b0392a7de88bb1d0fefa02c54373cbf074200b"
+}

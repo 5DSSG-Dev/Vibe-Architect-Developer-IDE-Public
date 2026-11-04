@@ -1,0 +1,1234 @@
+{
+  "architect": {
+    "count": 79,
+    "head": "845f5d4eabc70eb3a6dd55cd979d0c6bf8a15ae81822bade092646209cf5ceb2",
+    "verified": true,
+    "events": [
+      {
+        "seq": 58,
+        "at": "2026-11-04T05:40:42.198Z",
+        "hash": "1aff192e0ac93cd6b86d553d9cbac00bbf708a3de438a8ffbef5091cdd4ae53b",
+        "id": "192c7986-02d8-4309-8af7-bb17c3523287",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 59,
+        "at": "2026-11-04T05:42:12.986Z",
+        "hash": "21f0558156791f8db6b91f4afb7e1c9233af1e8345586f7d42b91ecf7c15f075",
+        "id": "a9e7388c-ac87-453b-a3f4-d09335a647a8",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 60,
+        "at": "2026-11-04T05:49:35.945Z",
+        "hash": "b3f8508cdf6bc45df4fbc14cf21b74180e4e44b583813673deabb419cc7176a3",
+        "id": "0b1856ae-59a1-4c29-bb30-9708bd1f0140",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 61,
+        "at": "2026-11-04T05:53:12.870Z",
+        "hash": "28c37ba1fe7f4b1df3fcaf82ebcc97397b823f760aa88cde2d39a7fcdfbb20fc",
+        "id": "3aff205a-eb59-4725-9abf-7e0a8789eb0d",
+        "kind": "note",
+        "note": {
+          "kind": "assembly_gates_verified",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "artifactHash": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+          "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+          "auditorModel": "llama3.2:3b",
+          "audit": {
+            "decision": "pass",
+            "artifactHash": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+            "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+            "coveredRequirementIds": [
+              "R001-01",
+              "R001-02",
+              "R001-03",
+              "R001-04",
+              "R001-05",
+              "R001-06",
+              "R001-07",
+              "R001-08",
+              "R001-09"
+            ],
+            "findings": [],
+            "modelId": "llama3.2:3b",
+            "evidence": {
+              "inputSha256": "a2ccf2d7b3aa4cb2d20acf2aaeb497805f3de91b11e69a161b6908aaa41f05b3",
+              "inputBytes": 72274,
+              "promptTokens": 24752,
+              "outputTokens": 174,
+              "elapsedMs": 193734,
+              "contextTokens": 65536
+            }
+          },
+          "ast": [
+            {
+              "requirementId": "R001-01",
+              "objectId": "home-page",
+              "file": "src/pages/home-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 770,
+              "end": 1013,
+              "sourceHash": "40538948c96500c671237935c6a40d954e2f7259cfa5c3a9088999e81096d0be"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "about-page",
+              "file": "src/pages/about-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 120,
+              "end": 206,
+              "sourceHash": "a007eb8b500b8d24d8424dd8996a1b0ac24dcab0b3564aba30e0606d52acd3d0"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "main-nav",
+              "file": "src/routes/main-nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "about-text",
+              "file": "src/components/about-text.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 201,
+              "sourceHash": "1760e4eacf50ef8319b80e8bc0cde122eb1d54c331dbe516a0a91dfcb533f1c8"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-purpose",
+              "file": "src/components/onboarding-purpose.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 93,
+              "sourceHash": "0c4bbbb6416481c7c7d9f21492949cbe4bebda61db2a6276a11b8a71c3a1e1d1"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-add-a-title",
+              "file": "src/components/onboarding-add-a-title.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "550f9f74f1c96f1ece03f22458f26b67c28b23dad1bc10a4394758c86525d670"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-save-a-note",
+              "file": "src/components/onboarding-save-a-note.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "426ce7e961115eb46ddf911a3992ab616663a8704c8605c631e2f90b793683f7"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-read-your-list",
+              "file": "src/components/onboarding-read-your-list.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 100,
+              "sourceHash": "0d0c669791b685323910a1e2de4c5d8100698402f3115169ddf61fab55d919d2"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-understand-the-slug",
+              "file": "src/components/onboarding-understand-the-slug.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 105,
+              "sourceHash": "dee690927c3aa49d6fa61e2b55e2798f1c6a5d72114598ad5422e9cdab6faf52"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-visit-about",
+              "file": "src/components/onboarding-visit-about.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "46ab02c102549cbd80901bd1c2c951d9d386ab087e25c1a3d24b7a5fd8874891"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-return-home",
+              "file": "src/components/onboarding-return-home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "49715040750ac22b3829afa4c935120d90c3165d83f71a4c8238bbc56d2ae737"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-reload-behavior",
+              "file": "src/components/onboarding-reload-behavior.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 101,
+              "sourceHash": "fd2fbc6892fb951687496df6433cccebcc0118b7591f215d7b1c5040e8df76cc"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-plain-text-safety",
+              "file": "src/components/onboarding-plain-text-safety.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 103,
+              "sourceHash": "a363dcf54f72987de83c4141c3245e0470db5702190ab15b8721aec36919a7bd"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "onboarding-keep-learning",
+              "file": "src/components/onboarding-keep-learning.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 99,
+              "sourceHash": "5561aa9bc2618ab346206c3e479c522c099fdb594f25c564ff232eb3f2e4a9fb"
+            },
+            {
+              "requirementId": "R001-02",
+              "objectId": "home-page",
+              "file": "src/pages/home-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 770,
+              "end": 1013,
+              "sourceHash": "40538948c96500c671237935c6a40d954e2f7259cfa5c3a9088999e81096d0be"
+            },
+            {
+              "requirementId": "R001-03",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-04",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-04",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-05",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-06",
+              "objectId": "about-page",
+              "file": "src/pages/about-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 120,
+              "end": 206,
+              "sourceHash": "a007eb8b500b8d24d8424dd8996a1b0ac24dcab0b3564aba30e0606d52acd3d0"
+            },
+            {
+              "requirementId": "R001-06",
+              "objectId": "about-text",
+              "file": "src/components/about-text.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 201,
+              "sourceHash": "1760e4eacf50ef8319b80e8bc0cde122eb1d54c331dbe516a0a91dfcb533f1c8"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "main-nav",
+              "file": "src/routes/main-nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "home-page",
+              "file": "src/pages/home-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 770,
+              "end": 1013,
+              "sourceHash": "40538948c96500c671237935c6a40d954e2f7259cfa5c3a9088999e81096d0be"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "about-page",
+              "file": "src/pages/about-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 120,
+              "end": 206,
+              "sourceHash": "a007eb8b500b8d24d8424dd8996a1b0ac24dcab0b3564aba30e0606d52acd3d0"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-purpose",
+              "file": "src/components/onboarding-purpose.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 93,
+              "sourceHash": "0c4bbbb6416481c7c7d9f21492949cbe4bebda61db2a6276a11b8a71c3a1e1d1"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-add-a-title",
+              "file": "src/components/onboarding-add-a-title.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "550f9f74f1c96f1ece03f22458f26b67c28b23dad1bc10a4394758c86525d670"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-save-a-note",
+              "file": "src/components/onboarding-save-a-note.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "426ce7e961115eb46ddf911a3992ab616663a8704c8605c631e2f90b793683f7"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-read-your-list",
+              "file": "src/components/onboarding-read-your-list.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 100,
+              "sourceHash": "0d0c669791b685323910a1e2de4c5d8100698402f3115169ddf61fab55d919d2"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-understand-the-slug",
+              "file": "src/components/onboarding-understand-the-slug.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 105,
+              "sourceHash": "dee690927c3aa49d6fa61e2b55e2798f1c6a5d72114598ad5422e9cdab6faf52"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-visit-about",
+              "file": "src/components/onboarding-visit-about.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "46ab02c102549cbd80901bd1c2c951d9d386ab087e25c1a3d24b7a5fd8874891"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-return-home",
+              "file": "src/components/onboarding-return-home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 97,
+              "sourceHash": "49715040750ac22b3829afa4c935120d90c3165d83f71a4c8238bbc56d2ae737"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-reload-behavior",
+              "file": "src/components/onboarding-reload-behavior.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 101,
+              "sourceHash": "fd2fbc6892fb951687496df6433cccebcc0118b7591f215d7b1c5040e8df76cc"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-plain-text-safety",
+              "file": "src/components/onboarding-plain-text-safety.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 103,
+              "sourceHash": "a363dcf54f72987de83c4141c3245e0470db5702190ab15b8721aec36919a7bd"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "onboarding-keep-learning",
+              "file": "src/components/onboarding-keep-learning.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 99,
+              "sourceHash": "5561aa9bc2618ab346206c3e479c522c099fdb594f25c564ff232eb3f2e4a9fb"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "home-page",
+              "file": "src/pages/home-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 770,
+              "end": 1013,
+              "sourceHash": "40538948c96500c671237935c6a40d954e2f7259cfa5c3a9088999e81096d0be"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "about-page",
+              "file": "src/pages/about-page.jsx",
+              "node": "FunctionDeclaration",
+              "start": 120,
+              "end": 206,
+              "sourceHash": "a007eb8b500b8d24d8424dd8996a1b0ac24dcab0b3564aba30e0606d52acd3d0"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "main-nav",
+              "file": "src/routes/main-nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            }
+          ],
+          "dependencies": {
+            "slugify": {
+              "version": "1.6.6",
+              "integrity": "sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==",
+              "path": "G:\\AEGIS_DEVELOPMENT_REPOS\\vibe-accepted-core-runtime\\output\\generated-projects\\app-rpHXGX\\node_modules\\slugify\\slugify.js"
+            }
+          },
+          "tests": "✔ form values append without mutating earlier records (1.6193ms)\n✔ required fields reject whitespace (0.6918ms)\n✔ declared dynamic slug dependency resolves and normalizes a title (4.3237ms)\n✔ routes resolve exactly and unknown routes stay missing (0.139ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 11.5699\n",
+          "build": "passed"
+        }
+      },
+      {
+        "seq": 62,
+        "at": "2026-11-04T05:53:12.876Z",
+        "hash": "bc302fb05c553391932ed84419853e318c7c54661ae8b9a8e25d6a85569d49bd",
+        "id": "9eb4abe6-8f69-43b6-932b-5c832673b5dd",
+        "kind": "note",
+        "note": {
+          "kind": "application_generated",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "requestId": "a23e03ee-39a9-4d57-b856-f0671120d823",
+          "digest": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603",
+          "modelId": "meta-models/muse-spark-open-1026",
+          "bindings": {
+            "home-page": "orb-http-gateway",
+            "about-page": "orb-http-gateway",
+            "notes-data": "orb-http-gateway",
+            "note-form": "orb-http-gateway",
+            "main-nav": "orb-http-gateway",
+            "about-text": "orb-http-gateway",
+            "onboarding-purpose": "orb-http-gateway",
+            "onboarding-add-a-title": "orb-http-gateway",
+            "onboarding-save-a-note": "orb-http-gateway",
+            "onboarding-read-your-list": "orb-http-gateway",
+            "onboarding-understand-the-slug": "orb-http-gateway",
+            "onboarding-visit-about": "orb-http-gateway",
+            "onboarding-return-home": "orb-http-gateway",
+            "onboarding-reload-behavior": "orb-http-gateway",
+            "onboarding-plain-text-safety": "orb-http-gateway",
+            "onboarding-keep-learning": "orb-http-gateway"
+          },
+          "projectPath": "G:\\AEGIS_DEVELOPMENT_REPOS\\vibe-accepted-core-runtime\\output\\generated-projects\\app-rpHXGX"
+        }
+      },
+      {
+        "seq": 63,
+        "at": "2026-11-04T05:55:18.861Z",
+        "hash": "dd15ed2fb7057745b07710994155ad290ae91c1e3bf8835dbc14796082e7686e",
+        "id": "3e6af7e9-7a6b-4376-8346-144bc8638807",
+        "kind": "note",
+        "note": {
+          "kind": "application_launch_requested",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "digest": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603"
+        }
+      },
+      {
+        "seq": 64,
+        "at": "2026-11-04T05:55:20.230Z",
+        "hash": "b6107613d00f4f3e10aaa5751571efa1b85708869e64b0f714497f7f72000aa3",
+        "id": "bded3451-ae5d-4509-9b78-d0ced0717a02",
+        "kind": "note",
+        "note": {
+          "kind": "application_build_verified",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "digest": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603"
+        }
+      },
+      {
+        "seq": 65,
+        "at": "2026-11-04T05:55:20.236Z",
+        "hash": "9daa3c3c561a2d0fa0057651336df479cbb97718300fe2751090e4298f590d58",
+        "id": "84391db1-b460-4f0e-ac31-85cddc72a87f",
+        "kind": "note",
+        "note": {
+          "kind": "application_preview_started",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "digest": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641",
+          "previewUrl": "http://127.0.0.1:59464/82d8e56d-3ff7-422f-8292-88534ea8b56c/"
+        }
+      },
+      {
+        "seq": 66,
+        "at": "2026-11-04T05:59:04.622Z",
+        "hash": "febf2c1657615a846217ac3e632a18db2261f4a94828e2f1c52e5fcc08c15791",
+        "id": "e11b29ef-1afd-4d6a-99f9-911ceb77a664",
+        "kind": "note",
+        "note": {
+          "kind": "application_preview_stopped",
+          "id": "59c3a797-bfaa-4fb8-9689-5984eea438f8",
+          "digest": "3827a564197f400db1249b9b47c0d4624083d4222bb1af4be6e45cc67819c641"
+        }
+      },
+      {
+        "seq": 67,
+        "at": "2026-11-04T06:09:29.112Z",
+        "hash": "3c3863f41979157a5af5028a6a2f20bcda002dbb08df36b1e8af15b80ab2fa03",
+        "id": "bb7d205d-ac0c-4800-9343-53e290d6d0d4",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 68,
+        "at": "2026-11-04T06:14:11.937Z",
+        "hash": "898bc957bbea59347cd4c0bd5859868a60aaab2f53a44c7d02f0dbeeaa9401d9",
+        "id": "3231d9a6-6011-4689-8365-2f30bcf4d6f3",
+        "kind": "note",
+        "note": {
+          "kind": "assembly_audit_rejected",
+          "id": "303115f7-1729-45d3-a909-834e9907e8c7",
+          "audit": {
+            "decision": "hold",
+            "artifactHash": "43985fc38e07feff6c1ac4087cc0308e385318680703d01e1379adff225fdd5f",
+            "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+            "coveredRequirementIds": [],
+            "findings": [
+              "The implementation of the note form does not reject blank titles as required by R001-03. The form allows the user to submit a blank title, which can cause issues with the application's functionality."
+            ],
+            "modelId": "llama3.2:3b",
+            "evidence": {
+              "inputSha256": "a1ac6b2fd79af3d90e67c7a14b2a45177cdd9d643a5f04fe7f93508b3f903fe4",
+              "inputBytes": 94123,
+              "promptTokens": 29541,
+              "outputTokens": 151,
+              "elapsedMs": 242444,
+              "contextTokens": 65536
+            }
+          }
+        }
+      },
+      {
+        "seq": 69,
+        "at": "2026-11-04T06:15:41.812Z",
+        "hash": "f86148545542769627296133c1ee031f5a194cc09147eb1a519b75e3880e9521",
+        "id": "2ef947da-2ed9-4465-8920-293d94f1b641",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 70,
+        "at": "2026-11-04T06:19:00.892Z",
+        "hash": "8780ac701358ac08ff5d1bb27652519a418af0f09d5b8391d4ed7017e49117d7",
+        "id": "592c3dc7-d936-4bae-b322-a7660c8e66df",
+        "kind": "note",
+        "note": {
+          "kind": "assembly_audit_rejected",
+          "id": "95984637-919b-4dfd-9099-aef06edffdd8",
+          "audit": {
+            "decision": "hold",
+            "artifactHash": "d90b3b8060de43fa6d2f6ca20f15914c46958e779ec6a2291e2d36fe7f98bc3e",
+            "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+            "coveredRequirementIds": [
+              "R001-01",
+              "R001-02",
+              "R001-03",
+              "R001-04",
+              "R001-05",
+              "R001-06",
+              "R001-07",
+              "R001-08"
+            ],
+            "findings": [
+              "Requirement R001-09 mandates the generation of a complete working app with its dependency manifest, lockfile, and executable tests. While package.json, package-lock.json, and test files exist in the bundle, the artifact data provided contains no evidence of these files being generated or executed as part of the 'complete working app' deliverable within the context of the audit scope. The presence of these files in the static bundle does not satisfy the requirement for them to be generated and/or"
+            ],
+            "modelId": "qwen3.5:4b",
+            "evidence": {
+              "inputSha256": "567f7d29260c4031beec4a4c716f5feb90ed22558d0f3bf3db55332c68a4b875",
+              "inputBytes": 80758,
+              "promptTokens": 27893,
+              "outputTokens": 335,
+              "elapsedMs": 170046,
+              "contextTokens": 65536
+            }
+          }
+        }
+      },
+      {
+        "seq": 71,
+        "at": "2026-11-04T06:20:25.849Z",
+        "hash": "fbd69b33bdf432f71f1dbf19f29d611f065787967b88ec92543dff6ea646c481",
+        "id": "348915dc-877a-4a94-93ef-032e0e776751",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 72,
+        "at": "2026-11-04T06:25:31.568Z",
+        "hash": "ed3e6413195d20f222da02f474e64a5505dfc1f669744d78ab47fc343821f8d4",
+        "id": "42489235-d11d-4bf7-90d9-7296e7a0780e",
+        "kind": "note",
+        "note": {
+          "kind": "assembly_audit_rejected",
+          "id": "e9c09946-dc9a-4098-83f9-0eada3831098",
+          "audit": {
+            "decision": "hold",
+            "artifactHash": "17d7cd0bd3f03c28cdc2f81fc27c9235cc6a13b62f446fb351c19da703c1cf91",
+            "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+            "coveredRequirementIds": [
+              "R001-01",
+              "R001-02",
+              "R001-03",
+              "R001-04",
+              "R001-05",
+              "R001-06",
+              "R001-07",
+              "R001-08"
+            ],
+            "findings": [
+              "Requirement R001-09 explicitly requires 'executable tests'. The executionEvidence contains a test file (test/application.test.mjs) and a test log showing 4 passing tests. However, the requirement text for R001-09 states: 'Generate a complete working app with its dependency manifest, lockfile and executable tests.' While tests exist, the artifact bundle provided in the JSON input does not include the actual source code files for these tests (e.g., test/*.test.mjs) within the 'files' or 'source' b"
+            ],
+            "modelId": "qwen3.5:4b",
+            "evidence": {
+              "inputSha256": "2519a34ce9caa862a449ae0dad335ecc8ebcb7666a3402a1ab2621f31181f486",
+              "inputBytes": 123405,
+              "promptTokens": 45293,
+              "outputTokens": 347,
+              "elapsedMs": 284110,
+              "contextTokens": 65536
+            }
+          }
+        }
+      },
+      {
+        "seq": 73,
+        "at": "2026-11-04T06:27:20.821Z",
+        "hash": "87d60cfd93d2ec80a91edfb8c7ecca966228d85347d1eca995f83a8a3badfb10",
+        "id": "7168d254-ec4d-4b06-8625-efcf32630bb6",
+        "kind": "architect_message",
+        "state": "sent",
+        "calls": {
+          "luminary_response": 0,
+          "ids_model": 0,
+          "gauge": 1,
+          "architect_delivery": 0
+        }
+      },
+      {
+        "seq": 74,
+        "at": "2026-11-04T06:31:11.272Z",
+        "hash": "232d30052623db96de869d9af9df81ed805f33394327092f152843753c0664ee",
+        "id": "4ab9d25b-38fe-42e5-bbaf-88c88cd9c841",
+        "kind": "note",
+        "note": {
+          "kind": "assembly_gates_verified",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "artifactHash": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+          "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+          "auditorModel": "qwen3.5:4b",
+          "audit": {
+            "decision": "pass",
+            "artifactHash": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+            "requirementsHash": "1a1c24e166bcdfcf721d8630eff68f3578ef5b7bf4e5b647ee6795404b518afe",
+            "coveredRequirementIds": [
+              "R001-01",
+              "R001-02",
+              "R001-03",
+              "R001-04",
+              "R001-05",
+              "R001-06",
+              "R001-07",
+              "R001-08",
+              "R001-09"
+            ],
+            "findings": [],
+            "modelId": "qwen3.5:4b",
+            "evidence": {
+              "inputSha256": "68508f498399b086861cde36c2acdef8d5bd0cbaf0812f77e643de4d5b4cd616",
+              "inputBytes": 91385,
+              "promptTokens": 32184,
+              "outputTokens": 239,
+              "elapsedMs": 167723,
+              "contextTokens": 65536
+            }
+          },
+          "ast": [
+            {
+              "requirementId": "R001-01",
+              "objectId": "home",
+              "file": "src/pages/home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 712,
+              "end": 966,
+              "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "nav",
+              "file": "src/routes/nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            },
+            {
+              "requirementId": "R001-01",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-02",
+              "objectId": "home",
+              "file": "src/pages/home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 712,
+              "end": 966,
+              "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+            },
+            {
+              "requirementId": "R001-02",
+              "objectId": "hero",
+              "file": "src/components/hero.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 217,
+              "sourceHash": "04d4a8858a9be19ad9d424648911ea7f06c2391c09fccdba0eb830022279c2c2"
+            },
+            {
+              "requirementId": "R001-03",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-04",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-04",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-05",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            },
+            {
+              "requirementId": "R001-05",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-06",
+              "objectId": "about",
+              "file": "src/pages/about.jsx",
+              "node": "FunctionDeclaration",
+              "start": 122,
+              "end": 208,
+              "sourceHash": "8c77eef452070ba2afe08cdcbdf9661c7d92ff3b187a67817657442a3a39a6ad"
+            },
+            {
+              "requirementId": "R001-06",
+              "objectId": "c-about-info",
+              "file": "src/components/c-about-info.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 350,
+              "sourceHash": "347c3241f68ed919e127edab56388e3fffc507978b1163ed632068531d91dbe3"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "nav",
+              "file": "src/routes/nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "home",
+              "file": "src/pages/home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 712,
+              "end": 966,
+              "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+            },
+            {
+              "requirementId": "R001-07",
+              "objectId": "about",
+              "file": "src/pages/about.jsx",
+              "node": "FunctionDeclaration",
+              "start": 122,
+              "end": 208,
+              "sourceHash": "8c77eef452070ba2afe08cdcbdf9661c7d92ff3b187a67817657442a3a39a6ad"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-purpose",
+              "file": "src/components/c-purpose.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 264,
+              "sourceHash": "789d130a03dafda335f1c56f812891a7650cb2ef59b71e30fa894e92a8f144ab"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-add-title",
+              "file": "src/components/c-add-title.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 257,
+              "sourceHash": "173ddce69844049d9c0881232b6f9d01affcd10ea66eff1b0b033da555c0e5a6"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-save-note",
+              "file": "src/components/c-save-note.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 273,
+              "sourceHash": "e3b108e5608c440ec0ef48b28916f1b7581d7e4e7693dd76e5cec7cf42817f09"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-read-list",
+              "file": "src/components/c-read-list.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 248,
+              "sourceHash": "822f8e3297b835863de2605ec968f9a51c0248456fda9e39e8fa9938a892cb19"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-understand-slug",
+              "file": "src/components/c-understand-slug.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 274,
+              "sourceHash": "c000f76b9d11ed8e44ffa718682af4c4ed28b3138d980ecf9902e6bc11ba680f"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-visit-about",
+              "file": "src/components/c-visit-about.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 229,
+              "sourceHash": "4e455877bd39268462f5dedf2d914df5d953c26080df19168614545d1b50a54e"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-return-home",
+              "file": "src/components/c-return-home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 217,
+              "sourceHash": "6c15efda67cfc7208e52bd818239e4f0070e5496df2e730a902225b73d2ef0bc"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-reload-behavior",
+              "file": "src/components/c-reload-behavior.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 236,
+              "sourceHash": "04fd2aaed01d23ef593dd040b8d530d6be7abf140be90fa72929bc8c9fca0807"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-plain-text-safety",
+              "file": "src/components/c-plain-text-safety.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 249,
+              "sourceHash": "4db4fc0d2b6af11a5698fc02fc0f9b15ff6417acb32868ecc3a9ac629491ed74"
+            },
+            {
+              "requirementId": "R001-08",
+              "objectId": "c-keep-learning",
+              "file": "src/components/c-keep-learning.jsx",
+              "node": "FunctionDeclaration",
+              "start": 27,
+              "end": 267,
+              "sourceHash": "9120e6ca0b446cd2de811786d3fb1477f59bc57813562e03f916286f74488270"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "home",
+              "file": "src/pages/home.jsx",
+              "node": "FunctionDeclaration",
+              "start": 712,
+              "end": 966,
+              "sourceHash": "84952042e381a705be29d56ee2a66f3e922fdbc5a9edaa25db7a1f8e55a3e574"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "nav",
+              "file": "src/routes/nav.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 96,
+              "sourceHash": "e6743d8e82ab164766c73d60124efd61f583575f45b687a4e26115dd3e602c66"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "notes-data",
+              "file": "src/models/notes-data.js",
+              "node": "VariableDeclaration",
+              "start": 13,
+              "end": 32,
+              "sourceHash": "bbcd0897770be56e537480be1fffb3dc5b4d5b54c975ab6d88dffee7570576cf"
+            },
+            {
+              "requirementId": "R001-09",
+              "objectId": "note-form",
+              "file": "src/components/note-form.jsx",
+              "node": "FunctionDeclaration",
+              "start": 203,
+              "end": 957,
+              "sourceHash": "901844b60e4cddec1057a27d1d8218e71d40b2c816639ba0de56c1a0388ed762"
+            }
+          ],
+          "dependencies": {
+            "slugify": {
+              "version": "1.6.6",
+              "integrity": "sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==",
+              "path": "G:\\AEGIS_DEVELOPMENT_REPOS\\vibe-accepted-core-runtime\\output\\generated-projects\\app-zE7057\\node_modules\\slugify\\slugify.js"
+            }
+          },
+          "tests": "✔ form values append without mutating earlier records (1.3024ms)\n✔ required fields reject whitespace (0.3467ms)\n✔ declared dynamic slug dependency resolves and normalizes a title (4.772ms)\n✔ routes resolve exactly and unknown routes stay missing (0.1932ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 13.9553\n",
+          "build": "passed"
+        }
+      },
+      {
+        "seq": 75,
+        "at": "2026-11-04T06:31:11.277Z",
+        "hash": "4e9dc5b8d11fd7e72deeb1dbcfc7b943f0dcc1ea417c71e230194d858727257e",
+        "id": "f494bc09-c8e9-45ec-ac00-06cfcfa796a2",
+        "kind": "note",
+        "note": {
+          "kind": "application_generated",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "requestId": "e8edef81-4a92-4ef6-8421-83aff7835214",
+          "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603",
+          "modelId": "meta-models/muse-spark-open-1026",
+          "bindings": {
+            "home": "orb-http-gateway",
+            "about": "orb-http-gateway",
+            "hero": "orb-http-gateway",
+            "c-purpose": "orb-http-gateway",
+            "c-add-title": "orb-http-gateway",
+            "c-save-note": "orb-http-gateway",
+            "c-read-list": "orb-http-gateway",
+            "c-understand-slug": "orb-http-gateway",
+            "c-visit-about": "orb-http-gateway",
+            "c-return-home": "orb-http-gateway",
+            "c-reload-behavior": "orb-http-gateway",
+            "c-plain-text-safety": "orb-http-gateway",
+            "c-keep-learning": "orb-http-gateway",
+            "c-about-info": "orb-http-gateway",
+            "notes-data": "orb-http-gateway",
+            "note-form": "orb-http-gateway",
+            "nav": "orb-http-gateway"
+          },
+          "projectPath": "G:\\AEGIS_DEVELOPMENT_REPOS\\vibe-accepted-core-runtime\\output\\generated-projects\\app-zE7057"
+        }
+      },
+      {
+        "seq": 76,
+        "at": "2026-11-04T06:32:17.506Z",
+        "hash": "5ddd5fdb4de60496d5ca573f91a2686cd55eaeaf6ef344f770ea8025c8579d76",
+        "id": "026aa0e7-ce91-42ba-a4eb-9792cb15ea92",
+        "kind": "note",
+        "note": {
+          "kind": "application_launch_requested",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603"
+        }
+      },
+      {
+        "seq": 77,
+        "at": "2026-11-04T06:32:19.054Z",
+        "hash": "305a5deb5030405af2d5a1bd0afafc38c11b2b119dd29d4dbc20cbc9f070aa00",
+        "id": "e21309f8-1e30-42a2-b254-c51b60f93ada",
+        "kind": "note",
+        "note": {
+          "kind": "application_build_verified",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+          "contextHash": "5f3872c39db28d71c5e43ab789574d4c1ef38cdbfda3ec3858fd7e167bfde603"
+        }
+      },
+      {
+        "seq": 78,
+        "at": "2026-11-04T06:32:19.059Z",
+        "hash": "a4ec8ee570802891eb0a968d4f6986bc2165e1f31d7d0407d4e84041554e0ab5",
+        "id": "b7edb3d6-f0de-4e0f-919d-607c0e9f9628",
+        "kind": "note",
+        "note": {
+          "kind": "application_preview_started",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8",
+          "previewUrl": "http://127.0.0.1:58981/97ca6638-8fba-4afe-8f57-a96776610dda/"
+        }
+      },
+      {
+        "seq": 79,
+        "at": "2026-11-04T06:33:55.376Z",
+        "hash": "845f5d4eabc70eb3a6dd55cd979d0c6bf8a15ae81822bade092646209cf5ceb2",
+        "id": "1fda49d4-f05d-43d0-abbc-478db99fa0a0",
+        "kind": "note",
+        "note": {
+          "kind": "application_preview_stopped",
+          "id": "b3875560-0c0f-4887-8e66-4653bcd172a8",
+          "digest": "0754682a708417a6c9bda9e9f690bdcdb2dc4b35cee89bb8438a0443ddaf28f8"
+        }
+      }
+    ]
+  },
+  "luminary": {
+    "count": 60,
+    "head": "aa1125b99b16c6e1d7443698f8fb54d630d22e2cbb60936066cee728188ef2ca",
+    "verified": true,
+    "events": [
+      {
+        "seq": 54,
+        "at": "2026-11-04T05:40:55.115Z",
+        "hash": "7d8e8948af84f08fdb61af95ba66a3cd1e620828962f12401e668c70b982f2a2",
+        "id": "a5c01b89-a458-402c-b1c9-747dfac6dda1",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "192c7986-02d8-4309-8af7-bb17c3523287"
+      },
+      {
+        "seq": 55,
+        "at": "2026-11-04T05:42:39.554Z",
+        "hash": "93447539a67de9ff4fcbb4397ef96186061fbcf8c1e6aad3252a499ca9866ce9",
+        "id": "284dcab2-4215-45c1-9d81-233afd82992b",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "a9e7388c-ac87-453b-a3f4-d09335a647a8"
+      },
+      {
+        "seq": 56,
+        "at": "2026-11-04T05:49:53.379Z",
+        "hash": "46b5c82e74edd0de4ac6684eda6f58af7ca969d7f7c6f6d8f87579af8464543f",
+        "id": "58190295-30ed-4476-95b7-63cd6754353d",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "0b1856ae-59a1-4c29-bb30-9708bd1f0140"
+      },
+      {
+        "seq": 57,
+        "at": "2026-11-04T06:10:03.063Z",
+        "hash": "f1370ecc8db6204fa520de9d01f70fb3faac58f4f72e3a6c4d2cab4404dd10f3",
+        "id": "bc469dcd-5374-4fb8-a8dd-9920a4e19dff",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "bb7d205d-ac0c-4800-9343-53e290d6d0d4"
+      },
+      {
+        "seq": 58,
+        "at": "2026-11-04T06:16:05.256Z",
+        "hash": "78694292866f6f0ad32334b55bdd8ba41e69bc167773c443ea225e35f6d126ed",
+        "id": "ae77ec99-f1d4-4a99-8b21-332239038f70",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "2ef947da-2ed9-4465-8920-293d94f1b641"
+      },
+      {
+        "seq": 59,
+        "at": "2026-11-04T06:20:43.121Z",
+        "hash": "fff6bf607f76b2841b05b32e048897c221ad77b0ea611df9804c02298249ad7b",
+        "id": "917ec4f7-1536-41fb-90a5-b6460e66d68a",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "348915dc-877a-4a94-93ef-032e0e776751"
+      },
+      {
+        "seq": 60,
+        "at": "2026-11-04T06:28:17.819Z",
+        "hash": "aa1125b99b16c6e1d7443698f8fb54d630d22e2cbb60936066cee728188ef2ca",
+        "id": "36521331-3c43-49b5-a73c-6be34f306338",
+        "kind": "luminary_reply",
+        "state": "delivered",
+        "modelId": "meta-models/muse-spark-open-1026",
+        "calls": {
+          "luminary_response": 1,
+          "ids_model": 0,
+          "gauge": 2,
+          "architect_delivery": 1
+        },
+        "architectEntryId": "7168d254-ec4d-4b06-8625-efcf32630bb6"
+      }
+    ]
+  }
+}
