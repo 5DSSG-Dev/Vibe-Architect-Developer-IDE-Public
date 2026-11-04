@@ -217,3 +217,13 @@ test('continuation exhaustion and disabled continuation return no partial candid
     assert.equal(meta.calls.length, 'maxContinuationCalls' in config ? 2 : 1);
   }
 });
+
+test('an empty length-limited provider response resumes internally without returning partial output', async () => {
+  for (const empty of [null, '']) {
+    const meta = fakeMeta(i => ({ body: { choices: [{ finish_reason: i === 1 ? 'length' : 'stop', message: { content: i === 1 ? empty : 'Complete code' } }], usage: { prompt_tokens: 30, completion_tokens: 100 } } }));
+    const ask = createMetaAskModel({ apiKey: 'test', ledger: new SpendLedger(ledgerPath(), 1, 4), fetch: meta.fetch });
+    assert.deepEqual(await ask('complete specification'), { modelId: 'muse-spark-1.3', content: 'Complete code' });
+    assert.equal(meta.calls.length, 2);
+    assert.ok(JSON.stringify(meta.calls[1].body).includes('complete specification'));
+  }
+});

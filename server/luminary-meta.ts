@@ -241,6 +241,7 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       { role: 'user', content: prompt },
     ];
     let accumulated = '';
+    let emptyTruncations = 0;
     let continuationModel: string | undefined;
     const maxCalls = options.maxContinuationCalls ?? 16;
     if (!Number.isInteger(maxCalls) || maxCalls < 1 || maxCalls > 128) throw new Error('Invalid continuation call limit.');
@@ -289,8 +290,14 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
       if (continuationModel && continuationModel !== actualModel) throw new Error('Provider changed model during continuation.');
       continuationModel = actualModel;
       const chunk = choice?.message?.content;
-      if (typeof chunk !== 'string') {
-        if (choice?.finish_reason === 'length') throw new Error(`${provider} used its output allowance before finishing a reply; no text was available to continue.`);
+      if (typeof chunk !== 'string' || (choice?.finish_reason === 'length' && chunk.length === 0)) {
+        if (choice?.finish_reason === 'length') {
+          if (!options.responseFormat && options.auto_resume_on_max_tokens !== false && emptyTruncations++ < 2) {
+            messages.push({ role: 'user', content: 'The previous completion reached its token limit before returning any text. Produce the requested remaining output now, concisely, retaining every requested file and functional requirement. Start at the next character after any visible assistant output above; do not repeat it or include a preamble.' });
+            continue;
+          }
+          throw new Error(`${provider} used its output allowance before finishing a reply; repeated empty completions could not make progress.`);
+        }
         throw new Error(`${provider} returned no readable reply (finish reason: ${typeof choice?.finish_reason === 'string' ? choice.finish_reason.slice(0, 40) : 'unknown'}).`);
       }
       accumulated += chunk;
