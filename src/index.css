@@ -52,7 +52,7 @@ body {
 }
 @media (max-width: 1099px) {
   .luminary-label { position: fixed; right: .75rem; bottom: var(--workspace-footer-clearance, 12rem); }
-  .command-console { left: .75rem; transform: none; width: 11.5rem; }
+  .command-console { width: 11.5rem; }
   .command-console > button { padding-left: .5rem; padding-right: .5rem; width: 100%; }
 }
 

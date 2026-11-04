@@ -1,5 +1,7 @@
 import type { VerifiedBuildReceipt } from '../engine/appBuildPlan';
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Play } from 'lucide-react';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
 import { productionContext, type ProductionAnswer } from '../engine/applicationProduction';
 import { luminaryApi, readDemoKey, saveDemoKey, anchorDetail, type TurnRecord } from '../luminary/client';
@@ -23,6 +25,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  const coreOperation=useRef(false);
  const dialog=useRef<HTMLDialogElement>(null),request=useRef<AbortController|null>(null),epoch=useRef(0);
  const trigger=useRef<HTMLButtonElement>(null);
+ const [triggerHost,setTriggerHost]=useState<HTMLElement|null>(null);
+ useEffect(()=>{setTriggerHost(document.getElementById('footer-build-preview'));},[]);
  const keepModalFocus=(event:React.KeyboardEvent<HTMLDialogElement>)=>{
   if(event.key!=='Tab')return;
   const root=event.currentTarget;
@@ -200,7 +204,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  const preview=receipt?.previewUrl && /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f-]{36}\/$/.test(receipt.previewUrl) ? receipt.previewUrl : undefined;
  const button='rounded-lg border border-cyan-400/40 px-3 py-2 text-sm disabled:opacity-40 hover:bg-cyan-500/10';
  return <>
-  <button ref={trigger} type="button" className="fixed top-20 right-4 z-30 rounded-xl border border-cyan-400/40 bg-slate-950/90 px-4 py-2 text-xs text-cyan-100" onClick={()=>setOpen(true)}>Build &amp; Preview</button>
+  {triggerHost && createPortal(<button ref={trigger} type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)} className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200"><Play className="w-4 h-4 text-cyan-300" /><span>Build &amp; Preview</span></button>,triggerHost)}
   <dialog ref={dialog} tabIndex={-1} onKeyDown={keepModalFocus} aria-labelledby="application-production-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);trigger.current?.focus();}} className="m-auto w-[min(95vw,80rem)] max-h-[90dvh] overflow-y-auto rounded-2xl border border-cyan-400/40 bg-slate-950 p-5 text-slate-100 backdrop:bg-black/70">
    <div className="flex items-center justify-between gap-4"><h2 id="application-production-title" className="text-xl">Build &amp; Preview — {core.name}</h2><button type="button" className={button} onClick={()=>setOpen(false)}>Close panel</button></div>
    <p className="my-3 text-sm text-slate-300">Generate from your accepted architecture, review the files, then launch. This first profile supports text, forms, in-memory records, pages and navigation. Reloading clears app data. Existing Element code frames are not compiled.</p>

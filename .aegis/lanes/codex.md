@@ -462,3 +462,15 @@ Validated scripted isolation, batching, failure recovery, accepted hierarchy, re
 - UseridentifiedrawinterviewToDos/Cabinetcollision/missingLuminarylabel/dropdownbelowWorkspace/Consoleoverbar. Createdlocalcodex/q4-ui-followup-20261104 offpublished8f771ce;publishedPRcandidateunchanged. Preserveinterviewplan.itemsandproductionIDs;journeyItemsprojectsactionableproposal.gapsintoUI,optionaltasksstoresmanualverificationseparately. Existingplansshowbuildtaskswithoutrewritingtheirrequirements. Taskfocususesactualconstructiontask.
 - ToDo boundedaboveResizeObserver-measuredfooter;wideCabinet/ToDosidebyside,narrowstacked;ConsolefixedabovefooterandseparatefrommobileLuminarylabel. Luminarylabelalwayspresent,conversationcanopenwithCabinet.284? correction:gateway288/app446=734tests0fail/skip;buildpass;realbrowser1440/1100/390boundsseparate/panelinviewport/Consolefooter gap/labelseparate. Actualtaskclickopenscodingcontextandlabelremainsvisible. No modelgeneration or userbrowserstoragechange;isolatedbrowserusedcopiedactualworkspace.
 - Evidenceui-followup-layout.json/screenshots/focusedregression+fulltests/buildlogincurrentvisualizationsfolder. Existingparallelpeereditdocs/PR52_MERGE_BLOCKERS.mdpreserved. Localuncommitted/no push/merge/reviewclearance. Usercanrefresh3133servedVitesource;no folderchange required.
+
+## 2026-11-04 | Lumin | Architect screenshot placement correction
+- Moved CORE crystal selector to left12px; restored Command Console tab centered and attached to top of footer (bottom-full), removing follow-up fixed-offset/mobileleft override. Exactbrowser1440:selectorx12,Consolebottom920=footertop920,nonoverlap. Screenshotui-bar-placement.png. UserWorkspaceuntouched;isolatedsnapshotbrowser. LocalUIbranchonly,no commit/push.
+
+## 2026-11-04 | Lumin | CORE selector rail clearance correction
+- Traceyscreenshotshowedleft12selectorhiddenbehind1inElementsrail. Correctedselectorleftcalc(1in+1rem)=112pxandmaxwidthaccountsforrail. RealbrowserverifiedCORElabelhit-testunobscured;Consoleunchanged. LocaluncommittedUIfollowuponly;earlierleft12note superseded.
+
+## 2026-11-04 | Lumin | Build Preview bottom-bar control
+- ArchitectrequestmovedBuildPreviewfromfloatingtoprightintobottomfooterbesideApothecary/Inspector. Footerhost+Reactportalpreserveexistingdialog/ref/focusbehavior;Playicon/sameclassesmatchbuttonheight/padding/font/border. Realbrowserfooterpresence,matchingheight,onebutton,dialogopenandfocusreturnverified. Buildpassed. Restartedonlyverified3133ownedgatewaytorefreshVitedependencycacheafterreact-domportalimport. LocaluncommittedUIbranch,no publication.
+
+## 2026-11-04 | Lumin | Keyboard navigation clears Luminary
+- UserannotatedbaroverLuminary. MovedkeyboardnavigationfrommidrighttopleftWorkspace,16pxrightofElementsrail/top80;expandedheightboundedabovefooter. Actualbrowserx112/y80andexpandReturntoCOREverified. LocalUIbranch/no publication;Luminarypositionunchanged.

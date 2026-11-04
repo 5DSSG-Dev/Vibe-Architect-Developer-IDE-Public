@@ -669,7 +669,7 @@ export function App() {
 
       {/* Keyboard access to the same 3D Enter and Inspect handlers. */}
       {coreManifest.appCreation !== 'draft' && activeOverlay === 'NONE' && !isApothecaryOpen && <nav aria-label="Keyboard Element navigation"
-        className="keyboard-nav-banner fixed top-[min(52vh,26rem)] right-2 z-20 max-h-[max(6rem,calc(100dvh-28rem))] overflow-y-auto max-w-[min(18rem,45vw)] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
+        className="keyboard-nav-banner fixed top-20 left-[calc(1in+1rem)] z-20 max-h-[calc(100dvh-var(--workspace-footer-clearance,12rem)-12rem)] overflow-y-auto max-w-[min(18rem,calc(100vw-1in-2rem))] rounded-lg border border-cyan-500/40 bg-slate-950/95 p-2 text-xs text-slate-100">
         <details onToggle={event => setKeyboardNavExpanded(event.currentTarget.open)}>
           <summary className="cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">Navigate 3D Elements by keyboard</summary>
           <button type="button" className="block mt-2 p-1 underline" onClick={() => popEnvironmentTo(0)}>Return to CORE</button>

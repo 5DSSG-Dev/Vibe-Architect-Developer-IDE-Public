@@ -2921,7 +2921,7 @@ const LegacyThreeCanvas: React.FC<ThreeCanvasProps> = ({
       </div>}
 
       {/* CORE Crystal selector */}
-      {!creationMode && !hideWorkspaceControls && <div className="absolute bottom-[170px] lg:bottom-28 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
+      {!creationMode && !hideWorkspaceControls && <div className="core-crystal-selector absolute bottom-[170px] lg:bottom-28 left-[calc(1in+1rem)] z-20 max-w-[calc(100%-1in-2rem)] overflow-x-auto flex items-center space-x-1 px-2 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/30">
         <span className="text-[9px] font-mono font-bold text-cyan-300 tracking-widest px-1.5">CORE</span>
         {CORE_CRYSTAL_VARIANTS.map((v) => (
           <button

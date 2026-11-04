@@ -133,3 +133,12 @@
 
 ## 2026-11-04 | Lumin | Workspace UI follow-up candidate
 - Localcodex/q4-ui-followup-20261104 separatesconstructionToDosfrominterviewledger;positionsToDobesideCabinetwide/stackednarrowwithviewportscrollbound;measuresfooterforConsole/dropdownclearance;persistsLuminarylabelthroughconversationandCabinetinteraction. Realbrowser1440/1100/390boundsandtaskcontextpassed;full734tests/buildpassed. Published8f771ceunchanged;notcommitted/pushed.
+
+## 2026-11-04 | Lumin | CORE selector and Console placement
+- ArchitectannotatedscreenshotrequestsleftCOREselectorandrestoredConsoleposition. Selectorleft12;Consolecenteredattachedfooterupperedge. Actualbrowsergeometryverified;no publishedcandidatechange.
+
+## 2026-11-04 | Lumin | Selector rail clearance
+- Supersedesleft12placement:COREselectorstarts16pxrightof1inElementsrail(left112px),widthboundedwithinremainingWorkspace. ActualbrowserCORElabelunobscuredhit-testpassed;Consolepositionunchanged. No publication.
+
+## 2026-11-04 | Lumin | Bottom bar Build Preview
+- BuildPreviewtriggernowrendersinfooterhostnexttoApothecary/Inspectorwithmatchingbuttonclasses/icon;existingproductiondialogandclosefocusretained. Browsermatchingheight/dialog/focus/one-triggerpass;buildpass. Localonly.

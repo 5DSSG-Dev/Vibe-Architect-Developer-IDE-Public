@@ -187,3 +187,6 @@ Record conventions, ownership, risks, and useful reference information for this 
 - Lowered keyboard navigation banner; renamed APP to MENU; local-session-aware Luminary connection reports Active/Standby; anchored Command Console above footer with 12px clearance; New App Luminary trigger focuses actual interview input. ToDo selection opens coding mode with full task/context.
 - Exact requirement ID/text, AST binding, artifact hash, independent audit pass and successful build/tests gate automatic completion; mismatch/failed/partial cases covered. Live existing audited nine-requirement receipt restored all nine checked states; selecting task enabled coding mode and real local status Active DESIGN. New App trigger focus verified at390x700 without horizontal overflow.
 - Full731tests passed (288 gateway/443 app), final TypeScript/build/diff checks passed. Existing Vite chunk warning remains. No new model calls, server restart, commit, push or merge; UI changes remain local per bundling request.
+
+## 2026-11-04 | Lumin | Keyboard navigation placement correction
+- ArchitectrequestmoveskeyboardnavfromLuminaryarea totopleftWorkspace(left1in+1rem/top80),boundedscrollheight. Browserpositionandexpandcontrolverified;Luminaryuntouched. Localonly.
