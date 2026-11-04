@@ -12,6 +12,7 @@ import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
+import { once } from 'node:events';
 import { createHash } from 'node:crypto';
 import { resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -74,9 +75,14 @@ try {
   throw error;
 }
 
-const server = app.listen(config.port, '127.0.0.1', () => {
+const server = app.listen(config.port, '127.0.0.1');
+try {
+  await once(server, 'listening');
   console.log(`AEGIS Architect gateway listening at ${config.origin}`);
-});
+} catch (error) {
+  await Promise.allSettled([sessions.close?.(), evidenceStore.close?.(), app.locals.applicationProduction?.close()]);
+  throw error;
+}
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {

@@ -40,4 +40,45 @@ This is a **local demo**; two items Lumin flagged are already Architect-approved
 
 Caveat (DEMO_SCOPE line 20): a scope deferral does **not** mark a feature implemented; each stays a pending build ToDo, and the independent non-author merge approval (Q2) remains a distinct gate.
 
+### Q4 — IRG gauge not calibrated/activated (live finding) ☐ (2026-11-04)
+Live Q4 attempt against PR #52 pipeline (dev-mode, Baseten writer, production route mounted). Real interview message submitted through the UI (no POST-body injection): _"a personal task tracker — add a task with title+due date, mark complete, filter to incomplete."_ On **two separate restarts**, the message was **returned through IDS** ("Your message was not sent to the Luminary"), i.e. the IRG message-governance gauge scored this benign, on-topic message below threshold and fail-closed.
+
+This empirically reproduces Aster's record-based finding:
+- The recorded **IRG calibration candidate** was **Meta `muse-spark-1.3` via the direct Meta API** — NOT the local `llama3.2:3b`.
+- The local `llama3.2:3b` candidate was tested and **over-blocked the sample cases** (matches the live IDS returns above).
+- That choice is dated **Nov 1** in the project record; **no verifiable Nov-3 final selection**. The record still lists **threshold calibration and live route activation as PENDING**.
+- Note the architecture conflict: `gauge-local.ts` enforces a **loopback-only** endpoint (`assertLoopbackEndpoint` throws on non-loopback), so the calibrated `muse-spark-1.3`-via-Meta-API route **cannot run as the embedded gauge under the committed code** without a loopback proxy or relaxing that guard. The Nov-3 receipt's "IRG gauge remains `llama3.2:3b`" reflects the over-blocking local fallback, not the calibrated choice.
+
+**Root cause identified (direct gauge probe, 2026-11-04):** `llama3.2:3b` is NOT broken — it emits `YES`/`NO` as the first token exactly as the IRG expects. Probing the gauge model directly over Ollama `/v1` with a clearly-good interview message (`max_tokens:1, top_logprobs:5`) returned first token `YES` at logprob **−0.339 → P(YES) ≈ 0.71**, with `NO` at −1.27 → P ≈ 0.28. So a plainly-good message scores **~71 on that virtue — only just above the 70 threshold**. Across **all seven virtues, fail-closed (every virtue must clear 70)**, each virtue is a near-coin-flip at the 70 line, so the joint pass probability is low and most attempts are returned through IDS (observed: `POST /api/luminary/ask → 422`). The Nov-3 "it worked" run is the case where all seven happened to land ≥70; the current IDS returns are the same distribution from the failure side.
+
+**The `{"...":70}` thresholds in `.env` are an uncalibrated placeholder, not the Architect's calibrated values.** This is a calibration gap, not a code regression and not a broken model.
+
+**Impact on Q4:** the writer/AST/qwen-auditor/launch tail is reachable; the IRG message-governance stage simply needs calibrated thresholds (or a higher-headroom gauge model) so a good message clears reliably while a genuinely bad one is still held. Options, Architect's call:
+1. **Calibrate thresholds down** to match this model's score distribution (e.g. ~55–60), giving good messages margin while bad messages — which score P(YES) far lower — are still blocked. Fastest path; keeps the loopback-only local gauge as-coded.
+2. **Switch the gauge** to a higher-headroom local model (e.g. `qwen3:14b`, already pulled) whose good-message P(YES) sits well above 70, keeping thresholds at 70.
+3. **The calibrated Meta `muse-spark-1.3` route** — requires resolving the loopback-only guard (`assertLoopbackEndpoint`) via a local proxy or relaxing it; heaviest path.
+
+Either (1) or (2) closes Q4's functional-acceptance gate with live data; the choice of calibrated values remains the Architect's authority.
+
 _Further items appended below as they close._
+
+### 2026-11-04 | Lumin continuation — threshold profile mismatch reproduced and corrected locally
+- Supersedes the earlier seven-coin-flips/lucky-Nov3 explanation: token probability is not run-level pass probability. Nine real gauge runs were largely stable. Five benign runs failed uniform70 and passed the already Architect-approved per-virtue profile; four explicit negative diagnostic runs were withheld under both. Arbitrary uniform55/60 would still fail these benign controls.
+- Found exact STP0002 P18 threshold approval,2026-10-27: Honesty13.8/Respect29.3/Attention23.9/Affection16.3/Loyalty10.7/Trust11.9/Communication34.7. Legacy adapter hash matches public checkout. Restored only that threshold line in remediation .env and ignored .env.live-q4.example. No new calibration or changed gauge logic/model.
+- Real AppCreationConversation submitted Verus original task-tracker request through temporary3132: inbound and writer reply cleared IRG on pass1, Baseten MuseSparkOpen returnedHTTP200 and real design questions; no corrective revision. Oneprovidercall/USD0.02471425. Temporary browser/gateway closed; existing3012 remained200 and unchanged. This does not establish3012 loadedconfig or close wholeQ4 app/auditoracceptance.
+- Correct intended name is IDQ, per Tracey. This branch still has legacy ids modules/protocol fields/modelprompt/UIstrings; those are a migration gap, not current intended terminology. Prior notes preserve historical spelling only.
+- Full report: docs/PR52_IRG_THRESHOLD_CONTINUATION_2026-11-04.md. Missing34UIassets/staticdelivery-from-hidden-worktree failure and model/corpus limits retained. No source algorithm change, commit/push/merge, or running3012 restart. Q4 remains open overall.
+
+### 2026-11-04 | Lumin — local missing-asset obstruction repaired
+- Userreportedtextureless3132; rootcauseLFS pointers servedHTTP200insteadofbinaries. Hydrated278objects/692MBfromlocalcachewithgitlfscheckout public/assets/**, remainingunhydrated0/trackedassetdiffempty. Realbrowserreloadhasno34asseterrorbannerorfailedrequests; Luminarymaterialsrender. Existinggatewaynotrestarted. Q4fullapp/auditoracceptance remainsopen.
+
+### 2026-11-04 | Lumin — Q4 live verification failed at definition contract
+- Rebuilt hydratedassets successfully; compiled3133gateway exactHEAD788c809 verified bystatus. Tracey explicitly authorized3133 after3132remainedoccupied. Prior3132attempts lackedbindingproof andremainseparatediagnostics. Sourceindexstartup ignoresExpressbinderrorandcanloglisteningonEADDRINUSE; noarbitraryelevatedprocesskilled.
+- Realheadlessinterview/accept/generate usedVerusrequest plusauthorizedbaseline/pendingcomplete+filter. Bothactualwriterproductionanswers useddependencies[] andinvalidfieldname due-date; bothHTTP409Unsupportedgenerateddependency. All6ToDoIDshavesyntacticbindingsbutnoAST/productionreceipt/filedigest/auditapprovalexists. No payloadwasmanuallyrepaired.
+- Addedrequestedmissing scripts/audit-assembly.ts; actualdefaultcommandexit2/UNVERIFIEDbecausegatedreceiptabsent; strictstandalonetypecheckpassed. Livepositive/negativeauditorbranches remainunexecuted, notcredited. Baselinescope/artifact retainsbothfuturefeaturespending/implementedfalse.
+- Fullreportdocs/Q4_LIVE_APP_VERIFICATION_2026-11-04.md; privatehashboundreceipt .luminary/q4-live-20261104/q4-audit-receipt.json. Q4remainsFAIL/open. Fixproductionoutputcontract/controlledrepairandstartupbindhandling, thenrepeatrealacceptance. No generator/gateweakening, commit/push/merge orindependentclearance.
+
+## 2026-11-04 | Lumin | Q4 repaired local candidate verified
+- Base788c809+productpatch92167605d07a; authenticated3133statusmatches. Explicitdependencyobject/fieldidentifierprompt+parsererrors addedwithoutcoercion; startupawaitsactual-listeningandthrowsbinderror.733repo tests(288gateway445app)0fail/skip/buildpass;realoccupiedsocketcompiledexit1/EADDRINUSE/no false success.
+- ActualUIinterview→explicitbaselinependingcomplete/filter→accept→generateHTTP201 ID03c3f285,20files/6IDs/22ASTbindings/3generatedtestspass/buildpass. Source0080a7a4745f06ef81e8e4855ed735219d4f8a0890d4c2cf687b51b317a5804c. MountedQwenpass;CLIpositiveexit0/pass;realincomplete-form+emptycontentnegativeexit0/holdwithcorrectsemanticfindings.10browserchecks passedincludingpendingnotice/navigation/reload/Stop.
+- Reportdocs/Q4_REMEDIATION_SUCCESS_2026-11-04.md;private candidatebinding/receipt/audits/traffic .luminary/q4-repair-20261104. ReceiptSHAa893a27be40c2c19af3103464d8a0b6aa262f05ac5e7f640f348863c0d42bfbf. Baselineonly;complete/filterpending,IDQmigrationseparate. Previewstopped;3133gatewayavailable. Localuncommitted;no push/merge/nonauthorapproval.

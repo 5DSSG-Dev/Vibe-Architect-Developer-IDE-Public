@@ -1,12 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { productionContext, validateProductionContext, parseProductionAnswer } from './applicationProduction';
+import { productionContext, validateProductionContext, parseProductionAnswer, productionPrompt } from './applicationProduction';
 import { createBlankApp } from './appCreation';
 const context = {version:1 as const,coreId:'core',name:'Notes',purpose:'Add notes',decisions:'Plain notes',elements:[
   {id:'core',name:'Notes',category:'CORE',parentId:null,description:'Add notes'},
   {id:'orb',name:'Notes storage',category:'Orbs',parentId:'core',description:'Store notes'}
 ]};
 const answer = {definition:{version:1,name:'Notes',objects:[{id:'home',kind:'Page',path:'/',title:'Notes',children:[]}]},bindings:{home:'core'},gaps:[]};
+
+test('production dependency contract rejects the observed array/null output and requests exact dependency objects',()=>{
+ for(const dependencies of [[],null])assert.throws(()=>parseProductionAnswer(JSON.stringify({...answer,definition:{...answer.definition,dependencies}}),context),/dependencies must be an object/);
+ assert.deepEqual(parseProductionAnswer(JSON.stringify({...answer,definition:{...answer.definition,dependencies:{}}}),context).definition.dependencies,{});
+ assert.ok(productionPrompt(context).includes('set definition.dependencies to exactly {}'));
+ assert.ok(productionPrompt({...context,dependencies:{slugify:'1.6.6'}}).includes('set definition.dependencies to exactly {"slugify":"1.6.6"}'));
+});
+
+test('production field contract rejects due-date without rewriting it and accepts dueDate',()=>{
+ const formAnswer={definition:{version:1,name:'Notes',dependencies:{},objects:[{id:'home',kind:'Page',path:'/',title:'Notes',children:['task-form','tasks']},{id:'tasks',kind:'Data',initialRecords:[]},{id:'task-form',kind:'Form',modelId:'tasks',fields:[{name:'due-date',label:'Due date',required:true}]}]},bindings:{home:'core',tasks:'orb','task-form':'orb'},gaps:[]};
+ assert.throws(()=>parseProductionAnswer(JSON.stringify(formAnswer),context),/use dueDate, not due-date/);
+ const valid=JSON.parse(JSON.stringify(formAnswer));valid.definition.objects[2].fields[0].name='dueDate';
+ assert.equal(parseProductionAnswer(JSON.stringify(valid),context).definition.objects[2].kind,'Form');
+});
 test('reads accepted CORE and actual attached hierarchy', () => {
   const core = createBlankApp();
   assert.throws(()=>productionContext(core,[]),/accept/i);
