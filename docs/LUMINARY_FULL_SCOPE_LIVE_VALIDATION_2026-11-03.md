@@ -44,3 +44,7 @@ Existing target review-record governance remained active, with the live Baseten 
 - Lumin DataQuad turn: `lumin-local-turn-967e8295330c4b36ba002fe8ebe2f27d`; the final append receipt is reported in chat. DataQuad publication preserves evidence and does not provide independent approval.
 
 All three attempts used10provider calls with total shared-ledger deltaUSD0.65649825; this is not isolated billing attribution. No provider/configured authority was replaced, no generated application was accepted/merged, and no claim of arbitrary-application completeness or final merge approval is made. Peer2 should inspect this executable revision, the generated artifact, the two failed assertions and the retained failure/recovery traces before final sign-off.
+
+## Published-byte hash qualification
+
+The SHA256`73c47b6247a93096fe9b00d78334c87d0ce4c67af70a1deb761e504215c376e6` above identifies the Windows working-file bytes (CRLF). The authoritative published Git blob SHA256 for `docs/evidence/2026-11-03/continuous-build-live-validation.json` is **`b807b09ab96f87ea2b0cba1037e04304d019b5d4753fddb2c2661594542f684a`** (LF). Both JSON documents parse identically. This qualification supersedes interpreting the working-file hash as the published blob hash. Generated application file hashes were separately compared to their committed blob bytes and matched.
