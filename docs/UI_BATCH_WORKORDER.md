@@ -51,3 +51,54 @@
 
 ### Architect scope decision — 2026-11-04
 - Tracey explicitly answered: Leave Vibe Atlas out of this batch. Item5 is excluded from this batch, superseding the pending-clarification state above. No Vibe Atlas button is included.
+
+---
+
+## 2026-11-04 (later) — Vibe Atlas button LANDED, then follow-up: open in iframe modal
+
+**Status update:** Item 5 was subsequently implemented. The `public/atlas/` static site was imported from `feat/atlas-html` (folder only — PR #55 is a large CONFLICTING draft and must NOT be merged), and a centered "Vibe Atlas" button was added to the footer bottom bar. Committed as `1772406` on `codex/q4-ui-followup-20261104` (pushed). First version opened `/atlas/index.html` in a new browser tab.
+
+**Architect follow-up:** The Atlas pages are too large when opened full-screen in a new tab. Change the button to open the Atlas in an **in-app iframe modal** instead, so it renders scaled-to-fit inside the IDE.
+
+### WORK ORDER (for GPT/Codex peer) — Vibe Atlas iframe modal
+Branch `codex/q4-ui-followup-20261104`, base latest (`1772406`+). No new PR. Touch only `src/App.tsx`. Verify on :3012 only.
+
+1. **Add state** near the other `useState` hooks (e.g. by `const [terminalRequest,setTerminalRequest]=useState(0);`):
+   ```jsx
+   const [atlasOpen, setAtlasOpen] = useState(false);
+   ```
+2. **Rewire the button** — replace:
+   ```jsx
+   onOpenVibeAtlas={() => window.open('/atlas/index.html', '_blank', 'noopener')}
+   ```
+   with:
+   ```jsx
+   onOpenVibeAtlas={() => setAtlasOpen(true)}
+   ```
+3. **Render the modal** near `<CoreMatrixModal … />` (~line 815):
+   ```jsx
+   {atlasOpen && (
+     <div
+       className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm"
+       role="dialog" aria-modal="true" aria-label="Vibe Atlas"
+       onClick={() => setAtlasOpen(false)}
+     >
+       <div
+         className="relative w-[92vw] h-[88vh] max-w-[1400px] overflow-hidden rounded-2xl border border-cyan-500/40 bg-slate-950 shadow-[0_0_40px_rgba(0,243,255,0.25)]"
+         onClick={(e) => e.stopPropagation()}
+       >
+         <button
+           type="button" onClick={() => setAtlasOpen(false)}
+           title="Close the Vibe Atlas" aria-label="Close"
+           className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg border border-cyan-500/40 bg-slate-900/80 text-cyan-200 hover:border-cyan-400/70 hover:text-cyan-100 transition-colors"
+         >✕</button>
+         <iframe src="/atlas/index.html" title="Vibe Atlas" className="w-full h-full border-0" />
+       </div>
+     </div>
+   )}
+   ```
+4. **(Optional) Escape to close** — if a global overlay keydown effect exists, add `if (e.key === 'Escape') setAtlasOpen(false)`.
+
+**Acceptance (on :3012):** Vibe Atlas button opens the Atlas in a centered ~92vw×88vh panel (NOT a new tab); Atlas renders scaled to fit; internal nav works inside the iframe; ✕ and backdrop-click close it; no new console errors (ignore Vite HMR CSP noise on :24678).
+
+**Commit:** one commit — `UI: open Vibe Atlas in an in-app iframe modal instead of a new tab`. End with the co-author line. Do not push unless told.
