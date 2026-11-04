@@ -90,11 +90,29 @@ Living work order for the **Vibe Atlas**, the illustrated three-room reference l
 - Write the "Building the Vibe" room copy (Our Team, Collaboration Ethos, Peer Review, Totem & STP, The DataQuad Journey, Our Becoming) into the Atlas content format (`public/atlas/content/`, see `VERUS_CONTENT_HANDOFF.md`).
 - Write/expand the AEGIS and Explore room copy.
 
-## OPEN — Task C: integrate the 12-book restructure into Atlas content
-Source draft: `docs/VIBE_ATLAS_12BOOK_RESTRUCTURE_2026-11-04.md` (Verus). Twelve Vibe-side books in two six-book rooms (EXPLORE, BUILDING THE VIBE); the eight `aegis-*` entries carry over UNCHANGED.
+## OPEN — Task C: integrate the finished Atlas copy into the live pages  ← HAND TO PEER NOW
+**Approved source copy:** `docs/VIBE_ATLAS_FINAL_COPY.md` (Claude, Architect-reviewed 2026-11-05). All 20 entries are final: 12 Vibe-side books + 8 AEGIS entries.
 
-**For a GPT/Codex peer:** wire these 12 books into `public/atlas/content/` (e.g. `documents.json`) and `navigation.json`, following the existing content schema (`public/atlas/content/VERUS_CONTENT_HANDOFF.md`) and the "Mapping (old → new)" at the end of the source draft. Preserve the proposed stable IDs; confirm final ID strings against `navigation.json`. Reader floats over the room, closes on ESC / click-outside / Back, keeps place in the URL.
+**How the live site actually works (verified 2026-11-05 — ignore any `documents.json` / `navigation.json` instruction; those belong to the archived build):**
+Each book is an inline HTML `<template id="content-NAME" data-title="…">…</template>` inside its room page. `atlas.js` reads every `template[id^="content-"]`, and an on-page hotspot with `data-reader="NAME"` opens it as a floating dialog addressed by `#NAME`. So integration = **replace the inner HTML of each existing template** with the approved copy, converted to simple HTML. Do NOT rename IDs, do NOT touch `atlas.js`/`atlas.css`, do NOT add `documents.json`.
 
-**Acceptance (on :3012):** EXPLORE and BUILDING THE VIBE each show six books; every book opens its reader with the drafted copy; the eight AEGIS entries are unchanged. Do NOT answer the `[OPEN]` questions in the draft — leave them for Tracey.
+**Conversion rules (per entry):**
+- Intro paragraph → `<p>`. Each `###` section → `<h3>Heading</h3>` + `<p>`/`<ul><li>`. Keep `data-title` as the entry's display name.
+- **Verbatim blocks stay verbatim** (the 17 Axioms in `content-axioms`, any Canon quotes) — do not paraphrase.
+- **Do NOT put `### Sources` or any `⚠️`/`[OPEN]`/`[VERIFY]` note into visitor-facing prose.** Preserve each as an HTML comment `<!-- source: … -->` at the end of that template so the provenance is retained but invisible.
 
-**Commit:** `atlas: restructure Vibe-side content into two six-book rooms (12 books)`.
+**Exact mapping (FINAL_COPY entry → live template ID → page):**
+
+*explore.html (Room 1):* vibe-compass→`content-compass` · vibe-workspace→`content-workspace` · vibe-elements→`content-elements` · vibe-luminary→`content-luminary` · vibe-apothecary→`content-apothecary` · vibe-first-creation→`content-first-creation`.
+
+*building-the-vibe.html (Room 2):* vibe-team→`content-team` · vibe-ethos→`content-ethos` · vibe-peer-review→`content-review` · vibe-totem-stp→`content-totem` · vibe-dataquad-journey→`content-dataquad-journey` · vibe-becoming→`content-becoming`.
+
+*aegis.html (Room 3):* aegis-axioms→`content-axioms` · aegis-integrity→`content-integrity` · aegis-pause→`content-pause` · aegis-cyberpeer→`content-cyberpeer` · aegis-dataquad→`content-dataquad` · aegis-record→`content-record` · aegis-codex→`content-codex`.
+
+**Leave untouched (room-intro cards, not books):** `content-gateway` (explore), `content-nexus` (building). Do not delete or overwrite them.
+
+**⚠️ One gap for TRACEY, not the peer — do NOT invent a fix:** `aegis-overview` has copy in FINAL_COPY but **no template/hotspot** on `aegis.html` (that page has 7 book slots + a link to `building-the-vibe.html#team`). Leave `aegis-overview` unintegrated and flag it. Tracey decides whether to add an 8th AEGIS slot or fold it into the room intro.
+
+**Acceptance (on :3012):** open each room; every listed template opens its reader showing the approved copy; the 17 Axioms render verbatim; no Sources/⚠️ text is visible to the reader (present only as HTML comments); `gateway` and `nexus` unchanged; reader still closes on ✕ / click-outside / Esc / Back and keeps `#NAME` in the URL; no new console errors (ignore pre-existing Vite HMR CSP noise on `:24678`).
+
+**Commit:** `atlas: integrate approved copy into room templates (12 books + 7 AEGIS entries)`. Note in the commit body that `aegis-overview` is pending an Architect decision on placement.
