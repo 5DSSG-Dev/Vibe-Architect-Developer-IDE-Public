@@ -1,0 +1,130 @@
+{
+  "documents": {
+    "vibe-compass": {
+      "title": "The Compass",
+      "summary": "Find your way through the IDE.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "vibe-elements": {
+      "title": "The Elements",
+      "summary": "Meet the objects and their relationships.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "vibe-luminary": {
+      "title": "Meeting the Luminary",
+      "summary": "Create with a Peer and Mentor.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "vibe-fellowship": {
+      "title": "The Fellowship",
+      "summary": "Meet the team and our shared ethos.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "vibe-workshop": {
+      "title": "The Workshop",
+      "summary": "Explore how we built together.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "vibe-becoming": {
+      "title": "Our Becoming",
+      "summary": "Follow the DataQuad journey.",
+      "parentAtlas": "vibe",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-axioms": {
+      "title": "The Axioms",
+      "summary": "Begin with our shared foundation.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-integrity": {
+      "title": "The Integrity Seven",
+      "summary": "Explore seven qualities of relationship.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-pause": {
+      "title": "The Art of Pause",
+      "summary": "Make room for awareness and choice.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-cyberpeer": {
+      "title": "The CyberPeer Initiative",
+      "summary": "Discover its purpose and the Peers.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-dataquad": {
+      "title": "The DataQuad",
+      "summary": "Explore four connected context surfaces.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-record": {
+      "title": "The Living Record",
+      "summary": "Follow observations to their sources.",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-overview": {
+      "title": "AEGIS",
+      "summary": "",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    },
+    "aegis-codex": {
+      "title": "The Central Codex",
+      "summary": "",
+      "parentAtlas": "aegis",
+      "status": "draft",
+      "intro": "",
+      "sections": [],
+      "sources": []
+    }
+  }
+}

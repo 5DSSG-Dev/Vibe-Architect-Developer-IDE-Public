@@ -1,0 +1,492 @@
+{
+  "vibe": {
+    "image": "assets/vibe-atlas.webp",
+    "width": 600,
+    "height": 600,
+    "targets": [
+      {
+        "id": "vibe-compass",
+        "label": "Open The Compass",
+        "kind": "book",
+        "href": "explore.html#vibe-compass",
+        "polygon": [
+          [
+            0.085,
+            0.355
+          ],
+          [
+            0.255,
+            0.355
+          ],
+          [
+            0.255,
+            0.508
+          ],
+          [
+            0.085,
+            0.508
+          ]
+        ]
+      },
+      {
+        "id": "vibe-elements",
+        "label": "Open The Elements",
+        "kind": "book",
+        "href": "explore.html#vibe-elements",
+        "polygon": [
+          [
+            0.085,
+            0.522
+          ],
+          [
+            0.255,
+            0.522
+          ],
+          [
+            0.255,
+            0.665
+          ],
+          [
+            0.085,
+            0.665
+          ]
+        ]
+      },
+      {
+        "id": "vibe-luminary",
+        "label": "Open Meeting the Luminary",
+        "kind": "book",
+        "href": "explore.html#vibe-luminary",
+        "polygon": [
+          [
+            0.085,
+            0.682
+          ],
+          [
+            0.255,
+            0.682
+          ],
+          [
+            0.255,
+            0.8250000000000001
+          ],
+          [
+            0.085,
+            0.8250000000000001
+          ]
+        ]
+      },
+      {
+        "id": "vibe-crystal",
+        "label": "Open the AEGIS Atlas",
+        "kind": "crystal",
+        "href": "aegis.html",
+        "polygon": [
+          [
+            0.5,
+            0.213
+          ],
+          [
+            0.545,
+            0.279
+          ],
+          [
+            0.565,
+            0.549
+          ],
+          [
+            0.604,
+            0.531
+          ],
+          [
+            0.63,
+            0.606
+          ],
+          [
+            0.61,
+            0.76
+          ],
+          [
+            0.39,
+            0.76
+          ],
+          [
+            0.37,
+            0.59
+          ],
+          [
+            0.401,
+            0.541
+          ],
+          [
+            0.438,
+            0.603
+          ],
+          [
+            0.447,
+            0.301
+          ]
+        ]
+      },
+      {
+        "id": "vibe-fellowship",
+        "label": "Open The Fellowship",
+        "kind": "book",
+        "href": "building.html#vibe-fellowship",
+        "polygon": [
+          [
+            0.752,
+            0.355
+          ],
+          [
+            0.902,
+            0.355
+          ],
+          [
+            0.902,
+            0.508
+          ],
+          [
+            0.752,
+            0.508
+          ]
+        ]
+      },
+      {
+        "id": "vibe-workshop",
+        "label": "Open The Workshop",
+        "kind": "book",
+        "href": "building.html#vibe-workshop",
+        "polygon": [
+          [
+            0.752,
+            0.522
+          ],
+          [
+            0.902,
+            0.522
+          ],
+          [
+            0.902,
+            0.665
+          ],
+          [
+            0.752,
+            0.665
+          ]
+        ]
+      },
+      {
+        "id": "vibe-becoming",
+        "label": "Open Our Becoming",
+        "kind": "book",
+        "href": "building.html#vibe-becoming",
+        "polygon": [
+          [
+            0.752,
+            0.682
+          ],
+          [
+            0.902,
+            0.682
+          ],
+          [
+            0.902,
+            0.8250000000000001
+          ],
+          [
+            0.752,
+            0.8250000000000001
+          ]
+        ]
+      }
+    ]
+  },
+  "aegis": {
+    "image": "assets/aegis-atlas.webp",
+    "width": 1487,
+    "height": 1058,
+    "targets": [
+      {
+        "id": "aegis-axioms",
+        "label": "Open The Axioms",
+        "kind": "book",
+        "href": "aegis.html#aegis-axioms",
+        "polygon": [
+          [
+            0.068,
+            0.154
+          ],
+          [
+            0.267,
+            0.154
+          ],
+          [
+            0.267,
+            0.393
+          ],
+          [
+            0.068,
+            0.393
+          ]
+        ]
+      },
+      {
+        "id": "aegis-integrity",
+        "label": "Open The Integrity Seven",
+        "kind": "book",
+        "href": "aegis.html#aegis-integrity",
+        "polygon": [
+          [
+            0.068,
+            0.4
+          ],
+          [
+            0.267,
+            0.4
+          ],
+          [
+            0.267,
+            0.641
+          ],
+          [
+            0.068,
+            0.641
+          ]
+        ]
+      },
+      {
+        "id": "aegis-pause",
+        "label": "Open The Art of Pause",
+        "kind": "book",
+        "href": "aegis.html#aegis-pause",
+        "polygon": [
+          [
+            0.068,
+            0.655
+          ],
+          [
+            0.267,
+            0.655
+          ],
+          [
+            0.267,
+            0.889
+          ],
+          [
+            0.068,
+            0.889
+          ]
+        ]
+      },
+      {
+        "id": "aegis-crystal",
+        "label": "Explore the Central Codex",
+        "kind": "crystal",
+        "href": "aegis.html#aegis-codex",
+        "polygon": [
+          [
+            0.5,
+            0.19
+          ],
+          [
+            0.585,
+            0.313
+          ],
+          [
+            0.605,
+            0.451
+          ],
+          [
+            0.579,
+            0.568
+          ],
+          [
+            0.5,
+            0.692
+          ],
+          [
+            0.418,
+            0.569
+          ],
+          [
+            0.393,
+            0.452
+          ],
+          [
+            0.416,
+            0.314
+          ]
+        ]
+      },
+      {
+        "id": "aegis-cyberpeer",
+        "label": "Open The CyberPeer Initiative",
+        "kind": "book",
+        "href": "aegis.html#aegis-cyberpeer",
+        "polygon": [
+          [
+            0.735,
+            0.16
+          ],
+          [
+            0.9319999999999999,
+            0.16
+          ],
+          [
+            0.9319999999999999,
+            0.392
+          ],
+          [
+            0.735,
+            0.392
+          ]
+        ]
+      },
+      {
+        "id": "aegis-dataquad",
+        "label": "Open The DataQuad",
+        "kind": "book",
+        "href": "aegis.html#aegis-dataquad",
+        "polygon": [
+          [
+            0.735,
+            0.409
+          ],
+          [
+            0.9319999999999999,
+            0.409
+          ],
+          [
+            0.9319999999999999,
+            0.643
+          ],
+          [
+            0.735,
+            0.643
+          ]
+        ]
+      },
+      {
+        "id": "aegis-record",
+        "label": "Open The Living Record",
+        "kind": "book",
+        "href": "aegis.html#aegis-record",
+        "polygon": [
+          [
+            0.735,
+            0.655
+          ],
+          [
+            0.9319999999999999,
+            0.655
+          ],
+          [
+            0.9319999999999999,
+            0.889
+          ],
+          [
+            0.735,
+            0.889
+          ]
+        ]
+      },
+      {
+        "id": "aegis-axioms-section",
+        "label": "Explore the Axioms",
+        "kind": "auxiliary",
+        "href": "aegis.html#aegis-axioms",
+        "polygon": [
+          [
+            0.355,
+            0.724
+          ],
+          [
+            0.645,
+            0.724
+          ],
+          [
+            0.645,
+            0.7949999999999999
+          ],
+          [
+            0.355,
+            0.7949999999999999
+          ]
+        ]
+      },
+      {
+        "id": "aegis-overview-section",
+        "label": "About AEGIS",
+        "kind": "auxiliary",
+        "href": "aegis.html#aegis-overview",
+        "polygon": [
+          [
+            0.35,
+            0.873
+          ],
+          [
+            0.47,
+            0.873
+          ],
+          [
+            0.47,
+            0.911
+          ],
+          [
+            0.35,
+            0.911
+          ]
+        ]
+      },
+      {
+        "id": "aegis-cyberpeer-section",
+        "label": "About the CyberPeer Initiative",
+        "kind": "auxiliary",
+        "href": "aegis.html#aegis-cyberpeer",
+        "polygon": [
+          [
+            0.49,
+            0.873
+          ],
+          [
+            0.6699999999999999,
+            0.873
+          ],
+          [
+            0.6699999999999999,
+            0.911
+          ],
+          [
+            0.49,
+            0.911
+          ]
+        ]
+      },
+      {
+        "id": "return-vibe",
+        "label": "Return to the Vibe Atlas",
+        "kind": "auxiliary",
+        "href": "index.html",
+        "polygon": [
+          [
+            0.022,
+            0.017
+          ],
+          [
+            0.178,
+            0.017
+          ],
+          [
+            0.178,
+            0.052000000000000005
+          ],
+          [
+            0.022,
+            0.052000000000000005
+          ]
+        ]
+      }
+    ]
+  }
+}

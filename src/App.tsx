@@ -733,6 +733,7 @@ export function App() {
         onOpenBrowser={() => {
           openOverlay('BROWSER');
         }}
+        onOpenVibeAtlas={() => window.open('/atlas/index.html', '_blank', 'noopener')}
         onExportCore={() => {
           const blob = new Blob([JSON.stringify(coreManifest, null, 2)], { type: 'application/json' });
           const url = URL.createObjectURL(blob);

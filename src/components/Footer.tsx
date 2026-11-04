@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity, Pencil, Terminal } from 'lucide-react';
+import { ChevronUp, ChevronDown, Download, Sparkles, AppWindow, FlaskConical, Activity, Pencil, Terminal, Map } from 'lucide-react';
 import { CoreManifest } from '../engine/relationEngine';
 
 export interface WorkspaceSaveStatus {
@@ -21,6 +21,8 @@ interface FooterProps {
   onOpenReliquary?: () => void;
   onOpenBrowser?: () => void;
   onOpenTerminal?: () => void;
+  /** Opens the Vibe Atlas reference library (static site at /atlas/index.html) from the centered bottom-bar button. */
+  onOpenVibeAtlas?: () => void;
   /** The Apothecary Cabinet window, opened and closed from the bar's Apothecary button. */
   isApothecaryOpen?: boolean;
   onToggleApothecary?: () => void;
@@ -41,6 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenReliquary,
   onOpenBrowser,
   onOpenTerminal,
+  onOpenVibeAtlas,
   isApothecaryOpen = false,
   onToggleApothecary,
   isInspectorOpen = false,
@@ -122,7 +125,7 @@ export const Footer: React.FC<FooterProps> = ({
       </div>
 
       {/* Bottom Status Bar: tall enough to hold the Apothecary button and the Luminary icon. */}
-      <div className="min-h-20 panel-glass-header px-2 sm:px-4 flex flex-wrap gap-2 items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
+      <div className="relative min-h-20 panel-glass-header px-2 sm:px-4 flex flex-wrap gap-2 items-center justify-between bg-slate-950/90 border-t border-cyan-500/20 text-xs">
         {/* Left: Wayfinder. The header holds the only mode switch. */}
         <div className="flex flex-wrap w-full lg:w-auto lg:flex-1 min-w-0 pl-0 lg:pl-12 items-center justify-center lg:justify-start gap-2 sm:gap-4">
           {onToggleApothecary && (
@@ -164,6 +167,19 @@ export const Footer: React.FC<FooterProps> = ({
           {keyboardNav}
           <div className="min-w-0">{wayfinder}</div>
         </div>
+
+        {/* Center: Vibe Atlas — opens the illustrated reference library. Absolutely centered so it sits under the Command Console tab regardless of the side clusters. Hidden on narrow widths to avoid overlapping the wrapped clusters. */}
+        {onOpenVibeAtlas && (
+          <button
+            type="button"
+            onClick={onOpenVibeAtlas}
+            title="Open the Vibe Atlas"
+            className="hidden lg:flex absolute left-1/2 -translate-x-1/2 bottom-2 shrink-0 items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200"
+          >
+            <Map className="w-4 h-4 text-cyan-300" />
+            <span>Vibe Atlas</span>
+          </button>
+        )}
 
         {/* Right: Version, Auto Save & Export CORE Button */}
         <div className="flex flex-wrap w-full lg:w-auto items-center justify-center lg:justify-end gap-2 sm:gap-3">
