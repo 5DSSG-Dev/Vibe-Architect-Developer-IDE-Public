@@ -8,9 +8,9 @@ Status legend: ☐ open · ◐ in progress · ☑ done · ⛔ gated (needs you /
 
 | # | Blocker | Owner | Status |
 |---|---------|-------|--------|
-| Q6 | Dependency risk — `npm audit` (1 critical / 5 high / 3 moderate) | Verus | ◐ critical cleared; 3 left need breaking majors |
+| Q6 | Dependency risk — `npm audit` (1 critical / 5 high / 3 moderate) | Verus | ◐ critical cleared; msal HIGH dispositioned (demo scope V17); vite dev-only |
 | Q3 | CI gate — run gateway+app suites and build as a check | Verus | ☑ workflow added |
-| Q5 | Truncation/context durability — durable checkpoints, restart recovery, provider context budgeting (`server/luminary-meta.ts`, `server/application-production.ts`) | Verus | ☐ |
+| Q5 | Truncation/context durability — durable checkpoints, restart recovery, provider context budgeting (`server/luminary-meta.ts`, `server/application-production.ts`) | Verus | ☑ dispositioned — out of demo scope (DEMO_SCOPE V18) |
 | Q4 | Live functional acceptance — real interview UI → accept → generate → launch; auditor vs known-good AND known-bad (empty/labels-only must be rejected) | Verus | ☐ |
 | Q1 | Integration path — merge/review #51 first, or retarget #52 to main; validate combined diff | **You** (decision) | ⛔ |
 | Q2 | Exact-head non-author approval | **Independent reviewer** (not Lumin, not Verus) | ⛔ |
@@ -32,5 +32,12 @@ Added `.github/workflows/ci.yml`: on push-to-main and all PRs, runs `npm ci`, `n
 - **`vite` / `esbuild` — 1 high + 1 moderate, DEV/BUILD only.** Needs vite 5 → 8 major. Not shipped at runtime; lower urgency.
 
 CI audit gate is set at **critical (prod-only)** so it passes now; it does not yet block on the msal high pending your upgrade decision.
+
+### Demo-scope dispositions (per docs/DEMO_SCOPE_APPROVAL_2026-11-03.md) — 2026-11-04
+This is a **local demo**; two items Lumin flagged are already Architect-approved deferrals:
+- **Q5 (truncation/context durability)** → **DEMO_SCOPE V18**: persistence across reload/gateway restart is out of demo scope; in-memory/bounded continuation is the accepted behavior. F5 is a documented deferral, not a demo merge blocker. Remains an open future-build ToDo (not "implemented").
+- **Q6 `@azure/msal-node` HIGH (Entra auth)** → **DEMO_SCOPE V17**: the demo has no login/authentication path, so the Entra authorization-code flow is not exercised. The advisory is dispositioned for the demo; upgrade msal 5→7 when auth is actually implemented. Remaining vite/esbuild advisories are dev/build-only.
+
+Caveat (DEMO_SCOPE line 20): a scope deferral does **not** mark a feature implemented; each stays a pending build ToDo, and the independent non-author merge approval (Q2) remains a distinct gate.
 
 _Further items appended below as they close._
