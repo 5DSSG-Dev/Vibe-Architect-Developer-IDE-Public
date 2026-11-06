@@ -1,0 +1,18 @@
+{
+  "policy": "atlas-integrity-successor",
+  "policyVersion": 1,
+  "baselineCommit": "9b1c988d86600521148a79f6703c6ef951e498d5",
+  "filesChecked": 36,
+  "appendedRanges": [
+    {
+      "path": "public/atlas/TOTEM.md",
+      "startByte": 5765,
+      "endByte": 6896,
+      "bytes": 1131,
+      "sha256": "cd2c1f87f0aa246080f65e99984c87a2931a447e882204e7d0ba68b8955035b0",
+      "crCount": 8
+    }
+  ],
+  "violations": [],
+  "result": "PASS"
+}

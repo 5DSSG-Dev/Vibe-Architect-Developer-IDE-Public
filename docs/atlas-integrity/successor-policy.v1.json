@@ -1,0 +1,25 @@
+{
+  "policy": "atlas-integrity-successor",
+  "version": 1,
+  "baseline": {
+    "commit": "9b1c988d86600521148a79f6703c6ef951e498d5",
+    "note": "Original baseline for the Atlas tree. Every byte that existed at this commit is historical evidence and must remain byte-for-byte identical in the working tree."
+  },
+  "protectedRoots": ["public/atlas/"],
+  "defaultMode": "exact",
+  "appendOnly": [
+    {
+      "path": "public/atlas/TOTEM.md",
+      "maxAppendBytes": 131072,
+      "note": "Continuity notes. Entries are appended at the end only; no earlier byte may change."
+    }
+  ],
+  "exactPrefixes": [
+    {
+      "prefix": "public/atlas/_archive/",
+      "note": "Raw archived snapshots. Byte-for-byte identical to the baseline; no appends permitted."
+    }
+  ],
+  "permittedNewFiles": [],
+  "eol": "Protected bytes are compared exactly as stored. No line-ending normalisation is applied, so a CRLF or LF change in a protected file is a violation. The appended region of an append-only file is reported with its CR count so line-ending drift in new text is visible."
+}
