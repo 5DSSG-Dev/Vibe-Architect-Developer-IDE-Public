@@ -3,6 +3,7 @@ import { AppBuildJourney } from './components/AppBuildJourney';
 import { buildItemFocus, isBuildPlan, nextBuildItem, completeVerifiedBuildItems } from './engine/appBuildPlan';
 import { setLuminaryEngaged, isLuminaryEngaged, subscribeLuminaryEngaged } from './luminary/presence';
 import { AppCreationConversation } from './components/AppCreationConversation';
+import { WelcomeScreen, WELCOME_SKIP_KEY } from './components/WelcomeScreen';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
 import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import { ThreeCanvas } from './components/ThreeCanvas';
@@ -243,6 +244,14 @@ export function App() {
     setEnvironmentStack(resumeStack);
     setResumeStack([]);
   };
+
+  // Launch lands on the welcome screen (New, Resume, Open). Actions that reload
+  // into a workspace set WELCOME_SKIP_KEY so the reload goes straight in.
+  const [welcomeOpen, setWelcomeOpen] = useState(() => {
+    const skip = sessionStorage.getItem(WELCOME_SKIP_KEY) === 'true';
+    sessionStorage.removeItem(WELCOME_SKIP_KEY);
+    return !skip;
+  });
 
   // 3-Tier Object Inspection payload
   const [inspectingItem, setInspectingItem] = useState<ApothecaryItem | null>(null);
@@ -558,12 +567,8 @@ export function App() {
     openOverlay('HANDSHAKE');
   };
 
-  if (localStorage.getItem('vibe.apps.closed') === 'true') return (
-    <div className="w-screen h-screen bg-[#080b10] text-slate-100">
-      <Header hardwareBudget={coreManifest.hardwareBudget} availableResources={getAvailableCoreResources(coreManifest)} onOpenCoreMatrix={() => {}} />
-      <div className="h-full flex flex-col items-center justify-center gap-3 font-mono"><h2 className="text-xl">No app open</h2><p className="text-slate-400">Use the App menu to create or open an app.</p></div>
-    </div>
-  );
+  const appClosed = localStorage.getItem('vibe.apps.closed') === 'true';
+  if (appClosed || welcomeOpen) return <WelcomeScreen closed={appClosed} onContinue={() => setWelcomeOpen(false)} />;
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#080b10] text-slate-100 font-sans select-none">

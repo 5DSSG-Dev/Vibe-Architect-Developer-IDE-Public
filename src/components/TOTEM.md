@@ -130,3 +130,10 @@
 - Lowered keyboard navigation banner; renamed APP to MENU; local-session-aware Luminary connection reports Active/Standby; anchored Command Console above footer with 12px clearance; New App Luminary trigger focuses actual interview input. ToDo selection opens coding mode with full task/context.
 - Exact requirement ID/text, AST binding, artifact hash, independent audit pass and successful build/tests gate automatic completion; mismatch/failed/partial cases covered. Live existing audited nine-requirement receipt restored all nine checked states; selecting task enabled coding mode and real local status Active DESIGN. New App trigger focus verified at390x700 without horizontal overflow.
 - Full731tests passed (288 gateway/443 app), final TypeScript/build/diff checks passed. Existing Vite chunk warning remains. No new model calls, server restart, commit, push or merge; UI changes remain local per bundling request.
+
+## 2026-11-06 | verus | IDE welcome screen (launch and close-app)
+- Added src/components/WelcomeScreen.tsx: New App, Resume last app, Open existing app. No Quit. Launch shows it; Close App shows it with Resume reopening the most recent saved app.
+- App.tsx: welcomeOpen state gates the screen; WELCOME_SKIP_KEY (sessionStorage) lets reloads from New, Resume-when-closed and Open land straight in the workspace. The old "No app open" closed branch is replaced by the welcome screen.
+- AppCreationConversation.tsx: three numbered interview steps under the header (describe, answer, accept; accepting configures starting Elements, app code is a separate step).
+- Verified: tsc --noEmit clean; app tests 445/445. Browser check: welcome renders on launch. New App click was not confirmed in the browser; the dev server's HMR connection kept dropping (CSP blocked ws on 24678), so that path needs a manual check.
+- Not changed: AppMenu still has Close IDE; the welcome screen has no Quit.

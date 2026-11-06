@@ -16,6 +16,7 @@ export class Aether {
   public directionalAngle: number;
 
   constructor(scene: THREE.Scene, {
+    backgroundBrightness = 1,
     ambientIntensity = 0.8,
     directionalIntensity = 1.0,
     directionalAngle = 0.9
@@ -35,7 +36,9 @@ export class Aether {
     this.backgroundMaterial = new THREE.ShaderMaterial({
       uniforms: {
         u_time: { value: 0 },
-        u_resolution: { value: new THREE.Vector2(1, 1) }
+        u_resolution: { value: new THREE.Vector2(1, 1) },
+        // 1 = the IDE background as shipped. The welcome screen raises it to match the Atlas.
+        u_brightness: { value: backgroundBrightness }
       },
       vertexShader: `
         varying vec2 vUv;
@@ -47,6 +50,7 @@ export class Aether {
       `,
       fragmentShader: `
         uniform vec2 u_resolution;
+        uniform float u_brightness;
         uniform float u_time;
         varying vec2 vUv;
 
@@ -141,7 +145,7 @@ export class Aether {
           vec3 color = mix(baseColor, farColor, 0.18 + farSmoke * 0.50);
           color = mix(color, nearColor, nearSmoke * 0.22);
 
-          gl_FragColor = vec4(color, 1.0);
+          gl_FragColor = vec4(color * u_brightness, 1.0);
         }
       `,
       depthTest: false,
