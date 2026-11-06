@@ -236,3 +236,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-06 | Lumin | Welcome integration repair
 - Welcome iframe framing and canonical GLB texture repaired without broad CSP relaxation; motion/visibility/context lifecycle now share owned cancellable schedules. Actual isolated gateway browser checks passed; production inline-script CSP and wider feature limits remain qualified. Report: docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. Tracey authorized repository publication; no runtime deployment.
+
+
+## 2026-11-06 | Lumin | Repository review guidance
+- Added Code Review Rules to AGENTS.md without changing its existing Totem instructions, and created SECURITY.md with actual gateway/CSP/artifact/data boundaries and honest private-reporting status. Documentation-only; no security setting, runtime, dependency or trust change.

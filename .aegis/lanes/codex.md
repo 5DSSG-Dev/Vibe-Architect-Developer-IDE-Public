@@ -661,3 +661,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Authorized welcome repair and publication
 - Tracey authorized checkpoint commit/push and reviewed promotion to main. Published33456ec containing README purpose and demo disclosures. Repaired welcome exact-path framing, embedded-texture loading under strict CSP, live motion preferences and single-owner GPU lifecycle scheduling. Supplemental source review and actual gateway Chrome evidence in docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. No inference calls or existing runtime restart. Final branch/publication receipt follows.
+
+
+## 2026-11-06 | Lumin | Review configuration documentation
+- Tracey requested SECURITY.md and AGENTS.md review guidance. Existing AGENTS bytes preserved as a prefix. New guidance covers accepted requirements, independent gates, retry/resource ownership, live evidence and continuity; SECURITY.md records credential/admission/browser/artifact boundaries. GitHub private vulnerability reporting checked disabled; no invented private contact or setting activation. Documentation-only; publication follows existing authorized push workflow.
