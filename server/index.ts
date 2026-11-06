@@ -1,3 +1,4 @@
+import { closeHttpServer } from './http-lifecycle.js';
 import { createLocalAssemblyAuditor } from './assembly-gates.js';
 import 'dotenv/config';
 import { createGateway } from './app.js';
@@ -86,9 +87,10 @@ try {
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
-    server.close(async () => {
-      await Promise.allSettled([sessions.close?.(), evidenceStore.close?.(), app.locals.applicationProduction?.close()]);
-      process.exit(0);
-    });
+    void (async () => {
+      const results=await Promise.allSettled([closeHttpServer(server), app.locals.applicationProduction?.close()]);
+      const storage=await Promise.allSettled([sessions.close?.(), evidenceStore.close?.()]);
+      process.exit([...results,...storage].some(result=>result.status==='rejected') ? 1 : 0);
+    })();
   });
 }

@@ -247,3 +247,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Welcome publication qualifications
 - WELCOME_GATEWAY_REPAIR_2026-11-06.md records scoped F1-F4 repairs, actual gateway Chrome checks and supplemental source review. The old exact Atlas freeze conflicts with later append-only notes; isolation verifier FAIL is retained without modifying baseline or original evidence. README reflects bounded executable demo support and founding purpose. No inference or runtime deployment.
+
+
+## 2026-11-06 | Lumin | R1-R7 remediation evidence
+- PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md records actual isolated Meta/Qwen generation, restart recovery, active-generation launch exclusion, post-provider record-write failure, incomplete preview-socket stop, pure exclusion probes, and desktop/iframe checks. Failed Baseten activation and early harness attempts remain explicit; no blanket readiness claim.

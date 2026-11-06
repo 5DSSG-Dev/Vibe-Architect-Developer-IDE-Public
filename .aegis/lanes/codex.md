@@ -665,3 +665,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Review configuration documentation
 - Tracey requested SECURITY.md and AGENTS.md review guidance. Existing AGENTS bytes preserved as a prefix. New guidance covers accepted requirements, independent gates, retry/resource ownership, live evidence and continuity; SECURITY.md records credential/admission/browser/artifact boundaries. GitHub private vulnerability reporting checked disabled; no invented private contact or setting activation. Documentation-only; publication follows existing authorized push workflow.
+
+
+## 2026-11-06 | Lumin | Aster published review remediation R1-R7
+- Implemented durable fresh-generation recovery identity/hash binding and unknown-outcome handling, explicit negative preflight clauses, truthful post-provider record errors, shared launch reservation, bounded preview/gateway closes with error propagation, separated desktop panels, and same-origin iframe Escape. Actual Meta/Qwen generation and private restart/collision/filesystem/socket/browser evidence recorded in docs/PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md. Baseten model-deactivated failure preserved. No shared runtime restart, installation, or historical baseline mutation. Supplemental source review; Aster candidate acceptance remains separate.

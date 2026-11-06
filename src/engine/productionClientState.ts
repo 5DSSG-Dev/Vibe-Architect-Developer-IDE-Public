@@ -27,7 +27,7 @@ export function productionReceiptKey(r:{id:string;digest:string;contextHash:stri
 }
 /** Authentication, throttling and transport errors say nothing about operation completion. */
 export function terminalGenerationFailure(status:number,error:unknown):boolean {
- return status===409 && error==='production_shortfall';
+ return status===409 && error==='production_shortfall'; // unknown-outcome uses a distinct code and is never terminal
 }
 /** Keep the active/uncertain application's controls until its outcome can be inspected. */
 export function canReplaceProduction(state:string|undefined,outcomeUnknown:boolean):boolean {

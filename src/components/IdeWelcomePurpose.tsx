@@ -12,7 +12,7 @@ export function IdeWelcomePurpose({ onOpenAtlas, onFocusLuminary }: {
   return (
     <section
       aria-labelledby="ide-purpose-title"
-      className="fixed left-5 top-20 z-40 w-[min(22rem,calc(100vw-2.5rem))] max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-amber-400/40 bg-slate-950/90 p-4 text-slate-100 shadow-[0_0_32px_rgba(251,191,36,0.12)] backdrop-blur-sm"
+      className="fixed left-5 top-20 z-40 w-[min(22rem,calc(100vw-2.5rem))] lg:w-[min(22rem,calc(36vw-2rem))] max-h-[calc(100vh-6rem)] overflow-y-auto rounded-2xl border border-amber-400/40 bg-slate-950/90 p-4 text-slate-100 shadow-[0_0_32px_rgba(251,191,36,0.12)] backdrop-blur-sm"
     >
       <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300">Vibe Architect</p>
       <h2 id="ide-purpose-title" className="mt-1 font-serif text-xl leading-snug text-amber-200">

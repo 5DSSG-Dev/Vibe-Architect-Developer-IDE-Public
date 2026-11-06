@@ -142,7 +142,7 @@ export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId:
     catch (e) { setError(e instanceof Error ? e.message : 'The architecture could not be connected.'); }
     finally { accepting.current = false; setApplying(false); }
   }
-  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
+  return <section aria-label="Create an app with Luminary" className="fixed z-40 top-24 bottom-24 left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-2xl lg:left-[calc(36vw+0.5rem)] lg:right-4 lg:translate-x-0 lg:w-auto flex flex-col rounded-3xl border border-amber-300/40 bg-slate-950/95 backdrop-blur-xl shadow-[0_0_60px_rgba(252,211,77,0.12)] text-slate-100 overflow-hidden select-text">
     <header className="p-3 sm:p-5 border-b border-amber-300/20 shrink-0"><p className="text-xs uppercase tracking-[0.2em] text-amber-200">A new beginning</p><h2 className="mt-2 text-xl font-orbitron">Let’s build your app</h2><p className="mt-2 text-sm text-slate-300">Describe it. Shape it together. Review your starting architecture.</p></header>
     <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4" aria-live="polite" aria-busy={busy}>
       <div className="relative mr-2 sm:mr-8 rounded-2xl rounded-tl-sm border border-amber-300/50 bg-amber-300/5 p-4 text-sm leading-relaxed break-words">

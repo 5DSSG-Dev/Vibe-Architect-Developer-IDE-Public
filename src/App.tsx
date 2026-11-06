@@ -5,7 +5,7 @@ import { setLuminaryEngaged, isLuminaryEngaged, subscribeLuminaryEngaged } from 
 import { AppCreationConversation } from './components/AppCreationConversation';
 import { IdeWelcomePurpose } from './components/IdeWelcomePurpose';
 import { createBlankApp, connectAppProposal } from './engine/appCreation';
-import React, { useState, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { Keyboard } from 'lucide-react';
 import { ThreeCanvas } from './components/ThreeCanvas';
 import { Header } from './components/Header';
@@ -189,6 +189,27 @@ export function App() {
   const [selectedBuildItem, setSelectedBuildItem] = useState<{ coreId: string; id: string } | null>(null);
   const [terminalRequest,setTerminalRequest]=useState(0);
   const [atlasOpen, setAtlasOpen] = useState(false);
+  const atlasIframeRef = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    if (!atlasOpen) return;
+    let attached: Document | null = null;
+    const escape = (key: KeyboardEvent) => {
+      if (key.key !== 'Escape' || key.defaultPrevented || attached?.querySelector('dialog[open]')) return;
+      key.preventDefault(); setAtlasOpen(false);
+    };
+    const attach = () => {
+      let doc: Document | null = null;
+      try { doc = atlasIframeRef.current?.contentDocument ?? null; } catch { return; }
+      if (doc === attached) return;
+      attached?.removeEventListener('keydown', escape);
+      attached = doc;
+      attached?.addEventListener('keydown', escape);
+    };
+    // Bind as soon as a same-origin document exists, even if fonts delay its load event.
+    attach();
+    const timer = window.setInterval(attach, 100);
+    return () => { window.clearInterval(timer); attached?.removeEventListener('keydown', escape); };
+  }, [atlasOpen]);
   const [atlasSrc, setAtlasSrc] = useState('/atlas/welcome.html');
   const openAtlas = (target: 'welcome' | 'purpose') => {
     setAtlasSrc(target === 'purpose' ? '/atlas/building-the-vibe.html#purpose' : '/atlas/welcome.html');
@@ -850,7 +871,7 @@ export function App() {
               title="Close the Vibe Atlas" aria-label="Close Vibe Atlas" autoFocus
               className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg border border-cyan-500/40 bg-slate-900/80 text-cyan-200 hover:border-cyan-400/70 hover:text-cyan-100 transition-colors"
             >✕</button>
-            <iframe src={atlasSrc} title="Vibe Atlas" className="border-0" style={{ width: "138.9%", height: "138.9%", transform: "scale(0.72)", transformOrigin: "top left" }} />
+            <iframe ref={atlasIframeRef} src={atlasSrc} title="Vibe Atlas" className="border-0" style={{ width: "138.9%", height: "138.9%", transform: "scale(0.72)", transformOrigin: "top left" }} />
           </div>
         </div>
       )}

@@ -175,10 +175,10 @@ export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRout
 const RETURNED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDS.';
 const SAVED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDS and saved for your review after two revision loops.';
 
-function recordFailure(error: unknown, architectLineage?: LineageEntry[]): GovernedAskResult {
+function recordFailure(error: unknown, architectLineage?: LineageEntry[], dispatched = false): GovernedAskResult {
   return {
     ok: false,
-    shortfall: { code: 'record_error', message: `Nothing was sent: the review record could not be written (${error instanceof Error ? error.message : 'write failed'}).`, modelId: null },
+    shortfall: { code: 'record_error', message: `${dispatched ? 'The model path was invoked, but delivery is withheld because its review record could not be written. Provider usage may have occurred; do not assume a retry is free' : 'Nothing was sent to the Luminary: the review record could not be written'} (${error instanceof Error ? error.message : 'write failed'}).`, modelId: null },
     architectLineage,
   };
 }
@@ -291,7 +291,7 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
       try {
         turnRecord.anchors.push(await record.appendLuminary({ kind: 'luminary_reply', id: record.newId(), architectEntryId: turnRecord.architectEntryId, modelId: null, passes: [], state: 'upstream_error', shortfallCode: 'upstream_error', lineage: [], calls: log.counts() }));
       } catch (recordError) {
-        return recordFailure(recordError, architectLineage);
+        return recordFailure(recordError, architectLineage, true);
       }
     }
     return upstream;
@@ -319,7 +319,7 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
           calls: { ...log.counts(), architect_delivery: result.ok ? 1 : 0 },
         }));
       } catch (error) {
-        return recordFailure(error, architectLineage);
+        return recordFailure(error, architectLineage, true);
       }
     }
     if (result.ok) log.record('architect_delivery');

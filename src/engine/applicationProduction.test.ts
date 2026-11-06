@@ -76,3 +76,13 @@ test('exact PokeVault purpose cannot enter an in-memory text-only generator',()=
  const purpose='Mobile-friendly personal Web App to track Pokemon cards: stores standard details (name, set, number, rarity, quantity, purchase price) plus condition, language, foil/holo and manual current value entry only; optional single front photo per card; organize and filter by set and rarity; private single-user login with personal collection; CSV import and export; no automated pricing integration.';
  assert.throws(()=>validateProductionContext({...context,purpose}),/login.*photo.*filter.*CSV/);
 });
+
+
+test('explicit exclusions do not reject a supported app or conceal affirmative requirements',()=>{
+ for(const purpose of ['Plain notes. No search.','Plain notes without search.','Plain notes. Search is not required.','Plain notes. No photo uploads.']) {
+  assert.doesNotThrow(()=>validateProductionContext({...context,purpose}));
+ }
+ for(const purpose of ['Notes with search.','No search on home, but search on archive.','Notes with photo uploads.']) {
+  assert.throws(()=>validateProductionContext({...context,purpose}),/cannot build/);
+ }
+});

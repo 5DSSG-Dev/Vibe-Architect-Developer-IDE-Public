@@ -59,3 +59,10 @@ test('canceling the wait does not label an unknown or running operation as faile
 test('a generated app gives the next action instead of implying it already launched',()=>{
  assert.equal(productionStatus(false,'generated','',''),'App generated — review it below, then launch');
 });
+
+
+test('unknown production outcomes preserve recovery rather than confirming terminal failure',()=>{
+ assert.equal(terminalGenerationFailure(409,'production_outcome_unknown'),false);
+ assert.equal(canReplaceProduction(undefined,true),false);
+ assert.equal(productionStatus(false,undefined,'Gateway restarted','original-request',true),'Operation outcome unknown — refresh status');
+});

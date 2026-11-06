@@ -240,3 +240,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-06 | Lumin | Repository review guidance
 - Added Code Review Rules to AGENTS.md without changing its existing Totem instructions, and created SECURITY.md with actual gateway/CSP/artifact/data boundaries and honest private-reporting status. Documentation-only; no security setting, runtime, dependency or trust change.
+
+
+## 2026-11-06 | Lumin | Published review follow-up
+- R1-R7 candidate and scoped live/browser/filesystem verification are documented in docs/PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md. Unknown generation outcomes preserve admission identity; fresh completed receipts bind metadata and source to durable evidence. Historical generation formats and wider product limitations remain qualified.

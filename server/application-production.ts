@@ -5,7 +5,6 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, writeFile, realpath } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
-import { once } from 'node:events';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { build } from 'vite';
@@ -14,6 +13,7 @@ import { verifyCoreApplication } from '../src/engine/coreApplication.js';
 import { validateProductionContext, parseProductionAnswer, productionPrompt, productionFiles, type ProductionContext } from '../src/engine/applicationProduction.js';
 import type { ReviewRecord } from './governance-record/review.js';
 import { isLoopback } from './luminary-task-router.js';
+import { closeHttpServer, listenLoopback } from './http-lifecycle.js';
 import type { GovernedAskResult } from './luminary-reply-router.js';
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const fileDigest = (files: Record<string,string>) => hash(Object.keys(files).sort().map(path=>[path,files[path]]));
@@ -29,6 +29,9 @@ export interface ProductionOptions {
  assembly?: {audit:AssemblyAuditor;resolve?:typeof resolveAndVerifyAssembly};
  root:string; record:ReviewRecord; ask:(prompt:string)=>Promise<GovernedAskResult>;
 }
+export class ProductionOutcomeUnknown extends Error {
+ constructor(message='Generation outcome is unknown. The admitted request is retained; no model request was repeated.') {super(message);}
+}
 export class ProductionRuntime {
  private readonly entries = new Map<string,Entry>();
  private readonly requests = new Map<string,{contextHash:string;result:Promise<ProductionReceipt>}>();
@@ -38,6 +41,9 @@ export class ProductionRuntime {
  private assertOpen() {
   if(this.disposed)throw Error('Application production is closed.');
   if(this.options.record.closed)throw Error('The governance review record is closed.');
+ }
+ private notes():any[] {
+  return this.options.record.architect.entries.flatMap(row=>{if(row.entry.kind!=='note')return [];try{return [JSON.parse(row.entry.text)];}catch{return [];}});
  }
  private async note(text:string) {
   this.assertOpen();
@@ -98,13 +104,41 @@ export class ProductionRuntime {
   if(!/^[0-9a-f-]{36}$/.test(requestId))throw Error('Invalid generation request ID.');
   const context=validateProductionContext(raw),contextHash=hash(context),previous=this.requests.get(requestId);
   if(previous){if(previous.contextHash!==contextHash)throw Error('This request ID belongs to different app decisions.');return structuredClone(await previous.result);}
+  const notes=this.notes();
+  const admitted=notes.find(n=>n.kind==='application_generation_admitted'&&(n.requestId===requestId||(n.contextHash===contextHash&&!notes.some(done=>done.kind==='application_generated'&&done.requestId===n.requestId))));
+  if(admitted)throw new ProductionOutcomeUnknown('This request or accepted context already has durable generation admission. Recover its original request '+admitted.requestId+'; no new model request was sent.');
   if(this.requests.size>=32)throw Error('The generation request history is full for this gateway session.');
   const result=this.generateOnce(context,requestId);this.requests.set(requestId,{contextHash,result});
   return structuredClone(await result);
  }
  async recover(requestId:string):Promise<ProductionReceipt> {
   const operation=this.requests.get(requestId);
-  if(!operation)throw Error('Generation request not found in this gateway session. No model request was repeated.');
+  if(!operation) {
+   this.assertOpen();
+   const existing=[...this.entries.values()].find(e=>e.receipt.requestId===requestId);
+   if(existing)return this.get(existing.receipt.id);
+   if(this.generating||[...this.entries.values()].some(e=>e.server||e.pending))throw new ProductionOutcomeUnknown('Recovery requires an idle runtime; no request was repeated.');
+   if(this.entries.size>=8)throw new ProductionOutcomeUnknown('Stop and preserve the current projects before recovering another receipt.');
+   const notes=this.notes(),admitted=notes.find(n=>n.kind==='application_generation_admitted'&&n.requestId===requestId);
+   const completed=notes.find(n=>n.kind==='application_generated'&&n.requestId===requestId);
+   if(!admitted || !completed)throw new ProductionOutcomeUnknown();
+   this.generating=true;
+   try {
+    const projectPath=await realpath(completed.projectPath),root=await realpath(this.options.root);
+    if(dirname(projectPath)!==root || admitted.contextHash!==completed.contextHash)throw Error('Conflicting durable generation identity.');
+    const receipt=JSON.parse(await readFile(join(projectPath,'vibe-receipt.json'),'utf8')) as ProductionReceipt;
+    if(!completed.receiptHash||hash(receipt)!==completed.receiptHash)throw Error('Retained receipt metadata is not bound to durable evidence.');
+    if(receipt.requestId!==requestId||receipt.id!==completed.id||receipt.contextHash!==admitted.contextHash||receipt.digest!==completed.digest||fileDigest(receipt.files)!==receipt.digest)throw Error('Conflicting retained receipt.');
+    for(const [relative,source]of Object.entries(receipt.files)) {
+     const target=await realpath(resolve(projectPath,relative));
+     if(!target.startsWith(projectPath+'\\')&&!target.startsWith(projectPath+'/'))throw Error('Retained file escapes project.');
+     if(await readFile(target,'utf8')!==source)throw Error('Retained source changed.');
+    }
+    this.assertOpen();
+    receipt.projectPath=projectPath;receipt.state='generated';delete receipt.previewUrl;
+    this.entries.set(receipt.id,{receipt});return this.get(receipt.id);
+   }catch {throw new ProductionOutcomeUnknown('Durable admission exists but a complete matching receipt could not be restored. Preserve this request for review; do not regenerate it.');} finally {this.generating=false;}
+  }
   return this.get((await operation.result).id);
  }
  private async generateOnce(raw:unknown,requestId:string):Promise<ProductionReceipt> {
@@ -115,7 +149,10 @@ export class ProductionRuntime {
   const context=validateProductionContext(raw);
   if(Buffer.byteLength(JSON.stringify(context))>524288)throw Error('The production context exceeds 524288 bytes.');
   this.generating=true;
+  let admitted=false;
   try {
+   await this.note(JSON.stringify({kind:'application_generation_admitted',requestId,contextHash:hash(context),coreId:context.coreId}));
+   admitted=true;
    const result=await this.options.ask(productionPrompt(context));
    if(!result.ok)throw Error(result.shortfall.message);
    if(!result.record || result.record.state!=='sent' || !result.lineage?.some(l=>l.stage==='prism'))throw Error('The production definition lacks a recorded governed delivery.');
@@ -144,10 +181,14 @@ export class ProductionRuntime {
    }
    const digest=fileDigest(files);
    await writeFile(join(projectPath,'vibe-provenance.json'),JSON.stringify({id,requestId,digest,contextHash,context,bindings:answer.bindings,modelId:result.reply.modelId,record:result.record,lineage:result.lineage,gates},null,2),{flag:'wx'});
-   await this.note(JSON.stringify({kind:'application_generated',id,requestId,digest,contextHash,modelId:result.reply.modelId,bindings:answer.bindings,projectPath}));
    const receipt:ProductionReceipt={id,requestId,digest,contextHash,modelId:result.reply.modelId,projectPath,answer,files,state:'generated',...(gates?{gates}:{}),output:'Governed definition recorded. Deterministic source assembled. Review the files before launching.\nData profile: in memory only. Existing code frames are not compiled.\n',record:result.record};
+   await writeFile(join(projectPath,'vibe-receipt.json'),JSON.stringify(receipt),{flag:'wx'});
+   await this.note(JSON.stringify({kind:'application_generated',id,requestId,digest,contextHash,modelId:result.reply.modelId,bindings:answer.bindings,projectPath,receiptHash:hash(receipt)}));
    this.entries.set(id,{receipt});
    return structuredClone(receipt);
+  } catch(error) {
+   if(admitted)throw new ProductionOutcomeUnknown('The admitted generation did not complete its recoverable receipt: '+(error as Error).message+' Preserve request '+requestId+' and its evidence; no automatic retry was sent.');
+   throw error;
   } finally {this.generating=false;}
  }
  /** Re-audit a retained held bundle against its original governed writer delivery. No writer call. */
@@ -234,11 +275,13 @@ export class ProductionRuntime {
   if(this.options.assembly && (!r.gates || r.gates.audit.artifactHash!==r.digest))throw Error('A matching complete-bundle assembly audit is required before preview.');
   if(r.digest!==digest)throw Error('The reviewed source digest does not match.');
   if(hash(validateProductionContext(raw))!==r.contextHash)throw Error('The accepted architecture or decisions changed. Generate and review again.');
+  if(this.generating)throw Error('Wait for the active generation, restore, or audit before launching.');
   if(e.pending)return e.pending;
   if(e.server)return this.get(id);
   if([...this.entries.values()].some(other=>other!==e && (other.server||other.pending)))throw Error('Stop the current preview before launching another project.');
+  this.generating=true;
   e.pending=this.start(e);
-  try {return await e.pending;} finally {e.pending=undefined;}
+  try {return await e.pending;} finally {e.pending=undefined;this.generating=false;}
  }
  private async start(e:Entry):Promise<ProductionReceipt> {
   const r=e.receipt;
@@ -276,14 +319,14 @@ export class ProductionRuntime {
     next();
    });
    preview.use('/'+previewToken,express.static(join(r.projectPath,'dist'),{index:'index.html',dotfiles:'deny'}));
-   const server=preview.listen(0,'127.0.0.1');
+   const server=new (await import('node:http')).Server(preview);
    try {
-    await once(server,'listening');this.assertOpen();
+    await listenLoopback(server);this.assertOpen();
     const previewUrl='http://127.0.0.1:'+(server.address() as AddressInfo).port+'/'+previewToken+'/';
     await this.note(JSON.stringify({kind:'application_preview_started',id:r.id,digest:r.digest,previewUrl}));
     e.server=server;r.previewUrl=previewUrl;r.state='running';
     r.output+='Build passed. Preview: '+previewUrl+'\nUses installed IDE dependencies; a clean npm install has not been checked.\n';
-   } catch(error) {await new Promise<void>(done=>server.close(()=>done()));throw error;}
+   } catch(error) {await closeHttpServer(server);throw error;}
    return this.get(r.id);
   } catch(error) {
    r.state='failed';delete r.previewUrl;r.output+='ERROR: '+(error as Error).message+'\n';
@@ -294,7 +337,7 @@ export class ProductionRuntime {
   const e=this.entry(id);
   if(e.pending)throw Error('The project is building. Wait for its result before stopping.');
   if(e.server) {
-   await new Promise<void>((done,reject)=>e.server!.close(error=>error?reject(error):done()));
+   await closeHttpServer(e.server);
    e.server=undefined;
   }
   e.receipt.state='stopped';delete e.receipt.previewUrl;
@@ -303,10 +346,12 @@ export class ProductionRuntime {
  }
  async close():Promise<void> {
   this.disposed=true;
-  await Promise.allSettled([...this.entries.values()].map(async e=>{
+  const closed=await Promise.allSettled([...this.entries.values()].map(async e=>{
    await e.pending?.catch(()=>{});
-   if(e.server)await new Promise<void>(done=>e.server!.close(()=>done()));
+   if(e.server)await closeHttpServer(e.server);
   }));
+  const errors=closed.flatMap(result=>result.status==='rejected'?[result.reason]:[]);
+  if(errors.length)throw new AggregateError(errors,'Application preview cleanup failed.');
  }
 }
 /** Socket loopback + exact Origin/Host equality; proxy headers remain refused. */
@@ -323,6 +368,7 @@ export function createProductionRouter(runtime:ProductionRuntime):Router {
   next();
  });
  const reply=(res:express.Response,error:unknown)=>{
+  if(error instanceof ProductionOutcomeUnknown)return res.status(409).json({error:'production_outcome_unknown',outcome:'unknown',message:error.message});
   const detail=error instanceof AssemblyAuditRejected
     ? error.audit.findings.filter(Boolean).join(' ') || 'The independent auditor held the generated bundle without a specific finding.'
     : '';

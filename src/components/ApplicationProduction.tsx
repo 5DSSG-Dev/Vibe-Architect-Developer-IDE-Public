@@ -91,7 +91,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
     : 'Application production needs the updated local development gateway, a live Luminary source, its gauge and the review record.'),{confirmed:Boolean(notAdmitted)});
   }
   let value:any;try{value=await response.json();}catch{throw Error('The gateway result could not be read. Recover the last request before generating again.');}
-  if(!response.ok)throw Object.assign(Error(value.message ?? value.shortfall?.message ?? 'Application production is unavailable ('+response.status+').'),{confirmed:terminalGenerationFailure(response.status,value.error)});
+  if(!response.ok)throw Object.assign(Error(value.message ?? value.shortfall?.message ?? 'Application production is unavailable ('+response.status+').'),{confirmed:terminalGenerationFailure(response.status,value.error),outcomeUnknown:value.error==='production_outcome_unknown'});
   return value;
  }
  function adopt(next:Receipt) {
@@ -197,6 +197,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
   } catch(e) {
    if(!controller.signal.aborted) {
     setError((e as Error).message);
+    if((e as {outcomeUnknown?:boolean}).outcomeUnknown)setOutcomeUnknown(true);
     if((action==='generate'||action==='recover') && (e as {confirmed?:boolean}).confirmed){try{sessionStorage.removeItem(pendingKey);}catch{}setPendingId('');}
     if((action==='launch'||action==='stop') && receipt) {
      setOutcomeUnknown(true);

@@ -163,3 +163,20 @@ This append records independent review of Lumin's manifest-bound Batch09 candida
 | Architect/product-wide acceptance | Remains open | No universal audit reliability, full governance-suite rerun, historical chain repair or final Architect acceptance is inferred. |
 
 Reviewer evidence: C:/AEGIS_IDE_AUDIT/aster-batch09-review-20261106/. The governance review test suite containing model/IDS fixtures was not executed. CLI copies and socket lifecycle checks used real files, actual installed CLI and actual HTTP servers, with no mocked model responses. Aster made only this authorized matrix append; no commit, push, dependency update or existing runtime restart.
+
+
+## 2026-11-06 — Published review R1–R7 remediation candidate
+
+Lumin implemented the seven findings from Aster's published3fa4862 review, based on313c38f. Full build and supplemental independent source review passed. Evidence is scoped in [the remediation report](PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md); Aster's independent acceptance of this new candidate is not inferred.
+
+| Item | Candidate verification | Remaining boundary |
+| --- | --- | --- |
+| R1 | Live fresh-generation receipt recovered after gateway restart; interrupted live admission stays unknown; new-ID redispatch rejected; metadata mutation rejected | New durable receipt format only; old re-audit/CORE paths remain distinct |
+| R2 | Explicit exclusion probes and affirmative counterexamples pass; live No search generation passes | Local explicit clauses, not unrestricted semantic interpretation |
+| R3 | Live provider followed by actual private filesystem failure returns truthful record_error | Provider usage may have occurred; no automatic replay inferred |
+| R4 | Actual older-app launch rejected during active live generation | Tested runtime's single-owner operation scope |
+| R5 | Real generated preview partial socket stopped in6ms; maintained12listener/fourchild verifier passes | No universal process-leak guarantee |
+| R6 | Actual1024x768,1280x900,1440x900 panel nonoverlap passes | Mobile remains outside demo priority |
+| R7 | Focused iframe Escape closes Atlas; reader consumes first Escape; draft retained | Listener document binding interval100ms; test allows200ms |
+
+Configured Baseten returned400 deactivated model version; that failure is preserved, not relabeled a pass. Live writer success used Meta muse-spark-1.3 and independent qwen3.5:4b. Image-entry generation, exact Atlas historical-freeze conflict, production welcome inline CSP, and final Architect visual acceptance remain open separately.

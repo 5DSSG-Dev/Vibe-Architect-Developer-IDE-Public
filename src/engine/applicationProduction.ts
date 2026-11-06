@@ -23,7 +23,17 @@ function assertSupportedPurpose(purpose:string):void {
     [/\bfront photo\b|\bphoto uploads?\b|\bupload (?:photos|images)\b/, 'photo upload and storage'],
     [/\bfilter by\b|\bwith filters\b/, 'interactive filters'],
     [/\bcsv import\b|\bcsv export\b/, 'CSV import and export'],
-  ].filter(([pattern]) => (pattern as RegExp).test(requested)).map(([, name]) => name as string);
+  ].filter(([pattern]) => {
+    // Only explicit local exclusions negate a match; ambiguous scope still fails closed.
+    for (const match of requested.matchAll(new RegExp((pattern as RegExp).source, 'g'))) {
+      const before=requested.slice(0,match.index);
+      const after=requested.slice(match.index!+match[0].length);
+      const excludedBefore=/\b(?:no|without|exclude|excludes|excluding|not|do not include|does not need|not requiring)\s+(?:any\s+)?$/.test(before);
+      const excludedAfter=/^\s+(?:(?:is|are)\s+)?(?:not (?:needed|required|requested|included|supported)|excluded)\b/.test(after);
+      if(!excludedBefore && !excludedAfter)return true;
+    }
+    return false;
+  }).map(([, name]) => name as string);
   if (unsupported.length) throw Error('This accepted app asks for '+unsupported.join(', ')+', which the current executable profile cannot build. Your accepted plan is retained; these capabilities need implementation before this profile can deliver the app.');
 }
 export function productionContext(core: CoreManifest, catalog: ApothecaryItem[]): ProductionContext {
