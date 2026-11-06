@@ -677,3 +677,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Release-finish candidate preparation
 - Strict Atlas external-script CSP, durable pre-dispatch browser identity/prompt hashes, authenticated read-only recovery evidence, and pre-listen error ownership implemented. Build and actual browser/storage/HTTP/lifecycle checks passed. Live window requested from Linq; no current-batch inference. Verus reviewed handoff, Aster acceptance and publication remain pending. See docs/RELEASE_FINISH_CANDIDATE_2026-11-06.md; historical evidence and Atlas policy baseline unchanged.
+
+
+## 2026-11-06 | Lumin | Exact Build disclosure handoff integration
+- Read Verus handoff from isolated vibe-disclosure-successor-20261106 at530f079 (milestone59a93da). Applied its exact capability paragraph and reload reminder to ApplicationProduction.tsx only; no capability/gateway logic changes. npm run build passed. Track1 checkpointd11614e retained. Policy assembly, Aster exact-candidate acceptance, live window and publication remain pending; no claim that image-entry live handling is verified.
