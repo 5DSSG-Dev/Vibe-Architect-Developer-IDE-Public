@@ -177,3 +177,17 @@
 
 ## 2026-11-05 | Lumin/Codex | Current UI source preservation
 - HeaderToDo portal, splitBuildPreview and interview recovery controls are now scoped for Architect-authorized Git preservation alongside their supporting state modules/tests. Fresh751tests/buildPASS; no source/UI redesign or runningdemo switch. Separate speech-bubble commit not silently substituted for this baseline.
+
+## 2026-11-05 | Lumin/Codex | Judges speech-bubble polish integration
+- Coordinated with Verus under Architect-confirmed sequence. Transferred only LuminaryBubble.tsx: persistent until dismiss/replacement/pause, name and close control, larger unclipped scrollable excerpt and mobile visibility. Existing bubble store/routing unchanged; app-creation reply wiring not changed.
+- Fresh target bubble tests 5/5 PASS, production build PASS with existing chunk warning, scoped diff check PASS. Verus independent desktop/narrow check pending. No environment access/restart/provider calls/commit/push.
+
+## 2026-11-05 | Lumin/Codex | Reviewed direct-address polish batch
+- Verus approved complete plan and four additions. AppCreationConversation greeting/turns now have named inline Luminary bubbles, distinct Architect alignment and visible reply label; copy serialization/live regions and full content retained. Host ReplyView wrappers now name/frame Luminary. Floating bubble yields to active interview via reactive presence subscription. Provider/state/acceptance logic unchanged.
+- CP0-full/CP1/CP2 snapshots+patches and guarded restore tool external under currentvisualizations/speech-polish; CP0-full original baseline includes earlier integrated bubble.445app tests +1presence check and fullbuild/scopeddiff PASS. Knownchunkwarning. Verus independent browser review pending. No Codexruntime restart/provider call/commit/push.
+
+## 2026-11-05 | Lumin/Codex | CP3 desktop polish and scoped responsive correction
+- Finalbubble supports embedded narrow copy in LuminaryHost; desktop retains external bubble. Fixed concrete narrow overlap found before Architect deprioritizedmobile; no furthermobileexpansion. Fullbuild/scopeddiffPASS. Desktop1280x900 fixturebrowser verifies namedreply/bubble,0paneloverlap,manualdismiss/newreply/pause; no paidcalls or livegovernanceproof. CP3 snapshots/hash/patch saved external speech-polish; safeundo tool retained. Verus cleared own runtimewedge; fresh3002HTTP200 confirmed.
+
+## 2026-11-05 | Lumin/Codex | Q4 recovery retained with speech presentation
+- Incomingbubble presentation reconciledontoQ4 without overwriting its session/recovery controls. Kept full priorTotemhistory. AddeddesktopHeader spacing correction for observedToDo overlap.752combinedtests/final461app rerun/buildPASS. Actualisolatedfixtureinterviewreload/archive/restore/headerToDo/namedbubble anddesktopgeometryPASS; no liveproviderproof. No demochanges.

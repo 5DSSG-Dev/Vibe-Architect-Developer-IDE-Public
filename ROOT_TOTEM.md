@@ -214,3 +214,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-11-05 | Lumin/Codex | Recovered current UI preservation authorized
 - Architect explicitly authorized committing/pushing the recovered Q4 working tree. Preserved header ToDo placement, split Build/Preview, interview restart/restore/tab continuity, generation recovery/status, capability preflight, reasoning-effort transport and watcher exclusion with supporting tests. Generated governance conversations remain outside candidate; speech-bubble milestone remains separate.
 - Fresh validation:291gateway+460app=751passed,0failed,0skipped; productionbuildPASS existingchunkwarning. No runtime switch/restart/merge; source preservation only.
+
+## 2026-11-05 | Lumin/Codex | Reconciled current engineering candidate
+- Architect resumed corrected recommendations. Isolated current-ui-integration branch starts at preservedbf5868f, applies only3e5f47d delta; Q4 histories retained through append-only conflict resolution. Header desktopspacing corrected after concrete1280px overlap. No oldbranches rewritten or runtime switched.
+- Combined752tests0fail0skip; finalHeader461app rerun/buildPASS. Isolatedfixture desktopinterviewreload/restart/restore, namedbubbles/headerToDo and1024/1280/1440/1920geometryPASS; no providercalls/livegenerationclaim.31checkout preservationledger/173privatefilescopied/verifiedgeneratedincrementalbundle, unresolveditemsretained,0removals. Independentreview/Architectacceptancepending.

@@ -196,3 +196,9 @@ Record conventions, ownership, risks, and useful reference information for this 
 ## 2026-11-04 | Codex | Atlas in-app panel
 - Footer Atlas opens a contained iframe modal from App. Same-origin Atlas HTML receives a narrow framing exception; other pages and APIs retain DENY/none. The iframe is scaled so the illustrated entrance fits desktop height.
 - Live 3012 Chrome verified desktop navigation across all four rooms, close button/backdrop, artwork fit and no page exceptions. Gateway 289/289 and build pass. Footer intentionally hides Atlas launch below lg; mobile launch was not claimed. No push.
+
+## 2026-11-05 | Lumin/Codex | Interview presence subscription
+- Added subscribeAppCreationActive with actual-state-change notification and unsubscribe; enables floating Luminary bubble to yield while app-creation transcript speaks. Existing active flag/lifecycle unchanged.1 focused lifecycle check +445app tests/build PASS; reviewed batch checkpoints external speech-polish/CP0-full through CP2. No governance/provider/environment change.
+
+## 2026-11-05 | Lumin/Codex | Current candidate presence lifecycle regression
+- Added committedpresence subscriber lifecycle regression alongside reconciledbubble; Q4 engine/provider/governance source untouched.752combinedtests and finalbuildpass. Preservation/deployment states remain separate; no cleanup deletion or runtimeactivation.

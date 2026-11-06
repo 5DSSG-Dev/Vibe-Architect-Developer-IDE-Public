@@ -48,23 +48,23 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 className="font-orbitron text-xs sm:text-base font-bold tracking-wider text-slate-100 glow-cyan">
               VIBE ARCHITECT
             </h1>
-            <span className="hidden xl:inline text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300">
+            <span className="hidden 2xl:inline text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300">
               Developer IDE v1.0
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
+          <p className="text-[11px] text-slate-400 font-mono hidden 2xl:block">
             Shape your app by arranging and connecting elements
           </p>
         </div>
       </div>
 
-      <div id="header-build-todo" className="flex min-w-0 flex-1 justify-center px-2" />
+      <div id="header-build-todo" className="flex min-w-max shrink-0 flex-1 justify-center px-2" />
 
       {/* Configured CORE resources and settings */}
       <div className="flex items-center space-x-4">
         {/* Live CORE budget: what the connected Orbs use out of what the CORE Matrix allows */}
         <div
-          className="hidden lg:flex items-center space-x-4 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800 text-xs font-mono"
+          className="hidden xl:flex items-center space-x-4 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800 text-xs font-mono"
           title={`The connected Orbs use ${usedMemory} of ${hardwareBudget.memoryMB} MB and ${usedThreads} of ${hardwareBudget.threads} threads. ${availableResources.memoryMB} MB and ${availableResources.threads} threads are left. Raise the budget in the CORE Matrix.`}
         >
           <div className="flex items-center space-x-1.5 text-slate-300">
