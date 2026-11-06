@@ -590,6 +590,42 @@ Validated scripted isolation, batching, failure recovery, accepted hierarchy, re
 -752combinedtests0fail0skip; finalHeader461app/buildpass, chunkwarningretained. Isolatedbuiltfixture confirms sessionreload/archive/restore, headerToDo+namedhost/interviewbubbles, desktopgeometry4widths. Initialtextlocatorfalse-negative retained; no actualrecoveryfailure. No provider/launch/runtime switch.
 - Private31checkoutledger+173filescopied+verifiedincrementalgeneratedbundle; credential/ignored/runtime/oversizeitemsunresolved,oldGitfamilybadobjectTOTEMerrorretained. Everyremovalclearancefalse. BASE-full/FINAL scopedcheckpoint pair excludesappend-onlyhistory. Candidate/publicreceipt and Linqreview handoff follow.
 
+## 2026-11-06 | Lumin | Batch20261106-03 IDE product acceptance audit
+- Fresh source1f364be clean entry,buildpass(chunkwarning). Existingdemo3002/3003/3012HTTPprobesunresponsive; no verifieddemorevision inferred. Ownisolated3147PID49720compiledgateway/copieddist/syntheticstate,provider/gaugeunconfigured,productionunmounted; stoppedafteraudit. No existingruntimechanged.
+-22fixturechecks+3extensionspass,actualgeneration404Blocked withdisabledlaunch; namederror plusunknownoutcome/recoverUXrecordedFailed. Followupreloadaskcount5vs4ambiguousdiagnosticretained. Matrix docs/IDE_PRODUCT_ACCEPTANCE_MATRIX_2026-11-06.md distinguishesPassed/Failed/Blocked; actualfiles/audit/build/launchnotpassed. HistoricalTotem7findings/gatewayfilefailureopen. No productfix/providercall/install/commit/push.
+
+## 2026-11-06 | Lumin | Live assembly auditor repair and retained bundle launch
+- Linq routed exact2dc99f41/app-V2lxxI. Generalquantifierscope/acceptedcontextcontract repaired; schemafindings500->2000/outputbudget4096/rawoutputretained; allfindings returned. Added strictretainedreauditmethod,no publicroute. Originalcloudwriter/source unchanged.
+- Actualqwen3.5:4bPASS exactartifact35bb2d.../requirements7ef0dae...; normalgatedlaunch4generatedchecks/buildpass; realChrome6form/reloadchecksPASS,nointerception. Ownpreviewstopped; originalAsterbackends/record untouched. Reauditnotesinverifiedrecordcopy preserveHOLD. Fulloldserializedinputunavailable; exactoldacceptedcontext andnewfullrequestretained,notbitidenticalinputclaim. Sourcechangeindependentreviewpending,no commit/push/deploy.
+
+## 2026-11-06 | Lumin | Batch20261106-05 reservation ordering
+- Aster sourcefinding accepted. reauditRetained now reserves synchronously before firstawait and encloses subsequentwork in onefinallyrelease. Exactreservation-onlydelta verified; artifact/audit/contextgates unchanged.
+- Realrecord/context+actualmissingroot parallelcheck: baselinebothENOENT/red; fixedsecondbusy/green,cleanupafterasyncfailure andsyncinvalidcontext verified. No mocks/inference/install. PriorlivePASS6browserchecks/evidencehashes unchanged; newbatchmanifest follows. Sourceintegrationreviewpending,no commit/push/runtimechange.
+
+## 2026-11-06 | Lumin | Batch06 live demo path
+-479artifactpinned dedicatedruntime C:/AEGIS_IDE_AUDIT/lumin-batch06-20261106,normalMeta3151PID42044/Baseten3150PID38044. Realbothproviderplanning200;freshMeta generation32446910...201/liveQwenPASS;actualUIreview/launch200;6realappchecksPASS,previewUIstop200. No mocks/seededworkspace/writerretry. Fullsource/runtime/evidencepins external batch06.
+- P22fix onlyexplicitmissingPOSTgenerate404 clearspending; realnegativegatewaywithliveproviderconfig validatednoUnknown/Recover and retryenabled,normalruntime restored. ActualacceptedNotesoptional contradictedpreparedtestassumption,failedharnessretained,correctacceptedbehaviorverifiedwithoutchangingapp. GeneratedSubmit/Savecopygapretained. Matrixappendupdatesliveoutcomes; historicalopenissuesremain. Independentreview/humanwalkthroughpending,no commit/push.
+
+## 2026-11-06 | Lumin | Verus static and live audit assessment
+- Read both Verus reports and Aster Batch 06 review. Confirmed two new live-generated bundles contain explicit newest-first requirement but append/render oldest first while Qwen passes both requirement IDs. Recomputed both artifact and requirement hashes against provenance. No new browser run, model call or product-code repair in this assessment.
+- Appended the ordering failure and false-PASS limitation to the product matrix without erasing the earlier no-ordering journey PASS. Recommend live browser reproduction, typed ordering capability or explicit unsupported hold, and requirement-bound behavior checks through Linq.
+- Static findings: re-audit HTTP exposure remains intentionally unwired; maintained integration coverage and provenance recovery need follow-up. Explicit unavailable-route JSON is sensible hardening, but duplicate processing from the reviewed catch-all is not demonstrated. Bounded raw audit text retention is intentional. All current test/review evidence is against the dirty candidate and exact manifests, not clean HEAD alone. Earlier compressed notes remain unchanged; this entry restores readable wording.
+
+
+## 2026-11-06 | Lumin | Batch07 completed; independent review pending
+- Added explicit typed display order with non-mutating display transform; omitted order preserves exact legacy source bytes. Writer contract and generated per-model ordering check updated.
+- Final named per-requirement auditor contract correctly holds both unchanged Verus counterexamples, then passes the unchanged fresh Meta bundle app-OemX7T / 8c3ed413-7b87-489d-be35-31dcc1da6c77. No writer regeneration. All three final audits share system hash40869945... . Prior prompt-only false passes, inconsistent fresh audit refusal and reasoning/header/deadline failures preserved.
+- Normal gated launch and actual Chrome5/5 checks prove newest-first two/three-note behavior and reload clearing; preview stopped. Actual recovery/idempotency and structured unavailable JSON/browser checks pass. Final gateway3161 PID37212 /479 pinned artifacts; prior3150/3151 unchanged. Final audit configuration disables extended internal reasoning, retains explicit traces and fail-closed checks.
+- Report docs/BATCH_20261106_07_DISPLAY_ORDER.md; raw evidence/checkpoints C:/AEGIS_IDE_AUDIT/lumin-batch07-20261106. Scoped guarded undo preserves earlier dirty work. No commits/pushes/global dependency changes. Audit latency/general coverage/historical diagnostics remain open. Verus overlap acknowledged as possible timeout contributor, not confirmed cause; inference window clear after calls finished. Receipt sent through existing collaboration channel; Aster review pending.
+
+
+## 2026-11-06 | Lumin | Batch08 implementation and bounded verification complete
+- Aligned writer instructions with fixed Save button. Fresh actual Baseten app-E6mDy3/fabba58d passed Qwen, generated tests5/build and browser2/2; original accepted context and historical copy mismatch preserved.
+- Interview now saves pending UUID/dispatch evidence synchronously before async work and sends that UUID to the gateway. Same-ID requests share one governed operation; changed-content reuse409; durable prior admission after restart409/no new model call. Actual live Meta browser reloads and one-admission-per-ID record verification pass; pre-dispatch reload sends0asks. Old aggregate-count ambiguity remains historical, not a diagnosed duplicate.
+- Maintained scripts/verify-interview-reload.mjs and verify-ide-navigation.mjs require isolated live gateways/actual workspace evidence. Full-tier actual canvas10/10 passes. Visible child/Luminary proxy collision exposed by Actuator check and repaired with Element geometry hit priority; all failed traces preserved. Reload/resume/Back/camera return retain accepted bindings. No model or network interception.
+- Final isolated runtime Meta3171 PID18152/Baseten3170 PID43872,479 pinned compiled artifacts. Test preview stopped. Existing3150/3151/3161 not restarted. BEFORE/SOURCE_FINAL/guarded undo protect six modified source files and two new scripts while retaining earlier dirty work.
+- Report docs/BATCH_20261106_08_COPY_RELOAD_NAVIGATION.md and matrix append preserve verification domains and open limits. Aster review pending; P23/P24 remain separate. No commits/pushes/dependency updates/human walkthrough. Completion and inference-window-clear receipt posted in shared collaboration folder.
+
 
 ## 2026-11-06 | Aster | Architect-authorized asset cleanup
 
@@ -599,3 +635,20 @@ Kept the 34 canonical registry GLBs under public/assets/models and both live Lum
 ### Asset cleanup verification completed
 
 Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures loaded, both Luminary images loaded, catalog crystal variants passed, actual CORE/Orb/Satellite/Actuator navigation 10/10 passed, Atlas iframe and all four current Atlas pages passed. No model/texture/decoder HTTP failures. Public Atlas files hash-identical; all 313 removed media originals remain verified in the external archive. No inference calls, commits or pushes. Completion receipt posted separately; posting is not acknowledgement.
+
+
+## Append Log
+
+2026-11-06 | Lumin | Batch09 structural continuation marker. All earlier content is preserved verbatim; this marker does not retrospectively certify historical entries.
+
+
+## 2026-11-06 | Lumin | Batch09 verifier and diagnostic receipt
+- P09 runner now requires successful HTTP200 and actual governed payload/anchors/Prism, not just an echoed ID. One coordinated live Meta run passed with one actual admission; raw request/recovery/trace retained.
+- P23 exact original base reproduces7findings; entry current8. Appended missing structure markers in governance Totem/Aster/Codex lanes; no old content rewrite. Remaining5raw findings are explicitly isolated with immutable snapshots and strict known-error/content checks. Raw CLI still fails; wrapper is separately named isolation, not chain certification. Atlas untouched. Actual mutation/new-error probes reject; EOL-only conversion accepted while raw snapshots stay pinned.
+- P24 teardown helper and review fixture ownership hardened. Same compiled helper exercised by actual private records/review HTTP, keep-alive and incomplete requests:12servers/four child exits0, ports rebound, no owned child remains. Historical original file failure cause remains UNDETERMINED because retained log lacks stack/exit/signal; no root-cause fix claimed. Existing mocked-model suite not executed under live-only instruction; full type/build passed.
+- Report docs/BATCH_20261106_09_VERIFIER_TOTEM_LIFECYCLE.md. Evidence C:/AEGIS_IDE_AUDIT/lumin-batch09-20261106; guarded code undo preserves histories and prior dirty engineering. No commit/push/install/runtime switch. Independent Aster review pending; recommend qualified historical isolation rather than pretending all diagnostics are clean.
+
+
+## 2026-11-06 | Lumin | Architect-authorized engineering publication
+- Tracey explicitly authorized commit and push of the recommended reviewed engineering through Batch09. Candidate includes scoped runtime/UI fixes, maintained verification commands, append-only reports and historical-integrity isolation snapshots. Exact source reconciled against Batch04/05/07/08/09 manifests and Aster's final matrix append; no unexplained source paths.
+- Publication preserves qualified PASS only: rawCLI five isolated findings and P24 unknown original cause remain recorded. Private credentials, generated apps, runtime records and raw browser/model evidence excluded. No dependency change or runtime promotion. Fresh build and staged integrity/privacy checks recorded privately in C:/AEGIS_IDE_AUDIT/lumin-engineering-publication-20261106; exact commit/remote receipt follows in shared channel.

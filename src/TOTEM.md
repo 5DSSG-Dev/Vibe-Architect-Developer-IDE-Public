@@ -202,3 +202,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-05 | Lumin/Codex | Current candidate presence lifecycle regression
 - Added committedpresence subscriber lifecycle regression alongside reconciledbubble; Q4 engine/provider/governance source untouched.752combinedtests and finalbuildpass. Preservation/deployment states remain separate; no cleanup deletion or runtimeactivation.
+
+
+## 2026-11-06 | Lumin | Correlated planning client request
+- luminaryApi.ask accepts optional requestId alongside existing revision/resubmit metadata. Interview supplies the persisted UUID; existing callers remain compatible. Actual live Meta same-ID recovery and conflict/restart behavior verified; no governance gate bypass.

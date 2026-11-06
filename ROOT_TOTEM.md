@@ -218,3 +218,13 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-11-05 | Lumin/Codex | Reconciled current engineering candidate
 - Architect resumed corrected recommendations. Isolated current-ui-integration branch starts at preservedbf5868f, applies only3e5f47d delta; Q4 histories retained through append-only conflict resolution. Header desktopspacing corrected after concrete1280px overlap. No oldbranches rewritten or runtime switched.
 - Combined752tests0fail0skip; finalHeader461app rerun/buildPASS. Isolatedfixture desktopinterviewreload/restart/restore, namedbubbles/headerToDo and1024/1280/1440/1920geometryPASS; no providercalls/livegenerationclaim.31checkout preservationledger/173privatefilescopied/verifiedgeneratedincrementalbundle, unresolveditemsretained,0removals. Independentreview/Architectacceptancepending.
+
+
+## 2026-11-06 | Lumin | Batch08 gateway dispatch boundary
+- Optional planning request UUID deduplicates identical prompt/link operations within the bounded gateway session and writes a durable admission note before governed ask. Conflicting reuse409; after restart an admitted ID returns truthful unknown-outcome409 without provider replay. Live Meta browser/record evidence verifies these bounded cases; it is not a durable response cache or proof of universal exactly-once delivery.
+- Existing independent audit/governance and prior dirty source remain intact. Batch08 report and maintained real-browser commands document copy/navigation fixes and evidence. Independent integration review and P23/P24 follow-up remain open.
+
+
+## 2026-11-06 | Lumin | Batch09 diagnostic boundaries
+- P09 live recovery verifier assertion repaired and passed once. Totem original7/current8 findings audited:3append-only structural repairs;5remaining known historical findings explicitly isolated by .aegis/integrity/totem-legacy-baseline.json and scripts/verify-totem-integrity.mjs. Raw CLI0.1.2 still reports those errors; no old chain rehash or Atlas change.
+- server/http-lifecycle.ts and review fixture ownership harden bounded cleanup. Real review/files/socket lifecycle checks pass; original file-level process failure cause remains unknown. See Batch09 report; independent review pending, no final all-diagnostics-clear or new commit/push claimed.

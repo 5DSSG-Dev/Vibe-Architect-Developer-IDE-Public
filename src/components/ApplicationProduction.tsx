@@ -81,7 +81,15 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  async function api(path:string,method='GET',body?:unknown,signal?:AbortSignal):Promise<Receipt> {
   await luminaryApi.localSession(signal);
   const response=await fetch('/api/luminary/production'+path,{method,headers:{'content-type':'application/json','x-luminary-demo-key':key.trim()},body:body===undefined?undefined:JSON.stringify(body),signal,credentials:'same-origin'});
-  if(response.status===404)throw Object.assign(Error('Application production needs the updated local development gateway, a live Luminary source, its gauge and the review record.'),{confirmed:false});
+  if(response.status===404) {
+   // Only the composition layer's structured unavailable response confirms non-admission.
+   // Missing recovery IDs, proxy errors and unreadable responses remain uncertain.
+   const unavailable=await response.json().catch(()=>null);
+   const notAdmitted=method==='POST' && path==='/generate' && unavailable?.error==='application_production_unavailable' && unavailable.admitted===false;
+   throw Object.assign(Error(notAdmitted
+    ? 'Generation was not started: this gateway does not provide application production. Connect to the configured local development gateway before retrying.'
+    : 'Application production needs the updated local development gateway, a live Luminary source, its gauge and the review record.'),{confirmed:Boolean(notAdmitted)});
+  }
   let value:any;try{value=await response.json();}catch{throw Error('The gateway result could not be read. Recover the last request before generating again.');}
   if(!response.ok)throw Object.assign(Error(value.message ?? value.shortfall?.message ?? 'Application production is unavailable ('+response.status+').'),{confirmed:terminalGenerationFailure(response.status,value.error)});
   return value;

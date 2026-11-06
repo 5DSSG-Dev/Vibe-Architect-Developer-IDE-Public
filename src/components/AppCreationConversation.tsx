@@ -82,7 +82,7 @@ export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId:
     if (request.current || accepting.current || !text.trim()) return;
     const latestAssistantIndex = turns.map(turn => turn.role).lastIndexOf('luminary');
     const history = turns.map((turn, index) => index === latestAssistantIndex && !turn.proposal ? { ...turn, proposal: answer?.proposal } : turn);
-    const sentTurn: Turn = { role: 'architect', text: text.trim(), state: 'pending' };
+    const sentTurn: Turn = { role: 'architect', text: text.trim(), state: 'pending', requestId: crypto.randomUUID(), dispatch:'prepared' };
     const next = [...history, sentTurn];
     // Never silently drop middle-turn requirements: ledger is cumulative and lossless.
     const promptTurns = selectCreationTurns(next.map((turn, index) => ({ ...turn, proposal: index === latestAssistantIndex ? (turn as Turn).proposal : undefined })));
@@ -91,6 +91,8 @@ export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId:
       setError('The interview exceeds this gateway context budget. No requirements were discarded. Copy the full conversation and start a new scope before continuing.');
       return;
     }
+    // Save before any async boundary so an immediate reload cannot lose the pending operation.
+    if(!saveCreationSession(storage,sessionKey,{...snapshot(),turns:next,draft:clearDraft?'':draft})){setError('The browser could not preserve this request before sending. Nothing was sent.');return;}
     const controller = new AbortController(); request.current = controller;
     setTurns(next);
     if (clearDraft) setDraft('');
@@ -107,12 +109,14 @@ export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId:
       if (!['meta', 'baseten'].includes(status.value.replySourceKind ?? status.value.replySource)) throw Error('App planning needs a live Luminary connection. This gateway has no live model configured. Your description is still here.');
       const prompt = creationPrompt(promptTurns, catalog, requirementLedger);
       if (new TextEncoder().encode(prompt).length > 48_000) throw Error('The catalog and conversation are too large for one planning request.');
-      const result = await luminaryApi.ask(key.trim(), prompt, controller.signal);
+      sentTurn.dispatch='dispatched';
+      if(!saveCreationSession(storage,sessionKey,{...snapshot(),turns:next,draft:clearDraft?'':draft}))throw Error('The browser could not preserve dispatch evidence. Nothing was sent.');
+      const result = await luminaryApi.ask(key.trim(), prompt, controller.signal, {requestId:sentTurn.requestId});
       if (controller.signal.aborted) return;
       if (!result.ok) throw Error(result.shortfall.message);
       const response = parseCreationAnswer(result.value.reply.content, catalog);
       scrollToCompletedAddition.current = Boolean(selected && response.proposal);
-      setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions].join('\n\n'), suggestions: response.suggestions, proposal: response.proposal }]);
+      setTurns([...next.map(turn => turn === sentTurn ? { ...turn, state: 'sent' as const, dispatch:'completed' as const } : turn), { role: 'luminary', text: [response.message, ...response.questions].join('\n\n'), suggestions: response.suggestions, proposal: response.proposal }]);
       setAnswer(response);
       setSelectedDecisions({});
       setSuggestions(selected && !response.proposal ? suggestions : nextAppSuggestions(suggestions, response.suggestions, selected, usedSuggestions));
@@ -146,7 +150,7 @@ export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId:
         <p>{GREETING}</p>
         <span aria-hidden="true" className="absolute -left-1.5 top-5 h-3 w-3 rotate-45 border-l border-b border-amber-300/50 bg-slate-950" />
       </div>
-      {turns.map((turn, index) => <div key={index} ref={index === turns.length - 1 ? latest : undefined} className={`relative min-w-0 rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-wrap break-words ${turn.role === 'architect' ? 'ml-2 sm:ml-8 rounded-tr-sm bg-cyan-900/25 border border-cyan-500/20' : 'mr-2 sm:mr-8 rounded-tl-sm bg-slate-900 border border-amber-300/50'}`}>
+      {turns.map((turn, index) => <div key={index} data-request-id={turn.requestId} data-dispatch-state={turn.dispatch} ref={index === turns.length - 1 ? latest : undefined} className={`relative min-w-0 rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-wrap break-words ${turn.role === 'architect' ? 'ml-2 sm:ml-8 rounded-tr-sm bg-cyan-900/25 border border-cyan-500/20' : 'mr-2 sm:mr-8 rounded-tl-sm bg-slate-900 border border-amber-300/50'}`}>
         <p className={`mb-2 flex items-center gap-2 font-semibold ${turn.role === 'architect' ? 'text-cyan-200' : 'text-amber-200'}`}>{turn.role !== 'architect' && <Sparkles size={16} aria-hidden="true" className="shrink-0" />}{turn.role === 'architect' ? 'Architect' : 'Luminary'}</p>
         {turn.role !== 'architect' && <span aria-hidden="true" className="absolute -left-1.5 top-5 h-3 w-3 rotate-45 border-l border-b border-amber-300/50 bg-slate-900" />}
         {turn.text}{turn.state && turn.state !== 'sent' && <span className="block mt-2 text-xs text-slate-400">{turn.state === 'pending' ? 'Sending to Luminary…' : turn.state === 'failed' ? 'Request failed — your message is kept here.' : 'Stopped — your message is kept here.'}</span>}

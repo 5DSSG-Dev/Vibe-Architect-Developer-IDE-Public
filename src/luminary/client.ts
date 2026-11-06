@@ -221,7 +221,7 @@ export const luminaryApi = {
     catch { return false; }
   },
   status: (key: string) => call<LuminaryStatus>('/api/luminary/status', key),
-  ask: (key: string, prompt: string, signal?: AbortSignal, link: { revisionOf?: string; resubmit?: boolean } = {}) =>
+  ask: (key: string, prompt: string, signal?: AbortSignal, link: { revisionOf?: string; resubmit?: boolean; requestId?: string } = {}) =>
     call<{ reply: GovernedReply; lineage?: LineageEntry[]; record?: TurnRecord }>('/api/luminary/ask', key, { method: 'POST', body: { prompt, ...link }, signal }),
   review: (key: string) => call<ReviewStatus>('/api/luminary/review', key),
   checkAnchors: (key: string, anchors: Anchor[]) =>

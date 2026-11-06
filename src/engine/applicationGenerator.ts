@@ -1,9 +1,11 @@
 /** Deterministic generation only. No authored source or process execution. */
+export type DisplayOrder = 'insertion-order' | 'newest-first';
+export interface ApplicationObjectData { id: string; kind: 'Data'; initialRecords: Record<string, string>[]; displayOrder?: DisplayOrder }
 export type ApplicationObject =
   | { id: string; kind: 'Page'; path: string; title: string; children: string[] }
   | { id: string; kind: 'Component'; text: string }
   | { id: string; kind: 'Form'; modelId: string; slugField?: string; fields: { name: string; label: string; required?: boolean }[] }
-  | { id: string; kind: 'Data'; initialRecords: Record<string, string>[] }
+  | ApplicationObjectData
   | { id: string; kind: 'Navigation'; pageIds: string[] }
   | { id: string; kind: 'API'; path: string };
 export interface ApplicationDefinition { version: 1; name: string; objects: ApplicationObject[]; dependencies?: Record<string,string> }
@@ -33,6 +35,7 @@ function validate(input: unknown): ApplicationDefinition {
         if (typeof o.text !== 'string') throw new Error('Invalid component text');
         break;
       case 'Data':
+        if (o.displayOrder !== undefined && !['insertion-order', 'newest-first'].includes(o.displayOrder)) throw new Error('Unsupported data display order');
         if (!Array.isArray(o.initialRecords) || !o.initialRecords.every(r => r && typeof r === 'object' && !Array.isArray(r) && Object.entries(r).every(([k, v]) => !reserved.has(k) && typeof v === 'string'))) throw new Error('Invalid data records');
         break;
       case 'Form': {
@@ -69,6 +72,8 @@ export function generateApplication(input: unknown): GeneratedApplication {
   const pages = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Page' }> => o.kind === 'Page');
   const models = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Data' }> => o.kind === 'Data');
   const forms = d.objects.filter((o): o is Extract<ApplicationObject, { kind: 'Form' }> => o.kind === 'Form');
+  // Omitted ordering preserves legacy source bytes and saved CORE evidence.
+  const explicitDisplayOrder = models.some(model => model.displayOrder !== undefined);
   files['package.json'] = JSON.stringify({
     name: 'vibe-generated-app', version: '1.0.0', private: true, type: 'module',
     scripts: { dev: 'vite --host 127.0.0.1', build: 'vite build', test: 'node --test test/*.test.mjs' },
@@ -81,6 +86,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
   files['src/logic.js'] = [
     'export const formFields = ' + json(Object.fromEntries(forms.map(form=>[form.id,form.fields]))) + ';',
     'export function appendRecord(records, record) { return [...records, { ...record }]; }',
+    ...(explicitDisplayOrder ? ['export function displayRecords(records, order = "insertion-order") { if (order === "newest-first") return [...records].reverse(); if (order === "insertion-order") return records; throw new Error("Unsupported data display order"); }'] : []),
     'export function prepareRecord(fields, values) {',
     '  return Object.fromEntries(fields.map(f => {',
     '    const supplied = values[f.name];',
@@ -94,7 +100,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
   ].join('\n') + '\n';
   files['src/runtime.jsx'] = [
     "import React, { createContext, useContext, useState } from 'react';",
-    "import { appendRecord } from './logic.js';",
+    explicitDisplayOrder ? "import { appendRecord, displayRecords } from './logic.js';" : "import { appendRecord } from './logic.js';",
     'const Context = createContext(null);',
     'export function ModelProvider({ initial, children }) {',
     '  const [models, setModels] = useState(initial);',
@@ -102,9 +108,9 @@ export function generateApplication(input: unknown): GeneratedApplication {
     '  return <Context.Provider value={{ models, append }}>{children}</Context.Provider>;',
     '}',
     'export function useModel(id) { const { models, append } = useContext(Context); return [models[id], record => append(id, record)]; }',
-    'export function Records({ modelId }) {',
+    explicitDisplayOrder ? 'export function Records({ modelId, displayOrder = "insertion-order" }) {' : 'export function Records({ modelId }) {',
     '  const [records] = useModel(modelId);',
-    '  return <ul aria-label="Saved records">{records.map((r, i) => <li key={i}>{Object.entries(r).map(([k,v]) => <p key={k}><strong>{k}: </strong>{v}</p>)}</li>)}</ul>;',
+    '  return <ul aria-label="Saved records">{' + (explicitDisplayOrder ? 'displayRecords(records, displayOrder)' : 'records') + '.map((r, i) => <li key={i}>{Object.entries(r).map(([k,v]) => <p key={k}><strong>{k}: </strong>{v}</p>)}</li>)}</ul>;',
     '}'
   ].join('\n') + '\n';
   for (const o of d.objects) {
@@ -134,7 +140,7 @@ export function generateApplication(input: unknown): GeneratedApplication {
       files['src/pages/' + o.id + '.jsx'] = [
         "import React from 'react';", "import { Records } from '../runtime.jsx';", ...imports,
         'export default function Page() { return <main><h1>{' + json(o.title) + '}</h1>',
-        ...children.map((c, i) => c.kind === 'Data' ? '<Records modelId={' + json(c.id) + '} />' : '<Child' + i + ' />'),
+        ...children.map((c, i) => c.kind === 'Data' ? '<Records modelId={' + json(c.id) + '}' + (explicitDisplayOrder ? ' displayOrder={' + json(c.displayOrder ?? 'insertion-order') + '}' : '') + ' />' : '<Child' + i + ' />'),
         '</main>; }'
       ].join('\n') + '\n';
     }
@@ -165,8 +171,9 @@ export function generateApplication(input: unknown): GeneratedApplication {
   files['src/style.css'] = 'body{font-family:system-ui,sans-serif;max-width:52rem;margin:2rem auto;padding:0 1rem;color:#172033}nav{display:flex;gap:1rem}form,label{display:grid;gap:.5rem}form{max-width:28rem;gap:1rem}input,button{font:inherit;padding:.65rem}li{border-bottom:1px solid #ddd}button{cursor:pointer}\n';
   files['test/application.test.mjs'] = [
     "import test from 'node:test';", "import assert from 'node:assert/strict';",
-    "import { appendRecord, prepareRecord, resolvePage } from '../src/logic.js';",
+    explicitDisplayOrder ? "import { appendRecord, displayRecords, prepareRecord, resolvePage } from '../src/logic.js';" : "import { appendRecord, prepareRecord, resolvePage } from '../src/logic.js';",
     'test("form values append without mutating earlier records", () => { const before = []; const record = prepareRecord([{name:"text",label:"Note",required:true}], {text:" hello "}); const after = appendRecord(before,record); assert.deepEqual(before,[]); assert.deepEqual(after,[{text:"hello"}]); record.text = "changed"; assert.equal(after[0].text,"hello"); });',
+    ...(explicitDisplayOrder ? models : []).map(m => 'test(' + json('Data '+m.id+' displays '+(m.displayOrder ?? 'insertion-order')) + ', () => { const stored = appendRecord(appendRecord([], {text:"FIRST"}), {text:"SECOND"}); assert.deepEqual(displayRecords(stored,' + json(m.displayOrder ?? 'insertion-order') + ').map(r=>r.text),' + json(m.displayOrder === 'newest-first' ? ['SECOND','FIRST'] : ['FIRST','SECOND']) + '); assert.deepEqual(stored.map(r=>r.text),["FIRST","SECOND"]); });'),
     'test("required fields reject whitespace", () => { assert.throws(() => prepareRecord([{name:"text",label:"Note",required:true}],{text:"   "}), /Note is required/); });',
     'test("non-text form values are rejected", () => { assert.throws(() => prepareRecord([{name:"text",label:"Note",required:true}],{text:{file:"image.png"}}), /Only text values/); });',
     ...(d.dependencies?.slugify ? ["test('declared dynamic slug dependency resolves and normalizes a title', async () => { const {default: slugify} = await import('slugify'); assert.equal(slugify('Hello Peer Two!',{lower:true,strict:true}),'hello-peer-two'); });"] : []),

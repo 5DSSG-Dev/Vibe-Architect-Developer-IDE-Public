@@ -200,6 +200,31 @@ See UI_VALIDATION_REVIEW_PACKET_2026-11-03.md for scripted retests, Architect sc
 ## 2026-11-05 | Lumin/Codex | Explicit source/runtime and preservation receipts
 - Added CURRENT_SOURCE_AND_RUNTIME.md, WORKTREE_PRESERVATION_SUMMARY_2026-11-05.md and COMBINED_CANDIDATE_RECEIPT_2026-11-05.md with exactlineage, separate candidate/accepted/runtime states, unresolvedpreservation and retainedcheckpoints. No broaddeletionclearance or assumedliveprovider success.
 
+## 2026-11-06 | Lumin | Product acceptance matrix evidence boundary
+- Added IDE_PRODUCT_ACCEPTANCE_MATRIX_2026-11-06.md against1f364be. UIfixture/reload/ToDo/Apothecary/presence/desktoplayout evidence separated from actualprovider/generation/launchblocked gates. Isolatedcompiledgateway actualgenerate404 surfaced missingconfig error plus ambiguousunknownoutcome UX. Historicalfailures retained,notrepaired. Runtimeauditisnotdemopromotion.
+
+## 2026-11-06 | Lumin | Assembly re-audit evidence
+- LIVE_ASSEMBLY_AUDITOR_REMEDIATION_2026-11-06.md records exactretainedbundle liveqwenPASS andactual6/6browserformchecks aftergatedlaunch,originalsourcehashespreserved. Generalcontractrepair andretainedbindingmethod pendingindependentreview; originalruntimeunchanged. Original500characterHOLD preserved; newrawprompt/outputretained. Historicaldiagnosticsremainopen.
+
+## 2026-11-06 | Lumin | Retained audit reservation receipt
+- REAUDIT_RESERVATION_FIX_2026-11-06.md records synchronousreservation and onefinallyrelease,baseline-red/fixed-green actualfilesystem concurrencycheck and priorliveevidencepreservation. No freshmodelsuccessclaim or historicalevidenceoverwrite.
+
+## 2026-11-06 | Lumin | Live matrix append
+- AppendedBatch06liveprovider/runtime/generation/audit/review/launchoutcomes to matrix,retainingBatch03fixture/failedreceiptsandhistoricaldiagnostics. OneboundedfreshMetapathpassed; Traceywalkthroughandindependentreviewremainopen. Notesoptionalharnessoverspec andSubmit/Savecopygap explicitlyrecorded.
+
+## 2026-11-06 | Lumin | Verus ordering audit update
+- Product matrix now records two actual live counterexamples: newest-first was requested, oldest-first was generated, and the independent auditor passed both. Lumin confirmed source/provenance/hash bindings; browser reproduction of these two cases is not yet claimed. Earlier bounded live PASS remains scoped to its actual requirements. Historical review records and failed receipts are retained.
+
+
+## 2026-11-06 | Lumin | Batch07 display-order receipt
+- BATCH_20261106_07_DISPLAY_ORDER.md and matrix append record final live two-negative/one-positive Qwen results on unchanged artifacts, one Meta writer output, actual five browser checks, legacy-byte preservation, recovery/idempotency and structured non-admission evidence.
+- All failed intermediate audits/timeouts and original records remain. Source and compiled manifests pin the dirty candidate; independent Aster review, broader reliability, audit latency and historical diagnostic items remain open. No commit/push. Guarded six-file source undo is external and preserves append-only histories.
+
+
+## 2026-11-06 | Lumin | Batch08 receipt
+- BATCH_20261106_08_COPY_RELOAD_NAVIGATION.md and matrix append record live Meta dispatch/reload evidence, live Baseten/Qwen copy acceptance and actual full-tier canvas10/10. All harness and product failures remain alongside corrected results. Six source paths/two browser commands have scoped guarded undo.
+- Independent review pending. P23/P24 remain the next dedicated diagnostic pass; prior matrix is not an exhaustive new claim of all remaining issues. No human walkthrough/commit/push/dependency update.
+
 
 ## 2026-11-06 | Aster | Architect-authorized asset cleanup
 
@@ -209,3 +234,12 @@ Kept the 34 canonical registry GLBs under public/assets/models and both live Lum
 ### Asset cleanup verification completed
 
 Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures loaded, both Luminary images loaded, catalog crystal variants passed, actual CORE/Orb/Satellite/Actuator navigation 10/10 passed, Atlas iframe and all four current Atlas pages passed. No model/texture/decoder HTTP failures. Public Atlas files hash-identical; all 313 removed media originals remain verified in the external archive. No inference calls, commits or pushes. Completion receipt posted separately; posting is not acknowledgement.
+
+
+## 2026-11-06 | Lumin | Batch09 qualified completion evidence
+- BATCH_20261106_09_VERIFIER_TOTEM_LIFECYCLE.md and matrix append distinguish P09 live verifier PASS, P23 structural repairs/strict historical isolation and P24 exercised lifecycle PASS from the undetermined historical cause. Raw failure logs and hash-pinned snapshots preserved; Atlas untouched.
+- Maintained real CLI/lifecycle commands reject new errors and verify owned child/server cleanup. No mocked model test suite, historical hash rewrite, install, commit, push or runtime promotion. Independent Aster review pending.
+
+
+## 2026-11-06 | Lumin | Reviewed candidate publication authorization
+- Architect explicitly authorized scoped commit/push of reviewed engineering through Batch09. Prior report/manifests and Aster matrix append remain evidence with their original qualifications. No historical hash rewrite, private runtime evidence publication or automatic deployment. Final source checkpoint/build/staged scan receipts retained outside Git; shared publication receipt records exact revision.

@@ -1,0 +1,9 @@
+# Batch20261106-05 — retained re-audit reservation
+
+Aster identified a real ordering defect: busy check preceded awaited filesystem work,while generating was set only afterward. Repair sets generating synchronously after eligibility/busy guards,before context processing and first await. One enclosing try/finally now covers all subsequent work; its finally releases reservation once. Invalid request identity or already-busy calls never own/release another operation. No independent gate removed or reordered within reserved work.
+
+Verification uses actual original governed record/context in separate copies and a genuinely absent filesystem root. Two calls issued without waiting: baseline both reached ENOENT,so busy-rejection assertion fails(exit1); fixed first reaches ENOENT while second rejects busy(exit0). Calls after asynchronous filesystem failure and after synchronous invalid-context failure reach ENOENT again,demonstrating reservation release. No filesystem/model mocks,response substitution or package installs. No inference calls were made: these are concurrency-boundary/failure-path checks,not a new live-model success audit. Prior actual QwenPASS and6browserchecks remain prior evidence,not rerun claims.
+
+Server typechecks/build emit and diffcheck pass. Source transformation verified exactly reservation-only against rawBEFORE,all previous live remediation evidence digests unchanged. Temporary baseline compiled module preserved privately then removed from ignored build directory. New snapshots/manifest are separate from prior manifest73409371...; histories and failed receipts retained.
+
+No commit,push,package install,runtime change or gateoverride. Independent review pending. Existing startup/context/audit checks remain unchanged. Next recommendation: focused independent source/reservation verification then route scoped integration/publication decisions separately.

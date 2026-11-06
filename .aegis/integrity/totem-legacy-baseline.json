@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "classification": "explicit historical integrity isolation, not raw CLI PASS",
+  "cliVersion": "0.1.2",
+  "base": "8ad87d326934c6616b4229a53efb48513248d640",
+  "originalFindings": 7,
+  "currentBeforeFindings": 8,
+  "structuralRepaired": 3,
+  "remainingKnownFindings": [
+    "docs/TOTEM.md: entry \"### 2026-10-24T19:04:13.486Z | stp | decision\" hash mismatch",
+    "docs/TOTEM.md: entry \"### Asset cleanup verification completed\" is missing chain metadata after the chain started",
+    "public/atlas/TOTEM.md is missing Append Log",
+    "lane stp.md: entry \"### 2026-10-26T23:40:39.231Z | stp | message\" links to df99865ea2a9b70b64ee343c30662fcb8bcaffb537cebe54bf11144a786bd013 but expected 873bd6ca64b3488468c7c42d39d01e8c73c541d6c3b74ffd419e1cbd68537e59",
+    "lane stp.md: entry \"### 2026-10-29T07:56:20.151Z | stp | message\" hash mismatch"
+  ],
+  "protectedFiles": [
+    {
+      "path": "docs/TOTEM.md",
+      "snapshot": ".aegis/integrity/legacy/docs-totem.snapshot",
+      "bytes": 34951,
+      "sha256": "8a6f876ff9b23e3c0ac0c819dac63d8064d502361721584e8d2b8985e6a7c63f",
+      "exact": false
+    },
+    {
+      "path": ".aegis/lanes/stp.md",
+      "snapshot": ".aegis/integrity/legacy/stp-lane.snapshot",
+      "bytes": 26879,
+      "sha256": "a16e53b4f225276405cc1614bf8a5a84e379e096eac3310312a31dc72c048593",
+      "exact": false
+    },
+    {
+      "path": "public/atlas/TOTEM.md",
+      "snapshot": ".aegis/integrity/legacy/atlas-totem.snapshot",
+      "bytes": 3636,
+      "sha256": "5c86412b1aa9ddd662135055039ade30e842671f061e5c1fcd43a55029a642e6",
+      "exact": true
+    }
+  ],
+  "notes": [
+    "Do not rewrite historical hashes or claim the old chain is valid.",
+    "Atlas is preserved exactly.",
+    "Any new CLI finding or changed preserved prefix fails the active verification.",
+    "Original historical failure and the newer asset-cleanup unchained heading are retained."
+  ],
+  "comparison": "Active content permits CRLF/LF equivalence only; raw original snapshots remain exact SHA-256 pinned. No other byte normalization."
+}

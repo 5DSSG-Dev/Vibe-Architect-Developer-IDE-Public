@@ -283,7 +283,9 @@ export const EnvironmentView: React.FC<EnvironmentViewProps> = ({ center, childr
       mouse.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
       scene.updateMatrixWorld(true);
       raycaster.setFromCamera(mouse, camera);
-      return raycaster.intersectObject(luminary.pickProxy, true).length > 0;
+      // A visible Element must remain selectable where the decorative presence proxy overlaps it.
+      // Resolve actual Element geometry before using Luminary's broader interaction proxy.
+      return raycaster.intersectObject(luminary.pickProxy, true).length > 0 && !findElementHit(clientX, clientY);
     };
 
     const handlePointerDown = (event: PointerEvent) => {

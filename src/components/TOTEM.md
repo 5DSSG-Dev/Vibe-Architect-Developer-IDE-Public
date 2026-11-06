@@ -191,3 +191,15 @@
 
 ## 2026-11-05 | Lumin/Codex | Q4 recovery retained with speech presentation
 - Incomingbubble presentation reconciledontoQ4 without overwriting its session/recovery controls. Kept full priorTotemhistory. AddeddesktopHeader spacing correction for observedToDo overlap.752combinedtests/final461app rerun/buildPASS. Actualisolatedfixtureinterviewreload/archive/restore/headerToDo/namedbubble anddesktopgeometryPASS; no liveproviderproof. No demochanges.
+
+## 2026-11-06 | Lumin | P22 confirmed missing-route handling
+- Generate POST explicitgatewaytext/plain404Notfound is confirmednonadmission with namednotstartedmessage; recoveryID/proxyambiguity remainsuncertain. Liveconfigurednegativegatewaytestpassed,nointerception; fullfreshMeta/Qwen/UIlaunchpathpassed separately. No governance/auditor bypass. Source/artifact/runtimepins and liveacceptance delta inBatch06 receipt; independentreviewpending.
+
+
+## 2026-11-06 | Lumin | Structured production non-admission
+- Production client confirms POST/generate non-admission only for JSON application_production_unavailable with admitted:false. Generic text/proxy/recovery responses retain uncertainty. Final real unavailable gateway/browser check passes no-unknown/no-recovery/retry-enabled behavior. No mocked responses.
+
+
+## 2026-11-06 | Lumin | Batch08 reload and full-tier navigation
+- AppCreationConversation synchronously saves pending request identity before async preflight and dispatch evidence before ask. Live browser reload checks passed before/after dispatch; no automatic resend. Same-ID recovery is a transport operation, not automatic interview replay.
+- EnvironmentView now prioritizes actual Element geometry over Luminary's broad pick proxy where they overlap. A real Actuator click failed before and passed after. Maintained actual browser10/10 covers all tiers, Back, reload/resume, saved camera after zoom and Frame. WebGL context-loss Restore control is not claimed tested.

@@ -17,3 +17,13 @@ Append-only continuity; verify against current source and tests.
 
 ## 2026-10-31 | Lumin | Queued timeout coverage
 - Peer confirmed timeout repair statically and recommended deterministic queued-timeout coverage. Added held-A/queued-B test: both deadlines expire; B never reloads/appends, unrelated keys stay blocked, and A recovers with the same key. Focused admission suite passes 22/22.
+
+
+## Append Log
+
+2026-11-06 | Lumin | Batch09 structural continuation marker. All earlier content is preserved verbatim; this marker does not retrospectively certify historical entries.
+
+
+## 2026-11-06 | Lumin | Review HTTP teardown hardening
+- review.test.ts registers owned cleanup before await-listen, uses bounded close/request helpers, settles all cleanup and constrains recursive removal to owned temporary paths. Original business/governance fixtures unchanged.
+- New actual-filesystem/HTTP process command verifies the same compiled helper:12servers/four clean child exits, repeated close, incomplete/keep-alive requests and freed/rebound ports. No model mock run or original-cause inference. Original review.test.ts whole-file failure remains preserved and causally undetermined.

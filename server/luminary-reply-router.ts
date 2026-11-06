@@ -8,6 +8,7 @@
 // The endpoint's mount path and auth model are deliberately NOT decided here; this router
 // is mounted by the caller (server/app.ts) once the Architect settles them.
 
+import { createHash } from 'node:crypto';
 import { SpendCapError } from './luminary-meta.js';
 import { Router, type Request, type Response } from 'express';
 import {
@@ -369,6 +370,8 @@ export function createLuminaryReplyRouter(
 ): Router {
   const router = Router();
   const governedAsk = createGovernedAsk(askModel, options);
+  // Bounded session-local deduplication. Never evict admitted IDs and silently replay them.
+  const dispatches=new Map<string,{hash:string;result:ReturnType<typeof governedAsk>}>();
 
   router.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -382,7 +385,20 @@ export function createLuminaryReplyRouter(
       return;
     }
 
-    const result = await governedAsk(prompt, readLink(req.body));
+    const requestId=req.body?.requestId;
+    if(requestId!==undefined && (typeof requestId!=='string'||!/^[0-9a-f-]{36}$/.test(requestId))){res.status(400).json({error:'invalid_request_id'});return;}
+    const link=readLink(req.body),fingerprint=createHash('sha256').update(JSON.stringify({prompt,link})).digest('hex');
+    let dispatch=requestId?dispatches.get(requestId):undefined;
+    if(dispatch && dispatch.hash!==fingerprint){res.status(409).json({error:'request_id_conflict'});return;}
+    if(requestId&&!dispatch){
+      const previouslyAdmitted=options.record?.architect.entries.some(row=>{if(row.entry.kind!=='note')return false;try{const note=JSON.parse(row.entry.text);return note.kind==='planning_dispatch'&&note.requestId===requestId;}catch{return false;}});
+      if(previouslyAdmitted){res.status(409).json({error:'request_outcome_unknown',message:'This request was admitted before this gateway session. No new call was made. Review its original record before retrying.'});return;}
+      if(dispatches.size>=256){res.status(409).json({error:'dispatch_capacity',message:'This gateway reached its tracked request limit. No new request was sent.'});return;}
+      const result=Promise.resolve().then(async()=>{if(options.record)await options.record.architect.append({kind:'note',id:requestId,text:JSON.stringify({kind:'planning_dispatch',requestId,promptSha256:createHash('sha256').update(prompt).digest('hex')})});return governedAsk(prompt,link);});
+      dispatch={hash:fingerprint,result};dispatches.set(requestId,dispatch);
+    }
+    if(requestId)res.setHeader('X-Luminary-Request-Id',requestId);
+    const result = await (dispatch?dispatch.result:governedAsk(prompt,link));
     if (!result.ok) {
       res.status(SHORTFALL_STATUS[result.shortfall.code]).json({ error: 'luminary_shortfall', shortfall: result.shortfall, ...evidence(result) });
       return;

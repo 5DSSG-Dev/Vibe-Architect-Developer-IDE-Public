@@ -309,6 +309,9 @@ export async function createGateway(options: CreateGatewayOptions) {
     const production = new ProductionRuntime({ root: resolve(process.cwd(), 'output/generated-projects'), record: options.record, ask: createGovernedAsk(luminaryAskModel, luminaryReplyOptions), assembly: {resolve:options.assemblyResolver,audit:options.assemblyAuditor??(async()=>{throw Error('Secondary assembly auditor is unavailable.');})} });
     app.locals.applicationProduction = production;
     app.use('/api/luminary/production', createProductionRouter(production));
+  } else {
+    // Composition knows production was never mounted; no generation can have been admitted here.
+    app.use('/api/luminary/production', (_req, res) => res.status(404).json({error:'application_production_unavailable',admitted:false,message:'Application production is not enabled on this gateway.'}));
   }
   if (options.record) app.use('/api/luminary/review', createReviewRouter(options.record));
   app.use('/api/luminary', createLuminaryReplyRouter(luminaryAskModel, luminaryReplyOptions));

@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import type { AddressInfo } from 'node:net';
 import { createServer } from 'node:http';
+import { listenLoopback, closeHttpServer } from '../http-lifecycle.js';
 import express from 'express';
 import { ReviewRecord } from './review.js';
 import { createLuminaryReplyRouter, type AskModel } from '../luminary-reply-router.js';
@@ -19,8 +20,13 @@ const virtues = (value: number, overrides: Partial<VirtueReadings> = {}) =>
 const dirs: string[] = [];
 const closers: Array<() => Promise<void>> = [];
 after(async () => {
-  for (const close of closers) await close();
-  for (const dir of dirs) await rm(dir, { recursive: true, force: true });
+  const closed=await Promise.allSettled(closers.map(close=>close()));
+  const removed=await Promise.allSettled(dirs.map(async dir=>{
+    if(dirname(resolve(dir))!==resolve(tmpdir())||!basename(dir).startsWith('aegis-'))throw Error('Refusing cleanup outside owned review temporary directories');
+    await rm(dir,{recursive:true,force:true});
+  }));
+  const failures=[...closed,...removed].filter((result):result is PromiseRejectedResult=>result.status==='rejected');
+  if(failures.length)throw new AggregateError(failures.map(result=>result.reason),'Review fixture teardown failed');
 });
 
 async function setup(askModel: AskModel, read: (content: string) => VirtueReadings, dir?: string) {
@@ -32,14 +38,15 @@ async function setup(askModel: AskModel, read: (content: string) => VirtueReadin
   app.use('/review', createReviewRouter(record));
   app.use('/', createLuminaryReplyRouter(askModel, { pipeline: { gauge: { read: async (c) => read(c), ids: fakeIdsWriter() } }, record }));
   const server = createServer(app);
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
-  closers.push(() => new Promise<void>((done) => server.close(() => done())));
+  // Register ownership before awaiting startup so even a failed listen is cleaned up.
+  closers.push(() => closeHttpServer(server));
+  await listenLoopback(server);
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   const post = async (path: string, body: unknown) => {
-    const res = await fetch(`${base}${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await fetch(`${base}${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal:AbortSignal.timeout(10000) });
     return { status: res.status, body: (await res.json()) as any };
   };
-  const get = async (path: string) => (await (await fetch(`${base}${path}`)).json()) as any;
+  const get = async (path: string) => (await (await fetch(`${base}${path}`,{signal:AbortSignal.timeout(10000)})).json()) as any;
   return { root, record, post, get };
 }
 
