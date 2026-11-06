@@ -180,3 +180,24 @@ Lumin implemented the seven findings from Aster's published3fa4862 review, based
 | R7 | Focused iframe Escape closes Atlas; reader consumes first Escape; draft retained | Listener document binding interval100ms; test allows200ms |
 
 Configured Baseten returned400 deactivated model version; that failure is preserved, not relabeled a pass. Live writer success used Meta muse-spark-1.3 and independent qwen3.5:4b. Image-entry generation, exact Atlas historical-freeze conflict, production welcome inline CSP, and final Architect visual acceptance remain open separately.
+
+
+## 2026-11-06 — Aster independent acceptance of R1–R7
+
+Aster's `ASTER_B1C05EE3_REMEDIATION_REVIEW.md` independently records **PASS for the seven scoped remediation items** at `b1c05ee3734a6178c9a98d170cef190ac1e8f1b7`. The actual private report was read and the author manifest SHA-256 independently rechecked: `4614fde8ad35ef25a0344d828d0ec814dd03b60dbcd853f0ce1a2ac9ebd0bcfc`. This entry supersedes the candidate's pending-Aster disposition only; it does not rewrite earlier evidence.
+
+| Item | Independent disposition | Scope preserved |
+| --- | --- | --- |
+| R1 durable recovery | PASS | Fresh receipt format; actual retained receipt independently recovered, concurrent ownership preserved, explicit unknown prevents redispatch |
+| R2 explicit exclusions | PASS | Maintained pure checks and retained live Meta/Qwen evidence; bounded local grammar |
+| R3 post-provider record errors | PASS | Retained actual Meta/filesystem failure inspected; usage uncertainty and withheld delivery stated accurately |
+| R4 operation reservation | PASS | Synchronous launch reservation; retained live collision evidence inspected |
+| R5 HTTP teardown | PASS | Independently executed12listener/fourchild verifier; arbitrary hung subprocesses/WebSocket upgrades not certified |
+| R6 desktop purpose layout | PASS | Independently verified1024x768,1280x900,1440x900,1920x1080 without overlap |
+| R7 iframe Escape | PASS after document binding | Fresh Chrome welcome/book dismissal and draft preservation;200ms allowance, instantaneous pre-binding Escape not certified |
+
+Independent artifact reconciliation:239 compiled files;231 raw-byte matches and8 equal only after CRLF normalization. No semantic compiled differences found. Reviewer did not make a fresh provider call; model-dependent conclusions use the identified retained actual Meta muse-spark-1.3/Qwen qwen3.5:4b execution. Baseten400/deactivated remains a failure.
+
+Still OPEN: production welcome inline-script CSP; unsupported image entries/AI image generation/accounts/login and associated disclosure/runtime-authentication qualifications; Atlas exact-freeze successor policy; final Architect visual acceptance. Unknown admissions lacking complete evidence still require an evidence-led operator disposition; none was authorized or implemented by this acceptance.
+
+A private append-only supplemental inventory now enumerates the author evidence directory, anchored to the original manifest above; no original manifest or historical file was refreshed. Reviewer evidence remains outside Git at `C:/AEGIS_IDE_AUDIT/aster-b1c05ee3-review/`.

@@ -24,3 +24,10 @@ Candidate based on published313c38f, addressing Aster's R1–R7 review of3fa4862
 - R7 binds the active iframe document every100ms while open, cleaning up on close/navigation. Verification allowed200ms after focus for document binding; it does not certify an instantaneous key before binding. Initial onLoad-only repair failed and was replaced; failed runner output remains part of the session record.
 - Earlier harness attempts referenced a frontend-only emitted JS path that does not exist and initially used Python's platform-default decoder; corrected to explicit UTF-8 and direct source-profile/actual-browser checks. These are harness shortfalls, not application acceptance evidence.
 - Baseline Atlas exact-length integrity mismatch, production welcome inline-script CSP compatibility, image-entry generation, and final Architect visual acceptance remain separate open items. No dependencies installed, production deployed, or shared runtime switched.
+
+
+## Independent acceptance received
+
+Aster's independent report `ASTER_B1C05EE3_REMEDIATION_REVIEW.md` accepts all seven scoped repairs at b1c05ee3734a6178c9a98d170cef190ac1e8f1b7. Lumin read the actual report and rechecked author manifest4614fde8ad35ef25a0344d828d0ec814dd03b60dbcd853f0ce1a2ac9ebd0bcfc. Independent checks include build, two pure regression tests,12actualHTTPlisteners/fourchildren, fresh Chrome at four desktop widths, iframe/book Escape, and retained live receipt recovery without another model call. The full disposition is appended to the acceptance matrix.
+
+A supplemental complete evidence inventory was added outside Git and anchored to that original manifest, addressing the review's inventory recommendation without rewriting prior evidence. Production CSP, unsupported capabilities/disclosure/authentication qualifications, Atlas successor policy and Architect visual acceptance remain open; this is not exhaustive product certification.

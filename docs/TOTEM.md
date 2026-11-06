@@ -251,3 +251,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | R1-R7 remediation evidence
 - PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md records actual isolated Meta/Qwen generation, restart recovery, active-generation launch exclusion, post-provider record-write failure, incomplete preview-socket stop, pure exclusion probes, and desktop/iframe checks. Failed Baseten activation and early harness attempts remain explicit; no blanket readiness claim.
+
+
+## 2026-11-06 | Lumin | Aster R1-R7 independent PASS
+- Read Aster's actual published-candidate re-review and independently rechecked its author manifest anchor. Acceptance matrix/report now append scoped R1-R7 PASS, exact reviewed revision,231raw/8EOL-only artifact comparisons and preserved open boundaries. Added private supplemental evidence inventory without changing original manifest. Documentation-only publication.
