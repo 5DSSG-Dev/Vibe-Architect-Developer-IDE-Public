@@ -186,3 +186,31 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-04 | Lumin | 3012 restarted after audit correction
 - Production build passes and app gateway verified HTTP 200 on localhost:3012.
+
+## 2026-11-04 | Codex | Separate generated output from IDE watcher
+- Vite middleware treats generated HTML writes as full IDE reloads. vite.config.ts now ignores **/output/**; actualwatcher regression proves generated source/build HTML no longer reload IDE while IDE HTML still reloads. Regression passed and isolated productionbuild passed;3012 HTTP200. Localfix only; independent NoteKeep audit acceptance remains open.
+
+
+## 2026-11-04 | Codex | NoteKeep audited baseline delivered
+- Generation86bf98f8-2074-4f57-97da-b38bbb9c42de/digest452f1394a21a1247b036a7f2d667dc519f577c4c3d9f7f64e60e71e978c0860e passed independentQwen3.5:4b audit then explicitrealUI review/launch. Browserblankrejection/twonoteretention verified;previewleft running.739tests/buildpass. Realcomplete/incompletecontrols recorded; watcher ignores output and .luminary; audit failure status truthful. Fullinterviewpendingfeatures remainpending; baselinecannotcomplete/savefullCORE. Localuncommittedrepair,nomerge/publicdeploy; report in currentvisualizations/NOTEKEEP_DONE_2026-11-04.md.
+
+
+## 2026-11-04 | Codex | Demo freeze at Architect STOP
+- Stopped editing/browser control. Backed up dirty patch externally and rolled latest interview visibility/prompt edits back to HEAD; retained prior verified NoteKeep audit/watcher and UI fixes. Active worktree .env Baseten25 changed75, Meta50 retained. No source commit/push.
+- Built frozen frontend; static hiddenworktree path500 and junctiongeneratedbuild mismatch were caught, not countedpass. Final physical G:/AEGIS_DEVELOPMENT_REPOS/vibe-demo-runtime-20261104 serves frozen dist with no Vite/HMR; node PID27208 no tsxwatch. Original source imports unchanged while recording; dedicated review/spend copies retainlineage.
+- One Baseten simpleideas generation cf2a3d60 digest a5a365a3a851cb4407b25a645dd2b07c67756999559236448b8f6c6ec5457dd8 passed independentaudit/test/build/launch. Samebundle restored and reaudited in finalruntime withoutwriterretry, launch54720HTTP200; fresh3012HTTP200 before/after. Finalstatus2.50150025/75,65calls. Terminal-only smoke, no mouse/browsercontrol; interaction not browserverified. Testpreviewstopped tofree generation slot. Hands off untilArchitectdone recording.
+
+
+## 2026-11-04 | Codex | Recording paused: reply reasoning budget repaired
+- Architect confirmed recording paused and authorized exact PokeVault investigation/repair. Recorded three Baseten empty completions each consumed8000tokens; request omitted reasoning_effort. Official Meta documentation says defaultxhigh and reasoning shares outputlimit. Added typed low/medium/high/xhigh env validation and explicitrequest serialization; liveBaseten defaults low, active/source .env explicitlow, ceiling75 unchanged. No modelidentity/audit/gauge gate bypass.
+- ExactPokeVault purpose required login/frontphoto/filter/CSV beyondfixedtext/memoryprofile. Added shared client/backend patterns for those explicitrequests and regression; exactrecordedcontext now409withspecificcapabilities and0providercalls. Preserved acceptedplan, no automatic substitute. Planningprompt now forbids unrequested unsupporteddefaults while retainingexplicitrequirements;12focusedplanningtests pass.
+- Fullsuite742pass(291gateway451app) aftertransport/preflight; finalplanningprompt addedtest12/12pass; finalproductionbuildpass(existingchunkadvisory). Redtests observed beforeimplementation;scopeddiffcheckpass.
+- Activated built frozen dist+dist-server in physicaldemo runtime, compilednodePID48244, noVite/HMR/tsxwatch. FullAPIplanningfirstreplycomplete; secondreply heldRespect26.73<threshold29.3 thenIDSfailedmissing/emptyresponse. This remains an independent governance shortfall; no calibrationchange or retrysuccess relabel.
+- Separate supportedideas context returned complete957token definition, governed delivery then independentQwen3.5:4baudit/test/buildpass, generated389fad38-0307-4c18-a37b-fb181e1c62b0,digest32ca9605e284bd8ded8bc340502a40ba0176ebb8026b7ea11b8e035f461c5b85,launch51589HTTP200,IDE200. Testpreviewstoppedafterverificationtofreegeneration. CUA IABattempt deniedbyWorksettings; no browserinteractionverified. PokeVaultfulldelivery/fullinterviewreliability remainunverified. No commit/push; stopchangesafterreport.
+
+## 2026-11-04 | Codex | Post-demo recovery live
+- Architect resumedwork. InterviewCancel/Restart/previousrestore andCORE-scopedsessionrecovery added; errors/busy visibleoutsideconversation, productionCancelwait/elapsed/truthfulunknownstatus and terminal-onlyautoscroll.750regressions+final2renderchecks/buildpass. Frozen3012PID11448; userIdeaList5dc22ac8 originaldigest814af06d restoredwithindependentauditpass/0newprovidercalls,notautolaunched. Source/codeuncommitted; lanehasfullverification. EarlierIRG/IDSfailure remainsopen.
+
+## 2026-11-05 | Lumin/Codex | Recovered current UI preservation authorized
+- Architect explicitly authorized committing/pushing the recovered Q4 working tree. Preserved header ToDo placement, split Build/Preview, interview restart/restore/tab continuity, generation recovery/status, capability preflight, reasoning-effort transport and watcher exclusion with supporting tests. Generated governance conversations remain outside candidate; speech-bubble milestone remains separate.
+- Fresh validation:291gateway+460app=751passed,0failed,0skipped; productionbuildPASS existingchunkwarning. No runtime switch/restart/merge; source preservation only.

@@ -40,15 +40,15 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="fixed top-0 left-0 right-0 z-50 h-16 panel-glass-header px-4 flex items-center justify-between">
       {/* Branding & Logo */}
       <div className="flex items-center space-x-3">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-600/30 border border-cyan-400/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.4)]">
+        <div className="hidden sm:flex w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-purple-600/30 border border-cyan-400/50 items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.4)]">
           <Box className="w-5 h-5 text-cyan-300 animate-pulse" />
         </div>
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="font-orbitron text-sm sm:text-base font-bold tracking-wider text-slate-100 glow-cyan">
+            <h1 className="font-orbitron text-xs sm:text-base font-bold tracking-wider text-slate-100 glow-cyan">
               VIBE ARCHITECT
             </h1>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300">
+            <span className="hidden xl:inline text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300">
               Developer IDE v1.0
             </span>
           </div>
@@ -57,6 +57,8 @@ export const Header: React.FC<HeaderProps> = ({
           </p>
         </div>
       </div>
+
+      <div id="header-build-todo" className="flex min-w-0 flex-1 justify-center px-2" />
 
       {/* Configured CORE resources and settings */}
       <div className="flex items-center space-x-4">

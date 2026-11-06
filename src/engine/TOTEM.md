@@ -110,3 +110,25 @@
 
 ## 2026-11-04 | Lumin | Audit retry source facts
 - Assembly auditor receives explicit generated-source facts about ModelProvider useState/setModels and Records useModel/records.map; must ground any static-list claim in bundle. Fail-closed checks remain.
+
+## 2026-11-04 | Codex | Production status preserves failure and uncertainty
+- productionStatus distinguishes independent audit holds, failedgeneration, pendingrecovery, busygeneration/audit and runningreceipt. Regression covers each terminal/uncertain outcome. LiveauditedNoteKeep preview generated/launched and blank/twonotesbehavior verified; baselinefullscope guards remain.739tests/buildpass; localuncommitted.
+
+
+## 2026-11-04 | Codex | Stale preview URL and terminal event regression
+- clearLegacyPreviewResume removesonlyoldpreviewRequest/previewBaselineparams preservingotherquery/hash. hasNewTerminalRequest requirescounterincrease, preventsnewCOREmountreplayingpreviousTerminalclick. FocusedproductionClientState6tests pass; liveNoteVaultworkspaceverifiedwithoutunexpecteddialog.
+
+
+## 2026-11-04 | Codex | NoteVault supported-profile admission
+- productionContext and gateway validateProductionContext reject explicitly detected unsupported NoteVault purpose before provider call; exact multi-user/cloud/Markdown/checklist/folders+tags/attachments regression passes. Full740tests/buildpass. Plan retained; full NoteVault remains unimplemented, no deliverable claim.
+
+
+## 2026-11-04 | Codex | Supported-scope planning and PokeVault admission
+- ExactPokeVault login/photo/filter/CSV purpose fails shared client/backend preflight beforeprovider,0livecallsverified. Planningdefaults nowdescribe currenttext/form/inmemory profile and preserve explicitunsupportedrequirements ratherthanshrinkingthem.12focusedplanningtests/buildpass. Lowreasoning simpleideas passesrealindependent audit/launch; fullplanning stillencounteredIRG/IDSshortfall. No fullPokeVaultdeliveryclaim.
+
+
+## 2026-11-04 | Codex | Tab-scoped interview continuity
+- creationSession validatesboundedtab-localpayload, preservesconversationwhenoldproposalinvalid, marksrestoredpendingstoppedwithoutreplay, isolatesCOREkeys andarchivesbeforeRestart. Storageblocked/quota failures cannotcrashorauthorizeclearing. Productionstatus distinguishescanceledwait/unknownoutcome andgenerated-reviewnextstep.750regressions+final2renderchecks/buildpass; no change toauditapprovalrules.
+
+## 2026-11-05 | Lumin/Codex | Recovered engine changes included in preservation
+- Include previouslyuntracked creationSession module and session/view regressions with purpose-capability checks and truthfulproductionrecovery state. Fresh291gateway/460app tests allPASS0skip; productionbuildPASS. No governance gate relaxation, provider calls or runtimeactivation this publication.

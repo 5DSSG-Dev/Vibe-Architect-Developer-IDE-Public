@@ -36,6 +36,9 @@ test('secondary audit transport sends the complete bundle as untrusted data and 
  const audit=await createLocalAssemblyAuditor('http://localhost:11434/v1','secondary-local',transport)(bundle);
  assert.equal(audit.decision,'pass');assert.equal(audit.evidence?.promptTokens,12000);assert.equal(audit.evidence?.inputBytes,Buffer.byteLength(posted.messages[1].content));assert.equal(posted.format.type,'object');assert.ok(posted.messages[0].content.includes('UNTRUSTED'));assert.ok(posted.messages[1].content.includes('COMPLETE_BUNDLE_END'));assert.equal(JSON.parse(posted.messages[1].content).files['src/main.jsx'],bundle.files['src/main.jsx']);assert.equal(JSON.parse(posted.messages[1].content).executionEvidence.tests,'host4tests passed');assert.ok(JSON.parse(posted.messages[1].content).fileInventory.some((row:any)=>row.path==='test/application.test.mjs'));assert.ok(JSON.parse(posted.messages[1].content).executableTestSources['test/application.test.mjs']);
  assert.throws(()=>createLocalAssemblyAuditor('https://remote.invalid/v1','secondary-local'),/loopback/);
+ assert.match(posted.messages[0].content,/Exclusions are satisfied by absence/);
+ assert.match(posted.messages[0].content,/Do not invent/);
+ assert.doesNotMatch(posted.messages[0].content,/screenshot|Treat this as an interactive list/);
  const stale=(async()=>new Response(JSON.stringify({model:'secondary-local',done:true,message:{content:JSON.stringify({...pass(bundle),artifactHash:'0'.repeat(64)})}}))) as typeof fetch;
  await assert.rejects(createLocalAssemblyAuditor('http://localhost:11434/v1','secondary-local',stale)(bundle),/exact bundle/);
 });

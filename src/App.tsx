@@ -772,7 +772,7 @@ export function App() {
       {/* Luminary presence: app level, so it survives every mode and drill-down. */}
       {coreManifest.appCreation !== 'draft' && <LuminaryBubble />}
       {coreManifest.appCreation === 'draft' && <button type="button" aria-label="Luminary — Click to talk" onClick={() => { const input=document.querySelector<HTMLTextAreaElement>('#app-idea'); input?.focus(); input?.scrollIntoView({block:'nearest'}); }} className="fixed bottom-5 right-5 z-50 rounded-xl border border-amber-400/50 bg-slate-950 px-4 py-3 text-left text-amber-100 shadow-lg focus-visible:ring-2 focus-visible:ring-amber-300"><span className="block text-sm font-bold">Luminary</span><span className="block text-xs">Click to talk</span></button>}
-      {coreManifest.appCreation === 'draft' && <AppCreationConversation catalog={apothecaryCatalog} onAccept={async (proposal, decisions) => {
+      {coreManifest.appCreation === 'draft' && <AppCreationConversation key={coreManifest.coreId} coreId={coreManifest.coreId} catalog={apothecaryCatalog} onAccept={async (proposal, decisions) => {
         const built = connectAppProposal(proposal, coreManifest, apothecaryCatalog, decisions);
         try {
           for (const contract of built.manifest.contracts) await appendRelationContractEvidence(contract);

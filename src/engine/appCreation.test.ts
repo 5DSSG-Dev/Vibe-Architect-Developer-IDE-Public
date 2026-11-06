@@ -95,3 +95,11 @@ test('accepted architecture carries pending construction and agreed context into
   assert.equal(blank.appBuildPlan, undefined);
  } finally { for(const c of built.manifest.contracts)closeConnectionByAgreement(c.contractId,c,'test cleanup'); }
 });
+
+
+test('planning defaults stay within executable capabilities without discarding explicit requirements',()=>{
+ const prompt=creationPrompt([],catalog);
+ assert.match(prompt,/Do not recommend unsupported features as defaults/);
+ assert.match(prompt,/explicitly requests an unsupported feature, preserve it/);
+ assert.match(prompt,/in-memory records/);
+});

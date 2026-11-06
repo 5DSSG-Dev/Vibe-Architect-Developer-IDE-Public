@@ -1,27 +1,34 @@
 ﻿import { nextAppSuggestions } from '../engine/appSuggestions';
 import { buildCreationLedger, selectCreationTurns, interviewRequirements } from '../engine/creationLedger';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowRight, Send, Square, Sparkles } from 'lucide-react';
+import { ArrowRight, Send, Sparkles } from 'lucide-react';
 import { creationPrompt, parseCreationAnswer, type AppProposal, type CreationAnswer } from '../engine/appCreation';
 import type { ApothecaryItem } from '../engine/relationEngine';
 import { luminaryApi, readDemoKey, saveDemoKey } from '../luminary/client';
 import { setAppCreationActive } from '../luminary/appCreationPresence';
 
-type Turn = { role: string; text: string; proposal?: AppProposal | null; suggestions?: string[]; state?: 'pending' | 'sent' | 'failed' | 'stopped' };
+import { emptyCreationSession, creationSessionKey, readCreationSession, saveCreationSession, archiveCreationSession, type CreationTurn as Turn, type CreationSession } from '../engine/creationSession';
 const GREETING = 'Welcome, Architect. I’m Luminary, your building companion. Tell me about the app you’d like to create: what should it help people do, and who will use it?';
-export function AppCreationConversation({ catalog, onAccept }: { catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal, decisions: string) => Promise<void> }) {
-  const [turns, setTurns] = useState<Turn[]>([]);
-  const [answer, setAnswer] = useState<CreationAnswer | null>(null);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [usedSuggestions, setUsedSuggestions] = useState<string[]>([]);
+export function AppCreationConversation({ coreId, catalog, onAccept }: { coreId: string; catalog: ApothecaryItem[]; onAccept: (proposal: AppProposal, decisions: string) => Promise<void> }) {
+  const sessionKey=creationSessionKey(coreId);
+  const [storage]=useState(()=>{try{return typeof sessionStorage==='undefined'?undefined:sessionStorage;}catch{return undefined;}});
+  const [initial]=useState(()=>readCreationSession(storage,sessionKey,catalog));
+  const [restartRequested,setRestartRequested]=useState(false);
+  const [hasPrevious,setHasPrevious]=useState(()=>readCreationSession(storage,sessionKey+':previous',catalog).turns.length>0);
+  const [storageWarning,setStorageWarning]=useState('');
+  const [elapsed,setElapsed]=useState(0);
+  const [turns, setTurns] = useState<Turn[]>(initial.turns);
+  const [answer, setAnswer] = useState<CreationAnswer | null>(initial.answer);
+  const [suggestions, setSuggestions] = useState<string[]>(initial.suggestions);
+  const [usedSuggestions, setUsedSuggestions] = useState<string[]>(initial.usedSuggestions);
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
-  const [selectedDecisions, setSelectedDecisions] = useState<Record<string, string>>({});
-  const [draft, setDraft] = useState('');
+  const [selectedDecisions, setSelectedDecisions] = useState<Record<string, string>>(initial.selectedDecisions);
+  const [draft, setDraft] = useState(initial.draft);
   const [key, setKey] = useState(readDemoKey);
   const [localReady, setLocalReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [applying, setApplying] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(initial.turns.some(t=>t.state==='stopped'||t.state==='failed')?'A previous request did not finish. Your conversation is restored; no request was repeated.':'');
   const request = useRef<AbortController | null>(null);
   const accepting = useRef(false);
   const latest = useRef<HTMLDivElement>(null);
@@ -43,6 +50,24 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
       container.scrollTop = Math.max(0, reply.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 20);
     }
   }, [turns]);
+  const snapshot=():CreationSession=>({version:1,turns,answer,draft,suggestions,usedSuggestions,selectedDecisions});
+  useEffect(()=>{if(!saveCreationSession(storage,sessionKey,snapshot()))setStorageWarning('This browser could not save the interview. Copy the conversation before refreshing.');},[turns,answer,draft,suggestions,usedSuggestions,selectedDecisions,sessionKey]);
+  useEffect(()=>{if(!busy){setElapsed(0);return;}const start=Date.now();const timer=window.setInterval(()=>setElapsed(Math.floor((Date.now()-start)/1000)),1000);return()=>window.clearInterval(timer);},[busy]);
+  function cancelWait() {
+    const controller=request.current;if(!controller)return;
+    controller.abort();request.current=null;setBusy(false);setSelectedSuggestion(null);
+    const pending=turns.filter(t=>t.state==='pending').slice(-1)[0];
+    setTurns(current=>current.map(t=>t.state==='pending'?{...t,state:'stopped'}:t));
+    if(pending)setDraft(current=>current||pending.text);
+    setError('Canceled waiting. Your message is kept here. The gateway may still finish a request that was already sent.');
+  }
+  function applySession(value:CreationSession) {
+    setTurns(value.turns);setAnswer(value.answer);setDraft(value.draft);setSuggestions(value.suggestions);setUsedSuggestions(value.usedSuggestions);setSelectedDecisions(value.selectedDecisions);setError('');setSelectedSuggestion(null);setRestartRequested(false);
+  }
+  function restartInterview() {
+    if(!archiveCreationSession(storage,sessionKey,snapshot())){setError('Could not keep a copy of this interview. Copy the conversation before restarting.');return;}
+    request.current?.abort();request.current=null;setBusy(false);setHasPrevious(true);applySession(emptyCreationSession());
+  }
   async function copyConversation(button: HTMLButtonElement) {
     const latestAssistant = turns.map(turn => turn.role).lastIndexOf('luminary');
     const content = [GREETING, ...turns.map((t, index) => { const proposal = t.proposal ?? (index === latestAssistant ? answer?.proposal : null); return `${t.role === 'architect' ? 'Architect' : 'Luminary'}\n${t.text}${t.suggestions?.length ? '\n\nSuggestions\n' + t.suggestions.join('\n') : ''}${proposal ? '\n\nStarting architecture\n' + JSON.stringify(proposal, null, 2) : ''}`; })].join('\n\n');
@@ -154,15 +179,26 @@ export function AppCreationConversation({ catalog, onAccept }: { catalog: Apothe
         <button type="button" disabled={busy || applying || answer.questions.length > 0} onClick={() => void accept()} className="btn-cyber px-4 py-2 rounded-xl text-sm disabled:opacity-50 flex gap-2 items-center"><Sparkles size={16} />{applying ? 'Connecting Elements…' : 'Accept starting architecture'}<ArrowRight size={16}/></button>
         <p className="text-xs text-slate-400">Want changes? Describe them below before accepting. {answer.questions.length > 0 && 'Answer the open design questions before acceptance, or explicitly agree to defer them.'}</p>
       </div>}
-      {busy && <p role="status" className="text-sm text-amber-200">Luminary is considering your app…</p>}
-      {error && <p role="alert" className="text-sm text-rose-200 border border-rose-400/40 rounded-xl p-3">{error}</p>}
 
+
+    </div>
+    <div className="shrink-0 border-t border-amber-300/20 px-4 py-3 space-y-2">
+      {busy && <p role="status" className="text-sm text-amber-200">Waiting for Luminary’s reply… {elapsed}s</p>}
+      {error && <div role="alert" className="max-h-28 overflow-y-auto rounded-xl border border-rose-400/50 bg-rose-950/40 p-3 text-sm text-rose-100"><p className="font-semibold">{busy?'Request status':'Interview stopped'}</p><p>{error}</p></div>}
+      {storageWarning && <p role="status" className="text-xs text-amber-200">{storageWarning}</p>}
+      <div className="flex flex-wrap gap-3 text-sm">
+        <button type="button" disabled={!busy||applying} onClick={cancelWait} className="rounded-lg border border-amber-300/40 px-3 py-2 disabled:opacity-40">Cancel</button>
+        {!busy && ['failed','stopped'].includes(turns[turns.length-1]?.state??'') && <button type="button" disabled={applying} onClick={()=>void sendText(turns[turns.length-1].text,false)} className="rounded-lg border border-amber-300/40 px-3 py-2 disabled:opacity-40">Try again</button>}
+        <button type="button" disabled={applying} onClick={()=>setRestartRequested(true)} className="rounded-lg border border-amber-300/40 px-3 py-2 disabled:opacity-40">Restart</button>
+        {hasPrevious && !turns.length && !busy && <button type="button" onClick={()=>applySession(readCreationSession(storage,sessionKey+':previous',catalog))} className="underline">Restore previous interview</button>}
+      </div>
+      {restartRequested && <div role="group" aria-label="Confirm interview restart" className="text-sm"><p>Start a new interview? This conversation will stay recoverable in this tab.</p><button type="button" disabled={applying} onClick={restartInterview} className="mt-2 mr-4 underline">Restart interview</button><button type="button" onClick={()=>setRestartRequested(false)} className="underline">Keep interview</button></div>}
     </div>
     <form onSubmit={send} className="p-3 border-t border-amber-300/20 space-y-2 shrink-0 max-h-[45%] overflow-y-auto">
       {localReady ? <p className="text-xs text-emerald-300">Connected through your local gateway</p> : <details><summary className="text-xs text-slate-400 cursor-pointer">Luminary connection settings</summary><label className="block text-xs text-slate-300">IDE demo key<input type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" className="block w-full mt-1 bg-slate-900 rounded-lg border border-slate-700 p-2" /></label></details>}
       <label className="sr-only" htmlFor="app-idea">Describe your app or answer Luminary</label>
       <textarea id="app-idea" autoFocus value={draft} onChange={e => setDraft(e.target.value)} maxLength={4000} rows={2} placeholder="I’d like to build an app that…" disabled={applying} className="w-full bg-slate-900 border border-slate-700 focus:border-amber-300 focus:outline-none rounded-xl p-3 text-sm resize-none"/>
-      <div className="flex items-center justify-between gap-3"><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button>{busy ? <button type="button" onClick={() => { request.current?.abort(); }} className="text-sm text-amber-200 flex gap-1 items-center"><Square size={14}/>Stop</button> : <button disabled={!draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button>}</div>
+      <div className="flex items-center justify-between gap-3"><button type="button" onClick={e => void copyConversation(e.currentTarget)} className="rounded-lg border border-amber-300/30 px-3 py-1.5 text-xs text-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">Copy conversation</button><button disabled={busy || !draft.trim() || applying} className="btn-cyber rounded-xl px-4 py-2 text-sm disabled:opacity-40 flex gap-2 items-center"><Send size={14}/>Send</button></div>
       <div>
         <label htmlFor="app-suggestions" className="sr-only">Choose a suggested addition to send to Luminary</label>
         <select id="app-suggestions" value="" disabled={busy || applying || suggestions.length === 0} onChange={event => {

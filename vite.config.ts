@@ -12,6 +12,8 @@ if (gatewayUrl) {
 export default defineConfig({
   plugins: [react()],
   server: {
+    // Generated app source/build HTML must not reload the IDE during generation.
+    watch: { ignored: ['**/output/**', '**/.luminary/**'] },
     ...(gatewayUrl ? { proxy: { '/api/luminary': { target: gatewayUrl, changeOrigin: true } } } : {}),
     port: 3002,
     host: true,

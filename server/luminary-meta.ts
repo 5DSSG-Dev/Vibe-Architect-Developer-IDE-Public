@@ -186,6 +186,8 @@ export interface MetaAskModelOptions {
   /** The Luminary's operating instructions, sent as the system message. */
   systemPrompt?: string;
   maxOutputTokens?: number;
+  /** Muse Spark reasoning shares max_tokens with visible output. */
+  reasoningEffort?: 'low' | 'medium' | 'high' | 'xhigh';
   timeoutMs?: number;
   ledger: SpendLedger;
   /** Who serves the model, named in errors. Defaults to "Meta model". */
@@ -257,6 +259,7 @@ export function createMetaAskModel(options: MetaAskModelOptions): AskModel {
           method: 'POST',
           headers: { 'content-type': 'application/json', authorization: `Bearer ${options.apiKey}` },
           body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens,
+            ...(options.reasoningEffort ? { reasoning_effort: options.reasoningEffort } : {}),
             ...(options.responseFormat ? { response_format: options.responseFormat, temperature: 0 } : {}) }),
           signal: control?.signal ? AbortSignal.any([control.signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs),
         });
@@ -367,8 +370,11 @@ export function parseLiveSourceEnv(source: LiveSource, env: NodeJS.ProcessEnv): 
     if (!Number.isInteger(value) || value <= 0) throw new Error(`${name} must be a positive integer`);
     return value;
   };
+  const reasoningEffort = env[`${prefix}_REASONING_EFFORT`]?.trim() || (source === 'baseten' ? 'low' : undefined);
+  if (reasoningEffort && !['low','medium','high','xhigh'].includes(reasoningEffort)) throw new Error(`${prefix}_REASONING_EFFORT must be low, medium, high or xhigh`);
   return {
     apiKey,
+    ...(reasoningEffort ? {reasoningEffort: reasoningEffort as MetaAskModelOptions['reasoningEffort']} : {}),
     model: env[`${prefix}_MODEL`]?.trim() || model,
     baseUrl: env[`${prefix}_BASE_URL`]?.trim() || baseUrl,
     maxOutputTokens: positiveInteger(`${prefix}_MAX_OUTPUT_TOKENS`, DEFAULT_META_LIVE_MAX_OUTPUT_TOKENS),

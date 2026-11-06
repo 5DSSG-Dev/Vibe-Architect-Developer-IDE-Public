@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { journeyItems, reopenBuildItem, verifyBuildItem, type AppBuildPlan } from '../engine/appBuildPlan';
 
 interface Props {
@@ -20,6 +21,8 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
   const [evidence, setEvidence] = useState('');
   const [error, setError] = useState('');
   const listTrigger = useRef<HTMLButtonElement>(null);
+  const [triggerHost, setTriggerHost] = useState<HTMLElement | null>(null);
+  useEffect(() => { setTriggerHost(document.getElementById('header-build-todo')); }, []);
   const reviewField = useRef<HTMLTextAreaElement>(null);
   const previousReviewTrigger = useRef<HTMLElement | null>(null);
   useEffect(() => {
@@ -47,12 +50,12 @@ export function AppBuildJourney({ coreId, plan, onChange, onSelect, onApothecary
     onApothecary();
   };
   return <>
-    <aside aria-label="App build ToDo list" className={`build-todo-dock ${isApothecaryOpen?'with-apothecary':''} fixed z-50 right-3 top-24 bottom-[calc(var(--workspace-footer-clearance,12rem)+4rem)] w-[min(21rem,calc(100vw-1.5rem))] min-w-0 flex flex-col items-end text-slate-100 pointer-events-none [&>*]:pointer-events-auto`}>
-      <button ref={listTrigger} type="button" aria-expanded={open} aria-controls="app-build-todos"
+    {triggerHost && createPortal(<button ref={listTrigger} type="button" aria-expanded={open} aria-controls="app-build-todos"
         onClick={() => setOpen(!open)}
-        className="rounded-xl border border-amber-300/40 bg-slate-950/95 px-4 py-2 text-sm shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">
-        ToDo · {pending.length} remaining {open ? '−' : '+'}
-      </button>
+        className="shrink-0 whitespace-nowrap rounded-xl border border-amber-300/40 bg-slate-950/95 px-2 sm:px-4 py-2 text-xs sm:text-sm text-slate-100 shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-200">
+        ToDo · {pending.length}<span className="hidden sm:inline"> remaining</span> {open ? '−' : '+'}
+      </button>, triggerHost)}
+    <aside aria-label="App build ToDo list" className={`build-todo-dock ${isApothecaryOpen?'with-apothecary':''} fixed z-50 right-3 top-20 bottom-[calc(var(--workspace-footer-clearance,12rem)+4rem)] w-[min(21rem,calc(100vw-1.5rem))] min-w-0 flex flex-col items-end text-slate-100 pointer-events-none [&>*]:pointer-events-auto`}>
       {open && <section id="app-build-todos" className="mt-2 min-h-0 flex-1 w-full min-w-0 overflow-x-hidden overflow-y-auto overscroll-contain break-words [overflow-wrap:anywhere] rounded-2xl border border-amber-300/30 bg-slate-950/95 p-4 space-y-3 shadow-xl">
         <h2 className="font-semibold text-amber-200">{plan.proposal.name} · build journey</h2>
         <p className="text-xs text-slate-300">Architecture accepted. Select an open item to flag Luminary with your agreed design. Completed items retain Architect or verified-build evidence. Opening a task never completes it.</p>

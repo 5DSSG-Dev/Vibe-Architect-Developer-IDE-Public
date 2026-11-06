@@ -227,3 +227,16 @@ test('an empty length-limited provider response resumes internally without retur
     assert.ok(JSON.stringify(meta.calls[1].body).includes('complete specification'));
   }
 });
+
+
+test('live Muse Spark requests bound reasoning effort instead of inheriting xhigh',async()=>{
+ const live=parseLiveSourceEnv('baseten',{LUMINARY_BASETEN_API_KEY:'test',LUMINARY_BASETEN_CEILING_USD:'75',LUMINARY_BASETEN_LEDGER_PATH:ledgerPath()});
+ const meta=fakeMeta(()=>ok('Complete definition'));
+ const ask=createMetaAskModel({...live,fetch:meta.fetch});
+ await ask('Build the compact definition');
+ assert.equal(meta.calls[0].body.reasoning_effort,'low');
+ assert.equal(meta.calls[0].body.max_tokens,8000);
+ const configured=parseLiveSourceEnv('baseten',{LUMINARY_BASETEN_API_KEY:'test',LUMINARY_BASETEN_CEILING_USD:'75',LUMINARY_BASETEN_REASONING_EFFORT:'medium',LUMINARY_BASETEN_LEDGER_PATH:ledgerPath()});
+ assert.equal(configured.reasoningEffort,'medium');
+ assert.throws(()=>parseLiveSourceEnv('baseten',{LUMINARY_BASETEN_API_KEY:'test',LUMINARY_BASETEN_CEILING_USD:'75',LUMINARY_BASETEN_REASONING_EFFORT:'none'}),/REASONING_EFFORT/);
+});

@@ -11,7 +11,7 @@ interface Receipt extends Omit<VerifiedBuildReceipt,'context'> {
  id:string;requestId:string;digest:string;contextHash:string;modelId:string;projectPath:string;
  answer:ProductionAnswer;files:Record<string,string>;state:string;output:string;previewUrl?:string;record?:TurnRecord;
 }
-import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction } from '../engine/productionClientState';
+import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction, productionStatus, clearLegacyPreviewResume, hasNewTerminalRequest } from '../engine/productionClientState';
 export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified,terminalRequest=0}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void;terminalRequest?:number}) {
  const pendingKey='vibe.production.request:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -19,6 +19,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
  const terminalEnd=useRef<HTMLDivElement>(null);
  const [outcomeUnknown,setOutcomeUnknown]=useState(false);
+ const [elapsed,setElapsed]=useState(0);
+ useEffect(()=>{if(!busy){setElapsed(0);return;}const started=Date.now();const timer=window.setInterval(()=>setElapsed(Math.floor((Date.now()-started)/1000)),1000);return()=>window.clearInterval(timer);},[busy]);
  const [receipt,setReceipt]=useState<Receipt|null>(null),[file,setFile]=useState('src/main.jsx');
  const [reviewedFor,setReviewedFor]=useState(''),[evidenceFor,setEvidenceFor]=useState(''),[key,setKey]=useState(readDemoKey);
  const [pendingId,setPendingId]=useState(()=>{try{return sessionStorage.getItem(pendingKey)??'';}catch{return '';}});
@@ -28,8 +30,19 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  const trigger=useRef<HTMLButtonElement>(null);
  const [triggerHost,setTriggerHost]=useState<HTMLElement|null>(null);
  useEffect(()=>{setTriggerHost(document.getElementById('footer-build-preview'));},[]);
- useEffect(()=>{if(terminalRequest>0)setOpen(true);},[terminalRequest]);
- useEffect(()=>{if(!open||terminalRequest===0)return;const timer=window.setTimeout(()=>document.getElementById('production-terminal-input')?.focus(),0);return()=>window.clearTimeout(timer);},[open,terminalRequest]);
+ useEffect(()=>{
+  const cleaned=clearLegacyPreviewResume(window.location.href);
+  if(cleaned!==window.location.href)window.history.replaceState(window.history.state,'',cleaned);
+ },[]);
+ const previousTerminalRequest=useRef(terminalRequest);
+ useEffect(()=>{
+  const fresh=hasNewTerminalRequest(previousTerminalRequest.current,terminalRequest);
+  previousTerminalRequest.current=terminalRequest;
+  if(!fresh)return;
+  setOpen(true);
+  const timer=window.setTimeout(()=>document.getElementById('production-terminal-input')?.focus(),0);
+  return()=>window.clearTimeout(timer);
+ },[terminalRequest]);
  const keepModalFocus=(event:React.KeyboardEvent<HTMLDialogElement>)=>{
   if(event.key!=='Tab')return;
   const root=event.currentTarget;
@@ -49,6 +62,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  let context:ReturnType<typeof productionContext>|undefined,problem='';
  try {context=baselineMode?productionBaselineContext(core,catalog):productionContext(core,catalog);}catch(e){problem=(e as Error).message;}
  const contextText=JSON.stringify(context ?? null);
+ const canOfferNoteBaseline=core.appBuildPlan?.items.some(item=>item.text.trim()==='My answer: Personal single-user, no login') && core.appBuildPlan.items.some(item=>item.text.trim()==='My answer: Text only for now');
  const live=useRef(contextText);live.current=contextText;
  const reviewed=Boolean(receipt && reviewedFor===receiptKey(receipt));
  const evidenceSaved=Boolean(receipt && evidenceFor===receiptKey(receipt));
@@ -184,6 +198,12 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
    }
   } finally {if(request.current===controller){request.current=null;setBusy(false);}}
  }
+ function cancelWait() {
+  const controller=request.current;if(!controller)return;
+  controller.abort();request.current=null;epoch.current++;setBusy(false);
+  if(receipt)setOutcomeUnknown(true);
+  setError('Canceled waiting. The gateway may still finish this request. Use Recover last request or Refresh status to check it; no new generation was sent.');
+ }
  function runTerminal(raw:string) {
   const command=raw.trim().toLowerCase();
   setTerminalInput('');
@@ -204,26 +224,29 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
   }
   write('Unknown command. Type help for available commands.');
  }
- useEffect(()=>{if(open)terminalEnd.current?.scrollIntoView({block:'nearest'});},[terminalLines,receipt?.output,open]);
+ useEffect(()=>{const log=terminalEnd.current?.parentElement;if(open&&log)log.scrollTop=log.scrollHeight;},[terminalLines,receipt?.output,open]);
  const preview=receipt?.previewUrl && /^http:\/\/127\.0\.0\.1:\d+\/[0-9a-f-]{36}\/$/.test(receipt.previewUrl) ? receipt.previewUrl : undefined;
  const button='rounded-lg border border-cyan-400/40 px-3 py-2 text-sm disabled:opacity-40 hover:bg-cyan-500/10';
  return <>
   {triggerHost && createPortal(<button ref={trigger} type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)} className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border font-orbitron text-[10px] font-bold tracking-wider uppercase transition-colors bg-slate-900/80 border-cyan-500/30 text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200"><Play className="w-4 h-4 text-cyan-300" /><span>Build &amp; Preview</span></button>,triggerHost)}
-  <dialog ref={dialog} tabIndex={-1} onKeyDown={keepModalFocus} aria-labelledby="application-production-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);trigger.current?.focus();}} className="m-auto w-[min(95vw,80rem)] max-h-[90dvh] overflow-y-auto rounded-2xl border border-cyan-400/40 bg-slate-950 p-5 text-slate-100 backdrop:bg-black/70">
+  <dialog ref={dialog} tabIndex={-1} onKeyDown={keepModalFocus} aria-labelledby="application-production-title" onCancel={()=>setOpen(false)} onClose={()=>{setOpen(false);trigger.current?.focus();}} className={'m-auto max-h-[90dvh] overflow-y-auto rounded-2xl border border-cyan-400/40 bg-slate-950 p-5 text-slate-100 backdrop:bg-black/70 '+(preview?'h-[90dvh] w-[min(95vw,100rem)] lg:overflow-hidden':'w-[min(95vw,80rem)]')}>
    <div className="flex items-center justify-between gap-4"><h2 id="application-production-title" className="text-xl">Build &amp; Preview — {core.name}</h2><button type="button" className={button} onClick={()=>setOpen(false)}>Close panel</button></div>
+   <div className={preview?'mt-4 grid gap-5 lg:h-[calc(90dvh-7rem)] lg:min-h-0 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]':''}>
+   <div className={preview?'min-w-0 lg:h-full lg:overflow-y-auto lg:pr-3':''}>
    <p className="my-3 text-sm text-slate-300">Generate from your accepted architecture, review the files, then launch. This first profile supports text, forms, in-memory records, pages and navigation. Reloading clears app data. Existing Element code frames are not compiled.</p>
    <details className="my-3"><summary>Gateway connection</summary><label className="block text-sm">Local demo key, if needed<input type="password" value={key} onChange={e=>setKey(e.target.value)} className="ml-3 rounded bg-slate-800 p-2" autoComplete="off" /></label></details>
    {problem && <p className="my-3 text-amber-200">{problem}</p>}
-   {!baselineMode && problem && <button type="button" className={button} onClick={()=>{setBaselineMode(true);setError('');}}>Generate supported text-and-list baseline</button>}
+   {!baselineMode && problem && canOfferNoteBaseline && <button type="button" className={button} onClick={()=>{setBaselineMode(true);setError('');}}>Generate supported text-and-list baseline</button>}
    {baselineMode && <p className="my-3 text-amber-200">Preview baseline only: plain-text notes and an in-memory list. Folders, tags, rich text, search, pinning and archiving remain pending in the accepted interview; this preview does not complete those ToDos or replace the full CORE program. <button type="button" className="underline" onClick={()=>setBaselineMode(false)}>Return to full scope</button></p>}
    <div className="flex flex-wrap items-center gap-3">
     <button type="button" className={button} disabled={busy||!context||!replaceable||Boolean(pendingId)} onClick={()=>void act('generate')}>{busy?'Working…':'Generate application'}</button>
+    {busy && request.current && <button type="button" className={button} onClick={cancelWait}>Cancel wait</button>}
     {pendingId && <button type="button" className={button} disabled={busy} onClick={()=>void act('recover')}>Recover last request</button>}
     {receipt&&!evidenceSaved && <button type="button" className={button} disabled={busy} onClick={()=>void act('evidence')}>Save generation evidence</button>}
     <button type="button" className={button} disabled={busy||stale||!reviewed||!evidenceSaved||Boolean(preview)||outcomeUnknown||receipt?.state==='building'} onClick={()=>void act('launch')}>Launch reviewed application</button>
     <button type="button" className={button} disabled={busy||!preview} onClick={()=>void act('stop')}>Stop application</button>
     {(receipt || core.applicationProduction) && <button type="button" className={button} disabled={busy} onClick={()=>void act('status')}>{receipt?'Refresh status':'Restore previous generation'}</button>}
-    <span role="status" className="text-sm">{busy?'Waiting for the gateway…':receipt?.state ?? 'Architecture ready for generation'}</span>
+    <span role="status" className="text-sm">{problem?'Generation unavailable — see details above':productionStatus(busy,receipt?.state,error,pendingId,outcomeUnknown)}{busy?` · ${elapsed}s`:''}</span>
    </div>
    {error && <p role="alert" className="my-3 whitespace-pre-wrap text-rose-200">{error}</p>}
    <section aria-label="CORE application" className="my-4 rounded-xl border border-cyan-400/30 p-3">
@@ -257,7 +280,9 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
      </form>
      <p className="mt-2 text-xs text-slate-400">Commands operate only on this generated app. Start runs its tests and build before opening Preview.</p>
     </section>
-    {preview && <section className="mt-4"><h3 className="mb-2">Application Preview</h3><iframe title={core.name+' application preview'} src={preview} sandbox="allow-scripts allow-forms" referrerPolicy="no-referrer" className="h-[55vh] w-full rounded bg-white" /><p className="mt-2 text-xs text-slate-400">Closing this panel keeps the app running. Stop application closes its local preview.</p></section>}
+   </div>
+    {preview && <section aria-label="Application Preview" className="flex min-h-0 min-w-0 flex-col rounded-xl border border-cyan-400/30 bg-slate-900/40 p-3 lg:h-full"><h3 className="mb-2 shrink-0">Application Preview</h3><iframe title={core.name+' application preview'} src={preview} sandbox="allow-scripts allow-forms" referrerPolicy="no-referrer" className="h-[60dvh] min-h-[20rem] w-full rounded bg-white lg:h-auto lg:min-h-0 lg:flex-1" /><p className="mt-2 shrink-0 text-xs text-slate-400">Closing this panel keeps the app running. Stop application closes its local preview.</p></section>}
+   </div>
   </dialog>
  </>;
 }

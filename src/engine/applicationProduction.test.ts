@@ -40,6 +40,9 @@ test('reads accepted CORE and actual attached hierarchy', () => {
   assert.deepEqual(productionContext(ready,[]).elements.map(e=>e.id),[core.coreId,'orb']);
   assert.throws(()=>productionContext({...ready,appConfiguration:{...ready.appConfiguration,appType:'Desktop App'}},[]),/Web App/);
   assert.throws(()=>productionContext({...ready,appConfiguration:{...ready.appConfiguration,purpose:'Notes with rich-text editing, search, pinning and archiving'}},[]),/rich-text editing, search, pinning, archiving/);
+  const vaultPurpose='Web App for private multi-user note-taking with cloud-synced database storing markdown notes with live preview, checklists, folders+tags organization, and image/file attachments; auth-gated private-only access.';
+  assert.throws(()=>productionContext({...ready,appConfiguration:{...ready.appConfiguration,purpose:vaultPurpose}},[]),/multi-user authentication/);
+  assert.throws(()=>validateProductionContext({...context,purpose:vaultPurpose}),/cloud sync and storage/);
   const full={...ready,appConfiguration:{...ready.appConfiguration,purpose:'Notes with rich-text editing, search, pinning and archiving'}};
   const withPlan={...full,appBuildPlan:{items:[{id:'R001-01',text:'I would like a note keeping web app'},{id:'R002-05',text:'My answer: Folders + Tags'},{id:'R002-07',text:'My answer: Rich text editor'}]} as NonNullable<typeof core.appBuildPlan>};
   const baseline=productionBaselineContext(withPlan,[]);
@@ -66,4 +69,10 @@ test('preserves code-frame changes as review context without executing source', 
  assert.equal(checked.elements[1].code,JSON.stringify(frame));
  const changed=validateProductionContext({...c,elements:c.elements.map(e=>e.id==='orb'?{...e,code:JSON.stringify({...frame,source:'changed'})}:e)});
  assert.notDeepEqual(checked,changed);
+});
+
+
+test('exact PokeVault purpose cannot enter an in-memory text-only generator',()=>{
+ const purpose='Mobile-friendly personal Web App to track Pokemon cards: stores standard details (name, set, number, rarity, quantity, purchase price) plus condition, language, foil/holo and manual current value entry only; optional single front photo per card; organize and filter by set and rarity; private single-user login with personal collection; CSV import and export; no automated pricing integration.';
+ assert.throws(()=>validateProductionContext({...context,purpose}),/login.*photo.*filter.*CSV/);
 });

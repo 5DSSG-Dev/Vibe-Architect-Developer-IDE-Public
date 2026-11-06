@@ -151,3 +151,29 @@
 
 ## 2026-11-04 | Lumin | Visible production holds
 - Build & Preview offers explicit text-and-list baseline and keeps pending scope visible. Failed assembly audit findings now surface in the gateway response instead of a generic reset. Baseline cannot auto-complete full interview ToDos or save as full CORE app. Full live acceptance remains blocked by independent audit.
+
+## 2026-11-04 | Codex | Explicit production outcome status
+- ApplicationProduction uses productionStatus for audit-held/otherfailed/pending/running states; failedgeneration no longer reports ready. ActualNoteKeep generation/source review/launch succeeded; baselinefullCOREsave/ToDocompletion protections retained. Final739tests/buildpassed; report NOTEKEEP_DONE_2026-11-04.md in currentvisualizations.
+
+
+## 2026-11-04 | Codex | Side-by-side application preview
+- BuildPreview desktopdialog widens to100rem and uses independentlyscrolling controlsleft/livepreviewright; belowlg stacks. Iframesandboxunchanged. ExplicitUUID resumequery restoresexistingrequestviaRecover without auto-generation/launch. ActualChromeNoteKeep sameauditedpreviewverifiedside-by-side; TypeScript/buildpass. Localuncommitted.
+
+
+## 2026-11-04 | Codex | Header ToDo slot
+- Header hosts the existingAppBuildJourney trigger through header-build-todo/Reactportal. ToDocount, expandedstate, taskselection and review behavior retained; draweropensbelowtopbar and floatingworkspacecontrolremoved. LiveChrome placementanddropdownverified; productionbuildpass. Localuncommitted.
+
+
+## 2026-11-04 | Codex | New CORE does not replay preview session
+- Supersedes previewresumequery support: ApplicationProduction startsclosed/fullscope and onlyusesCORE-scoped pendingrequests; oldURLpreviewparamsremovedwithoutreload. Terminalopensonlyonfreshcounterevent, notinheritednonzerocounteronnewCOREmount. NoteVaultnormalworkspace/cleanURL/noautomaticBuildPreviewverified;6focusedregressionspass.
+
+
+## 2026-11-04 | Codex | Unsupported accepted app is explicit
+- BuildPreview shows Generation unavailable when context admission fails and limits NoteKeep baseline offer to original single-user/text-only interview answers. Actual3012Chrome NoteVault capability message/disabled Generate verified. No smaller app substitution. Full740tests/buildpass; localuncommitted.
+
+
+## 2026-11-04 | Codex | Interview and build recovery controls
+- AppCreationConversation keyedbyCORE restores tab-localinterview; fixedfootercontains Cancel/Restart/Tryagain/status/error and archive-beforeclear/previousrestore. BuildPreviewCancelwait retainspendingrequest,elapsedstatus; terminalonlyscrollsownlog, generatedstatusstatesreviewthenlaunch.750regressions+2finalrenderchecks/buildpass; served3012staticassetsverified, browserclickthroughunverified.
+
+## 2026-11-05 | Lumin/Codex | Current UI source preservation
+- HeaderToDo portal, splitBuildPreview and interview recovery controls are now scoped for Architect-authorized Git preservation alongside their supporting state modules/tests. Fresh751tests/buildPASS; no source/UI redesign or runningdemo switch. Separate speech-bubble commit not silently substituted for this baseline.

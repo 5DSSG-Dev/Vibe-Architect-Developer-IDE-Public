@@ -6,17 +6,30 @@ export interface ProductionContext {
   elements: { id: string; name: string; category: string; parentId: string | null; description: string; code?: string }[];
 }
 export interface ProductionAnswer { definition: ApplicationDefinition; bindings: Record<string, string>; gaps: string[]; requirementBindings?: Record<string,string[]>; packageLock?: string }
+function assertSupportedPurpose(purpose:string):void {
+  const requested = purpose.toLowerCase();
+  const unsupported = [
+    [/rich[- ]text|formatted text|wysiwyg/, 'rich-text editing'],
+    [/\bsearch(?:able)?\b/, 'search'],
+    [/\bpin(?:ning)?\b/, 'pinning'],
+    [/\barchiv(?:e|ing)\b/, 'archiving'],
+    [/\bmulti[- ]user\b|\bauth[- ]gated\b/, 'multi-user authentication'],
+    [/\bcloud[- ]sync(?:ed|ing)?\b|\bcloud[- ](?:storage|database)\b/, 'cloud sync and storage'],
+    [/\bmarkdown (?:notes|editor|editing)\b/, 'Markdown editing and live preview'],
+    [/\bchecklists?\b/, 'interactive checklists'],
+    [/\bfolders?\s*\+\s*tags?\b/, 'folders and tags organization'],
+    [/\b(?:image\/file|file|image) attachments?\b/, 'file attachments'],
+    [/\b(?:single[- ]user|personal|private) login\b|\bprotected routes\b/, 'login and session authentication'],
+    [/\bfront photo\b|\bphoto uploads?\b|\bupload (?:photos|images)\b/, 'photo upload and storage'],
+    [/\bfilter by\b|\bwith filters\b/, 'interactive filters'],
+    [/\bcsv import\b|\bcsv export\b/, 'CSV import and export'],
+  ].filter(([pattern]) => (pattern as RegExp).test(requested)).map(([, name]) => name as string);
+  if (unsupported.length) throw Error('This accepted app asks for '+unsupported.join(', ')+', which the current executable profile cannot build. Your accepted plan is retained; these capabilities need implementation before this profile can deliver the app.');
+}
 export function productionContext(core: CoreManifest, catalog: ApothecaryItem[]): ProductionContext {
   if (core.appCreation === 'draft') throw Error('Accept the app architecture before generating its application.');
   if (core.appConfiguration?.appType !== 'Web App') throw Error('The first executable profile supports Web App projects.');
-  const requested = core.appConfiguration.purpose.toLowerCase();
-  const unsupported = [
-    [/rich[- ]text|formatted text|wysiwyg/, 'rich-text editing'],
-    [/\bsearch\b/, 'search'],
-    [/\bpin(?:ning)?\b/, 'pinning'],
-    [/\barchiv(?:e|ing)\b/, 'archiving'],
-  ].filter(([pattern]) => (pattern as RegExp).test(requested)).map(([, name]) => name as string);
-  if (unsupported.length) throw Error('This accepted app asks for '+unsupported.join(', ')+', which the current executable profile cannot build. Keep these as pending scope or choose a supported text, form, in-memory list and navigation baseline before generating.');
+  assertSupportedPurpose(core.appConfiguration.purpose);
   const elements: ProductionContext['elements'] = [{id:core.coreId,name:core.name,category:'CORE',parentId:null,description:core.appConfiguration.purpose}];
   const add = (item: ApothecaryItem, parentId: string) => {
     if (elements.some(e => e.id === item.id)) throw Error('An Element occurs more than once in this architecture.');
@@ -53,6 +66,7 @@ export function validateProductionContext(raw: unknown): ProductionContext {
   const c = raw as ProductionContext;
   const text = (v: unknown, max: number) => typeof v === 'string' && v.length <= max;
   if (!c || c.version !== 1 || !text(c.coreId,160) || !c.coreId || !text(c.name,80) || !c.name.trim() || !text(c.purpose,2000) || !text(c.decisions,48000) || !Array.isArray(c.elements) || c.elements.length < 2 || c.elements.length > 33) throw Error('Invalid production context.');
+  assertSupportedPurpose(c.purpose);
   if (!c.elements.every(e => e && text(e.id,160) && e.id && text(e.name,160) && text(e.description,2000) && (e.code === undefined || text(e.code,12000)) && ['CORE','Orbs','Satellites','Actuators'].includes(e.category) && (e.parentId === null || text(e.parentId,160)))) throw Error('Invalid production Elements.');
   if (c.requirements !== undefined && (!Array.isArray(c.requirements) || !c.requirements.length || c.requirements.length>64 || c.requirements.some(r=>!r || typeof r.id!=='string' || !/^[A-Za-z0-9_-]{1,160}$/.test(r.id) || !text(r.text,2000) || !r.text.trim()) || new Set(c.requirements.map(r=>r.id)).size!==c.requirements.length)) throw Error('Invalid interview ToDo IDs.');
   if (c.dependencies !== undefined && (!c.dependencies || Array.isArray(c.dependencies) || typeof c.dependencies!=='object' || Object.entries(c.dependencies).some(([name,version])=>name!=='slugify'||version!=='1.6.6'))) throw Error('Unsupported production dependency.');
