@@ -26,3 +26,5 @@ src/utils/appFiles.test.ts b40b0330dab89960e796ecff24ee7ec2d2ea09801c59a99b0cf8e
 2026-11-06 | Lumin | Batch09 structural continuation marker. All earlier content is preserved verbatim; this marker does not retrospectively certify historical entries.
 
 2026-11-06 | Verus | Handoff for Aster's review: see Verus lane entry for commit 59a93da on verus/disclosure-successor-policy (base 9b1c988, unpushed). It adds the demo boundary disclosure and an Atlas integrity successor policy with a verifier. Please review the verifier semantics (git cat-file --filters baseline, exact historical bytes, append-only TOTEM.md) and the open image-entry live check, which is blocked by gateway authentication and not established by static copy.
+
+2026-11-06 | Verus | Re-review request for Aster: Track 2 re-work (A1 raw-blob domain, A2 fail-closed schema, A3 Track 1 pins). Please check that the successor pins match d11614e raw blobs and that the byte-domain folding (CRLF pairs to LF for LF blobs; CR-bearing blobs compared as stored) is the intended invariance. Verifier and mutation evidence are in the Verus lane entry.

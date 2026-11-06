@@ -1,9 +1,10 @@
 {
   "policy": "atlas-integrity-successor",
   "version": 1,
+  "revision": 2,
   "baseline": {
     "commit": "9b1c988d86600521148a79f6703c6ef951e498d5",
-    "note": "Original baseline for the Atlas tree. Every byte that existed at this commit is historical evidence and must remain byte-for-byte identical in the working tree."
+    "note": "Original Atlas baseline. Every raw blob that exists at this commit is historical evidence. Baseline blobs stay in Git unchanged; replacements are admitted only by the pins below."
   },
   "protectedRoots": ["public/atlas/"],
   "defaultMode": "exact",
@@ -17,9 +18,45 @@
   "exactPrefixes": [
     {
       "prefix": "public/atlas/_archive/",
-      "note": "Raw archived snapshots. Byte-for-byte identical to the baseline; no appends permitted."
+      "note": "Raw archived snapshots. Byte-for-byte identical to the baseline; no appends and no successors permitted."
     }
   ],
-  "permittedNewFiles": [],
-  "eol": "Protected bytes are compared exactly as stored. No line-ending normalisation is applied, so a CRLF or LF change in a protected file is a violation. The appended region of an append-only file is reported with its CR count so line-ending drift in new text is visible."
+  "successors": [
+    {
+      "path": "public/atlas/welcome.html",
+      "note": "Track 1 welcome CSP refactor (Lumin, commit d11614e). The baseline blob is kept; the refactor is admitted by its raw-blob pin.",
+      "permittedReplacements": [
+        { "sha256": "22b7fa362fec1fa49ea277c130c30f937b2fb24c48ce99d7616c27b1c6ebbe17", "bytes": 4000, "sourceBlob": "8b4e65d8871820f26ba3955de04990224f5bb767", "sourceCommit": "d11614e5c058591a31d6119aa2ab7ed731303898" }
+      ]
+    },
+    {
+      "path": "public/atlas/assets/aether/loaders/GLTFLoader.js",
+      "note": "Track 1 vendored-script update, pinned to the raw blob.",
+      "permittedReplacements": [
+        { "sha256": "c2bdc781f467eb16b3cc7885b1895d6bd8a43befad182ee8910921b06131ed69", "bytes": 110056, "sourceBlob": "1e853a5afed62c06ba3025e3f948fd2bf6337593", "sourceCommit": "d11614e5c058591a31d6119aa2ab7ed731303898" }
+      ]
+    },
+    {
+      "path": "public/atlas/assets/aether/utils/BufferGeometryUtils.js",
+      "note": "Track 1 vendored-script update, pinned to the raw blob.",
+      "permittedReplacements": [
+        { "sha256": "51db05616ad0ddf7722e4ae8ad06bacc464985f510db3e65501498c4a816b10c", "bytes": 31781, "sourceBlob": "b37d3f6a1cbf3c0d11ce80b53a97c4c034b555e5", "sourceCommit": "d11614e5c058591a31d6119aa2ab7ed731303898" }
+      ]
+    }
+  ],
+  "permittedNewFiles": [
+    {
+      "path": "public/atlas/assets/aether/welcome.js",
+      "sha256": "8c2f19df056bc9e76db35ee5c4a9e9ec7a433ab2ffc53dfcb1a3848d50472f6e",
+      "bytes": 10625,
+      "sourceBlob": "bfc8f90bccbab5ec1e2b683dbf567336c60480cf",
+      "sourceCommit": "d11614e5c058591a31d6119aa2ab7ed731303898",
+      "note": "Track 1 vendored welcome script; new in this revision."
+    }
+  ],
+  "eol": "Byte domain is the raw Git blob. Working-tree CRLF pairs are folded to LF for LF blobs, so the result does not depend on core.autocrlf. Blobs that store CR bytes are compared as stored. Other byte changes are violations.",
+  "changelog": [
+    "revision 1: baseline, append-only TOTEM.md, exact _archive, verifier with checkout-filter baseline (superseded).",
+    "revision 2: raw-blob byte domain (A1); fail-closed schema validation (A2); successors and permittedNewFiles pinned by SHA-256 for the Track 1 welcome refactor (A3)."
+  ]
 }
