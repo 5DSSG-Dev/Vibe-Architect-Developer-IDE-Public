@@ -33,3 +33,24 @@ export function terminalGenerationFailure(status:number,error:unknown):boolean {
 export function canReplaceProduction(state:string|undefined,outcomeUnknown:boolean):boolean {
  return !outcomeUnknown && state!=='building' && state!=='running';
 }
+
+
+export interface PendingProduction {
+ version:1; requestId:string; coreId:string; contextHash:string; promptHash:string; createdAt:string;
+}
+export function readPendingProduction(storage:Pick<Storage,'getItem'>,key:string):PendingProduction|null {
+ try {
+  const value=JSON.parse(storage.getItem(key)??'null');
+  return value?.version===1 && typeof value.coreId==='string' && /^[0-9a-f-]{36}$/.test(value.requestId)
+   && /^[0-9a-f]{64}$/.test(value.contextHash) && /^[0-9a-f]{64}$/.test(value.promptHash) && typeof value.createdAt==='string' ? value : null;
+ } catch {return null;}
+}
+export function persistPendingProduction(storage:Pick<Storage,'getItem'|'setItem'>,key:string,value:PendingProduction):void {
+ const earlier=storage.getItem(key);
+ if(earlier && earlier!==JSON.stringify(value))throw Error('A generation identity is already retained for this app. Inspect and recover it before generating again.');
+ storage.setItem(key,JSON.stringify(value));
+}
+export function clearPendingProduction(storage:Pick<Storage,'getItem'|'removeItem'>,key:string,requestId:string):void {
+ const value=readPendingProduction(storage,key);
+ if(value?.requestId===requestId)storage.removeItem(key);
+}

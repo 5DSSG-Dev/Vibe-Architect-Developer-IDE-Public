@@ -244,3 +244,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-06 | Lumin | Published review follow-up
 - R1-R7 candidate and scoped live/browser/filesystem verification are documented in docs/PUBLISHED_REVIEW_REMEDIATION_2026-11-06.md. Unknown generation outcomes preserve admission identity; fresh completed receipts bind metadata and source to durable evidence. Historical generation formats and wider product limitations remain qualified.
+
+
+## 2026-11-06 | Lumin | Release-finish candidate preparation
+- Strict Atlas external-script CSP, durable pre-dispatch browser identity/prompt hashes, authenticated read-only recovery evidence, and pre-listen error ownership implemented. Build and actual browser/storage/HTTP/lifecycle checks passed. Live window requested from Linq; no current-batch inference. Verus reviewed handoff, Aster acceptance and publication remain pending. See docs/RELEASE_FINISH_CANDIDATE_2026-11-06.md; historical evidence and Atlas policy baseline unchanged.

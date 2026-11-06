@@ -1,4 +1,5 @@
-import { closeHttpServer } from './http-lifecycle.js';
+import { createServer } from 'node:http';
+import { closeHttpServer, listenLoopback } from './http-lifecycle.js';
 import { createLocalAssemblyAuditor } from './assembly-gates.js';
 import 'dotenv/config';
 import { createGateway } from './app.js';
@@ -13,7 +14,6 @@ import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
 import { readFileSync } from 'node:fs';
-import { once } from 'node:events';
 import { createHash } from 'node:crypto';
 import { resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -76,9 +76,9 @@ try {
   throw error;
 }
 
-const server = app.listen(config.port, '127.0.0.1');
+const server = createServer(app);
 try {
-  await once(server, 'listening');
+  await listenLoopback(server, config.port);
   console.log(`AEGIS Architect gateway listening at ${config.origin}`);
 } catch (error) {
   await Promise.allSettled([sessions.close?.(), evidenceStore.close?.(), app.locals.applicationProduction?.close()]);

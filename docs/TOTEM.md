@@ -255,3 +255,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Aster R1-R7 independent PASS
 - Read Aster's actual published-candidate re-review and independently rechecked its author manifest anchor. Acceptance matrix/report now append scoped R1-R7 PASS, exact reviewed revision,231raw/8EOL-only artifact comparisons and preserved open boundaries. Added private supplemental evidence inventory without changing original manifest. Documentation-only publication.
+
+
+## 2026-11-06 | Lumin | Release-finish candidate preparation
+- Strict Atlas external-script CSP, durable pre-dispatch browser identity/prompt hashes, authenticated read-only recovery evidence, and pre-listen error ownership implemented. Build and actual browser/storage/HTTP/lifecycle checks passed. Live window requested from Linq; no current-batch inference. Verus reviewed handoff, Aster acceptance and publication remain pending. See docs/RELEASE_FINISH_CANDIDATE_2026-11-06.md; historical evidence and Atlas policy baseline unchanged.

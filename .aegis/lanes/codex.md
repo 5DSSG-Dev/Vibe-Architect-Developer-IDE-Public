@@ -673,3 +673,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Independent acceptance recorded
 - Aster independently accepts R1-R7 at b1c05ee3734a6178c9a98d170cef190ac1e8f1b7. Read original report and rechecked4614fde8ad35ef25a0344d828d0ec814dd03b60dbcd853f0ce1a2ac9ebd0bcfc. Matrix/report appended; original evidence untouched and complete supplemental inventory retained privately. Wider limits remain explicit. No product source/runtime changes.
+
+
+## 2026-11-06 | Lumin | Release-finish candidate preparation
+- Strict Atlas external-script CSP, durable pre-dispatch browser identity/prompt hashes, authenticated read-only recovery evidence, and pre-listen error ownership implemented. Build and actual browser/storage/HTTP/lifecycle checks passed. Live window requested from Linq; no current-batch inference. Verus reviewed handoff, Aster acceptance and publication remain pending. See docs/RELEASE_FINISH_CANDIDATE_2026-11-06.md; historical evidence and Atlas policy baseline unchanged.

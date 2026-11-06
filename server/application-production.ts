@@ -111,6 +111,23 @@ export class ProductionRuntime {
   const result=this.generateOnce(context,requestId);this.requests.set(requestId,{contextHash,result});
   return structuredClone(await result);
  }
+ /** Read-only recovery evidence: never dispatches, resets admission, or clears a hold. */
+ inspectRequest(requestId:string) {
+  this.assertOpen();
+  if(!/^[0-9a-f-]{36}$/.test(requestId))throw Error('Invalid generation request ID.');
+  const notes=this.notes();
+  const admission=notes.find(n=>n.kind==='application_generation_admitted'&&n.requestId===requestId);
+  const completion=notes.find(n=>n.kind==='application_generated'&&n.requestId===requestId);
+  const registered=[...this.entries.values()].find(e=>e.receipt.requestId===requestId);
+  return {requestId,contextHash:admission?.contextHash??null,promptHash:admission?.promptHash??null,
+   outcome:registered?'registered':completion?'completion_recorded':admission?'unknown':'not_found_in_this_record',
+   generationId:completion?.id??null,sourceDigest:completion?.digest??null,
+   architectRecordHead:this.options.record.architect.latest,
+   message:completion?'A completion note exists. Recover will verify its receipt and source bytes before restoring it.':
+    admission?'Admission is retained but completion is unverified. Keep this identity and evidence for operator review; no new model request has been sent.':
+    'This review record has no matching admission. Confirm the original gateway and record before deciding whether a new request is safe.',
+   redispatched:false};
+ }
  async recover(requestId:string):Promise<ProductionReceipt> {
   const operation=this.requests.get(requestId);
   if(!operation) {
@@ -151,7 +168,7 @@ export class ProductionRuntime {
   this.generating=true;
   let admitted=false;
   try {
-   await this.note(JSON.stringify({kind:'application_generation_admitted',requestId,contextHash:hash(context),coreId:context.coreId}));
+   await this.note(JSON.stringify({kind:'application_generation_admitted',requestId,contextHash:hash(context),promptHash:createHash('sha256').update(productionPrompt(context)).digest('hex'),coreId:context.coreId}));
    admitted=true;
    const result=await this.options.ask(productionPrompt(context));
    if(!result.ok)throw Error(result.shortfall.message);
@@ -376,6 +393,7 @@ export function createProductionRouter(runtime:ProductionRuntime):Router {
  };
  router.post('/generate',async(req,res)=>{try{if(typeof req.body?.requestId!=='string')throw Error('A recoverable request ID is required.');res.status(201).json(await runtime.generate(req.body?.context,req.body.requestId));}catch(error){reply(res,error);}});
  router.post('/restore-core',async(req,res)=>{try{res.status(201).json(await runtime.restoreCore(req.body?.application,req.body?.context));}catch(error){reply(res,error);}});
+ router.get('/requests/:id/evidence',(req,res)=>{try{res.json(runtime.inspectRequest(String(req.params.id)));}catch(error){reply(res,error);}});
  router.get('/requests/:id',async(req,res)=>{try{res.json(await runtime.recover(String(req.params.id)));}catch(error){reply(res,error);}});
  router.get('/:id',(req,res)=>{try{res.json(runtime.get(String(req.params.id)));}catch(error){reply(res,error);}});
  router.post('/:id/launch',async(req,res)=>{try{res.json(await runtime.launch(String(req.params.id),req.body?.context,req.body?.digest));}catch(error){reply(res,error);}});

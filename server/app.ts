@@ -146,7 +146,12 @@ export async function createGateway(options: CreateGatewayOptions) {
       res.setHeader('X-Frame-Options', 'SAMEORIGIN');
       const policy = res.getHeader('Content-Security-Policy');
       if (typeof policy === 'string') {
-        res.setHeader('Content-Security-Policy', policy.replace("frame-ancestors 'none'", "frame-ancestors 'self'"));
+        // Static Atlas documents use external scripts in every mode. Enforce the
+        // production script boundary here even when Vite needs inline scripts elsewhere.
+        const atlasPolicy = policy.replace("frame-ancestors 'none'", "frame-ancestors 'self'")
+          .replace(/script-src ([^;]*)/, (_directive, sources: string) =>
+            'script-src ' + sources.split(/\s+/).filter(source => source !== "'unsafe-inline'").join(' '));
+        res.setHeader('Content-Security-Policy', atlasPolicy);
       }
     }
     next();

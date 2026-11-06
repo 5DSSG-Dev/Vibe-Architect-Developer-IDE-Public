@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Play } from 'lucide-react';
 import type { CoreManifest, ApothecaryItem } from '../engine/relationEngine';
-import { productionContext, productionBaselineContext, type ProductionAnswer } from '../engine/applicationProduction';
+import { productionContext, productionBaselineContext, productionPrompt, type ProductionAnswer } from '../engine/applicationProduction';
 import { luminaryApi, readDemoKey, saveDemoKey, anchorDetail, type TurnRecord } from '../luminary/client';
 import { appendLuminaryExchangeEvidence } from '../engine/evidenceArchive';
 import { acceptedCoreContext, saveCoreApplication, verifyCoreApplication, type CoreApplication } from '../engine/coreApplication';
@@ -11,9 +11,10 @@ interface Receipt extends Omit<VerifiedBuildReceipt,'context'> {
  id:string;requestId:string;digest:string;contextHash:string;modelId:string;projectPath:string;
  answer:ProductionAnswer;files:Record<string,string>;state:string;output:string;previewUrl?:string;record?:TurnRecord;
 }
-import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction, productionStatus, clearLegacyPreviewResume, hasNewTerminalRequest } from '../engine/productionClientState';
+import { productionEvidenceId, productionReceiptKey as receiptKey, terminalGenerationFailure, canReplaceProduction, productionStatus, clearLegacyPreviewResume, hasNewTerminalRequest, readPendingProduction, persistPendingProduction, clearPendingProduction } from '../engine/productionClientState';
 export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVerified,terminalRequest=0}:{core:CoreManifest;catalog:ApothecaryItem[];onRemember:(pointer:NonNullable<CoreManifest['applicationProduction']>)=>void;onSaveCore:(app:CoreApplication)=>void;onVerified?:(receipt:VerifiedBuildReceipt)=>void;terminalRequest?:number}) {
  const pendingKey='vibe.production.request:'+core.coreId;
+ const durablePendingKey='vibe.production.pending.v1:'+core.coreId;
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const [baselineMode,setBaselineMode]=useState(false);
  const [terminalInput,setTerminalInput]=useState(''),[terminalLines,setTerminalLines]=useState<string[]>(['Vibe Architect Terminal. Type help for available commands.']);
@@ -23,7 +24,8 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
  useEffect(()=>{if(!busy){setElapsed(0);return;}const started=Date.now();const timer=window.setInterval(()=>setElapsed(Math.floor((Date.now()-started)/1000)),1000);return()=>window.clearInterval(timer);},[busy]);
  const [receipt,setReceipt]=useState<Receipt|null>(null),[file,setFile]=useState('src/main.jsx');
  const [reviewedFor,setReviewedFor]=useState(''),[evidenceFor,setEvidenceFor]=useState(''),[key,setKey]=useState(readDemoKey);
- const [pendingId,setPendingId]=useState(()=>{try{return sessionStorage.getItem(pendingKey)??'';}catch{return '';}});
+ const [pendingId,setPendingId]=useState(()=>{try{return readPendingProduction(localStorage,durablePendingKey)?.requestId??sessionStorage.getItem(pendingKey)??'';}catch{return '';}});
+ const [recoveryEvidence,setRecoveryEvidence]=useState<Record<string,unknown>|null>(null);
  const [fingerprint,setFingerprint]=useState({text:'',hash:''});
  const coreOperation=useRef(false);
  const dialog=useRef<HTMLDialogElement>(null),request=useRef<AbortController|null>(null),epoch=useRef(0);
@@ -91,14 +93,15 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
     : 'Application production needs the updated local development gateway, a live Luminary source, its gauge and the review record.'),{confirmed:Boolean(notAdmitted)});
   }
   let value:any;try{value=await response.json();}catch{throw Error('The gateway result could not be read. Recover the last request before generating again.');}
-  if(!response.ok)throw Object.assign(Error(value.message ?? value.shortfall?.message ?? 'Application production is unavailable ('+response.status+').'),{confirmed:terminalGenerationFailure(response.status,value.error),outcomeUnknown:value.error==='production_outcome_unknown'});
+  if(!response.ok)throw Object.assign(Error(response.status===401 ? 'The gateway requires an IDE demo session or demo key. Open Gateway connection in this panel; do not enter a provider API key here.' : value.message ?? value.shortfall?.message ?? 'Application production is unavailable ('+response.status+').'),{confirmed:terminalGenerationFailure(response.status,value.error),outcomeUnknown:value.error==='production_outcome_unknown'});
   return value;
  }
  function adopt(next:Receipt) {
   setReceipt(next);setReviewedFor('');setEvidenceFor('');setOutcomeUnknown(false);
   if(!baselineMode)onRemember({id:next.id,digest:next.digest,contextHash:next.contextHash});
   try{sessionStorage.removeItem(pendingKey);}catch{/* The known receipt is also kept in the app. */}
-  setPendingId('');
+  try{clearPendingProduction(localStorage,durablePendingKey,next.requestId);}catch{/* Never clear another tab's identity. */}
+  setPendingId('');setRecoveryEvidence(null);
  }
  async function saveEvidence(next:Receipt) {
   // A restored materialization has its own request; preserve the original proposal evidence.
@@ -153,6 +156,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
   if(coreOperation.current || request.current || (action==='generate' && (!context||!replaceable)))return;
   const controller=new AbortController();request.current=controller;epoch.current++;
   const sentContext=contextText;
+  let attemptedRequestId=pendingId;
   setBusy(true);setError('');
   try {
    if(key.trim())saveDemoKey(key.trim());
@@ -160,7 +164,13 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
    if(action==='generate'||action==='recover'||action==='restore-core') {
     if(action==='generate') {
      if(pendingId)throw Error('Recover the earlier request before starting another generation.');
-     const id=crypto.randomUUID();sessionStorage.setItem(pendingKey,id);setPendingId(id);
+     const id=crypto.randomUUID();
+     const sha=async(text:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join('');
+     const identity={version:1 as const,requestId:id,coreId:core.coreId,contextHash:await sha(JSON.stringify(context)),promptHash:await sha(productionPrompt(context!)),createdAt:new Date().toISOString()};
+     if(controller.signal.aborted||request.current!==controller)return;
+     persistPendingProduction(localStorage,durablePendingKey,identity);
+     attemptedRequestId=id;setPendingId(id);
+     try{sessionStorage.setItem(pendingKey,id);}catch{/* Durable identity is already retained. */}
      next=await api('/generate','POST',{context,requestId:id},controller.signal);
     } else if(action==='restore-core') {
      if(!core.application || !replaceable || pendingId)throw Error('Recover any pending request and stop the running app before restoring CORE.');
@@ -198,7 +208,7 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
    if(!controller.signal.aborted) {
     setError((e as Error).message);
     if((e as {outcomeUnknown?:boolean}).outcomeUnknown)setOutcomeUnknown(true);
-    if((action==='generate'||action==='recover') && (e as {confirmed?:boolean}).confirmed){try{sessionStorage.removeItem(pendingKey);}catch{}setPendingId('');}
+    if((action==='generate'||action==='recover') && (e as {confirmed?:boolean}).confirmed){try{sessionStorage.removeItem(pendingKey);clearPendingProduction(localStorage,durablePendingKey,attemptedRequestId);}catch{}setPendingId('');}
     if((action==='launch'||action==='stop') && receipt) {
      setOutcomeUnknown(true);
      try{const current=await api('/'+encodeURIComponent(receipt.id),'GET',undefined,controller.signal);if(!controller.signal.aborted){setReceipt(current);setOutcomeUnknown(false);}}
@@ -206,6 +216,20 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
     }
    }
   } finally {if(request.current===controller){request.current=null;setBusy(false);}}
+ }
+ async function inspectRecovery() {
+  if(!pendingId||request.current||coreOperation.current)return;
+  const controller=new AbortController();request.current=controller;setBusy(true);
+  setError('');
+  try {
+   await luminaryApi.localSession(controller.signal);
+   if(controller.signal.aborted)return;
+   const response=await fetch('/api/luminary/production/requests/'+encodeURIComponent(pendingId)+'/evidence',{headers:{'x-luminary-demo-key':key.trim()},credentials:'same-origin',signal:controller.signal});
+   const value=await response.json();
+   if(!response.ok)throw Error(response.status===401?'The gateway requires an IDE demo session or demo key. Open Gateway connection.':value.message??'Recovery evidence is unavailable.');
+   if(!controller.signal.aborted)setRecoveryEvidence(value);
+  }catch(error){if(!controller.signal.aborted)setError((error as Error).message);}
+  finally{if(request.current===controller){request.current=null;setBusy(false);}}
  }
  function cancelWait() {
   const controller=request.current;if(!controller)return;
@@ -250,13 +274,15 @@ export function ApplicationProduction({core,catalog,onRemember,onSaveCore,onVeri
    <div className="flex flex-wrap items-center gap-3">
     <button type="button" className={button} disabled={busy||!context||!replaceable||Boolean(pendingId)} onClick={()=>void act('generate')}>{busy?'Working…':'Generate application'}</button>
     {busy && request.current && <button type="button" className={button} onClick={cancelWait}>Cancel wait</button>}
-    {pendingId && <button type="button" className={button} disabled={busy} onClick={()=>void act('recover')}>Recover last request</button>}
+    {pendingId && <><button type="button" className={button} disabled={busy} onClick={()=>void act('recover')}>Recover last request</button><button type="button" className={button} disabled={busy} onClick={()=>void inspectRecovery()}>Inspect recovery evidence</button></>}
     {receipt&&!evidenceSaved && <button type="button" className={button} disabled={busy} onClick={()=>void act('evidence')}>Save generation evidence</button>}
     <button type="button" className={button} disabled={busy||stale||!reviewed||!evidenceSaved||Boolean(preview)||outcomeUnknown||receipt?.state==='building'} onClick={()=>void act('launch')}>Launch reviewed application</button>
     <button type="button" className={button} disabled={busy||!preview} onClick={()=>void act('stop')}>Stop application</button>
     {(receipt || core.applicationProduction) && <button type="button" className={button} disabled={busy} onClick={()=>void act('status')}>{receipt?'Refresh status':'Restore previous generation'}</button>}
     <span role="status" className="text-sm">{problem?'Generation unavailable — see details above':productionStatus(busy,receipt?.state,error,pendingId,outcomeUnknown)}{busy?` · ${elapsed}s`:''}</span>
    </div>
+   {pendingId && <p className="my-2 text-xs text-slate-300">A generation request is retained. Recover or inspect it before starting another build.</p>}
+   {recoveryEvidence && <details className="my-3 rounded border border-amber-400/40 p-3" open><summary>Recovery evidence — no new model request</summary><p className="my-2 text-sm">{String(recoveryEvidence.message)}</p><pre tabIndex={0} className="max-h-48 overflow-auto whitespace-pre-wrap break-all text-xs">{JSON.stringify(recoveryEvidence,null,2)}</pre></details>}
    {error && <p role="alert" className="my-3 whitespace-pre-wrap text-rose-200">{error}</p>}
    <section aria-label="CORE application" className="my-4 rounded-xl border border-cyan-400/30 p-3">
     <h3 className="mb-2">CORE application</h3>
