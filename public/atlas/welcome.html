@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b25">
+  <title>Welcome · The Vibe Atlas</title>
+  <style>
+    /* Welcome landing page DRAFT (aether-realm/welcome-draft). Wording pending Tracey's review. */
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: #08010f;
+      font-family: Georgia, serif;
+      color: #f4ecd8;
+      overflow-x: hidden;
+    }
+    /* The moving Aether field (AetherVolume from aether-realm), full-bleed behind the page. */
+    #aether {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+    /* Fallback when WebGL is unavailable or the context is lost: a still gradient. */
+    body.still #aether { display: none; }
+    body.still {
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(90, 60, 180, .35), transparent 60%),
+        radial-gradient(ellipse at 75% 60%, rgba(40, 120, 200, .25), transparent 55%),
+        #08010f;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      /* Panel and Luminary sit as one centred group with a fixed gap, so side margins match. */
+      grid-template-columns: auto auto;
+      justify-content: center;
+      align-items: center;
+      column-gap: clamp(2rem, 4vw, 5rem);
+      padding: 4vh 5vw;
+      box-sizing: border-box;
+    }
+    .panel {
+      background: rgba(12, 14, 30, .82);
+      border: 1px solid rgba(232, 190, 90, .45);
+      border-radius: 14px;
+      padding: 3vh 2.4vw;
+      width: min(34rem, 40vw);
+      box-sizing: border-box;
+      justify-self: end;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      margin: 0 0 .6em;
+      color: #f7d98b;
+      letter-spacing: .02em;
+    }
+    p {
+      font-size: clamp(1rem, 1.3vw, 1.2rem);
+      line-height: 1.55;
+      margin: 0 0 1em;
+    }
+    ul.sections {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.4em;
+    }
+    ul.sections li {
+      font-size: clamp(1rem, 1.3vw, 1.2rem);
+      line-height: 1.55;
+      padding-left: 1em;
+      border-left: 2px solid rgba(232, 190, 90, .45);
+      margin-bottom: .7em;
+    }
+    ul.sections strong { color: #f7d98b; font-weight: normal; }
+    .enter {
+      display: inline-block;
+      margin-top: .4em;
+      font: inherit;
+      font-size: 1.1rem;
+      padding: .8em 1.6em;
+      border-radius: 999px;
+      border: 1px solid #f7d98b;
+      background: linear-gradient(#2a3a8a, #1b2560);
+      color: #fff6dc;
+      text-decoration: none;
+    }
+    .enter:focus-visible { outline: 3px solid #9be8ff; outline-offset: 4px; }
+    img.luminary {
+      justify-self: center;
+      max-height: 80vh;
+      width: auto;
+      max-width: 100%;
+      filter: drop-shadow(0 0 28px rgba(120, 160, 255, .45));
+    }
+    @media (max-width: 760px) {
+      .wrap { grid-template-columns: 1fr; padding: 3vh 5vw; }
+      img.luminary { max-height: 50vh; order: -1; }
+    }
+  </style>
+  <script type="importmap">
+  { "imports": { "three": "./assets/aether/three.module.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="aether" aria-hidden="true"></canvas>
+  <main class="wrap">
+    <section class="panel" aria-labelledby="welcome-title">
+      <h1 id="welcome-title">Welcome to the Vibe Atlas</h1>
+      <p>The Vibe Atlas is the Library for the Vibe Architect IDE. It consists of three sections:</p>
+      <ul class="sections">
+        <li><strong>Explore:</strong> How to Navigate the IDE and Information on the code Elements</li>
+        <li><strong>The AEGIS Atlas:</strong> The Foundational Canon and AI Governance Ethos of the IDE</li>
+        <li><strong>Behind the Vibe:</strong> About the Vibe build team and the discipline used during the build</li>
+      </ul>
+      <a class="enter" href="index.html">Enter the Atlas</a>
+    </section>
+    <img class="luminary" src="assets/luminary_transparent.png" alt="The Luminary" width="1200" height="1600">
+  </main>
+  <script type="module">
+    import * as THREE from 'three';
+    import { vertexShader, fragmentShader } from './assets/aether/AetherBackground.js';
+
+    const canvas = document.getElementById('aether');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function goStill() { document.body.classList.add('still'); }
+
+    let renderer = null;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false });
+    } catch (err) {
+      goStill();
+    }
+
+    if (renderer) {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+      // Full-screen quad, shader ported from the IDE's src/engine/Aether.ts background.
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          u_time: { value: 0 },
+          u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        },
+        vertexShader,
+        fragmentShader,
+        depthTest: false,
+        depthWrite: false
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+
+      const clock = new THREE.Clock();
+      let frameId = 0;
+
+      function draw() {
+        material.uniforms.u_time.value = clock.getElapsedTime();
+        renderer.render(scene, camera);
+      }
+
+      function loop() {
+        frameId = requestAnimationFrame(loop);
+        draw();
+      }
+
+      canvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        cancelAnimationFrame(frameId);
+        goStill();
+      });
+
+      window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        material.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
+        if (reduceMotion) draw();
+      });
+
+      // Pause the background when the tab is hidden; resume on return.
+      document.addEventListener('visibilitychange', () => {
+        if (reduceMotion) return;
+        if (document.hidden) cancelAnimationFrame(frameId);
+        else loop();
+      });
+
+      if (reduceMotion) draw(); // calm mode: one still frame
+      else loop();
+    }
+  </script>
+</body>
+</html>
