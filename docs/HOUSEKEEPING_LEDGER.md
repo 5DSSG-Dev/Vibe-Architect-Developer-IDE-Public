@@ -202,3 +202,8 @@ Deleted remote heads were checked for ancestry in main, absence of open PR head/
 | `codex/vibe-atlas-reference-library` | `b3e072c93bcdeebbe54ec886aaa95b65d6d256b3` | Kept: open PR 30 |
 
 Navigation: added docs/README.md and root entry links. Updated README to reflect retired simulation/deployment screens and storage-only admission integration limits. No product behavior, source assets, historical lanes, STPs, or hashed records were deleted. Existing divergent branches are retained intentionally; their presence is not evidence that they are active or approved.
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

@@ -133,3 +133,8 @@ These are conceptual art pieces informing the visual atmosphere of the AEGIS env
 | GLB models classified separately from concept art | **Met.** GLB models paired with runtime renderers are "current visual specification." |
 | Admin Operations and Architect Canvas visual sources distinguished | **Met.** GLB models note which views use them. |
 | Historical design iterations marked | **Met.** Design folder iterations marked as historical evidence. |
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](../MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

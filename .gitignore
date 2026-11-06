@@ -56,3 +56,12 @@ build/
 /output/generated-projects/
 /output/production-runtime-test-*/
 /output/generated-app-*/
+
+# Private source renders and browser evidence: archive outside this repository.
+/public/assets/image_files/
+/public/assets/*.glb
+/public/assets/*.mp4
+/output/playwright/
+/docs/evidence/
+/docs/stp/0001-walk/
+/docs/design/admin-message-flow-concept*.png

@@ -2,7 +2,7 @@
 
 The Service Admin application is the protected, observation-only operations view at `/admin/operations`. It presents one POD as a visual CORE with its Orbs, Orb-owned Satellites, Umbilicals, declared Portals, operational routes, and evidence. The existing Architect application remains at `/`.
 
-The default Admin mode is **Flow**: a transaction-first message-flow observatory. **Topology** remains available as the secondary navigation tab for inspecting the underlying CORE, Orbs, Satellites, Umbilicals, and Portals. The current visual direction is recorded in [the user-corrected Admin symmetric message-flow concept](design/admin-message-flow-concept-v3.png). [Concept v2](design/admin-message-flow-concept-v2.png) and [concept v1](design/admin-message-flow-concept.png) are retained as design history, not current routing authority. The runtime UI remains evidence-driven and does not treat concept-art labels as source data.
+The default Admin mode is **Flow**: a transaction-first message-flow observatory. **Topology** remains available as the secondary navigation tab for inspecting the underlying CORE, Orbs, Satellites, Umbilicals, and Portals. The current visual direction is recorded in [the user-corrected Admin symmetric message-flow concept — privately archived](MEDIA_ARCHIVE_2026-11-06.md#media-d8b6c62efbb9). [Concept v2 — privately archived](MEDIA_ARCHIVE_2026-11-06.md#media-613af6de2836) and [concept v1 — privately archived](MEDIA_ARCHIVE_2026-11-06.md#media-35a22a49aa0e) are retained as design history, not current routing authority. The runtime UI remains evidence-driven and does not treat concept-art labels as source data.
 
 ## Source and domain authority
 
@@ -90,3 +90,8 @@ Known residuals:
 - The build reports 29 runtime-resolved GLB warnings. All corresponding browser requests returned HTTP 200 in desktop QA, but asset URL handling should be normalized.
 - The unchanged Architect `/` route still reports six nonblocking model-cache timing errors while the GLBs load successfully.
 - Mobile QA has not been run. The responsive DOM layout and optional viewport behavior must be validated on target touch devices before release.
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

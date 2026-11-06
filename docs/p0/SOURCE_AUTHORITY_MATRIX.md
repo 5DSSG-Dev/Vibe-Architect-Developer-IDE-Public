@@ -357,3 +357,8 @@ For every concept that the Architectural Friction Resolution Action Plan touches
 | 76 CORE Elements | Complete (Catalog) | Not present |
 | RelationalIntentEnvelope | Action Plan definition only | Not present |
 | Continuity Tensors | Complete (admin contracts) | Replay fixture data only |
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](../MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

@@ -59,3 +59,8 @@ Modal stacking (G5) could not be reproduced by mouse: the CORE Matrix backdrop b
 ## Effect on the order of P1-P7
 
 The walk confirms the approved M1 order. P3 first (D1 is the most frequent friction and every later proposal adds or touches overlays), then P1 (gives D4 a home and removes D5), then P2 (D2), P5 (D5-D7), P6, P4 (D3), P7 (D8). D9 is a new finding outside the approved proposals; it is recorded here and in STP-0001, not acted on.
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](../MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

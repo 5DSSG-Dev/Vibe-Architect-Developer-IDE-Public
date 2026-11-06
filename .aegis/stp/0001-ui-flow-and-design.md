@@ -410,3 +410,8 @@ Kind: milestone
 Supersedes: approval M1 (Status only)
 Status: Verified
 All eight M1 proposals executed in order and verified: P8, P3, P1, P2, P5, P6, P4, P7. `npm test` passes (76 gateway, 142 app) and `npm run build` passes. Open items for the Architect: observation O1 (canvas view controls overlap the SIMULATE and DEPLOY panels) is not covered by any proposal. G8 stays partly open until the Project Palette. The Luminary host's content belongs to review section 6. U1 (STP in VS Code beside the IDE or inside it) is unanswered. The full Target T1-T9 remains recorded beyond this milestone.
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](../../docs/MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.

@@ -1353,3 +1353,8 @@ When reading the parent specification, substitute:
 - "Ingredient Scale" (Section 8) -> **Reagent Scale**
 
 The parent specification will be updated to reflect this terminology change in its next revision.
+
+
+## 2026-11-06 | Aster | Media preservation
+
+Development media formerly referenced here is hash-verified in the outside-repository archive. See [the relocation index](MEDIA_ARCHIVE_2026-11-06.md). Historical observations and their original text are preserved; only attachment destinations were updated where present.
