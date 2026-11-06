@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b25">
+  <title>Welcome · The Vibe Atlas</title>
+  <style>
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: #08010f;
+      font-family: Georgia, serif;
+      color: #f4ecd8;
+      overflow-x: hidden;
+    }
+    /* The moving Aether field, full-bleed behind the page. */
+    #aether {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+    /* Fallback when WebGL is unavailable or the context is lost: a still gradient. */
+    body.still #aether, body.still #luminary { display: none; }
+    body.still {
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(90, 60, 180, .35), transparent 60%),
+        radial-gradient(ellipse at 75% 60%, rgba(40, 120, 200, .25), transparent 55%),
+        #08010f;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      /* Panel and Luminary sit as one centred group with a fixed gap, so side margins match. */
+      grid-template-columns: auto auto;
+      justify-content: center;
+      align-items: center;
+      column-gap: clamp(2rem, 4vw, 5rem);
+      padding: 4vh 5vw;
+      box-sizing: border-box;
+    }
+    .panel {
+      background: rgba(12, 14, 30, .82);
+      border: 1px solid rgba(232, 190, 90, .45);
+      border-radius: 14px;
+      padding: 3vh 2.4vw;
+      width: min(34rem, 40vw);
+      box-sizing: border-box;
+      justify-self: end;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      margin: 0 0 .6em;
+      color: #f7d98b;
+      letter-spacing: .02em;
+    }
+    p {
+      font-size: clamp(1rem, 1.3vw, 1.2rem);
+      line-height: 1.55;
+      margin: 0 0 1em;
+    }
+    ul.sections {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.4em;
+    }
+    ul.sections li {
+      font-size: clamp(1rem, 1.3vw, 1.2rem);
+      line-height: 1.55;
+      padding-left: 1em;
+      border-left: 2px solid rgba(232, 190, 90, .45);
+      margin-bottom: .7em;
+    }
+    ul.sections strong { color: #f7d98b; font-weight: normal; }
+    .enter {
+      display: inline-block;
+      margin-top: .4em;
+      font: inherit;
+      font-size: 1.1rem;
+      padding: .8em 1.6em;
+      border-radius: 999px;
+      border: 1px solid #f7d98b;
+      background: linear-gradient(#2a3a8a, #1b2560);
+      color: #fff6dc;
+      text-decoration: none;
+    }
+    .enter:focus-visible { outline: 3px solid #9be8ff; outline-offset: 4px; }
+    /* The live 3D Luminary: the same GLB the workspace renders. */
+    #luminary {
+      justify-self: center;
+      display: block;
+      width: min(30vw, 42vh, 440px);
+      height: min(80vh, 760px);
+      pointer-events: none;
+    }
+    @media (max-width: 760px) {
+      .wrap { grid-template-columns: 1fr; padding: 3vh 5vw; }
+      #luminary { order: -1; width: min(70vw, 360px); height: 50vh; }
+    }
+  </style>
+  <script type="importmap">
+  { "imports": { "three": "./assets/aether/three.module.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="aether" aria-hidden="true"></canvas>
+  <main class="wrap">
+    <section class="panel" aria-labelledby="welcome-title">
+      <h1 id="welcome-title">Welcome to the Vibe Atlas</h1>
+      <p>The Vibe Atlas is the Library for the Vibe Architect IDE. It consists of three sections:</p>
+      <ul class="sections">
+        <li><strong>Explore:</strong> How to Navigate the IDE and Information on the code Elements</li>
+        <li><strong>The AEGIS Atlas:</strong> The Foundational Canon and AI Governance Ethos of the IDE</li>
+        <li><strong>Building the Vibe:</strong> About the Vibe build team and the discipline used during the build</li>
+      </ul>
+      <a class="enter" href="index.html">Enter the Atlas</a>
+    </section>
+    <canvas id="luminary" role="img" aria-label="The Luminary"></canvas>
+  </main>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from './assets/aether/loaders/GLTFLoader.js';
+    import { vertexShader, fragmentShader } from './assets/aether/AetherBackground.js';
+
+    // Values mirror the workspace Luminary presence (src/three/luminaryPresence.ts).
+    const REST_GLOW = 0.3;
+    const PULSE_SCALE = 0.035;
+    const PULSE_RATE = 1.8;
+    const MODEL_HEIGHT = 2.86;
+    const LUMINARY_URL = '../assets/models/LUMINARY.glb';
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const aetherCanvas = document.getElementById('aether');
+    const luminaryCanvas = document.getElementById('luminary');
+    let aetherFrame = 0;
+    let luminaryFrame = 0;
+    let aetherRenderer = null;
+    let luminaryRenderer = null;
+    const owned = [];
+    let materials = [];
+    let loaded = false;
+    let disposed = false;
+
+    function goStill() {
+      document.body.classList.add('still');
+    }
+
+    // Shared clock for both canvases; the Luminary breathes and the Aether drifts.
+    const clock = new THREE.Clock();
+
+    // ---- Aether background (full-screen shader, as in the IDE) -------------------------------
+    try {
+      aetherRenderer = new THREE.WebGLRenderer({ canvas: aetherCanvas, antialias: false, alpha: false });
+    } catch (err) {
+      goStill();
+    }
+
+    let aetherMaterial = null;
+    if (aetherRenderer) {
+      aetherRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
+      aetherRenderer.setSize(window.innerWidth, window.innerHeight, false);
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      aetherMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          u_time: { value: 0 },
+          u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        },
+        vertexShader,
+        fragmentShader,
+        depthTest: false,
+        depthWrite: false
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), aetherMaterial));
+      owned.push(aetherMaterial);
+
+      const drawAether = () => {
+        aetherMaterial.uniforms.u_time.value = clock.getElapsedTime();
+        aetherRenderer.render(scene, camera);
+      };
+      const loopAether = () => {
+        aetherFrame = requestAnimationFrame(loopAether);
+        drawAether();
+      };
+
+      aetherCanvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        cancelAnimationFrame(aetherFrame);
+        aetherFrame = 0;
+        goStill();
+      });
+      // Three.js rebuilds its GL state on restore; resume the field instead of staying on the still fallback.
+      aetherCanvas.addEventListener('webglcontextrestored', () => {
+        if (disposed) return;
+        document.body.classList.remove('still');
+        if (reduceMotion || document.hidden) drawAether();
+        else loopAether();
+      });
+
+      window.addEventListener('resize', () => {
+        aetherRenderer.setSize(window.innerWidth, window.innerHeight, false);
+        aetherMaterial.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
+        if (reduceMotion) drawAether();
+      });
+
+      // Pause the background while the tab is hidden; resume on return.
+      document.addEventListener('visibilitychange', () => {
+        if (reduceMotion || disposed) return;
+        if (document.hidden) {
+          cancelAnimationFrame(aetherFrame);
+          aetherFrame = 0;
+        } else if (!aetherFrame) {
+          loopAether();
+        }
+      });
+
+      if (reduceMotion) drawAether(); // calm mode: one still frame
+      else loopAether();
+    }
+
+    // ---- The 3D Luminary --------------------------------------------------------------------
+    let luminaryScene = null;
+    let luminaryCamera = null;
+    let body = null;
+
+    try {
+      luminaryRenderer = new THREE.WebGLRenderer({ canvas: luminaryCanvas, antialias: true, alpha: true });
+    } catch (err) {
+      luminaryRenderer = null;
+    }
+
+    if (luminaryRenderer) {
+      luminaryRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      luminaryRenderer.outputColorSpace = THREE.SRGBColorSpace;
+      luminaryRenderer.setClearColor(0x000000, 0);
+
+      luminaryScene = new THREE.Scene();
+      luminaryCamera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+      luminaryCamera.position.set(0, 0, 6);
+      luminaryCamera.lookAt(0, 0, 0);
+
+      // The same lights as the workspace presence: a warm key and a soft white fill.
+      const key = new THREE.PointLight(0xfcd34d, 0.6, 9, 2);
+      key.position.set(0, 0.4, 0.8);
+      const fill = new THREE.PointLight(0xffffff, 1.4, 12, 2);
+      fill.position.set(0.6, 0.8, 3);
+      luminaryScene.add(key, fill);
+      body = new THREE.Group();
+      luminaryScene.add(body);
+
+      const resizeLuminary = () => {
+        const { clientWidth: w, clientHeight: h } = luminaryCanvas;
+        if (!w || !h) return;
+        luminaryRenderer.setSize(w, h, false);
+        luminaryCamera.aspect = w / h;
+        luminaryCamera.updateProjectionMatrix();
+      };
+      resizeLuminary();
+      window.addEventListener('resize', resizeLuminary);
+
+      const loader = new GLTFLoader();
+      loader.load(
+        LUMINARY_URL,
+        (gltf) => {
+          if (disposed) {
+            disposeModel(gltf.scene);
+            return;
+          }
+          const model = gltf.scene;
+          model.traverse((node) => {
+            if (!node.isMesh) return;
+            // The supplied export carries no normals; lighting needs them.
+            if (!node.geometry.getAttribute('normal')) node.geometry.computeVertexNormals();
+            const own = node.material.clone();
+            // Lit as a surface, not as metal: with no environment map a metallic finish renders dark.
+            own.metalness = 0;
+            own.emissiveMap = own.map ?? own.emissiveMap;
+            own.emissive = new THREE.Color(0xffffff);
+            own.emissiveIntensity = REST_GLOW;
+            owned.push(own);
+            node.material = own;
+            materials.push(own);
+          });
+          // Fit to the same height as the workspace presence and centre it on the origin.
+          const size = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
+          if (size.y > 0) model.scale.multiplyScalar(MODEL_HEIGHT / size.y);
+          const centre = new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3());
+          model.position.sub(centre);
+          body.add(model);
+          loaded = true;
+          if (reduceMotion) drawLuminary(0);
+          else startLuminaryLoop();
+        },
+        undefined,
+        () => {
+          // A failed load leaves the page text in place with no Luminary; the Aether still shows.
+          luminaryCanvas.style.display = 'none';
+        }
+      );
+
+      const drawLuminary = (elapsed) => {
+        const breath = reduceMotion ? 0 : Math.sin(elapsed * PULSE_RATE);
+        body.scale.setScalar(1 + breath * PULSE_SCALE);
+        for (const material of materials) material.emissiveIntensity = REST_GLOW * (1 + breath * 0.12);
+        key.intensity = 0.4 + REST_GLOW * 1.2 * (1 + breath * 0.12);
+        luminaryRenderer.render(luminaryScene, luminaryCamera);
+      };
+
+      const startLuminaryLoop = () => {
+        if (luminaryFrame || reduceMotion || disposed || document.hidden) return;
+        const tick = () => {
+          luminaryFrame = requestAnimationFrame(tick);
+          drawLuminary(clock.getElapsedTime());
+        };
+        tick();
+      };
+
+      document.addEventListener('visibilitychange', () => {
+        if (reduceMotion || disposed || !loaded) return;
+        if (document.hidden) {
+          cancelAnimationFrame(luminaryFrame);
+          luminaryFrame = 0;
+        } else {
+          startLuminaryLoop();
+        }
+      });
+
+      luminaryCanvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        cancelAnimationFrame(luminaryFrame);
+        luminaryFrame = 0;
+        luminaryCanvas.style.display = 'none';
+      });
+      luminaryCanvas.addEventListener('webglcontextrestored', () => {
+        if (disposed || !loaded) return;
+        luminaryCanvas.style.display = '';
+        if (reduceMotion) drawLuminary(0);
+        else startLuminaryLoop();
+      });
+    } else {
+      luminaryCanvas.style.display = 'none';
+    }
+
+    // ---- Clean up animation loops and WebGL resources when the view closes ------------------
+    function disposeModel(root) {
+      root.traverse((node) => {
+        if (node.geometry) node.geometry.dispose();
+      });
+    }
+
+    function dispose() {
+      if (disposed) return;
+      disposed = true;
+      cancelAnimationFrame(aetherFrame);
+      cancelAnimationFrame(luminaryFrame);
+      aetherFrame = 0;
+      luminaryFrame = 0;
+      for (const item of owned) item.dispose?.();
+      owned.length = 0;
+      if (body) disposeModel(body);
+      materials = [];
+      if (aetherRenderer) { aetherRenderer.dispose(); aetherRenderer.forceContextLoss(); }
+      if (luminaryRenderer) { luminaryRenderer.dispose(); luminaryRenderer.forceContextLoss(); }
+    }
+    window.addEventListener('pagehide', dispose);
+    window.addEventListener('beforeunload', dispose);
+  </script>
+</body>
+</html>

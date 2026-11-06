@@ -1,9 +1,23 @@
 import * as THREE from 'three';
 
 /**
+ * Background brightness that matches the Atlas welcome page (public/atlas/assets/aether/
+ * AetherBackground.js, BRIGHTNESS = 7.0, a provisional value pending visual review).
+ *
+ * Rendering path: the welcome writes the multiplied colour straight to the screen. The workspace
+ * draws the same field through an EffectComposer, whose output is sRGB-encoded, so the background
+ * shader decodes the multiplied colour from sRGB to linear before writing it. The screen then shows
+ * the welcome's colour, and the background stays below the bloom threshold instead of being lifted
+ * into a haze. Only the background shader does this; Luminary, Element materials and the bloom
+ * control are unchanged.
+ */
+export const WELCOME_AETHER_BRIGHTNESS = 7.0;
+
+/**
  * Aether is a dedicated lighting manager for the Three.js scene. It handles
  * the creation, configuration, and dynamic updates of ambient and directional
  * lights, centralizing lighting control and simplifying the main scene component.
+ * It also owns the full-screen background field, which draws the welcome's shader.
  */
 export class Aether {
   private scene: THREE.Scene;
@@ -35,7 +49,8 @@ export class Aether {
     this.backgroundMaterial = new THREE.ShaderMaterial({
       uniforms: {
         u_time: { value: 0 },
-        u_resolution: { value: new THREE.Vector2(1, 1) }
+        u_resolution: { value: new THREE.Vector2(1, 1) },
+        u_brightness: { value: WELCOME_AETHER_BRIGHTNESS }
       },
       vertexShader: `
         varying vec2 vUv;
@@ -48,6 +63,7 @@ export class Aether {
       fragmentShader: `
         uniform vec2 u_resolution;
         uniform float u_time;
+        uniform float u_brightness;
         varying vec2 vUv;
 
         vec3 permute(vec3 x) {
@@ -141,7 +157,13 @@ export class Aether {
           vec3 color = mix(baseColor, farColor, 0.18 + farSmoke * 0.50);
           color = mix(color, nearColor, nearSmoke * 0.22);
 
-          gl_FragColor = vec4(color, 1.0);
+          // The welcome page writes these values straight to the screen. The workspace draws through
+          // an EffectComposer, whose output is sRGB-encoded, so the same values would lift to a paler,
+          // hazier blue and feed the bloom pass. Decode to linear here so the screen shows the welcome's
+          // colour and the background stays below the bloom threshold. Background only.
+          vec3 displayed = clamp(color * u_brightness, 0.0, 1.0);
+          vec3 linear = mix(displayed / 12.92, pow((displayed + 0.055) / 1.055, vec3(2.4)), step(0.04045, displayed));
+          gl_FragColor = vec4(linear, 1.0);
         }
       `,
       depthTest: false,

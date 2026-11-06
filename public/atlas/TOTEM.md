@@ -32,3 +32,11 @@
 ## 2026-11-04 | Codex | Remove duplicate top return link
 - AEGIS, Explore and Building the Vibe no longer show the standalone return text above the artwork. Illustrated hotspots remain, as do existing footer links. The now-unused return-link CSS rule was removed.
 - Live 3012 desktop Chrome followed each page's hotspot back to index; all three pages had zero return-link nodes. No push.
+## 2026-11-06 | Claude (Verus lane) | Atlas welcome, background alignment, founding purpose
+- Added public/atlas/welcome.html: the live LUMINARY.glb, the welcome Aether shader, "Building the Vibe" naming, and a WebGL context-restore fix so the page resumes after a context loss.
+- Added public/atlas/assets/aether/ (vendored three r168 module, AetherBackground.js, GLTFLoader and BufferGeometryUtils) for the welcome page.
+- Added the reader "Why I Built Vibe Architect" (id purpose) as the first reading-list entry of building-the-vibe.html; #purpose opens it directly, from the room, and inside the IDE Atlas dialog.
+- Background: src/engine/Aether.ts uses WELCOME_AETHER_BRIGHTNESS 7.0 and decodes the background to linear, because the workspace composer sRGB-encodes its output. Provisional until Tracey accepts the visual match; the environment backgrounds are black and unchanged.
+- Entry flow: src/components/IdeWelcomePurpose.tsx leads the first-launch view with Tracey's purpose, then "Start with your idea" (focuses the interview, does not send), the visual architecture, and the Vibe Atlas. App.tsx routes the Atlas dialog through atlasSrc.
+- Verified at 1440x900: welcome renders the GLB; the IDE first launch keeps the draft through Atlas open and close; Keyboard entry reaches Orb, Satellite and Actuator and Back returns through each level.
+- Open: the canvas-click Orb entry in scripts/verify-ide-navigation.mjs is unresolved (automation aims at a 0x0 label); Keyboard entry is the verified route. The build-audit WelcomeScreen.tsx is not ported. Uncommitted, no push.
