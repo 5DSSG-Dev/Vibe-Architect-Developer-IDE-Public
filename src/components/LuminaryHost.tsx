@@ -20,6 +20,7 @@ import {
   type TurnRecord,
 } from '../luminary/client';
 import { ReplyView, TaskCard } from './LuminaryCards';
+import { LuminaryBubble } from './LuminaryBubble';
 import { isLuminaryEngaged, setLuminaryEngaged, subscribeLuminaryEngaged } from '../luminary/presence';
 import { PRESENCE_SCREEN_OFFSET, PRESENCE_WINDOW_RADIUS } from '../three/luminaryPresence';
 import { recordExchange, textEvidence } from '../luminary/record';
@@ -582,6 +583,8 @@ export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; m
             </div>
           )}
 
+          <LuminaryBubble embedded />
+
           {needsKey && (
             <form
               className="flex items-center gap-1.5"
@@ -627,7 +630,9 @@ export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; m
                   );
                 case 'reply':
                   return (
-                    <div key={entry.id} data-entry-id={entry.id} className="space-y-1">
+                    <div key={entry.id} data-entry-id={entry.id} className="relative mr-2 rounded-2xl rounded-tl-sm border border-amber-300/40 bg-slate-900/60 p-2 space-y-1 break-words">
+                      <p className="text-xs font-semibold text-amber-200">Luminary</p>
+                      <span aria-hidden="true" className="absolute -left-1 top-4 h-2 w-2 rotate-45 border-l border-b border-amber-300/40 bg-slate-900" />
                       <ReplyView content={entry.reply.content} modelId={entry.reply.modelId} lineage={entry.lineage} level={entry.level} forTask={entry.forTask} />
                       <button type="button" disabled={busy} onClick={() => explainMore(entry)} className="text-[9px] text-amber-300 hover:text-amber-100 disabled:opacity-50">Explain more</button>
                     </div>
