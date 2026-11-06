@@ -40,3 +40,7 @@
 - Entry flow: src/components/IdeWelcomePurpose.tsx leads the first-launch view with Tracey's purpose, then "Start with your idea" (focuses the interview, does not send), the visual architecture, and the Vibe Atlas. App.tsx routes the Atlas dialog through atlasSrc.
 - Verified at 1440x900: welcome renders the GLB; the IDE first launch keeps the draft through Atlas open and close; Keyboard entry reaches Orb, Satellite and Actuator and Back returns through each level.
 - Open: the canvas-click Orb entry in scripts/verify-ide-navigation.mjs is unresolved (automation aims at a 0x0 label); Keyboard entry is the verified route. The build-audit WelcomeScreen.tsx is not ported. Uncommitted, no push.
+
+
+## 2026-11-06 | Lumin | Gateway-served welcome remediation
+- Applied scoped fixes for reported F1-F4: exact welcome framing exception, workspace-compatible strict-CSP embedded texture loading, live reduced-motion changes, single-owner animation scheduling across visibility/context events, and browser-Back restoration of disposed GPU resources. Real gateway Chrome checks and supplemental source review recorded in docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. No inference or existing runtime change. Historical records preserved.

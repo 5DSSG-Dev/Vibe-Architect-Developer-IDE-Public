@@ -232,3 +232,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-06 | Lumin | README purpose entry
 - README now opens with Tracey's founding motivation before feature details, under "Why I built Vibe Architect": development access for noncoding Architects, especially neurodivergent thinkers. The section is attributed to Tracey and linked from the contents. User-stated priority is access first, AEGIS close second. Documentation-only; no commit or push.
+
+
+## 2026-11-06 | Lumin | Welcome integration repair
+- Welcome iframe framing and canonical GLB texture repaired without broad CSP relaxation; motion/visibility/context lifecycle now share owned cancellable schedules. Actual isolated gateway browser checks passed; production inline-script CSP and wider feature limits remain qualified. Report: docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. Tracey authorized repository publication; no runtime deployment.

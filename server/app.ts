@@ -139,10 +139,10 @@ export async function createGateway(options: CreateGatewayOptions) {
     noSniff: true,
     referrerPolicy: { policy: 'no-referrer' },
   }));
-  // Only the four Atlas documents can be embedded by this same-origin IDE.
+  // Only the five Atlas documents can be embedded by this same-origin IDE.
   // Keep the default frame denial for the IDE, APIs, and every other route.
   app.use((req, res, next) => {
-    if (/^\/atlas\/(?:index|aegis|explore|building-the-vibe)\.html$/.test(req.path)) {
+    if (/^\/atlas\/(?:index|welcome|aegis|explore|building-the-vibe)\.html$/.test(req.path)) {
       res.setHeader('X-Frame-Options', 'SAMEORIGIN');
       const policy = res.getHeader('Content-Security-Policy');
       if (typeof policy === 'string') {

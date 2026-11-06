@@ -68,7 +68,7 @@ In Vibe Architect you build a project by:
 1. Dragging **Elements** (named by function — a *Library* that holds documents, a *Memory* that holds state, a *Validation* that checks inputs) out of a library.
 2. **Docking** them around a central **CORE** and connecting them with **Umbilicals**.
 3. **Drilling in** to any object to arrange the smaller pieces inside it.
-4. **Saving and exporting** the CORE workspace as JSON. Executable builds, simulation, and deployment remain future integration work.
+4. **Saving and exporting** the CORE workspace as JSON. The current executable demo can generate, independently audit, build, and locally launch supported text-entry web apps; general simulation and deployment remain future work.
 
 A plain-language **Wayfinder** narrates where you are and what to do next, so no screen is ever a dead end. Throughout, an AI partner — the **Luminary** — can advise, explain, and (on request) write code, but always inside guardrails you can see.
 
@@ -168,7 +168,7 @@ AEGIS is what makes the Luminary trustworthy, and what makes this an AEGIS appli
 
 ## Real-world application and benefits
 
-**What you can build.** Vibe Architect is a general visual environment for composing software systems — data and document pipelines, service backends, integration flows, and agent/AI-assisted tools — expressed as connected Orbs, Satellites, and Actuators around a CORE. Turning that composition into an executable build remains an integration target.
+**What you can build.** Vibe Architect is a general visual environment for composing software systems — data and document pipelines, service backends, integration flows, and agent/AI-assisted tools — expressed as connected Orbs, Satellites, and Actuators around a CORE. The current executable generator supports a bounded web-app profile: text-entry forms, lists, pages, navigation, and in-memory records. Image uploads, accounts, persistent storage, search, and editing or deleting records remain unsupported. Generated-app records clear on reload; saving the IDE workspace does not preserve them.
 
 **The benefits it provides:**
 
@@ -216,8 +216,8 @@ See [`server/README.md`](server/README.md) for gateway and authentication requir
 This repository is the **public hackathon baseline**, and it is honest about what is and is not finished:
 
 - **The authoring workspace and Element/POD model are implemented.** Simulate and Deploy were retired in PR #25; genuine simulation and executable deployment remain future work.
-- **AEGIS governance stays in full** — it is the point, not a feature to trim.
-- **The Luminary is under active construction.** Model-provider integration and governance code exist; durable admission storage merged in PR #32 is not yet wired into live routes. End-to-end governance and build acceptance remain open.
+- **AEGIS governance remains integral** to the collaboration and generation flow, supporting the primary purpose of opening development to more Architects.
+- **The Luminary and supported app-generation path have bounded live verification.** Recorded Meta/Baseten journeys cover governed planning, accepted architecture, generated files, independent assembly audit, build, and local launch. This is not arbitrary-app support. See [the product acceptance matrix](docs/IDE_PRODUCT_ACCEPTANCE_MATRIX_2026-11-06.md) for evidence, historical findings, and remaining limits.
 - **The "Stellar" coding-language subsystem has been removed** from this build and preserved separately; it was not complete and is out of scope for the hackathon. The element **code-editor overlay** remains.
 - The product name describes the direction, not a readiness claim. Some views are demonstrations or partial integrations, and they are labeled as such.
 

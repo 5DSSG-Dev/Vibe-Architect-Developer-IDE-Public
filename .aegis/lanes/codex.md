@@ -657,3 +657,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 ## 2026-11-06 | Lumin | README founding purpose
 - At Tracey's request, added an early first-person README section explaining why he created Vibe Architect: opening development to noncoding systems designers and Architects, with particular focus on neurodivergent autistic and ADHD thinkers including himself. Purpose first, AEGIS close second; updated the adjacent priority wording and contents link.
 - Documentation-only; reviewed exact diff and whitespace. Verus's two existing disclosure edits preserved unchanged. No model calls, source implementation, commit or push.
+
+
+## 2026-11-06 | Lumin | Authorized welcome repair and publication
+- Tracey authorized checkpoint commit/push and reviewed promotion to main. Published33456ec containing README purpose and demo disclosures. Repaired welcome exact-path framing, embedded-texture loading under strict CSP, live motion preferences and single-owner GPU lifecycle scheduling. Supplemental source review and actual gateway Chrome evidence in docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. No inference calls or existing runtime restart. Final branch/publication receipt follows.

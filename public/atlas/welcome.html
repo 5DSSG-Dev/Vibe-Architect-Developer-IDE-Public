@@ -134,11 +134,11 @@
     const MODEL_HEIGHT = 2.86;
     const LUMINARY_URL = '../assets/models/LUMINARY.glb';
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduceMotion = motionPreference.matches;
     const aetherCanvas = document.getElementById('aether');
     const luminaryCanvas = document.getElementById('luminary');
-    let aetherFrame = 0;
-    let luminaryFrame = 0;
+
     let aetherRenderer = null;
     let luminaryRenderer = null;
     const owned = [];
@@ -152,6 +152,41 @@
 
     // Shared clock for both canvases; the Luminary breathes and the Aether drifts.
     const clock = new THREE.Clock();
+    const schedules = [];
+    // Every event reconciles one owned RAF per canvas. Lost/hidden/disposed views never schedule.
+    function createSchedule(canvas, draw, ready = () => true) {
+      let frame = 0;
+      let lost = false;
+      const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+      const available = () => !disposed && !lost && !document.hidden && ready();
+      const tick = () => {
+        frame = 0;
+        if (!available() || reduceMotion) return;
+        draw();
+        frame = requestAnimationFrame(tick);
+      };
+      const reconcile = () => {
+        stop();
+        if (!available()) return;
+        draw();
+        if (!reduceMotion) frame = requestAnimationFrame(tick);
+      };
+      const onLost = (event) => { event.preventDefault(); lost = true; stop(); };
+      const onRestored = () => { lost = false; reconcile(); };
+      canvas.addEventListener('webglcontextlost', onLost);
+      canvas.addEventListener('webglcontextrestored', onRestored);
+      const schedule = { reconcile, stop, dispose() {
+        stop();
+        canvas.removeEventListener('webglcontextlost', onLost);
+        canvas.removeEventListener('webglcontextrestored', onRestored);
+      }};
+      schedules.push(schedule);
+      return schedule;
+    }
+    const reconcileAll = () => { for (const schedule of schedules) schedule.reconcile(); };
+    const onMotionChange = () => { reduceMotion = motionPreference.matches; reconcileAll(); };
+    motionPreference.addEventListener('change', onMotionChange);
+    document.addEventListener('visibilitychange', reconcileAll);
 
     // ---- Aether background (full-screen shader, as in the IDE) -------------------------------
     try {
@@ -177,50 +212,24 @@
         depthWrite: false
       });
       scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), aetherMaterial));
-      owned.push(aetherMaterial);
+      owned.push(aetherMaterial, scene.children[0].geometry);
 
       const drawAether = () => {
         aetherMaterial.uniforms.u_time.value = clock.getElapsedTime();
         aetherRenderer.render(scene, camera);
       };
-      const loopAether = () => {
-        aetherFrame = requestAnimationFrame(loopAether);
-        drawAether();
-      };
-
-      aetherCanvas.addEventListener('webglcontextlost', (e) => {
-        e.preventDefault();
-        cancelAnimationFrame(aetherFrame);
-        aetherFrame = 0;
-        goStill();
-      });
-      // Three.js rebuilds its GL state on restore; resume the field instead of staying on the still fallback.
+      const aetherSchedule = createSchedule(aetherCanvas, drawAether);
+      aetherCanvas.addEventListener('webglcontextlost', goStill);
       aetherCanvas.addEventListener('webglcontextrestored', () => {
-        if (disposed) return;
-        document.body.classList.remove('still');
-        if (reduceMotion || document.hidden) drawAether();
-        else loopAether();
+        if (!disposed) document.body.classList.remove('still');
       });
-
       window.addEventListener('resize', () => {
+        if (disposed) return;
         aetherRenderer.setSize(window.innerWidth, window.innerHeight, false);
         aetherMaterial.uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
-        if (reduceMotion) drawAether();
+        aetherSchedule.reconcile();
       });
-
-      // Pause the background while the tab is hidden; resume on return.
-      document.addEventListener('visibilitychange', () => {
-        if (reduceMotion || disposed) return;
-        if (document.hidden) {
-          cancelAnimationFrame(aetherFrame);
-          aetherFrame = 0;
-        } else if (!aetherFrame) {
-          loopAether();
-        }
-      });
-
-      if (reduceMotion) drawAether(); // calm mode: one still frame
-      else loopAether();
+      aetherSchedule.reconcile();
     }
 
     // ---- The 3D Luminary --------------------------------------------------------------------
@@ -263,7 +272,20 @@
       resizeLuminary();
       window.addEventListener('resize', resizeLuminary);
 
-      const loader = new GLTFLoader();
+      // Match StrictCspGltfLoader in the workspace: embedded images use img-src blob:,
+      // not ImageBitmapLoader's fetch (which would require widening connect-src).
+      class StrictCspGltfLoader extends GLTFLoader {
+        parse(data, path, onLoad, onError) {
+          const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'createImageBitmap');
+          Object.defineProperty(globalThis, 'createImageBitmap', { configurable: true, writable: true, value: undefined });
+          try { super.parse(data, path, onLoad, onError); }
+          finally {
+            if (descriptor) Object.defineProperty(globalThis, 'createImageBitmap', descriptor);
+            else Reflect.deleteProperty(globalThis, 'createImageBitmap');
+          }
+        }
+      }
+      const loader = new StrictCspGltfLoader();
       loader.load(
         LUMINARY_URL,
         (gltf) => {
@@ -293,8 +315,7 @@
           model.position.sub(centre);
           body.add(model);
           loaded = true;
-          if (reduceMotion) drawLuminary(0);
-          else startLuminaryLoop();
+          luminarySchedule.reconcile();
         },
         undefined,
         () => {
@@ -311,36 +332,11 @@
         luminaryRenderer.render(luminaryScene, luminaryCamera);
       };
 
-      const startLuminaryLoop = () => {
-        if (luminaryFrame || reduceMotion || disposed || document.hidden) return;
-        const tick = () => {
-          luminaryFrame = requestAnimationFrame(tick);
-          drawLuminary(clock.getElapsedTime());
-        };
-        tick();
-      };
-
-      document.addEventListener('visibilitychange', () => {
-        if (reduceMotion || disposed || !loaded) return;
-        if (document.hidden) {
-          cancelAnimationFrame(luminaryFrame);
-          luminaryFrame = 0;
-        } else {
-          startLuminaryLoop();
-        }
-      });
-
-      luminaryCanvas.addEventListener('webglcontextlost', (e) => {
-        e.preventDefault();
-        cancelAnimationFrame(luminaryFrame);
-        luminaryFrame = 0;
-        luminaryCanvas.style.display = 'none';
-      });
+      const luminarySchedule = createSchedule(luminaryCanvas,
+        () => drawLuminary(reduceMotion ? 0 : clock.getElapsedTime()), () => loaded);
+      luminaryCanvas.addEventListener('webglcontextlost', () => { luminaryCanvas.style.visibility = 'hidden'; });
       luminaryCanvas.addEventListener('webglcontextrestored', () => {
-        if (disposed || !loaded) return;
-        luminaryCanvas.style.display = '';
-        if (reduceMotion) drawLuminary(0);
-        else startLuminaryLoop();
+        if (!disposed) luminaryCanvas.style.visibility = '';
       });
     } else {
       luminaryCanvas.style.display = 'none';
@@ -356,19 +352,24 @@
     function dispose() {
       if (disposed) return;
       disposed = true;
-      cancelAnimationFrame(aetherFrame);
-      cancelAnimationFrame(luminaryFrame);
-      aetherFrame = 0;
-      luminaryFrame = 0;
+      motionPreference.removeEventListener('change', onMotionChange);
+      document.removeEventListener('visibilitychange', reconcileAll);
+      for (const schedule of schedules) schedule.dispose();
       for (const item of owned) item.dispose?.();
       owned.length = 0;
-      if (body) disposeModel(body);
+      if (body) {
+        const textures = new Set();
+        body.traverse(node => { if (node.isMesh) for (const value of Object.values(node.material)) if (value?.isTexture) textures.add(value); });
+        for (const texture of textures) texture.dispose();
+        disposeModel(body);
+      }
       materials = [];
       if (aetherRenderer) { aetherRenderer.dispose(); aetherRenderer.forceContextLoss(); }
       if (luminaryRenderer) { luminaryRenderer.dispose(); luminaryRenderer.forceContextLoss(); }
     }
     window.addEventListener('pagehide', dispose);
-    window.addEventListener('beforeunload', dispose);
+    // A cached document owns disposed GPU resources; rebuild it when browser Back restores it.
+    window.addEventListener('pageshow', event => { if (event.persisted) location.reload(); });
   </script>
 </body>
 </html>
