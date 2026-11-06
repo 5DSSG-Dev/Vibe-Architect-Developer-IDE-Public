@@ -228,3 +228,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 ## 2026-11-06 | Lumin | Batch09 diagnostic boundaries
 - P09 live recovery verifier assertion repaired and passed once. Totem original7/current8 findings audited:3append-only structural repairs;5remaining known historical findings explicitly isolated by .aegis/integrity/totem-legacy-baseline.json and scripts/verify-totem-integrity.mjs. Raw CLI0.1.2 still reports those errors; no old chain rehash or Atlas change.
 - server/http-lifecycle.ts and review fixture ownership harden bounded cleanup. Real review/files/socket lifecycle checks pass; original file-level process failure cause remains unknown. See Batch09 report; independent review pending, no final all-diagnostics-clear or new commit/push claimed.
+
+
+## 2026-11-06 | Lumin | README purpose entry
+- README now opens with Tracey's founding motivation before feature details, under "Why I built Vibe Architect": development access for noncoding Architects, especially neurodivergent thinkers. The section is attributed to Tracey and linked from the contents. User-stated priority is access first, AEGIS close second. Documentation-only; no commit or push.

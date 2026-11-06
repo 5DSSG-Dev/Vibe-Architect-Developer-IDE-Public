@@ -652,3 +652,8 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 ## 2026-11-06 | Lumin | Architect-authorized engineering publication
 - Tracey explicitly authorized commit and push of the recommended reviewed engineering through Batch09. Candidate includes scoped runtime/UI fixes, maintained verification commands, append-only reports and historical-integrity isolation snapshots. Exact source reconciled against Batch04/05/07/08/09 manifests and Aster's final matrix append; no unexplained source paths.
 - Publication preserves qualified PASS only: rawCLI five isolated findings and P24 unknown original cause remain recorded. Private credentials, generated apps, runtime records and raw browser/model evidence excluded. No dependency change or runtime promotion. Fresh build and staged integrity/privacy checks recorded privately in C:/AEGIS_IDE_AUDIT/lumin-engineering-publication-20261106; exact commit/remote receipt follows in shared channel.
+
+
+## 2026-11-06 | Lumin | README founding purpose
+- At Tracey's request, added an early first-person README section explaining why he created Vibe Architect: opening development to noncoding systems designers and Architects, with particular focus on neurodivergent autistic and ADHD thinkers including himself. Purpose first, AEGIS close second; updated the adjacent priority wording and contents link.
+- Documentation-only; reviewed exact diff and whitespace. Verus's two existing disclosure edits preserved unchanged. No model calls, source implementation, commit or push.

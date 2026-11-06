@@ -4,7 +4,19 @@
 
 Vibe Architect is a visual development environment with a *governed* AI partner at its center. It is designed **approachable-first**: someone who has never written code can understand every screen, and nothing gets in the way of someone who has. Objects are named by **what they do**, not by what they are called in a programming language.
 
-It is an **AEGIS application**. AEGIS is the governance and AI-safety layer, and it is not an add-on — the fact that the AI partner inside the IDE is *governed* is the product's defining feature.
+## Why I built Vibe Architect
+
+**You may already think like an Architect.**
+
+I created Vibe Architect to open a door into software development for people who have ideas, recognize relationships, and imagine systems, but find code intimidating. Some may be systems designers and Architects without having had the opportunity to discover it.
+
+My particular focus is on neurodivergent thinkers, including autistic and ADHD individuals like me. I want more people to have the opportunity to discover what they can design and build, beginning with their purpose and learning through visual structure and conversation.
+
+Opening that door is the IDE's primary purpose. AEGIS is a close second: its principles and governance shape how the AI collaboration supports that purpose.
+
+— **Tracey Prutch, Creator of Vibe Architect**
+
+It is an **AEGIS application**. AEGIS is the governance and AI-safety layer, and it is not an add-on — the AI partner inside the IDE is *governed* as part of supporting that purpose.
 
 > **Ownership:** Copyright © 2023–2026 5D Service Solutions Global, LLC. All rights reserved. Proprietary, source-available software — see [LICENSE](LICENSE).
 >
@@ -26,6 +38,7 @@ Three original instruments make their public debut in this submission — each i
 
 ## Table of contents
 
+- [Why I built Vibe Architect](#why-i-built-vibe-architect)
 - [What's new here](#whats-new-here)
 - [What it is](#what-it-is)
 - [Who it is for, and the problem it solves](#who-it-is-for-and-the-problem-it-solves)
