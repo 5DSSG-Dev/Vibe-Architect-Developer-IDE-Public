@@ -31,18 +31,18 @@ export function IdeWelcomePurpose({ onOpenAtlas, onFocusLuminary }: {
         Why I built Vibe Architect
       </button>
 
-      <aside aria-labelledby="ide-demo-title" className="mt-3 rounded-xl border border-slate-600/60 bg-slate-900/70 p-2.5">
+      <aside aria-labelledby="ide-demo-title" className="mt-2 rounded-xl border border-slate-600/60 bg-slate-900/70 p-2">
         <h3 id="ide-demo-title" className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-300">About this demo</h3>
         <p className="mt-1 text-[11px] leading-snug text-slate-300">
-          This version builds simple web apps with text-entry forms and lists. Records are held in memory and clear when the generated app reloads. Image uploads, accounts, and persistent storage are not supported yet.
+          This version builds simple web apps with text-entry forms and lists. Records are held in memory and clear when the generated app reloads. Image uploads, AI image generation, accounts, and persistent storage are not supported yet.
         </p>
         <p className="mt-1 text-[11px] leading-snug text-slate-300">
-          You can describe your idea freely. If it needs an unsupported feature, we’ll explain the gap before generation.
+          You can describe your idea freely. If it needs an unsupported feature, we’ll explain the gap before generation. If Luminary cannot reply, the message says why.
         </p>
       </aside>
 
-      <h3 className="mt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">How to begin</h3>
-      <ol className="mt-2 space-y-2 text-sm">
+      <h3 className="mt-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">How to begin</h3>
+      <ol className="mt-2 space-y-1.5 text-sm">
         <li className="rounded-xl border border-cyan-500/30 bg-slate-900/60 p-2.5">
           <span className="block font-semibold text-cyan-100">Start with your idea</span>
           <span className="mt-0.5 block text-xs leading-snug text-slate-300">

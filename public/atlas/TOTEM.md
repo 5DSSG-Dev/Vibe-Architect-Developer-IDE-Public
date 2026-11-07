@@ -44,3 +44,11 @@
 
 ## 2026-11-06 | Lumin | Gateway-served welcome remediation
 - Applied scoped fixes for reported F1-F4: exact welcome framing exception, workspace-compatible strict-CSP embedded texture loading, live reduced-motion changes, single-owner animation scheduling across visibility/context events, and browser-Back restoration of disposed GPU resources. Real gateway Chrome checks and supplemental source review recorded in docs/WELCOME_GATEWAY_REPAIR_2026-11-06.md. No inference or existing runtime change. Historical records preserved.
+
+## 2026-11-06 | Verus (Peer Engineer) | Demo disclosure and Atlas integrity successor policy
+- Added docs/atlas-integrity/successor-policy.v1.json and scripts/verify-atlas-integrity.mjs. Baseline bytes come from git (cat-file --filters), so CRLF checkouts are compared as they are written. Historical bytes must match exactly; TOTEM.md accepts appends only; _archive is exact.
+- Self-test and a mutation test in a temporary copy: an edit inside history is rejected, and an append is inventoried, not treated as a violation.
+- README.md: added "Demo capabilities and boundaries" (supported features, unsupported features including AI image generation, no app-build allowance, real limit messages, gateway notices).
+- src/components/IdeWelcomePurpose.tsx: the About this demo notice now names AI image generation and the gateway notice.
+- Handoff for Lumin, not implemented here: docs/demo-disclosure/handoff-application-production.md (exact Build & Preview copy).
+- Open: image-entry live interview check, blocked by gateway authentication. Posting to the collaboration channel was not possible from this session. No push.

@@ -1,0 +1,167 @@
+{
+  "policy": "atlas-integrity-successor",
+  "policyVersion": 1,
+  "policyRevision": 3,
+  "baselineCommit": "9b1c988d86600521148a79f6703c6ef951e498d5",
+  "byteDomain": "raw Git blob bytes; working-tree CRLF folded to LF for LF blobs",
+  "filesChecked": 36,
+  "successorMatches": [],
+  "appendedRanges": [
+    {
+      "path": "public/atlas/TOTEM.md",
+      "startByte": 5719,
+      "endByte": 6842,
+      "bytes": 1123,
+      "sha256": "a256ee0f53bd7ca365c6833641d4192d7d9e441ccd81a20a24e759c0b20b8222",
+      "crCount": 0
+    }
+  ],
+  "workingEol": [
+    {
+      "path": "public/atlas/README.md",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/TOTEM.md",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/aegis.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/assets/aegis-atlas.webp",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/assets/vibe-atlas.webp",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/building.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/content/documents.json",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/content/navigation.json",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/explore.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/index.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/scripts/atlas.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/scripts/model.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/scripts/reader.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/styles/atlas.css",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/styles/reader.css",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/tests/atlas.test.mjs",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/tests/preview.mjs",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/_archive/ui-build-2026-11-03/tests/preview.test.mjs",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/aegis.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/assets/aegis-atlas.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/assets/aether/AetherBackground.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/assets/aether/loaders/GLTFLoader.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/assets/aether/three.module.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/assets/aether/utils/BufferGeometryUtils.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/assets/building-the-vibe.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/assets/explore.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/assets/source/aegis-atlas.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/assets/source/vibe-atlas.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/assets/vibe-atlas.png",
+      "eol": "mixed"
+    },
+    {
+      "path": "public/atlas/atlas.css",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/atlas.js",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/building-the-vibe.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/content/VERUS_CONTENT_HANDOFF.md",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/explore.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/index.html",
+      "eol": "CRLF"
+    },
+    {
+      "path": "public/atlas/welcome.html",
+      "eol": "CRLF"
+    }
+  ],
+  "violations": [],
+  "result": "PASS"
+}

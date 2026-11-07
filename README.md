@@ -223,6 +223,17 @@ This repository is the **public hackathon baseline**, and it is honest about wha
 
 Validation results belong to their recorded revision and scope. See the Totems and PR evidence; this overview does not assert that the current revision has passed every check.
 
+## Demo capabilities and boundaries
+
+What the demo builds today, and what it does not:
+
+- **Supported:** simple web apps made of pages, navigation, plain-text forms, and lists of records.
+- **Records:** records entered in a generated app are held in memory and clear when that app reloads. Saving the IDE workspace does not keep them.
+- **Not supported yet:** AI image generation, image uploads and attachments, accounts and login, persistent storage, search, editing or deleting records, rich text, and Markdown.
+- **Image requests:** a request that needs an image is kept in the conversation and the plan, and the demo says it cannot build that part yet. A text-only alternative is offered only where the interview provides one; it is not yet offered for every request, and it runs only if the Architect chooses it.
+- **Limits:** the demo's real session, rate, and spending limits show their own messages when reached. The demo has no app-build allowance: no counter limits how many apps you can build.
+- **Gateway notices:** Luminary replies need a connected gateway. When the gateway is not connected, is unauthorised, or is rate-limited, the message says so; a local run may need the gateway configured first (see [server/README.md](server/README.md)).
+
 ## Repository map
 
 | Path | Contents |
