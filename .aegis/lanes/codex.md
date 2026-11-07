@@ -738,3 +738,7 @@ Aster's seq341 held the planning ledger over personal identity attribution. The 
 
 ## 2026-11-07 | Lumin | Governance reasoning budget
 - Generation request db2c2326 stopped before writer dispatch when Meta IRG exhausted output allowance. Governance transport now defaults reasoning effort to low while preserving explicit configuration. Exact retained 6116-byte production prompt then passed live PIM/IRG/PTAG with [1,1]. Original failed request remains preserved. Full fresh journey pending.
+
+
+## 2026-11-07 | Lumin | Proposed definitions and completion claims
+- Meta IRG treated requirementBindings and empty gaps as proof of completion/approval claims. Added general interpretation distinguishing a proposed definition from explicit claims of built/tested/audited/deployed work. Actual event claims retain evidence requirements. Exact retained outbound definition then passed live full PIM/IRG/PTAG [1,1]. Full app journey recheck pending.
