@@ -26,7 +26,7 @@ function assertSupportedPurpose(purpose:string):void {
   ];
   // Carry an explicit exclusion through complete capability names in a comma list.
   // Sentence boundaries and items with qualifiers or verbs end the grouped scope.
-  const additionalListItem = /^(?:accounts?(?: and login)?|persistent storage|uploads?(?:\/image generation)?|image generation|editing(?:\/deleting)?|deleting|optional dependencies|rich[- ]text editing)$/;
+  const additionalListItem = /^(?:accounts?(?: and login)?|persistence|persistent storage|uploads?(?:\/image generation)?|image generation|editing(?:\/deleting)?|deleting|(?:optional|extra) dependencies|rich[- ]text editing)$/;
   const exactCapabilityNames = capabilityPatterns.map(([pattern]) => new RegExp('^(?:' + pattern.source + ')$'));
   const excludedItems: { start: number; end: number }[] = [];
   for (const prefix of requested.matchAll(/\b(?:no|without|exclude|excludes|excluding|do not include|does not need|not requiring)\s+(?:any\s+)?/g)) {

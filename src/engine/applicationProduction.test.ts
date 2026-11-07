@@ -97,7 +97,11 @@ test('grouped exclusions preserve the raw Meta proposal at both preflight entry 
   appConfiguration:{appType:'Web App',purpose,crystalModel:'x',updatedAt:'now'},
   sockets:app.sockets.map((socket,index)=>index?socket:{...socket,state:'Active' as const,connectedItem:orb})};
  assert.equal(productionContext(accepted,[]).purpose,purpose);
+ const livePurpose='Simple personal Notes web app with no accounts, persistence, search, uploads, editing/deleting, or extra dependencies.';
+ assert.equal(validateProductionContext({...context,purpose:livePurpose}).purpose,livePurpose);
+ assert.equal(productionContext({...accepted,appConfiguration:{...accepted.appConfiguration,purpose:livePurpose}},[]).purpose,livePurpose);
  for(const requested of [
+  livePurpose+' Add a search bar to search notes.',
   'No accounts, search records by title.',
   'No accounts, persistent storage, but include search.',
   'No accounts, persistent storage, search; add search on the archive page.',

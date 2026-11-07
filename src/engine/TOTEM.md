@@ -151,3 +151,7 @@
 
 ## 2026-11-06 | Lumin | Readable production definition output
 - Retained request85570688 produced three identical compact JSON definitions and failed Communication. The same definition with indentation passed all existing gauge thresholds in a live local comparison. Production prompt now requests readable indented JSON. Candidate contents and governance settings are retained. Fresh full-path verification follows.
+
+
+## 2026-11-06 | Lumin | Persistence exclusion regression
+- Grouped exclusions now recognize persistence and extra dependencies as complete list items. Both preflight entry points preserve the reported Meta wording and later affirmative search still fails. Updated the replay test's stale IDS identifiers to the active IDQ fixture. App suite 465/465 and Atlas policy revision 3 passes all 37 protected files. Publication held for independent live review.
