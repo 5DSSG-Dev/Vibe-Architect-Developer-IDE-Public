@@ -734,3 +734,7 @@ The source matches all 14 paths in source-manifest.json for 5be2f92+marker-da00c
 ## 2026-11-07 | Lumin | Planning intent interpretation
 
 Aster's seq341 held the planning ledger over personal identity attribution. The provider wire contract now distinguishes proposed application scope from actual identity, execution authority and completion claims. Actual material claims retain evidence requirements. The exact retained 9,773-character planning candidate passed live PIM, IRG and PTAG with [1,1] at private seq347. An isolated 120-second transport setting completed within the existing 180-second session budget. Build and 465 app tests passed, Atlas37 passed. Fresh full app journey remains pending. Publication held.
+
+
+## 2026-11-07 | Lumin | Governance reasoning budget
+- Generation request db2c2326 stopped before writer dispatch when Meta IRG exhausted output allowance. Governance transport now defaults reasoning effort to low while preserving explicit configuration. Exact retained 6116-byte production prompt then passed live PIM/IRG/PTAG with [1,1]. Original failed request remains preserved. Full fresh journey pending.
