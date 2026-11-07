@@ -86,3 +86,22 @@ test('explicit exclusions do not reject a supported app or conceal affirmative r
   assert.throws(()=>validateProductionContext({...context,purpose}),/cannot build/);
  }
 });
+
+
+test('grouped exclusions preserve the raw Meta proposal at both preflight entry points',()=>{
+ const purpose='Simple personal Notes web app with one home page containing one required plain-text Note field and Save button; each save adds a note to visible list newest-first; records in-memory only and clear on reload; no accounts, persistent storage, search, uploads/image generation, editing/deleting, or optional dependencies.';
+ assert.equal(validateProductionContext({...context,purpose}).purpose,purpose);
+ const app=createBlankApp();
+ const orb={id:'orb',name:'Notes',category:'Orbs' as const,description:'Store notes',version:'1',trust:'Draft' as const,memoryReq:1,threadsReq:1,capabilities:[],requirements:[]};
+ const accepted={...app,name:'Notes',appCreation:'ready' as const,
+  appConfiguration:{appType:'Web App',purpose,crystalModel:'x',updatedAt:'now'},
+  sockets:app.sockets.map((socket,index)=>index?socket:{...socket,state:'Active' as const,connectedItem:orb})};
+ assert.equal(productionContext(accepted,[]).purpose,purpose);
+ for(const requested of [
+  'No accounts, search records by title.',
+  'No accounts, persistent storage, but include search.',
+  'No accounts, persistent storage, search; add search on the archive page.',
+  'No accounts, search, uploads. Search by title is required.',
+  'No accounts, an unrelated clause, search.',
+ ]) assert.throws(()=>validateProductionContext({...context,purpose:requested}),/asks for search/);
+});

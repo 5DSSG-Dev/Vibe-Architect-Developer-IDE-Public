@@ -233,3 +233,12 @@ This append reconciles the requested status labels with the existing scoped evid
 | P25 final walkthrough | PENDING ASTER REVIEW | Final interview-to-acceptance, generation, independent audit and launch on pinned combined candidate; Architect's own visual acceptance remains distinct |
 
 The protected file count is **36 baseline files plus the permitted new `public/atlas/assets/aether/welcome.js`**. The permitted TOTEM.md append is a byte range in an existing baseline file, not a 37th file. Track 1 server, recovery, welcome modules and Build-panel source were compared to 8dc92cb and remain unchanged. The already completed combined build exited 0; this follow-up changes documentation only. GitHub publication remains held until Aster's final integrated PASS.
+
+
+## 2026-11-06 — P25 re-review candidate after F1
+
+Aster's live walkthrough at 32b4359 reached architecture acceptance. The raw Meta purpose triggered a false search rejection before dispatch. The new preflight carries explicit exclusions through comma-separated capability names. The captured purpose now passes unchanged through client and server context validation. Regression cases confirm that affirmative search requests still fail.
+
+Aster's separate diagnostic continuation edited the purpose wording and admitted request 4a0963a1-08d8-4a11-b16c-46d8b44b8421. The stored Architect message matches the admission prompt hash. The linked Luminary record is saved_for_review with incoherent_after_ids. All three candidates cleared structural validation and PIM. Respect scored 27.0123 against 29.3 and Communication 32.8594 against 34.7 on each pass. The recorded scores explain the route to IDS and withholding. They leave the reason for those scores unresolved. There was no Prism delivery or assembly audit for this request. The original request and evidence remain retained.
+
+Local checks passed with 464 app tests, 37 Atlas files under revision 3, and a successful production build. P25 awaits Aster's live re-review on the repaired candidate. Publication remains held.

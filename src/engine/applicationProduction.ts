@@ -8,7 +8,7 @@ export interface ProductionContext {
 export interface ProductionAnswer { definition: ApplicationDefinition; bindings: Record<string, string>; gaps: string[]; requirementBindings?: Record<string,string[]>; packageLock?: string }
 function assertSupportedPurpose(purpose:string):void {
   const requested = purpose.toLowerCase();
-  const unsupported = [
+  const capabilityPatterns: [RegExp, string][] = [
     [/rich[- ]text|formatted text|wysiwyg/, 'rich-text editing'],
     [/\bsearch(?:able)?\b/, 'search'],
     [/\bpin(?:ning)?\b/, 'pinning'],
@@ -23,14 +23,33 @@ function assertSupportedPurpose(purpose:string):void {
     [/\bfront photo\b|\bphoto uploads?\b|\bupload (?:photos|images)\b/, 'photo upload and storage'],
     [/\bfilter by\b|\bwith filters\b/, 'interactive filters'],
     [/\bcsv import\b|\bcsv export\b/, 'CSV import and export'],
-  ].filter(([pattern]) => {
-    // Only explicit local exclusions negate a match; ambiguous scope still fails closed.
+  ];
+  // Carry an explicit exclusion through complete capability names in a comma list.
+  // Sentence boundaries and items with qualifiers or verbs end the grouped scope.
+  const additionalListItem = /^(?:accounts?(?: and login)?|persistent storage|uploads?(?:\/image generation)?|image generation|editing(?:\/deleting)?|deleting|optional dependencies|rich[- ]text editing)$/;
+  const exactCapabilityNames = capabilityPatterns.map(([pattern]) => new RegExp('^(?:' + pattern.source + ')$'));
+  const excludedItems: { start: number; end: number }[] = [];
+  for (const prefix of requested.matchAll(/\b(?:no|without|exclude|excludes|excluding|do not include|does not need|not requiring)\s+(?:any\s+)?/g)) {
+    let start = prefix.index + prefix[0].length;
+    const clause = requested.slice(start).split(/[.;!?\r\n]/, 1)[0];
+    const items = clause.split(',');
+    if (items.length < 2) continue;
+    for (const item of items) {
+      const name = item.trim().replace(/^or\s+/, '');
+      if (!additionalListItem.test(name) && !exactCapabilityNames.some(pattern => pattern.test(name))) break;
+      excludedItems.push({ start, end: start + item.length });
+      start += item.length + 1;
+    }
+  }
+  const unsupported = capabilityPatterns.filter(([pattern]) => {
+    // Check every occurrence so later affirmative requests still fail preflight.
     for (const match of requested.matchAll(new RegExp((pattern as RegExp).source, 'g'))) {
       const before=requested.slice(0,match.index);
       const after=requested.slice(match.index!+match[0].length);
       const excludedBefore=/\b(?:no|without|exclude|excludes|excluding|not|do not include|does not need|not requiring)\s+(?:any\s+)?$/.test(before);
       const excludedAfter=/^\s+(?:(?:is|are)\s+)?(?:not (?:needed|required|requested|included|supported)|excluded)\b/.test(after);
-      if(!excludedBefore && !excludedAfter)return true;
+      const excludedInList = excludedItems.some(({ start, end }) => match.index >= start && match.index + match[0].length <= end);
+      if(!excludedBefore && !excludedAfter && !excludedInList)return true;
     }
     return false;
   }).map(([, name]) => name as string);

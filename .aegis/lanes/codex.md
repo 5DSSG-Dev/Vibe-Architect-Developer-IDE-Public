@@ -689,3 +689,9 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Integration receipt reconciliation
 - Existing assembly2415b14 retained; Track1/Build source confirmed identical to8dc92cb. Integrated verifier againPASS37/no violations. 37=36baseline plus welcome.js, not TOTEMappend. Matrix now states requested scoped dispositions with exact-copy versus independent-live boundaries. Documentation-only checkpoint for Aster; no push or modelcalls.
+
+
+## 2026-11-06 | Lumin | F1 grouped preflight exclusions
+
+- Reproduced Aster's false search rejection with the unchanged Meta purpose. Preflight now bounds comma-list scope to complete capability names. Regression covers both context entry points and later affirmative search. App tests 464/464, Atlas 37 files PASS, build exit 0.
+- Inspected retained request 4a0963a1-08d8-4a11-b16c-46d8b44b8421. Admission prompt hash matched linked Architect message. Three PIM-clear candidates remained below Respect and Communication thresholds. The final HOLD preceded assembly. Governance settings and evidence were preserved. P25 re-review pending.

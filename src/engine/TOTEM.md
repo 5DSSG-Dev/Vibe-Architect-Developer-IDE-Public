@@ -142,3 +142,8 @@
 ## 2026-11-06 | Lumin | Batch08 planning dispatch and copy contract
 - Creation sessions optionally retain request UUID and prepared/dispatched/completed markers; older version1 records remain readable. Pending reload becomes stopped without automatic replay. Save-before-await and save-before-dispatch provide a durable browser marker; gateway admission remains separately evidenced.
 - Production writer prompt names the fixed Save label for authored instructions. Fresh actual Baseten generation/Qwen/browser evidence confirms one supported case without changing historical generated files. See Batch08 report for sample limits and preserved failures.
+
+
+## 2026-11-06 | Lumin | Grouped preflight exclusions
+
+- Production preflight recognizes bounded comma-separated lists of complete capability names under an explicit exclusion. The captured Meta purpose passes intact at both context entry points. Tests cover affirmative clauses and qualifiers that end the list scope.
