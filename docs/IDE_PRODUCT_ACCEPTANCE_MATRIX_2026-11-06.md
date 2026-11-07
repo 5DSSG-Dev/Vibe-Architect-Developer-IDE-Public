@@ -219,3 +219,17 @@ Tracey supplied Aster's exact-revision Track 2 PASS for `98810fe5cbfc982ddd9497a
 | GitHub publication | HELD | Publish only after final integrated independent acceptance |
 
 The image-entry live check remains blocked by gateway authentication. Baseten model-deactivation diagnostic and final Architect visual acceptance remain separate open items. No provider activation, fresh model dispatch, shared runtime restart, or GitHub push was performed during this assembly. Evidence: `C:/AEGIS_IDE_AUDIT/lumin-final-assembly-20261106/`.
+
+
+## 2026-11-06 — Integration checkpoint disposition summary
+
+This append reconciles the requested status labels with the existing scoped evidence; it does not close the final combined live audit.
+
+| Item | Disposition | Evidence and scope |
+| --- | --- | --- |
+| R1–R7 fixes | VERIFIED PASS | Aster's previously recorded b1c05ee review; corresponding fixes retained through integration |
+| Track 2 Atlas policy, revision 3 | VERIFIED PASS | Aster's exact 98810fe closure receipt supplied by Tracey; integrated verifier passes all 37 files with no violations |
+| Build-panel capability disclosures | VERIFIED PASS — exact-copy integration | Exact reviewed handoff paragraph and reminder rechecked against ApplicationProduction.tsx; source unchanged from 8dc92cb. Final integrated browser/live review remains pending |
+| P25 final walkthrough | PENDING ASTER REVIEW | Final interview-to-acceptance, generation, independent audit and launch on pinned combined candidate; Architect's own visual acceptance remains distinct |
+
+The protected file count is **36 baseline files plus the permitted new `public/atlas/assets/aether/welcome.js`**. The permitted TOTEM.md append is a byte range in an existing baseline file, not a 37th file. Track 1 server, recovery, welcome modules and Build-panel source were compared to 8dc92cb and remain unchanged. The already completed combined build exited 0; this follow-up changes documentation only. GitHub publication remains held until Aster's final integrated PASS.

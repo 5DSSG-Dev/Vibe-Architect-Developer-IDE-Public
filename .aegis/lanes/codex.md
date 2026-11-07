@@ -685,3 +685,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Reviewed Track 2 assembled
 - Normal merge of Aster-reviewed98810fe into8dc92cb completed without conflict at593da6b993e0e96488d81498b89d50c64fc46e00. Full build0, Atlas integrity37filesPASS and self-test30/30PASS. Matrix appends bounded candidate status. Final combined live audit awaitsAster; no inference, provideractivation, peer runtimerestart orpush. Original evidence and baseline unchanged.
+
+
+## 2026-11-06 | Lumin | Integration receipt reconciliation
+- Existing assembly2415b14 retained; Track1/Build source confirmed identical to8dc92cb. Integrated verifier againPASS37/no violations. 37=36baseline plus welcome.js, not TOTEMappend. Matrix now states requested scoped dispositions with exact-copy versus independent-live boundaries. Documentation-only checkpoint for Aster; no push or modelcalls.
