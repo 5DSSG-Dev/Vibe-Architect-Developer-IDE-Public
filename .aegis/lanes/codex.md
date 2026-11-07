@@ -730,3 +730,7 @@ Tracey explicitly approved Meta for PTAG after the pinned Baseten version return
 Author live request f4c9e284-a1de-4966-b43c-0191ac463a26 returned HTTP 200 on port 3206 (PID 57448). Inbound and outbound numeric Markers both returned [1,1], with structural validation and Prism delivery. The call record shows one writer call and one delivery. The prior Baseten failure remains retained.
 
 The source matches all 14 paths in source-manifest.json for 5be2f92+marker-da00c0a70cac. The reviewed port 3204 runtime still matches all 248 artifacts in Aster's manifest 23357318251e20c4b8a1825dfb0015007d10c77ad16300f345c7252ad043f82a. Atlas policy revision 3 passes 37 files. Independent acceptance of the governance candidate and Tracey's visual acceptance remain pending. Publication is held. Private evidence is under C:/AEGIS_IDE_AUDIT/lumin-marker-ptag-reconciliation-20261106.
+
+## 2026-11-07 | Lumin | Planning intent interpretation
+
+Aster's seq341 held the planning ledger over personal identity attribution. The provider wire contract now distinguishes proposed application scope from actual identity, execution authority and completion claims. Actual material claims retain evidence requirements. The exact retained 9,773-character planning candidate passed live PIM, IRG and PTAG with [1,1] at private seq347. An isolated 120-second transport setting completed within the existing 180-second session budget. Build and 465 app tests passed, Atlas37 passed. Fresh full app journey remains pending. Publication held.
