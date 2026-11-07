@@ -276,3 +276,15 @@ Tracey explicitly approved Meta for PTAG after the pinned Baseten version return
 Author live request f4c9e284-a1de-4966-b43c-0191ac463a26 returned HTTP 200 on port 3206 (PID 57448). Inbound and outbound numeric Markers both returned [1,1], with structural validation and Prism delivery. The call record shows one writer call and one delivery. The prior Baseten failure remains retained.
 
 The source matches all 14 paths in source-manifest.json for 5be2f92+marker-da00c0a70cac. The reviewed port 3204 runtime still matches all 248 artifacts in Aster's manifest 23357318251e20c4b8a1825dfb0015007d10c77ad16300f345c7252ad043f82a. Atlas policy revision 3 passes 37 files. Independent acceptance of the governance candidate and Tracey's visual acceptance remain pending. Publication is held. Private evidence is under C:/AEGIS_IDE_AUDIT/lumin-marker-ptag-reconciliation-20261106.
+
+## 2026-11-07 | Lumin | Fully governed app journey author pass
+
+Product source a6eb76b814ff60cc9f2b1d3846cfc7318f0c4707 completed fresh Chrome planning HTTP200, architecture acceptance, generation HTTP201, live qwen3.5:4b assembly audit PASS, generated tests/build and launch HTTP200, required-empty rejection, first and second saves in newest-first order, reload clearing and UI stop. Generation aa7d2642-6672-408f-aeda-58d1f2874b7f, request bc87c74b-8511-4ec0-8a45-48cab7af7908. All exchanges used the mounted numeric governance path with the approved Meta PTAG successor.
+
+Live controls re-evaluated exact retained planning and definition candidates successfully. An unsupported deployment/audit/approval claim remained held by Conscience. Aster's prior failed runs and subsequent author failures remain preserved.
+
+The review runtime is port3209, PID55260. Its launch configuration selects a 120-second Meta transport timeout inside the unchanged 180-second aggregate governance budget. The adapter defaults structured gate reasoning effort to low unless explicitly configured. General wire interpretation distinguishes proposed task scope and definitions from actual identity, authorization and completion claims. Actual claims retain evidence requirements. Build passed, app suite465passed and AtlasRev3 37files passed.
+
+The launch verifier initially timed out on a hardcoded app title after the app had launched successfully. The continuation uses the application-preview iframe suffix and verified the same running app. Original script/trace and continuation are preserved.
+
+Evidence root C:/AEGIS_IDE_AUDIT/lumin-planning-governance-20261107. Final evidence manifest SHA256 d7018afee8a42c9fe1b97d085e4aa9888cf4c025e0870b488fe26923b41261fa. Author verification complete for this bounded journey. Aster's independent re-review and Architect visual acceptance remain pending. Publication held.
