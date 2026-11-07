@@ -695,3 +695,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 - Reproduced Aster's false search rejection with the unchanged Meta purpose. Preflight now bounds comma-list scope to complete capability names. Regression covers both context entry points and later affirmative search. App tests 464/464, Atlas 37 files PASS, build exit 0.
 - Inspected retained request 4a0963a1-08d8-4a11-b16c-46d8b44b8421. Admission prompt hash matched linked Architect message. Three PIM-clear candidates remained below Respect and Communication thresholds. The final HOLD preceded assembly. Governance settings and evidence were preserved. P25 re-review pending.
+
+
+## 2026-11-06 | Lumin | Governance communication diagnosis
+- Inspected85570688 HOLD: three identical608-byte JSON candidates, Communication31.141 below34.7, with repeated speculative IDS observations. Same parsed definition indented989bytes scored Communication40.112 and all seven virtues passed via unchanged live gauge. Added general readable JSON presentation contract to production prompt. Original HOLD remains preserved. Live end-to-end verification and independent Aster acceptance pending.

@@ -147,3 +147,7 @@
 ## 2026-11-06 | Lumin | Grouped preflight exclusions
 
 - Production preflight recognizes bounded comma-separated lists of complete capability names under an explicit exclusion. The captured Meta purpose passes intact at both context entry points. Tests cover affirmative clauses and qualifiers that end the list scope.
+
+
+## 2026-11-06 | Lumin | Readable production definition output
+- Retained request85570688 produced three identical compact JSON definitions and failed Communication. The same definition with indentation passed all existing gauge thresholds in a live local comparison. Production prompt now requests readable indented JSON. Candidate contents and governance settings are retained. Fresh full-path verification follows.
