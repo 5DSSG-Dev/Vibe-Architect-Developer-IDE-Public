@@ -242,3 +242,8 @@ Aster's live walkthrough at 32b4359 reached architecture acceptance. The raw Met
 Aster's separate diagnostic continuation edited the purpose wording and admitted request 4a0963a1-08d8-4a11-b16c-46d8b44b8421. The stored Architect message matches the admission prompt hash. The linked Luminary record is saved_for_review with incoherent_after_ids. All three candidates cleared structural validation and PIM. Respect scored 27.0123 against 29.3 and Communication 32.8594 against 34.7 on each pass. The recorded scores explain the route to IDS and withholding. They leave the reason for those scores unresolved. There was no Prism delivery or assembly audit for this request. The original request and evidence remain retained.
 
 Local checks passed with 464 app tests, 37 Atlas files under revision 3, and a successful production build. P25 awaits Aster's live re-review on the repaired candidate. Publication remains held.
+
+
+## 2026-11-06 | Lumin | IDQ candidate live journey receipt
+- Source473da4690fbe20215985ed189ae4de0d3db902ad completed fresh live Meta interview/acceptance and generation1545563f-bd15-465d-b306-ccd68689d226 (requesta1fd83f5-63f1-4b0e-981a-c3371e937744), independentQwen3.5:4bPASS, reviewed launch, empty-required rejection, two-note newest-first and reload clearing. UIstoppassed; isolated3203/PID55204 remains for reviewer. Real local-IDQ held-message controls passed separately.
+- Evidence manifest C:/AEGIS_IDE_AUDIT/lumin-idq-restoration-20261106/final-evidence-manifest.json SHA256f55892f54a5242a01415e133b9464e35fcf79664e94daf058d2ad748eb0abfce. Aster/Linq notified directly; livewindowreleased. Independent acceptance and full numeric/PTAG mount reconciliation remain open; no push.

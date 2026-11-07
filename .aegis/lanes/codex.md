@@ -703,3 +703,8 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Active Conscience IDQ restoration
 - Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.
+
+
+## 2026-11-06 | Lumin | IDQ candidate live journey receipt
+- Source473da4690fbe20215985ed189ae4de0d3db902ad completed fresh live Meta interview/acceptance and generation1545563f-bd15-465d-b306-ccd68689d226 (requesta1fd83f5-63f1-4b0e-981a-c3371e937744), independentQwen3.5:4bPASS, reviewed launch, empty-required rejection, two-note newest-first and reload clearing. UIstoppassed; isolated3203/PID55204 remains for reviewer. Real local-IDQ held-message controls passed separately.
+- Evidence manifest C:/AEGIS_IDE_AUDIT/lumin-idq-restoration-20261106/final-evidence-manifest.json SHA256f55892f54a5242a01415e133b9464e35fcf79664e94daf058d2ad748eb0abfce. Aster/Linq notified directly; livewindowreleased. Independent acceptance and full numeric/PTAG mount reconciliation remain open; no push.

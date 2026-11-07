@@ -18,3 +18,8 @@ The current bounded retries, command-posture screen, timeout behavior, withholdi
 ## Remaining acceptance boundary
 
 This correction restores the active IDQ behavior. It does **not** establish that the separately preserved numeric Marker/PTAG/private-governance route is mounted in the current runtime. That missing integration remains an explicit governance finding. The earlier successful Meta/Qwen app journey was on the legacy path and cannot certify the locked full governance architecture. A fresh current-candidate journey and Aster's independent review remain required. Publication stays held; no complete-app or full-governance acceptance is claimed.
+
+
+## 2026-11-06 | Lumin | IDQ candidate live journey receipt
+- Source473da4690fbe20215985ed189ae4de0d3db902ad completed fresh live Meta interview/acceptance and generation1545563f-bd15-465d-b306-ccd68689d226 (requesta1fd83f5-63f1-4b0e-981a-c3371e937744), independentQwen3.5:4bPASS, reviewed launch, empty-required rejection, two-note newest-first and reload clearing. UIstoppassed; isolated3203/PID55204 remains for reviewer. Real local-IDQ held-message controls passed separately.
+- Evidence manifest C:/AEGIS_IDE_AUDIT/lumin-idq-restoration-20261106/final-evidence-manifest.json SHA256f55892f54a5242a01415e133b9464e35fcf79664e94daf058d2ad748eb0abfce. Aster/Linq notified directly; livewindowreleased. Independent acceptance and full numeric/PTAG mount reconciliation remain open; no push.
