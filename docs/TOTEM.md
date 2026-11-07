@@ -263,3 +263,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Reviewed Track 2 assembled
 - Normal merge of Aster-reviewed98810fe into8dc92cb completed without conflict at593da6b993e0e96488d81498b89d50c64fc46e00. Full build0, Atlas integrity37filesPASS and self-test30/30PASS. Matrix appends bounded candidate status. Final combined live audit awaitsAster; no inference, provideractivation, peer runtimerestart orpush. Original evidence and baseline unchanged.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.

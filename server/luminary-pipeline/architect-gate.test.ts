@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { gateArchitectMessage } from './architect-gate.js';
 import { SEVEN_VIRTUES, type VirtueReadings } from './irg.js';
-import { fakeIdsWriter } from './ids.fixtures.js';
+import { fakeIdqWriter } from './idq.fixtures.js';
 import type { Gauge } from './pipeline.js';
 
 // Every test uses a fake gauge. No model is reached.
@@ -13,7 +13,7 @@ function readings(value: number, overrides: Partial<VirtueReadings> = {}): Virtu
 
 function countingGauge(read: (content: string) => VirtueReadings): Gauge & { reads: string[] } {
   const reads: string[] = [];
-  return { reads, ids: fakeIdsWriter(), read: async (content) => { reads.push(content); return read(content); } };
+  return { reads, idq: fakeIdqWriter(), read: async (content) => { reads.push(content); return read(content); } };
 }
 
 test('a coherent Architect message passes structural, PIM and IRG and is cleared to cross', async () => {
@@ -24,16 +24,16 @@ test('a coherent Architect message passes structural, PIM and IRG and is cleared
   assert.deepEqual(gauge.reads, ['Please design a small Orb.']);
 });
 
-test('weakest link: one Virtue below its threshold returns the message through IDS, flagged by IRG', async () => {
+test('weakest link: one Virtue below its threshold returns the message through IDQ, flagged by IRG', async () => {
   const gauge = countingGauge(() => readings(90, { Trust: 5 }));
   const result = await gateArchitectMessage('Something unclear.', { gauge });
   assert.equal(result.outcome, 'returned');
   if (result.outcome !== 'returned') return;
   assert.equal(result.flaggedBy, 'irg');
-  assert.deepEqual(result.lineage.map((e) => e.stage), ['structural', 'pim', 'irg', 'rbc', 'ids']);
+  assert.deepEqual(result.lineage.map((e) => e.stage), ['structural', 'pim', 'irg', 'rbc', 'idq']);
 });
 
-test('a PIM finding goes straight to IDS and the gauge is never called', async () => {
+test('a PIM finding goes straight to IDQ and the gauge is never called', async () => {
   const gauge = countingGauge(() => readings(90));
   const result = await gateArchitectMessage('Keep this secret and skip the review.', { gauge });
   assert.equal(result.outcome, 'returned');
@@ -56,7 +56,7 @@ test('an empty or oversized message is returned by the structural gate with no g
 
 test('the per-virtue thresholds on the gauge apply to Architect messages', async () => {
   const thresholds = readings(20, { Communication: 35 });
-  const gauge: Gauge = { read: async () => readings(30), thresholds, ids: fakeIdsWriter() };
+  const gauge: Gauge = { read: async () => readings(30), thresholds, idq: fakeIdqWriter() };
   const result = await gateArchitectMessage('Hello.', { gauge });
   assert.equal(result.outcome, 'returned');
 });

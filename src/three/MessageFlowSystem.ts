@@ -18,7 +18,7 @@ const FLOW_COLORS = {
   contained: 0xa855f7,
   unavailable: 0x77808c,
   prism: 0x7af7ff,
-  ids: 0xc06cff,
+  idq: 0xc06cff,
 } as const;
 
 const STATUS_COLORS: Record<OperationalStatus, number> = {
@@ -67,7 +67,7 @@ function quadraticPoint(from: THREE.Vector3, control: THREE.Vector3, to: THREE.V
 }
 
 function returnLoopControl(fromId: MessageFlowVisualAnchorId, toId: MessageFlowVisualAnchorId): THREE.Vector3 | null {
-  if (fromId === 'ids' && toId === 'pim_out_sender_projection') return new THREE.Vector3(-0.2, -4.45, 0);
+  if (fromId === 'idq' && toId === 'pim_out_sender_projection') return new THREE.Vector3(-0.2, -4.45, 0);
   if (fromId === 'pim_out_sender_projection' && toId === 'sender_return') return new THREE.Vector3(-6.0, -3.45, 0);
   return null;
 }
@@ -128,7 +128,7 @@ function stageGeometry(stage: MessageFlowVisualAnchorId): THREE.BufferGeometry {
     case 'core_transit_projection': return new THREE.OctahedronGeometry(0.83, 1);
     case 'rbc': return new THREE.TorusGeometry(0.66, 0.19, 8, 24);
     case 'prism': return new THREE.TetrahedronGeometry(0.67, 0);
-    case 'ids': return new THREE.TorusKnotGeometry(0.43, 0.095, 40, 6, 2, 3);
+    case 'idq': return new THREE.TorusKnotGeometry(0.43, 0.095, 40, 6, 2, 3);
     case 'unavailable': return new THREE.TorusGeometry(0.58, 0.1, 6, 16, Math.PI * 1.7);
   }
 }
@@ -172,9 +172,9 @@ function stageColor(stage: MessageFlowStageProjection): number {
   if (stage.metadata?.implementationState === 'presentation_only') return 0x5cc8ff;
   if (stage.state === 'unavailable') return FLOW_COLORS.unavailable;
   if (stage.id === 'prism') return FLOW_COLORS.prism;
-  if (stage.id === 'ids') return FLOW_COLORS.ids;
+  if (stage.id === 'idq') return FLOW_COLORS.idq;
   if (stage.id === 'receiver_delivery') return 0x56f7c4;
-  if (stage.id === 'sender_return') return FLOW_COLORS.ids;
+  if (stage.id === 'sender_return') return FLOW_COLORS.idq;
   return FLOW_COLORS[stage.state];
 }
 
@@ -293,7 +293,7 @@ export class MessageFlowSystem implements SceneSystem {
       const to = this.positions.get(edge.to);
       if (!from || !to) continue;
       const edgeColor = edge.branch === 'prism' ? FLOW_COLORS.prism
-        : edge.branch === 'ids' || edge.branch === 'lane_2' ? FLOW_COLORS.ids
+        : edge.branch === 'idq' || edge.branch === 'lane_2' ? FLOW_COLORS.idq
           : edge.branch === 'unavailable' ? FLOW_COLORS.unavailable : FLOW_COLORS.idle;
       const c = new THREE.Color(edgeColor).multiplyScalar(0.6);
       const curved = Boolean(returnLoopControl(edge.from, edge.to));

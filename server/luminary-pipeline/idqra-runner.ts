@@ -1,10 +1,10 @@
-// IDQRA runner (P5 Conscience contract v0.2 §4/§6/§8). The analog of `runIds` in `ids.ts`:
+// IDQRA runner (P5 Conscience contract v0.2 §4/§6/§8). The analog of `runIdq` in `idq.ts`:
 // it drives the injected hosted Conscience writer, turns its untrusted output into a validated
-// `IDQRAEnvelopeV1`, and fails closed to `conscience_error` — the successor to `ids_error`.
+// `IDQRAEnvelopeV1`, and fails closed to `conscience_error` — the successor to `idq_error`.
 //
-// ADDITIVE AND UNWIRED. New module beside `ids.ts`; it is called by no route or pipeline yet,
-// so every existing IDS consumer keeps compiling. The pipeline/gate/reply-router swap to this
-// runner is a later slice; `ids.ts`/`runIds` stay until then.
+// ADDITIVE AND UNWIRED. New module beside `idq.ts`; it is called by no route or pipeline yet,
+// so every existing IDQ consumer keeps compiling. The pipeline/gate/reply-router swap to this
+// runner is a later slice; `idq.ts`/`runIdq` stay until then.
 //
 // Trust boundary (clarification §A): the writer supplies NO Reflect free text. For each Reflect
 // item it supplies a `factId` (+ slots, none in the first slice); the trusted renderer in
@@ -29,12 +29,12 @@ import {
 } from './idqra.js';
 
 /**
- * One bounded service retry per response (v0.2 §8, parity with the IDS F2b `retryUsed`). The
+ * One bounded service retry per response (v0.2 §8, parity with the IDQ F2b `retryUsed`). The
  * writer is called at most `1 + IDQRA_SERVICE_RETRY` times for a single response.
  */
 export const IDQRA_SERVICE_RETRY = 1;
 
-/** Deadline for one writer call (v0.2 §8 bounded I/O; parity with IDS_TIMEOUT_MS). */
+/** Deadline for one writer call (v0.2 §8 bounded I/O; parity with IDQ_TIMEOUT_MS). */
 export const IDQRA_TIMEOUT_MS = 60_000;
 
 /** The exact top-level keys a raw writer draft may carry — nothing is silently stripped. */
@@ -82,7 +82,7 @@ function hasExactKeys(obj: Record<string, unknown>, keys: readonly string[]): bo
   return own.length === keys.length && keys.every((k) => Object.prototype.hasOwnProperty.call(obj, k));
 }
 
-/** Reject a writer promise that does not settle within `ms` (parity with IDS `withTimeout`). */
+/** Reject a writer promise that does not settle within `ms` (parity with IDQ `withTimeout`). */
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`Conscience writer timed out after ${ms} ms.`)), ms);

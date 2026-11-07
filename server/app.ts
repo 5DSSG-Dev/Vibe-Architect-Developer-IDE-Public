@@ -280,7 +280,7 @@ export async function createGateway(options: CreateGatewayOptions) {
   // reviewer can reach it; guarded instead by a shared demo key + a per-IP rate limit, and
   // fail-closed when no key is configured. The reply source defaults to an honest placeholder
   // that yields a named Shortfall until a real model is wired (M1.b). Every reply then passes
-  // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDS); the gauge defaults to not-configured.
+  // the P17 pipeline (PIM -> IRG -> RBC -> Prism | IDQ); the gauge defaults to not-configured.
   // P19 adds a status read for the panel and, when the executor is on, loopback-only coding tasks
   // that take the same governed path as /ask.
   if (config.nodeEnv === 'development' && config.luminaryLocalSession && config.luminaryDemoKey) {

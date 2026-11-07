@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { SEVEN_VIRTUES, type VirtueReadings } from './irg.js';
-import { fakeIdsWriter } from './ids.fixtures.js';
+import { fakeIdqWriter } from './idq.fixtures.js';
 import { GAUGE_NOT_CONFIGURED_MESSAGE, notConfiguredGauge, runReplyPipeline, type Gauge, type Reform } from './pipeline.js';
 
 // Every test uses fakes: a fake gauge and a fake re-form call. No model is reached.
@@ -17,7 +17,7 @@ function gaugeFrom(table: Record<string, VirtueReadings>): Gauge & { seen: strin
   const seen: string[] = [];
   return {
     seen,
-    ids: fakeIdsWriter(),
+    idq: fakeIdqWriter(),
     read: async (content, virtues) => {
       assert.deepEqual([...virtues], [...SEVEN_VIRTUES]);
       seen.push(content);
@@ -45,7 +45,7 @@ test('the gauge receives only the reply content and the Seven Virtues', async ()
   assert.deepEqual(gauge.seen, ['Only this.']);
 });
 
-test('an incoherent reply goes to IDS, the originator re-forms, and the re-formed reply is delivered', async () => {
+test('an incoherent reply goes to IDQ, the originator re-forms, and the re-formed reply is delivered', async () => {
   const gauge = gaugeFrom({ first: readings(90, { Respect: 30 }), second: readings(88) });
   const observations: string[][] = [];
   const reform: Reform = async (observation, previous) => {
@@ -64,32 +64,32 @@ test('an incoherent reply goes to IDS, the originator re-forms, and the re-forme
   ]);
 });
 
-test('the loop is bounded: after 2 IDS passes a still-incoherent reply is an incoherent_after_ids Shortfall and the text is withheld', async () => {
+test('the loop is bounded: after 2 IDQ passes a still-incoherent reply is an incoherent_after_idq Shortfall and the text is withheld', async () => {
   let reforms = 0;
-  const gauge: Gauge = { read: async () => readings(90, { Trust: 10 }), ids: fakeIdsWriter() };
+  const gauge: Gauge = { read: async () => readings(90, { Trust: 10 }), idq: fakeIdqWriter() };
   const reform: Reform = async () => { reforms += 1; return reply(`attempt ${reforms + 1}`); };
   const result = await runReplyPipeline(reply('attempt 1'), reform, { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;
   assert.equal(reforms, 2);
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
   assert.equal(result.shortfall.modelId, 'meta/test-model');
   assert.deepEqual(result.shortfall.readings, readings(90, { Trust: 10 }));
   assert.deepEqual(result.shortfall.observation?.define, ['Trust reads 10, below the threshold of 70.']);
   assert.ok(!JSON.stringify(result).includes('"content"'), 'incoherent text is never returned as a reply');
-  assert.equal(result.lineage.filter((e) => e.stage === 'ids').length, 3);
-  assert.equal(result.lineage.at(-1)?.stage, 'ids');
+  assert.equal(result.lineage.filter((e) => e.stage === 'idq').length, 3);
+  assert.equal(result.lineage.at(-1)?.stage, 'idq');
 });
 
-test('maxIdsPasses tunes the bound; 0 means no re-form at all', async () => {
-  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
-  const result = await runReplyPipeline(reply('x'), noReform, { gauge, maxIdsPasses: 0 });
+test('maxIdqPasses tunes the bound; 0 means no re-form at all', async () => {
+  const gauge: Gauge = { read: async () => readings(10), idq: fakeIdqWriter() };
+  const result = await runReplyPipeline(reply('x'), noReform, { gauge, maxIdqPasses: 0 });
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
 });
 
-test('a PIM catch goes straight to IDS without the IRG reading the reply', async () => {
+test('a PIM catch goes straight to IDQ without the IRG reading the reply', async () => {
   const gauge = gaugeFrom({ 'A calm answer.': readings(90) });
   const reform: Reform = async () => reply('A calm answer.');
   const result = await runReplyPipeline(reply('You have no choice but to accept.'), reform, { gauge });
@@ -101,13 +101,13 @@ test('a PIM catch goes straight to IDS without the IRG reading the reply', async
   ]);
 });
 
-test('a PIM catch that persists ends as incoherent_after_ids with no readings', async () => {
+test('a PIM catch that persists ends as incoherent_after_idq with no readings', async () => {
   const gauge = gaugeFrom({});
   const reform: Reform = async () => reply('Keep this secret.');
   const result = await runReplyPipeline(reply('Keep this secret.'), reform, { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;
-  assert.equal(result.shortfall.code, 'incoherent_after_ids');
+  assert.equal(result.shortfall.code, 'incoherent_after_idq');
   assert.equal(result.shortfall.readings, null);
   assert.deepEqual(gauge.seen, []);
 });
@@ -122,7 +122,7 @@ test('a structurally invalid first reply keeps its P12 Shortfall and never reach
 });
 
 test('a re-formed reply is structurally gated too', async () => {
-  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
+  const gauge: Gauge = { read: async () => readings(10), idq: fakeIdqWriter() };
   const result = await runReplyPipeline(reply('first'), async () => ({ content: 'no model id' }), { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;
@@ -146,10 +146,10 @@ test('an invalid gauge payload is a gauge_error, never a guessed reading', async
   assert.match(result.shortfall.message, /Respect/);
 });
 
-test('the IDS embedded model writes the response; with none configured, or an unusable one, IDS fails closed as ids_error', async () => {
+test('the IDQ embedded model writes the response; with none configured, or an unusable one, IDQ fails closed as idq_error', async () => {
   const good: Gauge = {
     read: async (content) => (content === 'fixed' ? readings(90) : readings(10)),
-    ids: { write: async () => ({ identify: 'from the embedded model', define: ['d'], suggest: ['One possibility is a shorter reply.'] }) },
+    idq: { write: async () => ({ identify: 'from the embedded model', define: ['d'], question: ['How could the same intent be expressed more clearly?'] }) },
   };
   let seenIdentify = '';
   const result = await runReplyPipeline(reply('first'), async (observation) => { seenIdentify = observation.identify; return reply('fixed'); }, { gauge: good });
@@ -158,20 +158,20 @@ test('the IDS embedded model writes the response; with none configured, or an un
 
   for (const gauge of [
     { read: async () => readings(10) } as Gauge,
-    { read: async () => readings(10), ids: { write: async () => 'not an observation' } } as Gauge,
+    { read: async () => readings(10), idq: { write: async () => 'not an observation' } } as Gauge,
   ]) {
-    const failed = await runReplyPipeline(reply('first'), noReform, { gauge, idsOptions: { retryDelayMs: 0 } });
+    const failed = await runReplyPipeline(reply('first'), noReform, { gauge, idqOptions: { retryDelayMs: 0 } });
     assert.equal(failed.ok, false);
     if (failed.ok) return;
-    assert.equal(failed.shortfall.code, 'ids_error');
+    assert.equal(failed.shortfall.code, 'idq_error');
     assert.ok(!JSON.stringify({ shortfall: failed.shortfall, lineage: failed.lineage }).includes('"first"'), 'none of the reply text is returned');
     assert.deepEqual(failed.passes, ['first'], 'the reply is kept in full for the review record');
-    assert.equal(failed.lineage.at(-1)?.stage, 'ids_error');
+    assert.equal(failed.lineage.at(-1)?.stage, 'idq_error');
   }
 });
 
 test('a failing re-form call is an upstream_error Shortfall', async () => {
-  const gauge: Gauge = { read: async () => readings(10), ids: fakeIdsWriter() };
+  const gauge: Gauge = { read: async () => readings(10), idq: fakeIdqWriter() };
   const result = await runReplyPipeline(reply('first'), async () => { throw new Error('model down'); }, { gauge });
   assert.equal(result.ok, false);
   if (result.ok) return;

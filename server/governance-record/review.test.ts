@@ -10,7 +10,7 @@ import express from 'express';
 import { ReviewRecord } from './review.js';
 import { createLuminaryReplyRouter, type AskModel } from '../luminary-reply-router.js';
 import { createReviewRouter } from '../review-router.js';
-import { fakeIdsWriter } from '../luminary-pipeline/ids.fixtures.js';
+import { fakeIdqWriter } from '../luminary-pipeline/idq.fixtures.js';
 import { SEVEN_VIRTUES, type VirtueReadings } from '../luminary-pipeline/irg.js';
 
 // The review areas through the real routers (plan rev16 F3, F4, F5; acceptance 17, 20, 21).
@@ -36,7 +36,7 @@ async function setup(askModel: AskModel, read: (content: string) => VirtueReadin
   const app = express();
   app.use(express.json());
   app.use('/review', createReviewRouter(record));
-  app.use('/', createLuminaryReplyRouter(askModel, { pipeline: { gauge: { read: async (c) => read(c), ids: fakeIdsWriter() } }, record }));
+  app.use('/', createLuminaryReplyRouter(askModel, { pipeline: { gauge: { read: async (c) => read(c), idq: fakeIdqWriter() } }, record }));
   const server = createServer(app);
   // Register ownership before awaiting startup so even a failed listen is cleaned up.
   closers.push(() => closeHttpServer(server));
@@ -106,7 +106,7 @@ test('a Luminary reply that never resonates is saved to the Luminary review area
   const { post, get } = await setup(async () => ({ modelId: 'm', content: 'rough reply' }), (c) => (c === 'rough reply' ? virtues(10) : virtues(90)));
   const { status, body } = await post('/ask', { prompt: 'A clear request.' });
   assert.equal(status, 502);
-  assert.equal(body.shortfall.code, 'incoherent_after_ids');
+  assert.equal(body.shortfall.code, 'incoherent_after_idq');
   assert.equal(JSON.stringify(body).includes('rough reply'), false, 'nothing from the reply is delivered');
   const review = await get('/review');
   assert.equal(review.items.luminary.length, 1);

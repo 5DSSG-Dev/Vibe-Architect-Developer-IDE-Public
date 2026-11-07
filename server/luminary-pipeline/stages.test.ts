@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { screenPim } from './pim.js';
 import { GaugeError, IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, validateThresholds, type VirtueReadings } from './irg.js';
 import { routeRbc } from './rbc.js';
-import { composeRevisionPrompt, validateObservation } from './ids.js';
+import { composeRevisionPrompt, validateObservation } from './idq.js';
 
 function readings(value: number, overrides: Partial<VirtueReadings> = {}): VirtueReadings {
   return { ...Object.fromEntries(SEVEN_VIRTUES.map((v) => [v, value])), ...overrides } as VirtueReadings;
@@ -73,21 +73,21 @@ test('gauge readings are validated: a missing, non-numeric or out-of-range virtu
   assert.throws(() => validateReadings([90, 90]), GaugeError);
 });
 
-test('RBC routes Coherent to the Prism and Incoherent to IDS', () => {
+test('RBC routes Coherent to the Prism and Incoherent to IDQ', () => {
   assert.equal(routeRbc(readIrg(readings(90))), 'prism');
-  assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'ids');
+  assert.equal(routeRbc(readIrg(readings(90, { Affection: 20 }))), 'idq');
 });
 
-test('an IDS writer payload is validated before use: all three parts, none empty', () => {
-  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], suggest: ['s'] }), { identify: 'i', define: ['d'], suggest: ['s'] });
-  assert.equal(validateObservation({ identify: 'i', define: ['d'], suggest: [] }), null);
-  assert.equal(validateObservation({ identify: 'i', define: [' '], suggest: ['s'] }), null);
-  assert.equal(validateObservation({ identify: '', define: [], suggest: [] }), null);
-  assert.equal(validateObservation({ identify: 'i', define: 'd', suggest: [] }), null);
+test('an IDQ writer payload is validated before use: all three parts, none empty', () => {
+  assert.deepEqual(validateObservation({ identify: 'i', define: ['d'], question: ['What is the recorded shortfall?'] }), { identify: 'i', define: ['d'], question: ['What is the recorded shortfall?'] });
+  assert.equal(validateObservation({ identify: 'i', define: ['d'], question: [] }), null);
+  assert.equal(validateObservation({ identify: 'i', define: [' '], question: ['What is the recorded shortfall?'] }), null);
+  assert.equal(validateObservation({ identify: '', define: [], question: [] }), null);
+  assert.equal(validateObservation({ identify: 'i', define: 'd', question: [] }), null);
   assert.equal(validateObservation('i'), null);
 });
 
 test('the revision prompt carries the observation, the previous reply and the original prompt', () => {
-  const prompt = composeRevisionPrompt('Design an Orb', 'Old reply', { identify: 'I', define: ['D'], suggest: ['S'] });
-  for (const part of ['Identify: I', 'Define: D', 'Suggest: S', 'Old reply', 'Design an Orb']) assert.ok(prompt.includes(part), part);
+  const prompt = composeRevisionPrompt('Design an Orb', 'Old reply', { identify: 'I', define: ['D'], question: ['S'] });
+  for (const part of ['Identify: I', 'Define: D', 'Question: S', 'Old reply', 'Design an Orb']) assert.ok(prompt.includes(part), part);
 });

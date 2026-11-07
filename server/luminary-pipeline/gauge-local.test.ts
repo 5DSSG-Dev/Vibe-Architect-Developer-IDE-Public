@@ -10,7 +10,7 @@ import {
 } from './gauge-local.js';
 import { runReplyPipeline } from './pipeline.js';
 import { loadConfig } from '../config.js';
-import { fakeIdsWriter } from './ids.fixtures.js';
+import { fakeIdqWriter } from './idq.fixtures.js';
 
 // Every test uses a fake fetch. No runtime or model is reached.
 
@@ -119,15 +119,15 @@ test('runtime failures are GaugeErrors: unreachable, HTTP error, or a non-JSON b
   await assert.rejects(gaugeWith(notJson).read('x', SEVEN_VIRTUES), /not JSON/);
 });
 
-test('in the pipeline, each Virtue meets its own threshold; one below routes to IDS naming that threshold', async () => {
+test('in the pipeline, each Virtue meets its own threshold; one below routes to IDQ naming that threshold', async () => {
   const selected = thresholds(10, { Respect: 29.3, Communication: 34.7 });
   // Every reading is 30: above Respect's 29.3, below Communication's 34.7.
-  const gauge = { ...gaugeWith(fakeRuntime(() => 0.3).fetch, selected), ids: fakeIdsWriter() };
+  const gauge = { ...gaugeWith(fakeRuntime(() => 0.3).fetch, selected), idq: fakeIdqWriter() };
   assert.deepEqual(gauge.thresholds, selected);
   const result = await runReplyPipeline({ modelId: 'meta/x', content: 'hello' }, async () => { throw new Error('stop'); }, { gauge });
   assert.equal(result.ok, false);
-  const ids = result.lineage.find((e) => e.stage === 'ids');
-  assert.ok(ids && ids.stage === 'ids');
+  const ids = result.lineage.find((e) => e.stage === 'idq');
+  assert.ok(ids && ids.stage === 'idq');
   assert.equal(ids.observation.define.length, 1);
   assert.match(ids.observation.define[0], /^Communication reads 30(\.\d+)?, below the threshold of 34\.7\.$/);
   const irg = result.lineage.find((e) => e.stage === 'irg');

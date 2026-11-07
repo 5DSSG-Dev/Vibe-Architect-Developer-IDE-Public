@@ -14,7 +14,7 @@ import { randomUUID } from 'node:crypto';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { CallCounts } from '../luminary-pipeline/call-log.js';
-import type { IdsObservation } from '../luminary-pipeline/ids.js';
+import type { IdqObservation } from '../luminary-pipeline/idq.js';
 import type { LineageEntry } from '../luminary-pipeline/pipeline.js';
 import { AppendOnlyLog, type LogHead, type LogLine, type LogProblem } from './log.js';
 
@@ -23,7 +23,7 @@ export const DEFAULT_RECORD_DIR = join(homedir(), '.aegis-vibe-architect', 'gove
 /** The message limit (F3): two revisions, then the review area. */
 export const MESSAGE_REVISION_LIMIT = 2;
 
-export type ArchitectState = 'sent' | 'returned' | 'saved_for_review' | 'gauge_error' | 'ids_error';
+export type ArchitectState = 'sent' | 'returned' | 'saved_for_review' | 'gauge_error' | 'idq_error';
 
 export interface ArchitectEntry {
   kind: 'architect_message';
@@ -36,12 +36,12 @@ export interface ArchitectEntry {
   resubmittedFrom?: string;
   state: ArchitectState;
   flaggedBy?: 'structural' | 'pim' | 'irg';
-  observation?: IdsObservation;
+  observation?: IdqObservation;
   lineage: LineageEntry[];
   calls?: CallCounts;
 }
 
-export type LuminaryState = 'delivered' | 'saved_for_review' | 'gauge_error' | 'ids_error' | 'upstream_error' | 'not_delivered';
+export type LuminaryState = 'delivered' | 'saved_for_review' | 'gauge_error' | 'idq_error' | 'upstream_error' | 'not_delivered';
 
 export interface LuminaryEntry {
   kind: 'luminary_reply';

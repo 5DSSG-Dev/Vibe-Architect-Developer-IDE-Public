@@ -575,7 +575,7 @@ export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; m
                     <li key={item.entry.id} className="rounded-md border border-slate-700 bg-slate-900/50 p-1.5 text-slate-300 whitespace-pre-wrap">
                       {item.entry.kind === 'architect_message'
                         ? `Your message, saved after two revision loops (${item.at.slice(0, 16).replace('T', ' ')}):\n${item.entry.message}`
-                        : `A Luminary reply, saved after two IDS passes (${item.at.slice(0, 16).replace('T', ' ')}):\n${item.entry.passes[item.entry.passes.length - 1] ?? ''}`}
+                        : `A Luminary reply, saved after two IDQ passes (${item.at.slice(0, 16).replace('T', ' ')}):\n${item.entry.passes[item.entry.passes.length - 1] ?? ''}`}
                     </li>
                   ))}
                 </ul>
@@ -754,7 +754,7 @@ export const LuminaryHost: React.FC<{ creatingApp?: boolean; docked?: boolean; m
 
           {revising && !taskMode && (
             <p className="text-[9px] text-amber-200/90">
-              Your next message revises the one returned through IDS (revision {revising.loop + 1} of 2).{' '}
+              Your next message revises the one returned through IDQ (revision {revising.loop + 1} of 2).{' '}
               <button type="button" onClick={() => setRevising(null)} className="underline hover:text-amber-100">Start fresh instead</button>
             </p>
           )}

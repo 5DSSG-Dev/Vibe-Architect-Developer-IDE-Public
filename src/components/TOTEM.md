@@ -203,3 +203,7 @@
 ## 2026-11-06 | Lumin | Batch08 reload and full-tier navigation
 - AppCreationConversation synchronously saves pending request identity before async preflight and dispatch evidence before ask. Live browser reload checks passed before/after dispatch; no automatic resend. Same-ID recovery is a transport operation, not automatic interview replay.
 - EnvironmentView now prioritizes actual Element geometry over Luminary's broad pick proxy where they overlap. A real Actuator click failed before and passed after. Maintained actual browser10/10 covers all tiers, Back, reload/resume, saved camera after zoom and Frame. WebGL context-loss Restore control is not claimed tested.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.

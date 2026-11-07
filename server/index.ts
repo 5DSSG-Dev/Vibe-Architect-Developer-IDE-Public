@@ -9,7 +9,7 @@ import { InMemorySessionStore, RedisSessionStore } from './session-store.js';
 import { ReplayOperationsProvider } from './replay-operations-provider.js';
 import { InMemoryEvidenceStore, RedisEvidenceStore } from './evidence-store.js';
 import { createLocalGauge } from './luminary-pipeline/gauge-local.js';
-import { createLocalIdsWriter } from './luminary-pipeline/ids-local.js';
+import { createLocalIdqWriter } from './luminary-pipeline/idq-local.js';
 import { ReviewRecord } from './governance-record/review.js';
 import { rehearsalAskModel } from './luminary-rehearsal.js';
 import { LuminaryExecutor } from './luminary-executor.js';
@@ -57,10 +57,10 @@ try {
     entra: new MsalEntraAuth(config),
     operationsProvider: new ReplayOperationsProvider(),
     evidenceStore,
-    // The IDS embedded model runs on the gauge's local runtime and model (STP-0005 P2).
+    // The IDQ embedded model runs on the gauge's local runtime and model (STP-0005 P2).
     record,
     gauge: config.luminaryGauge
-      ? { ...createLocalGauge(config.luminaryGauge), ids: createLocalIdsWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
+      ? { ...createLocalGauge(config.luminaryGauge), idq: createLocalIdqWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
       : undefined,
     askModel: config.luminaryReplySource === 'rehearsal' ? rehearsalAskModel : metaAskModel,
     replySource: meta ? (liveSource === 'baseten' ? 'Muse Spark Open · Baseten' : `Meta · ${meta.model}`) : config.luminaryReplySource,

@@ -138,13 +138,13 @@ function assertMessageFlowTraces(events: readonly OperationEvent[]): void {
     const stages = trace.map((stage) => stage.stage);
     const transitions: Record<string, readonly string[]> = first.lane === 'pim_lane_2'
       ? {
-          sender_ingress: ['pim_in'], pim_in: ['ids', 'unavailable'], ids: ['pim_out', 'unavailable'],
+          sender_ingress: ['pim_in'], pim_in: ['idq', 'unavailable'], idq: ['pim_out', 'unavailable'],
           pim_out: ['sender_return', 'unavailable'], sender_return: [], unavailable: [],
         }
       : {
           sender_ingress: ['pim_in'], pim_in: ['irg', 'unavailable'], irg: ['core_transit_projection', 'unavailable'],
-          core_transit_projection: ['rbc', 'unavailable'], rbc: ['prism', 'ids', 'unavailable'],
-          prism: ['pim_out', 'unavailable'], ids: ['pim_out', 'unavailable'],
+          core_transit_projection: ['rbc', 'unavailable'], rbc: ['prism', 'idq', 'unavailable'],
+          prism: ['pim_out', 'unavailable'], idq: ['pim_out', 'unavailable'],
           pim_out: ['receiver_delivery', 'sender_return', 'unavailable'], receiver_delivery: [], sender_return: [], unavailable: [],
         };
     if (stages.slice(1).some((stage, index) => !transitions[stages[index]]?.includes(stage))) {
@@ -154,18 +154,18 @@ function assertMessageFlowTraces(events: readonly OperationEvent[]): void {
       throw new OperationsProviderStateError('Message-flow trace must terminate at Receiver, Sender, or unavailable.');
     }
     if (first.lane === 'pim_lane_2' && first.rbcRoute !== 'not_reached') {
-      throw new OperationsProviderStateError('PIM lane 2 must bypass RBC and route directly to IDS.');
+      throw new OperationsProviderStateError('PIM lane 2 must bypass RBC and route directly to IDQ.');
     }
     const branchIndex = stages.indexOf('rbc');
     const prismIndex = stages.indexOf('prism');
-    const idsIndex = stages.indexOf('ids');
-    if (prismIndex >= 0 && idsIndex >= 0) throw new OperationsProviderStateError('A message-flow trace cannot traverse both Prism and IDS.');
+    const idsIndex = stages.indexOf('idq');
+    if (prismIndex >= 0 && idsIndex >= 0) throw new OperationsProviderStateError('A message-flow trace cannot traverse both Prism and IDQ.');
     if (first.lane === 'pim_lane_1') {
       if (prismIndex >= 0 && (first.rbcRoute !== 'prism' || branchIndex !== prismIndex - 1)) {
         throw new OperationsProviderStateError('Only RBC may select the Prism route.');
       }
-      if (idsIndex >= 0 && (first.rbcRoute !== 'ids' || branchIndex !== idsIndex - 1)) {
-        throw new OperationsProviderStateError('Only RBC may select the IDS route.');
+      if (idsIndex >= 0 && (first.rbcRoute !== 'idq' || branchIndex !== idsIndex - 1)) {
+        throw new OperationsProviderStateError('Only RBC may select the IDQ route.');
       }
       const unavailableIndex = stages.indexOf('unavailable');
       const expectedUnavailableRoute = branchIndex >= 0 && unavailableIndex === branchIndex + 1 ? 'unavailable' : 'not_reached';
@@ -176,8 +176,8 @@ function assertMessageFlowTraces(events: readonly OperationEvent[]): void {
     if (first.rbcRoute === 'prism' && last.stage !== 'receiver_delivery') {
       throw new OperationsProviderStateError('Prism must terminate by delivery to the Receiver.');
     }
-    if ((first.rbcRoute === 'ids' || first.lane === 'pim_lane_2') && last.stage !== 'sender_return') {
-      throw new OperationsProviderStateError('IDS must terminate by return to the original Sender.');
+    if ((first.rbcRoute === 'idq' || first.lane === 'pim_lane_2') && last.stage !== 'sender_return') {
+      throw new OperationsProviderStateError('IDQ must terminate by return to the original Sender.');
     }
     if (last.stage === 'receiver_delivery' && last.terminalOutcome !== 'delivered_to_receiver') {
       throw new OperationsProviderStateError('Receiver delivery terminal outcome is invalid.');

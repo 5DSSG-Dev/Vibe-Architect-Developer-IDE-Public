@@ -21,7 +21,7 @@ import {
 import { MESSAGE_REVISION_LIMIT, type Anchor, type ArchitectEntry, type ArchitectState, type LuminaryState, type ReviewRecord } from './governance-record/review.js';
 import { gateArchitectMessage, type ArchitectFlag } from './luminary-pipeline/architect-gate.js';
 import { createCallLog, tagged, type CallCounts, type CallLog } from './luminary-pipeline/call-log.js';
-import { composeRevisionPrompt, type IdsObservation } from './luminary-pipeline/ids.js';
+import { composeRevisionPrompt, type IdqObservation } from './luminary-pipeline/idq.js';
 import { runReplyPipeline, type Gauge, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
 
 /**
@@ -76,8 +76,8 @@ export interface ReplyShortfall extends Omit<Shortfall, 'code'> {
   code: ReplyShortfallCode;
   /** On returned_to_sender: the check that flagged the Architect's message. */
   flaggedBy?: ArchitectFlag;
-  /** On returned_to_sender: the IDS response returned to the Architect. */
-  observation?: IdsObservation;
+  /** On returned_to_sender: the IDQ response returned to the Architect. */
+  observation?: IdqObservation;
 }
 
 /** The HTTP status each Shortfall maps to. 502 = the model path failed its contract. */
@@ -88,11 +88,11 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   missing_model_id: 502,
   upstream_error: 502,
   gauge_error: 502,
-  ids_error: 502,
-  incoherent_after_ids: 502,
+  idq_error: 502,
+  incoherent_after_idq: 502,
   // The Architect's spending ceiling (P21) was reached: the gateway is working, it is refusing to spend.
   spend_ceiling: 503,
-  // The Architect's own message was incoherent (STP-0005 P1): returned through IDS, never sent on.
+  // The Architect's own message was incoherent (STP-0005 P1): returned through IDQ, never sent on.
   returned_to_sender: 422,
   // The review record failed its check and the Architect has not yet seen it (STP-0005 P3).
   governance_closed: 503,
@@ -121,12 +121,12 @@ export type GovernedAskResult =
   | ({ ok: true; reply: GovernedReply; lineage?: LineageEntry[] } & TurnEvidence)
   | ({ ok: false; shortfall: ReplyShortfall; lineage?: LineageEntry[] } & TurnEvidence);
 
-/** The gauge with each call tagged: IRG reads as gauge, IDS embedded-model calls as ids_model. */
+/** The gauge with each call tagged: IRG reads as gauge, IDQ embedded-model calls as idq_model. */
 function taggedGauge(gauge: Gauge, log: CallLog): Gauge {
   return {
     ...gauge,
     read: tagged(log, 'gauge', gauge.read),
-    ...(gauge.ids ? { ids: { write: (request) => { log.record('ids_model', request.retry); return gauge.ids!.write(request); } } } : {}),
+    ...(gauge.idq ? { idq: { write: (request) => { log.record('idq_model', request.retry); return gauge.idq!.write(request); } } } : {}),
   };
 }
 
@@ -172,8 +172,8 @@ export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRout
   };
 }
 
-const RETURNED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDS.';
-const SAVED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDS and saved for your review after two revision loops.';
+const RETURNED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDQ.';
+const SAVED_MESSAGE = 'Your message was not sent to the Luminary. It was returned through IDQ and saved for your review after two revision loops.';
 
 function recordFailure(error: unknown, architectLineage?: LineageEntry[], dispatched = false): GovernedAskResult {
   return {
@@ -186,9 +186,9 @@ function recordFailure(error: unknown, architectLineage?: LineageEntry[], dispat
 function luminaryState(result: { ok: boolean; shortfall?: { code: string } }): LuminaryState {
   if (result.ok) return 'delivered';
   switch (result.shortfall?.code) {
-    case 'incoherent_after_ids': return 'saved_for_review';
+    case 'incoherent_after_idq': return 'saved_for_review';
     case 'gauge_error': return 'gauge_error';
-    case 'ids_error': return 'ids_error';
+    case 'idq_error': return 'idq_error';
     case 'upstream_error': return 'upstream_error';
     default: return 'not_delivered';
   }
@@ -216,7 +216,7 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
   }
 
   // Governance in both directions (STP-0005 P1): the Architect's message is checked before the
-  // Luminary response path is called at all. An incoherent message goes back through IDS.
+  // Luminary response path is called at all. An incoherent message goes back through IDQ.
   let architectLineage: LineageEntry[] | undefined;
   let turnRecord: TurnRecord | undefined;
   if (options.pipeline) {
@@ -224,7 +224,7 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
       gauge: options.pipeline.gauge,
       threshold: options.pipeline.threshold,
       maxContentBytes: (options.pipeline.governance ?? options.governance)?.maxContentBytes,
-      idsOptions: options.pipeline.idsOptions,
+      idqOptions: options.pipeline.idqOptions,
     });
     architectLineage = gate.lineage;
     const state: ArchitectState = gate.outcome === 'coherent'
@@ -253,7 +253,7 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
       }
     }
 
-    if (gate.outcome === 'gauge_error' || gate.outcome === 'ids_error') {
+    if (gate.outcome === 'gauge_error' || gate.outcome === 'idq_error') {
       return { ok: false, shortfall: { code: gate.outcome, message: gate.message, modelId: null }, architectLineage, record: turnRecord };
     }
     if (gate.outcome === 'returned') {

@@ -15,11 +15,19 @@ export interface GovernedReply {
 
 export interface LineageEntry {
   pass: number;
-  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'ids' | 'ids_error' | 'prism';
+  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'idq' | 'idq_error' | 'prism';
 }
 
-/** The IDS response returned to the sender of an incoherent message (STP-0005 P2). */
-export interface IdsResponse {
+/** The IDQ response returned to the sender of an incoherent message (STP-0005 P2). */
+export interface IdqResponse {
+  identify: string;
+  define: string[];
+  question: string[];
+  questionNote?: string;
+}
+
+/** Read-only compatibility for preserved pre-migration records. Never emitted by IDQ. */
+export interface LegacyIdsResponse {
   identify: string;
   define: string[];
   suggest: string[];
@@ -32,8 +40,8 @@ export interface Shortfall {
   modelId?: string | null;
   /** On returned_to_sender: the check that flagged the message. */
   flaggedBy?: 'structural' | 'pim' | 'irg';
-  /** On returned_to_sender: the IDS response. */
-  observation?: IdsResponse;
+  /** On returned_to_sender: the IDQ response. */
+  observation?: IdqResponse | LegacyIdsResponse;
 }
 
 /** A pointer to the newest entry in one review area, kept in the evidence archive (STP-0005 P3). */
@@ -46,7 +54,7 @@ export interface Anchor {
 /** Where the gateway wrote this turn in the review record. */
 export interface TurnRecord {
   architectEntryId: string;
-  state: 'sent' | 'returned' | 'saved_for_review' | 'gauge_error' | 'ids_error';
+  state: 'sent' | 'returned' | 'saved_for_review' | 'gauge_error' | 'idq_error';
   loop: number;
   anchors: Anchor[];
 }
@@ -55,7 +63,7 @@ export interface ReviewItem {
   seq: number;
   at: string;
   entry:
-    | { kind: 'architect_message'; id: string; message: string; loop: number; state: string; observation?: IdsResponse }
+    | { kind: 'architect_message'; id: string; message: string; loop: number; state: string; observation?: IdqResponse | LegacyIdsResponse }
     | { kind: 'luminary_reply'; id: string; passes: string[]; state: string; shortfallCode?: string };
 }
 
@@ -93,15 +101,22 @@ const FLAGGED_BY: Record<NonNullable<Shortfall['flaggedBy']>, string> = {
   irg: 'the Virtue gauge (IRG)',
 };
 
-/** The IDS response in plain lines: what the message is, what was found, and a possible point to re-examine. */
-export function describeIdsResponse(shortfall: Shortfall): string {
-  const lines = [`Your message was not sent to the Luminary. It was returned through IDS${shortfall.flaggedBy ? ` after ${FLAGGED_BY[shortfall.flaggedBy]}` : ''}.`];
+/** The IDQ response in plain lines: what the message is, what was found, and a possible point to re-examine. */
+export function describeIdqResponse(shortfall: Shortfall): string {
+  const historical = shortfall.observation && 'suggest' in shortfall.observation;
+  const method = historical ? 'historical IDS' : 'IDQ';
+  const lines = [`Your message was not sent to the Luminary. It was returned through ${method}${shortfall.flaggedBy ? ` after ${FLAGGED_BY[shortfall.flaggedBy]}` : ''}.`];
   const ids = shortfall.observation;
   if (ids) {
     lines.push(`Identify: ${ids.identify}`);
     for (const item of ids.define) lines.push(`Define: ${item}`);
-    for (const item of ids.suggest) lines.push(`Suggest: ${item}`);
-    if (ids.suggestNote) lines.push(`Suggest: ${ids.suggestNote}`);
+    if ('question' in ids) {
+      for (const item of ids.question) lines.push(`Question: ${item}`);
+      if (ids.questionNote) lines.push(`Question: ${ids.questionNote}`);
+    } else {
+      for (const item of ids.suggest) lines.push(`Historical Suggest: ${item}`);
+      if (ids.suggestNote) lines.push(`Historical Suggest: ${ids.suggestNote}`);
+    }
   }
   return lines.join('\n');
 }
@@ -238,13 +253,13 @@ export function describeShortfall(shortfall: Shortfall): string {
   switch (shortfall.code) {
     case 'upstream_error': return `No model answered. ${shortfall.message}`;
     case 'spend_ceiling': return shortfall.message;
-    case 'returned_to_sender': return describeIdsResponse(shortfall);
+    case 'returned_to_sender': return describeIdqResponse(shortfall);
     case 'gauge_error': return 'Nothing was sent, because the gauge that checks every message is not running.';
-    case 'ids_error': return 'The message was not sent, and IDS could not respond.';
+    case 'idq_error': return 'The message was not sent, and IDQ could not respond.';
     case 'governance_closed': return 'Nothing was sent. Governance is closed until you have seen the review record check above.';
     case 'record_error': return shortfall.message;
     case 'saved_for_review': return 'That message is saved for review. Resubmitting it starts a new entry with a fresh count.';
-    case 'incoherent_after_ids': return 'The reply was returned through IDS twice and still did not read as coherent, so it is not shown.';
+    case 'incoherent_after_idq': return 'The reply was returned through IDQ twice and still did not read as coherent, so it is not shown.';
     case 'empty_reply': return 'The model sent an empty reply, so nothing is shown.';
     case 'malformed_reply': return 'The model sent a reply the IDE could not read, so nothing is shown.';
     case 'oversized_reply': return 'The reply was too long to show safely.';

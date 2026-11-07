@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { screenIdsPim } from './ids-pim.js';
+import { screenIdqPim } from './idq-pim.js';
 
-// The IDS PIM (plan rev16 F2): five kinds of command posture. Informative options must pass.
+// The IDQ PIM (plan rev16 F2): five kinds of command posture. Informative options must pass.
 
 const directive: Array<[string, string]> = [
   ['Rewrite this.', 'direct_command'],
@@ -19,8 +19,8 @@ const directive: Array<[string, string]> = [
 ];
 
 for (const [text, kind] of directive) {
-  test(`IDS PIM flags ${kind}: "${text}"`, () => {
-    assert.ok(screenIdsPim(text).some((f) => f.kind === kind), JSON.stringify(screenIdsPim(text)));
+  test(`IDQ PIM flags ${kind}: "${text}"`, () => {
+    assert.ok(screenIdqPim(text).some((f) => f.kind === kind), JSON.stringify(screenIdqPim(text)));
   });
 }
 
@@ -31,13 +31,13 @@ const informative = [
 ];
 
 for (const text of informative) {
-  test(`IDS PIM passes an informative suggestion: "${text}"`, () => {
-    assert.deepEqual(screenIdsPim(text), []);
+  test(`IDQ PIM passes an informative question: "${text}"`, () => {
+    assert.deepEqual(screenIdqPim(text), []);
   });
 }
 
 test('a finding names the kind, the rule and the matched text, and the screen never rewrites', () => {
   const text = 'You should rephrase this.';
-  const [finding] = screenIdsPim(text);
+  const [finding] = screenIdqPim(text);
   assert.deepEqual(finding, { kind: 'softened_command', ruleId: 'softened-1', excerpt: 'You should' });
 });

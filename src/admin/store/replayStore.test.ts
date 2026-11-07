@@ -113,9 +113,9 @@ test('following-live TICK advances the same authoritative replay clock', () => {
   assert.equal(state.clock.followingLive, false);
 });
 
-test('IDS shortfall remains localized until sender-return evidence is observed', () => {
+test('IDQ shortfall remains localized until sender-return evidence is observed', () => {
   const idsShortfallIndex = REPLAY_FIXTURE_EVENTS.findIndex((event) => (
-    event.messageFlow?.traceId === 'trace:ids-shortfall-return' && event.messageFlow.stage === 'ids'
+    event.messageFlow?.traceId === 'trace:idq-shortfall-return' && event.messageFlow.stage === 'idq'
   ));
   let state = replayReducer(loadedState(), { type: 'INGEST_EVENTS', events: REPLAY_FIXTURE_EVENTS.slice(0, idsShortfallIndex + 1) });
   const idsOrb = REPLAY_FIXTURE_SNAPSHOT.orbs.find((orb) => orb.orb_id === 'orb:validation');

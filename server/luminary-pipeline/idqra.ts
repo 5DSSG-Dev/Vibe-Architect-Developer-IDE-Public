@@ -5,8 +5,8 @@
 //
 // FIRST SLICE — ADDITIVE AND UNWIRED. This module defines the IDQRA envelope, the trusted
 // Reflect renderer, and two distinct validators. It imports nothing and is wired into no route
-// or pipeline yet, so every existing consumer of `ids.ts` keeps compiling unchanged. `ids.ts` is
-// NOT removed in this slice; `conscience_error` is the canonical shortfall and `ids_error` stays
+// or pipeline yet, so every existing consumer of `idq.ts` keeps compiling unchanged. `idq.ts` is
+// NOT removed in this slice; `conscience_error` is the canonical shortfall and `idq_error` stays
 // a deprecated alias in the consumers until they migrate.
 //
 // Trust boundary (clarification §2, narrowed honestly): the structural "built only from a fixed
@@ -57,7 +57,7 @@ export interface ReflectItem {
   text: string;
 }
 
-/** The five-field IDQRA envelope (v0.2 §5). Replaces the 3-field IdsObservation. */
+/** The five-field IDQRA envelope (v0.2 §5). Replaces the 3-field IdqObservation. */
 export interface IDQRAEnvelopeV1 {
   version: 1;
   identify: string;
@@ -68,7 +68,7 @@ export interface IDQRAEnvelopeV1 {
 }
 
 export interface ConscienceShortfall {
-  /** Canonical shortfall code; `ids_error` is the deprecated alias in migrating consumers. */
+  /** Canonical shortfall code; `idq_error` is the deprecated alias in migrating consumers. */
   code: 'conscience_error';
   reason: string;
 }

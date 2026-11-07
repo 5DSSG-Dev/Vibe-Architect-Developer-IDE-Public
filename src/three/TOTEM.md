@@ -67,3 +67,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 - New App composer keeps up to three model suggestions below input. Choice clicks send directly, preserve unsent draft, retain unused choices and replace selected slot after successful response. Failed calls retain choices and proposal; no filler suggestions are invented. Prompt history retains initial requirements and latest architecture without resending every old proposal.
 - Orb/Satellite/Actuator EnvironmentView now creates the shared Luminary Presence, follows the same screen anchor, supports avatar click/hover and disposes owned resources. Async model completion is guarded after unmount.
 - Thirteen focused creation/suggestion/anchor/cache-ownership checks pass. Windows build checked; browser visual and live suggestion-click confirmation remain with Architect. Saved app data was not cleared.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.

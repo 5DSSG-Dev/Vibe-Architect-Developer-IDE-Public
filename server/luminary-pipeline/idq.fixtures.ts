@@ -1,11 +1,11 @@
-// A deterministic stand-in for the IDS embedded model, for tests only. It writes Define from
-// what the checks recorded and a Suggest worded as an observation, never quoting the message.
+// A deterministic stand-in for the IDQ embedded model, for tests only. It writes Define from
+// what the checks recorded and a Question worded as an observation, never quoting the message.
 
 import { thresholdFor } from './irg.js';
-import type { IdsWriter, IdsWriteRequest } from './ids.js';
+import type { IdqWriter, IdqWriteRequest } from './idq.js';
 
-export function fakeIdsWriter(onWrite?: (request: IdsWriteRequest) => void): IdsWriter & { requests: IdsWriteRequest[] } {
-  const requests: IdsWriteRequest[] = [];
+export function fakeIdqWriter(onWrite?: (request: IdqWriteRequest) => void): IdqWriter & { requests: IdqWriteRequest[] } {
+  const requests: IdqWriteRequest[] = [];
   return {
     requests,
     write: async (request) => {
@@ -18,7 +18,7 @@ export function fakeIdsWriter(onWrite?: (request: IdsWriteRequest) => void): Ids
       return {
         identify: request.irg ? 'The message makes a request.' : 'The message makes a request the pattern screen flagged.',
         define,
-        suggest: ['One possibility is that the point could be stated more plainly.'],
+        question: ['How could the same point be expressed more plainly?'],
       };
     },
   };

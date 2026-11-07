@@ -699,3 +699,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Governance communication diagnosis
 - Inspected85570688 HOLD: three identical608-byte JSON candidates, Communication31.141 below34.7, with repeated speculative IDS observations. Same parsed definition indented989bytes scored Communication40.112 and all seven virtues passed via unchanged live gauge. Added general readable JSON presentation contract to production prompt. Original HOLD remains preserved. Live end-to-end verification and independent Aster acceptance pending.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.

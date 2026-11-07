@@ -16,7 +16,7 @@ const STAGE_LAYOUT: Readonly<Record<MessageFlowVisualAnchorId, readonly [number,
   core_transit_projection: [-1.4, 0, 0],
   rbc: [0.9, 0, 0],
   prism: [3.2, 1.65, 0],
-  ids: [3.2, -1.65, 0],
+  idq: [3.2, -1.65, 0],
   pim_out_receiver_projection: [5.3, 0.25, 0],
   pim_out_sender_projection: [-5.5, -2.55, 0],
   receiver_delivery: [6.1, 1.75, 0],
@@ -27,7 +27,7 @@ const STAGE_LAYOUT: Readonly<Record<MessageFlowVisualAnchorId, readonly [number,
 const LABELS: Readonly<Record<MessageFlowVisualAnchorId, string>> = {
   sender_ingress: 'Sender ingress', pim_in: 'PIM in', irg: 'IRG',
   core_transit_projection: 'CORE transit', rbc: 'RBC', prism: 'Prism',
-  ids: 'IDS', pim_out_receiver_projection: 'PIM out · Receiver side',
+  idq: 'IDQ', pim_out_receiver_projection: 'PIM out · Receiver side',
   pim_out_sender_projection: 'PIM out · Sender side', receiver_delivery: 'Receiver delivery', sender_return: 'Sender return',
   unavailable: 'Unavailable',
 };
@@ -38,22 +38,22 @@ const CONDUITS: readonly MessageFlowConduitProjection[] = [
   { id: 'irg:core', from: 'irg', to: 'core_transit_projection', branch: 'shared' },
   { id: 'core:rbc', from: 'core_transit_projection', to: 'rbc', branch: 'shared' },
   { id: 'rbc:prism', from: 'rbc', to: 'prism', branch: 'prism' },
-  { id: 'rbc:ids', from: 'rbc', to: 'ids', branch: 'ids' },
-  { id: 'pim:ids', from: 'pim_in', to: 'ids', branch: 'lane_2' },
+  { id: 'rbc:ids', from: 'rbc', to: 'idq', branch: 'idq' },
+  { id: 'pim:ids', from: 'pim_in', to: 'idq', branch: 'lane_2' },
   { id: 'prism:pim-out-receiver', from: 'prism', to: 'pim_out_receiver_projection', branch: 'prism' },
-  { id: 'ids:pim-out-sender', from: 'ids', to: 'pim_out_sender_projection', branch: 'ids' },
+  { id: 'idq:pim-out-sender', from: 'idq', to: 'pim_out_sender_projection', branch: 'idq' },
   { id: 'pim-out-receiver:receiver', from: 'pim_out_receiver_projection', to: 'receiver_delivery', branch: 'prism' },
-  { id: 'pim-out-sender:sender', from: 'pim_out_sender_projection', to: 'sender_return', branch: 'ids' },
+  { id: 'pim-out-sender:sender', from: 'pim_out_sender_projection', to: 'sender_return', branch: 'idq' },
   { id: 'pim:unavailable', from: 'pim_in', to: 'unavailable', branch: 'unavailable' },
   { id: 'irg:unavailable', from: 'irg', to: 'unavailable', branch: 'unavailable' },
   { id: 'rbc:unavailable', from: 'rbc', to: 'unavailable', branch: 'unavailable' },
-  { id: 'ids:unavailable', from: 'ids', to: 'unavailable', branch: 'unavailable' },
+  { id: 'idq:unavailable', from: 'idq', to: 'unavailable', branch: 'unavailable' },
   { id: 'pim-out-receiver:unavailable', from: 'pim_out_receiver_projection', to: 'unavailable', branch: 'unavailable' },
   { id: 'pim-out-sender:unavailable', from: 'pim_out_sender_projection', to: 'unavailable', branch: 'unavailable' },
 ];
 
 function visualRouteFor(route: readonly MessageFlowStageId[]): readonly MessageFlowVisualAnchorId[] {
-  const senderReturn = route.includes('ids');
+  const senderReturn = route.includes('idq');
   return route.map((stage) => stage === 'pim_out'
     ? senderReturn ? 'pim_out_sender_projection' : 'pim_out_receiver_projection'
     : stage as MessageFlowVisualAnchorId);
@@ -72,12 +72,12 @@ function operationalStatus(event: OperationEvent): OperationalStatus {
 
 const LEGAL_TRANSITIONS: Readonly<Record<MessageFlowStageId, readonly MessageFlowStageId[]>> = {
   sender_ingress: ['pim_in'],
-  pim_in: ['irg', 'ids', 'unavailable'],
+  pim_in: ['irg', 'idq', 'unavailable'],
   irg: ['core_transit_projection', 'unavailable'],
   core_transit_projection: ['rbc', 'unavailable'],
-  rbc: ['prism', 'ids', 'unavailable'],
+  rbc: ['prism', 'idq', 'unavailable'],
   prism: ['pim_out', 'unavailable'],
-  ids: ['pim_out', 'unavailable'],
+  idq: ['pim_out', 'unavailable'],
   pim_out: ['receiver_delivery', 'sender_return', 'unavailable'],
   receiver_delivery: [],
   sender_return: [],
@@ -92,12 +92,12 @@ function isLegalObservedRoute(events: readonly (OperationEvent & { messageFlow: 
     const previous = events[index - 1].messageFlow.stage;
     const current = events[index].messageFlow.stage;
     if (!LEGAL_TRANSITIONS[previous].includes(current)) return false;
-    if (events[0].messageFlow.lane === 'pim_lane_1' && previous === 'pim_in' && current === 'ids') return false;
+    if (events[0].messageFlow.lane === 'pim_lane_1' && previous === 'pim_in' && current === 'idq') return false;
   }
   const stages = events.map((event) => event.messageFlow.stage);
   const terminal = stages[stages.length - 1];
   if (terminal === 'receiver_delivery' && !stages.includes('prism')) return false;
-  if (terminal === 'sender_return' && !stages.includes('ids')) return false;
+  if (terminal === 'sender_return' && !stages.includes('idq')) return false;
   return true;
 }
 

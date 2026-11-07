@@ -5,7 +5,7 @@ export const SERVICE_PIPELINE_STAGES = [
   'core_transit_projection',
   'rbc',
   'prism',
-  'ids',
+  'idq',
   'pim_out',
   'receiver_delivery',
   'sender_return',
@@ -16,14 +16,14 @@ export type ServicePipelineStage = (typeof SERVICE_PIPELINE_STAGES)[number];
 export type PimLane = 'pim_lane_1' | 'pim_lane_2';
 export type ExchangeDirection = 'human_to_ai' | 'ai_to_human';
 export type MessageIntegrity = 'not_evaluated' | 'coherent' | 'shortfall' | 'unavailable';
-export type RbcRoute = 'prism' | 'ids' | 'not_reached' | 'unavailable';
+export type RbcRoute = 'prism' | 'idq' | 'not_reached' | 'unavailable';
 export type MessageTerminalOutcome = 'pending' | 'delivered_to_receiver' | 'returned_to_sender' | 'returned_to_sender_with_shortfall' | 'unavailable';
 export type StageImplementationState = 'active_service_stage' | 'presentation_only' | 'placeholder_pass_through' | 'unavailable';
 export type StageEvidenceState = 'replay_fixture' | 'fixture_unavailable';
 
 /**
  * An allowlisted operational projection. It intentionally contains no message
- * body, fingerprint, token, score, rationale, prose finding, or raw IDS flag.
+ * body, fingerprint, token, score, rationale, prose finding, or raw IDQ flag.
  */
 export interface SanitizedMessageFlowProjection {
   canonical: false;
@@ -44,7 +44,7 @@ export interface SanitizedMessageFlowProjection {
 const PIPELINE_STAGE_SET = new Set<string>(SERVICE_PIPELINE_STAGES);
 const LANE_SET = new Set<string>(['pim_lane_1', 'pim_lane_2']);
 const INTEGRITY_SET = new Set<string>(['not_evaluated', 'coherent', 'shortfall', 'unavailable']);
-const RBC_ROUTE_SET = new Set<string>(['prism', 'ids', 'not_reached', 'unavailable']);
+const RBC_ROUTE_SET = new Set<string>(['prism', 'idq', 'not_reached', 'unavailable']);
 const DIRECTION_SET = new Set<string>(['human_to_ai', 'ai_to_human']);
 const TERMINAL_SET = new Set<string>(['pending', 'delivered_to_receiver', 'returned_to_sender', 'returned_to_sender_with_shortfall', 'unavailable']);
 const FLOW_KEYS = new Set([
@@ -97,11 +97,11 @@ export function isSanitizedMessageFlowProjection(value: unknown): value is Sanit
   if (lane === 'pim_lane_2' && (route !== 'not_reached' || ['irg', 'core_transit_projection', 'rbc', 'prism'].includes(stage))) return false;
   if (['sender_ingress', 'pim_in'].includes(stage) && integrity !== 'not_evaluated') return false;
   if (lane === 'pim_lane_2' && stage !== 'unavailable' && integrity !== 'not_evaluated') return false;
-  if (lane === 'pim_lane_1' && ['irg', 'core_transit_projection', 'rbc', 'prism', 'ids', 'pim_out', 'receiver_delivery', 'sender_return'].includes(stage)
+  if (lane === 'pim_lane_1' && ['irg', 'core_transit_projection', 'rbc', 'prism', 'idq', 'pim_out', 'receiver_delivery', 'sender_return'].includes(stage)
     && integrity === 'not_evaluated') return false;
   if (lane === 'pim_lane_1' && stage === 'prism' && route !== 'prism') return false;
-  if (lane === 'pim_lane_1' && stage === 'ids' && route !== 'ids') return false;
-  if (lane === 'pim_lane_1' && stage === 'rbc' && !['prism', 'ids', 'unavailable'].includes(route)) return false;
+  if (lane === 'pim_lane_1' && stage === 'idq' && route !== 'idq') return false;
+  if (lane === 'pim_lane_1' && stage === 'rbc' && !['prism', 'idq', 'unavailable'].includes(route)) return false;
   if (stage === 'unavailable') return integrity === 'unavailable' && outcome === 'unavailable';
   if (stage === 'receiver_delivery') return route === 'prism' && outcome === 'delivered_to_receiver';
   if (stage === 'sender_return') return route !== 'prism'

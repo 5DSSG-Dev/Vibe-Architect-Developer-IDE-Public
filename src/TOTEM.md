@@ -206,3 +206,7 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-06 | Lumin | Correlated planning client request
 - luminaryApi.ask accepts optional requestId alongside existing revision/resubmit metadata. Interview supplies the persisted UUID; existing callers remain compatible. Actual live Meta same-ID recovery and conflict/restart behavior verified; no governance gate bypass.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.

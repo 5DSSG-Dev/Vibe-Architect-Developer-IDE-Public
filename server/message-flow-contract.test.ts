@@ -19,7 +19,7 @@ for (const event of REPLAY_FIXTURE_EVENTS) {
 test('public pipeline stages are exact and core transit remains presentation-only', () => {
   assert.deepEqual(SERVICE_PIPELINE_STAGES, [
     'sender_ingress', 'pim_in', 'irg', 'core_transit_projection', 'rbc',
-    'prism', 'ids', 'pim_out', 'receiver_delivery', 'sender_return', 'unavailable',
+    'prism', 'idq', 'pim_out', 'receiver_delivery', 'sender_return', 'unavailable',
   ]);
   for (const event of REPLAY_FIXTURE_EVENTS) {
     if (!event.messageFlow) continue;
@@ -32,17 +32,17 @@ test('public pipeline stages are exact and core transit remains presentation-onl
   }
 });
 
-test('deterministic replay covers Prism, RBC-to-IDS shortfall return, lane-2 direct IDS, and unavailable', () => {
+test('deterministic replay covers Prism, RBC-to-IDQ shortfall return, lane-2 direct IDQ, and unavailable', () => {
   assert.deepEqual([...traces.keys()].sort(), [
-    'trace:ids-shortfall-return', 'trace:lane2-direct-ids', 'trace:prism-delivery', 'trace:upstream-unavailable',
+    'trace:idq-shortfall-return', 'trace:lane2-direct-idq', 'trace:prism-delivery', 'trace:upstream-unavailable',
   ]);
   const stages = (traceId: string) => traces.get(traceId)!.map((event) => event.messageFlow!.stage);
   assert.deepEqual(stages('trace:prism-delivery'), ['sender_ingress', 'pim_in', 'irg', 'core_transit_projection', 'rbc', 'prism', 'pim_out', 'receiver_delivery']);
-  assert.deepEqual(stages('trace:ids-shortfall-return'), ['sender_ingress', 'pim_in', 'irg', 'core_transit_projection', 'rbc', 'ids', 'pim_out', 'sender_return']);
-  assert.deepEqual(stages('trace:lane2-direct-ids'), ['sender_ingress', 'pim_in', 'ids', 'pim_out', 'sender_return']);
+  assert.deepEqual(stages('trace:idq-shortfall-return'), ['sender_ingress', 'pim_in', 'irg', 'core_transit_projection', 'rbc', 'idq', 'pim_out', 'sender_return']);
+  assert.deepEqual(stages('trace:lane2-direct-idq'), ['sender_ingress', 'pim_in', 'idq', 'pim_out', 'sender_return']);
   assert.deepEqual(stages('trace:upstream-unavailable'), ['sender_ingress', 'pim_in', 'unavailable']);
   assert.deepEqual(
-    traces.get('trace:lane2-direct-ids')!.map((event) => event.messageFlow!.integrity),
+    traces.get('trace:lane2-direct-idq')!.map((event) => event.messageFlow!.integrity),
     ['not_evaluated', 'not_evaluated', 'not_evaluated', 'not_evaluated', 'not_evaluated'],
   );
   for (const trace of traces.values()) {
@@ -50,8 +50,8 @@ test('deterministic replay covers Prism, RBC-to-IDS shortfall return, lane-2 dir
     assert.equal(trace[1].messageFlow!.integrity, 'not_evaluated');
   }
   assert.equal(traces.get('trace:prism-delivery')!.at(-1)!.messageFlow!.terminalOutcome, 'delivered_to_receiver');
-  assert.equal(traces.get('trace:ids-shortfall-return')!.at(-1)!.messageFlow!.terminalOutcome, 'returned_to_sender_with_shortfall');
-  assert.equal(traces.get('trace:lane2-direct-ids')!.at(-1)!.messageFlow!.terminalOutcome, 'returned_to_sender');
+  assert.equal(traces.get('trace:idq-shortfall-return')!.at(-1)!.messageFlow!.terminalOutcome, 'returned_to_sender_with_shortfall');
+  assert.equal(traces.get('trace:lane2-direct-idq')!.at(-1)!.messageFlow!.terminalOutcome, 'returned_to_sender');
   assert.deepEqual(new Set([...traces.values()].flatMap((trace) => trace.map((event) => event.messageFlow!.exchangeDirection))), new Set(['human_to_ai', 'ai_to_human']));
 });
 
@@ -59,22 +59,22 @@ test('sanitized projection rejects extra raw-service fields and invalid RBC auth
   const first = REPLAY_FIXTURE_EVENTS[0];
   for (const [field, value] of Object.entries({
     rawMessage: 'forbidden', fingerprint: 'forbidden', t0Token: 'forbidden', t1Token: 'forbidden',
-    irgScore: 0.91, irgRationale: 'forbidden', idsProse: 'forbidden', rawFlags: ['forbidden'],
+    irgScore: 0.91, irgRationale: 'forbidden', idqProse: 'forbidden', rawFlags: ['forbidden'],
   })) {
     assert.equal(isSanitizedMessageFlowProjection({ ...first.messageFlow, [field]: value }), false, field);
   }
-  const lane2RbcClaim = REPLAY_FIXTURE_EVENTS.map((event) => event.messageFlow?.traceId === 'trace:lane2-direct-ids'
-    ? { ...event, messageFlow: { ...event.messageFlow!, rbcRoute: 'ids' as const } }
+  const lane2RbcClaim = REPLAY_FIXTURE_EVENTS.map((event) => event.messageFlow?.traceId === 'trace:lane2-direct-idq'
+    ? { ...event, messageFlow: { ...event.messageFlow!, rbcRoute: 'idq' as const } }
     : event);
   assert.throws(() => new ReplayOperationsProvider({ events: lane2RbcClaim }), OperationsProviderStateError);
 });
 
-test('Prism can deliver only to Receiver while IDS can return only to the original Sender', () => {
+test('Prism can deliver only to Receiver while IDQ can return only to the original Sender', () => {
   const prismTerminal = traces.get('trace:prism-delivery')!.at(-1)!.messageFlow!;
-  const idsTerminal = traces.get('trace:ids-shortfall-return')!.at(-1)!.messageFlow!;
-  const lane2Terminal = traces.get('trace:lane2-direct-ids')!.at(-1)!.messageFlow!;
+  const idqTerminal = traces.get('trace:idq-shortfall-return')!.at(-1)!.messageFlow!;
+  const lane2Terminal = traces.get('trace:lane2-direct-idq')!.at(-1)!.messageFlow!;
   assert.equal(isSanitizedMessageFlowProjection({ ...prismTerminal, stage: 'sender_return', terminalOutcome: 'returned_to_sender' }), false);
-  assert.equal(isSanitizedMessageFlowProjection({ ...idsTerminal, stage: 'receiver_delivery', terminalOutcome: 'delivered_to_receiver' }), false);
+  assert.equal(isSanitizedMessageFlowProjection({ ...idqTerminal, stage: 'receiver_delivery', terminalOutcome: 'delivered_to_receiver' }), false);
   assert.equal(isSanitizedMessageFlowProjection({ ...lane2Terminal, stage: 'receiver_delivery', terminalOutcome: 'delivered_to_receiver' }), false);
   assert.equal(isSanitizedMessageFlowProjection({ ...prismTerminal, senderIdentity: 'forbidden' }), false);
 });

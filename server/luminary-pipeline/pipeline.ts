@@ -1,20 +1,20 @@
 // The live Luminary reply pipeline (STP-0002 P17), Luminary -> Architect direction:
 //
 //   structural gate (P12) -> PIM -> IRG -> RBC -- coherent --> Prism -> Architect
-//                                 \             \- incoherent -> IDS -> originator -> ...
+//                                 \             \- incoherent -> IDQ -> originator -> ...
 //                                  \- PIM catch -----------------^
 //
 // Every pass is recorded in an append-only lineage returned with the outcome, so the loop is
-// inspectable (Gate: Inspectability). The loop is bounded: after `maxIdsPasses` IDS returns,
-// a reply that still does not resonate becomes a named `incoherent_after_ids` Shortfall that
+// inspectable (Gate: Inspectability). The loop is bounded: after `maxIdqPasses` IDQ returns,
+// a reply that still does not resonate becomes a named `incoherent_after_idq` Shortfall that
 // carries the last observation and readings, and the incoherent text is withheld.
 //
-// The pipeline makes no model call of its own. The gauge (IRG scorer and optional IDS
+// The pipeline makes no model call of its own. The gauge (IRG scorer and optional IDQ
 // observer) and the originator's re-form call are injected, so this runs against fakes now
 // and the embedded gauge model arrives with M1.b.
 
 import { governReply, type GovernanceOptions, type GovernedReply, type ShortfallCode } from '../luminary-governance.js';
-import { runIds, type IdsDraft, type IdsFailure, type IdsObservation, type IdsWriter, type RunIdsOptions } from './ids.js';
+import { runIdq, type IdqDraft, type IdqFailure, type IdqObservation, type IdqWriter, type RunIdqOptions } from './idq.js';
 import { IRG_THRESHOLD, SEVEN_VIRTUES, readIrg, validateReadings, type IrgReading, type IrgScorer, type IrgThreshold, type Virtue, type VirtueReadings, type VirtueThresholds } from './irg.js';
 import { screenPim, type PimFinding } from './pim.js';
 import { routeRbc, type RbcRoute } from './rbc.js';
@@ -22,8 +22,8 @@ import { routeRbc, type RbcRoute } from './rbc.js';
 /** The separate, small gauge model (N13-N15), injected. */
 export interface Gauge {
   read: IrgScorer;
-  /** The IDS embedded model (STP-0005 P2). When absent, IDS fails closed as ids_error. */
-  ids?: IdsWriter;
+  /** The IDQ embedded model (STP-0005 P2). When absent, IDQ fails closed as idq_error. */
+  idq?: IdqWriter;
   /** Per-virtue thresholds selected for this gauge's scale (P18). When absent, IRG_THRESHOLD applies. */
   thresholds?: VirtueThresholds;
 }
@@ -36,20 +36,20 @@ export const notConfiguredGauge: Gauge = {
   },
 };
 
-/** Returns the IDS observation to the originator and resolves to its re-formed candidate. */
-export type Reform = (observation: IdsObservation, previous: GovernedReply) => Promise<unknown>;
+/** Returns the IDQ observation to the originator and resolves to its re-formed candidate. */
+export type Reform = (observation: IdqObservation, previous: GovernedReply) => Promise<unknown>;
 
 /** The loop bound (P17 decision 2). */
-export const DEFAULT_MAX_IDS_PASSES = 2;
+export const DEFAULT_MAX_IDQ_PASSES = 2;
 
 export interface ReplyPipelineOptions {
   gauge: Gauge;
   /** Overrides the gauge's own thresholds. */
   threshold?: IrgThreshold;
-  maxIdsPasses?: number;
+  maxIdqPasses?: number;
   governance?: GovernanceOptions;
-  /** IDS timeout, retry delay and (for tests) the IDS PIM screen. */
-  idsOptions?: RunIdsOptions;
+  /** IDQ timeout, retry delay and (for tests) the IDQ PIM screen. */
+  idqOptions?: RunIdqOptions;
 }
 
 export type LineageEntry =
@@ -57,19 +57,19 @@ export type LineageEntry =
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }
   | { pass: number; stage: 'rbc'; route: RbcRoute }
-  | { pass: number; stage: 'ids'; observation: IdsObservation; drafts: IdsDraft[]; idsPimVersion: string; failures: IdsFailure[] }
-  | { pass: number; stage: 'ids_error'; failures: IdsFailure[] }
+  | { pass: number; stage: 'idq'; observation: IdqObservation; drafts: IdqDraft[]; idqPimVersion: string; failures: IdqFailure[] }
+  | { pass: number; stage: 'idq_error'; failures: IdqFailure[] }
   | { pass: number; stage: 'prism' };
 
-export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'ids_error' | 'incoherent_after_ids';
+export type PipelineShortfallCode = ShortfallCode | 'upstream_error' | 'gauge_error' | 'idq_error' | 'incoherent_after_idq';
 
 export interface PipelineShortfall {
   code: PipelineShortfallCode;
   message: string;
   modelId: string | null;
-  /** The last IDS observation, on incoherent_after_ids. */
-  observation?: IdsObservation;
-  /** The last IRG readings, on incoherent_after_ids, or null when a PIM catch ended the loop. */
+  /** The last IDQ observation, on incoherent_after_idq. */
+  observation?: IdqObservation;
+  /** The last IRG readings, on incoherent_after_idq, or null when a PIM catch ended the loop. */
   readings?: VirtueReadings | null;
 }
 
@@ -94,7 +94,7 @@ async function gaugeReading(gauge: Gauge, content: string, threshold: IrgThresho
 
 /**
  * Run a candidate reply through the pipeline. `candidate` is untrusted (straight from the
- * model); `reform` returns an IDS observation to the originator for a re-formed candidate.
+ * model); `reform` returns an IDQ observation to the originator for a re-formed candidate.
  */
 export async function runReplyPipeline(
   candidate: unknown,
@@ -102,7 +102,7 @@ export async function runReplyPipeline(
   options: ReplyPipelineOptions,
 ): Promise<PipelineResult> {
   const threshold = options.threshold ?? options.gauge.thresholds ?? IRG_THRESHOLD;
-  const maxIdsPasses = options.maxIdsPasses ?? DEFAULT_MAX_IDS_PASSES;
+  const maxIdqPasses = options.maxIdqPasses ?? DEFAULT_MAX_IDQ_PASSES;
   const lineage: LineageEntry[] = [];
   const passes: string[] = [];
 
@@ -141,21 +141,21 @@ export async function runReplyPipeline(
       }
     }
 
-    // IDS fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
-    const ids = await runIds({ reply: reply.content, pimFindings, irg }, options.gauge.ids, options.idsOptions);
+    // IDQ fails closed (F2b): no partial response, and the Architect sees none of the reply's text.
+    const ids = await runIdq({ reply: reply.content, pimFindings, irg }, options.gauge.idq, options.idqOptions);
     if (!ids.ok) {
-      lineage.push({ pass, stage: 'ids_error', failures: ids.failures });
-      return { ok: false, shortfall: { code: 'ids_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
+      lineage.push({ pass, stage: 'idq_error', failures: ids.failures });
+      return { ok: false, shortfall: { code: 'idq_error', message: ids.message, modelId: reply.modelId }, lineage, passes };
     }
     const observation = ids.observation;
-    lineage.push({ pass, stage: 'ids', observation, drafts: ids.drafts, idsPimVersion: ids.idsPimVersion, failures: ids.failures });
+    lineage.push({ pass, stage: 'idq', observation, drafts: ids.drafts, idqPimVersion: ids.idqPimVersion, failures: ids.failures });
 
-    if (pass > maxIdsPasses) {
+    if (pass > maxIdqPasses) {
       return {
         ok: false,
         shortfall: {
-          code: 'incoherent_after_ids',
-          message: `The reply did not resonate after ${maxIdsPasses} IDS pass(es); it is withheld.`,
+          code: 'incoherent_after_idq',
+          message: `The reply did not resonate after ${maxIdqPasses} IDQ pass(es); it is withheld.`,
           modelId: reply.modelId,
           observation,
           readings: irg ? irg.readings : null,

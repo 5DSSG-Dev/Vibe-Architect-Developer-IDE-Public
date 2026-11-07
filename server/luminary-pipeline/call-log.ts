@@ -3,13 +3,13 @@
 // gate's zero-call criteria can be audited:
 //
 //   luminary_response   any call that could produce a Luminary reply to the Architect
-//   ids_model           IDS's embedded-model calls (Identify, Define, Suggest, rewrites)
+//   idq_model           IDQ's embedded-model calls (Identify, Define, Question, rewrites)
 //   gauge               IRG scoring calls
 //   architect_delivery  a governed Luminary reply delivered to the Architect
 //
 // The embedded model and the Luminary may share a provider; the tag still keeps them apart.
 
-export const CALL_PATHS = ['luminary_response', 'ids_model', 'gauge', 'architect_delivery'] as const;
+export const CALL_PATHS = ['luminary_response', 'idq_model', 'gauge', 'architect_delivery'] as const;
 
 export type CallPath = (typeof CALL_PATHS)[number];
 

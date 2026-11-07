@@ -248,3 +248,7 @@ This repository uses AEGIS Totem for append-only repo continuity and agent coord
 
 ## 2026-11-06 | Lumin | Release-finish candidate preparation
 - Strict Atlas external-script CSP, durable pre-dispatch browser identity/prompt hashes, authenticated read-only recovery evidence, and pre-listen error ownership implemented. Build and actual browser/storage/HTTP/lifecycle checks passed. Live window requested from Linq; no current-batch inference. Verus reviewed handoff, Aster acceptance and publication remain pending. See docs/RELEASE_FINISH_CANDIDATE_2026-11-06.md; historical evidence and Atlas policy baseline unchanged.
+
+
+## 2026-11-06 | Lumin | Active Conscience IDQ restoration
+- Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.
