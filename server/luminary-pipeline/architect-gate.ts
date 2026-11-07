@@ -18,7 +18,7 @@ import type { Gauge, LineageEntry } from './pipeline.js';
 import { screenPim } from './pim.js';
 import { routeRbc } from './rbc.js';
 
-export type ArchitectFlag = 'structural' | 'pim' | 'irg';
+export type ArchitectFlag = 'structural' | 'pim' | 'irg' | 'ptag';
 
 export interface ArchitectGateOptions {
   gauge: Gauge;

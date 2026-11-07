@@ -23,6 +23,7 @@ import { gateArchitectMessage, type ArchitectFlag } from './luminary-pipeline/ar
 import { createCallLog, tagged, type CallCounts, type CallLog } from './luminary-pipeline/call-log.js';
 import { composeRevisionPrompt, type IdqObservation } from './luminary-pipeline/idq.js';
 import { runReplyPipeline, type Gauge, type LineageEntry, type PipelineShortfallCode, type ReplyPipelineOptions } from './luminary-pipeline/pipeline.js';
+import { examineExchange, governNumericReply, type GovernanceRuntime, type GovernanceSession } from './luminary-bidirectional.js';
 
 /**
  * Produces a candidate reply for a prompt. Its result is untrusted: it is handed straight
@@ -59,6 +60,7 @@ export interface LuminaryReplyRouterOptions {
   pipeline?: ReplyPipelineOptions;
   /** The review areas (STP-0005 P3). With the pipeline, every message and reply is written here first. */
   record?: ReviewRecord;
+  numeric?: { runtime?: GovernanceRuntime };
 }
 
 /** An upstream failure is itself a named Shortfall, keeping the honest floor total. */
@@ -68,6 +70,7 @@ export type ReplyShortfallCode =
   | 'spend_ceiling'
   | 'returned_to_sender'
   | 'governance_closed'
+  | 'governance_unavailable'
   | 'record_error'
   | 'revision_not_found'
   | 'saved_for_review';
@@ -96,6 +99,7 @@ const SHORTFALL_STATUS: Record<ReplyShortfallCode, number> = {
   returned_to_sender: 422,
   // The review record failed its check and the Architect has not yet seen it (STP-0005 P3).
   governance_closed: 503,
+  governance_unavailable: 503,
   // The review record could not be written, so nothing crossed (fail closed).
   record_error: 503,
   revision_not_found: 400,
@@ -155,9 +159,9 @@ export function createGovernedAsk(askModel: AskModel, options: LuminaryReplyRout
     let ceiling: SpendCapError | null = null;
     const log = createCallLog();
     const respond = tagged(log, 'luminary_response', askModel);
-    const ask: AskModel = async (text) => {
+    const ask: AskModel = async (text, control) => {
       try {
-        return await respond(text);
+        return await respond(text, control);
       } catch (error) {
         if (error instanceof SpendCapError) ceiling = error;
         throw error;
@@ -196,6 +200,10 @@ function luminaryState(result: { ok: boolean; shortfall?: { code: string } }): L
 
 async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, options: LuminaryReplyRouterOptions, log: CallLog): Promise<GovernedAskResult> {
   const record = options.pipeline ? options.record : undefined;
+  const runtime = options.numeric?.runtime;
+  if (options.numeric && (!runtime || !record)) {
+    return { ok: false, shortfall: { code: 'governance_unavailable', message: 'The approved governance runtime or review record is unavailable.', modelId: null } };
+  }
   if (record?.closed) {
     return { ok: false, shortfall: { code: 'governance_closed', message: 'Governance is closed until you have seen the review record check. Nothing was sent.', modelId: null } };
   }
@@ -219,13 +227,28 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
   // Luminary response path is called at all. An incoherent message goes back through IDQ.
   let architectLineage: LineageEntry[] | undefined;
   let turnRecord: TurnRecord | undefined;
-  if (options.pipeline) {
-    const gate = await gateArchitectMessage(prompt, {
-      gauge: options.pipeline.gauge,
-      threshold: options.pipeline.threshold,
-      maxContentBytes: (options.pipeline.governance ?? options.governance)?.maxContentBytes,
-      idqOptions: options.pipeline.idqOptions,
-    });
+  let session: GovernanceSession | undefined;
+  const inboundPipeline = options.pipeline;
+  if (inboundPipeline) {
+    const gate = await (async (): ReturnType<typeof gateArchitectMessage> => {
+      if (runtime) {
+        try {
+          session = runtime.createSession();
+          const result = await examineExchange(session, prompt, 'inbound', 1);
+          return result.observation
+            ? { outcome: 'returned', flaggedBy: result.flaggedBy, observation: result.observation, lineage: [result.entry] }
+            : { outcome: 'coherent', lineage: [result.entry] };
+        } catch {
+          return { outcome: 'gauge_error', message: 'Governance could not complete. Nothing was sent to the Luminary.', lineage: [] };
+        }
+      }
+      return gateArchitectMessage(prompt, {
+        gauge: inboundPipeline.gauge,
+        threshold: inboundPipeline.threshold,
+        maxContentBytes: (inboundPipeline.governance ?? options.governance)?.maxContentBytes,
+        idqOptions: inboundPipeline.idqOptions,
+      });
+    })();
     architectLineage = gate.lineage;
     const state: ArchitectState = gate.outcome === 'coherent'
       ? 'sent'
@@ -274,14 +297,14 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
 
   let candidate: unknown;
   try {
-    candidate = await askModel(prompt);
+    candidate = session ? await session.invokeWriter(askModel, prompt) : await askModel(prompt);
   } catch (error) {
     // An upstream failure never becomes a real-looking answer; it is a named Shortfall.
     const upstream: GovernedAskResult = {
       ok: false,
       shortfall: {
         code: 'upstream_error',
-        message: error instanceof Error ? error.message : 'The model path failed before a reply was produced.',
+        message: !session && error instanceof Error ? error.message : 'The model path did not produce a deliverable reply.',
         modelId: null,
       },
       architectLineage,
@@ -299,7 +322,9 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
 
   if (options.pipeline) {
     const pipeline = { ...options.pipeline, governance: options.pipeline.governance ?? options.governance };
-    const result = await runReplyPipeline(
+    const result = session
+      ? await governNumericReply(session, candidate, prompt, askModel, pipeline.maxIdqPasses ?? 2, pipeline.governance)
+      : await runReplyPipeline(
       candidate,
       (observation, previous) => askModel(composeRevisionPrompt(prompt, previous.content, observation)),
       pipeline,
@@ -322,7 +347,12 @@ async function governedTurn(askModel: AskModel, prompt: string, link: TurnLink, 
         return recordFailure(error, architectLineage, true);
       }
     }
-    if (result.ok) log.record('architect_delivery');
+    if (result.ok) {
+      try { session?.assertAvailable?.(); } catch {
+        return { ok: false, shortfall: { code: 'governance_unavailable', message: 'Governance authority changed before delivery. The reply was withheld.', modelId: null }, architectLineage, record: turnRecord };
+      }
+      log.record('architect_delivery');
+    }
     return result.ok
       ? { ok: true, reply: result.reply, lineage: result.lineage, architectLineage, record: turnRecord }
       : { ok: false, shortfall: result.shortfall, lineage: result.lineage, architectLineage, record: turnRecord };

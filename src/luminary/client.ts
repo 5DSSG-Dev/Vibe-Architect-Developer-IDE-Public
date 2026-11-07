@@ -15,7 +15,7 @@ export interface GovernedReply {
 
 export interface LineageEntry {
   pass: number;
-  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'idq' | 'idq_error' | 'prism';
+  stage: 'structural' | 'pim' | 'irg' | 'rbc' | 'idq' | 'idq_error' | 'prism' | 'numeric';
 }
 
 /** The IDQ response returned to the sender of an incoherent message (STP-0005 P2). */
@@ -39,7 +39,7 @@ export interface Shortfall {
   message: string;
   modelId?: string | null;
   /** On returned_to_sender: the check that flagged the message. */
-  flaggedBy?: 'structural' | 'pim' | 'irg';
+  flaggedBy?: 'structural' | 'pim' | 'irg' | 'ptag';
   /** On returned_to_sender: the IDQ response. */
   observation?: IdqResponse | LegacyIdsResponse;
 }
@@ -99,6 +99,7 @@ const FLAGGED_BY: Record<NonNullable<Shortfall['flaggedBy']>, string> = {
   structural: 'the structural check',
   pim: 'the pattern screen (PIM)',
   irg: 'the Virtue gauge (IRG)',
+  ptag: 'the operating-contract check (PTAG)',
 };
 
 /** The IDQ response in plain lines: what the message is, what was found, and a possible point to re-examine. */

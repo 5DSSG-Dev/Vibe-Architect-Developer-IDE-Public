@@ -210,3 +210,11 @@ Record conventions, ownership, risks, and useful reference information for this 
 
 ## 2026-11-06 | Lumin | Active Conscience IDQ restoration
 - Restored Identify/Define/Question across current gateway, client and projections while preserving retries, withholding, UI and recovery. Define uses recorded findings/readings. Build and live local-model inbound/outbound negative controls pass; historical Suggest records remain explicitly historical. See docs/IDQ_RESTORATION_2026-11-06.md. Full numeric/PTAG mounting and independent final journey remain open; publication held.
+
+## 2026-11-07 | Lumin | Meta PTAG live reconciliation
+
+Tracey explicitly approved Meta for PTAG after the pinned Baseten version returned a deactivation error. A separately hashed private successor manifest selects the existing Meta profile for PTAG. The registry, activation, source approval, contract and thresholds retain their existing pinned references. The ignored current environment selects the successor manifest SHA-256 4a4677c3cc8cc8bea68db682930cff47a8a08ca64c4befd279ed38079c48b92b.
+
+Author live request f4c9e284-a1de-4966-b43c-0191ac463a26 returned HTTP 200 on port 3206 (PID 57448). Inbound and outbound numeric Markers both returned [1,1], with structural validation and Prism delivery. The call record shows one writer call and one delivery. The prior Baseten failure remains retained.
+
+The source matches all 14 paths in source-manifest.json for 5be2f92+marker-da00c0a70cac. The reviewed port 3204 runtime still matches all 248 artifacts in Aster's manifest 23357318251e20c4b8a1825dfb0015007d10c77ad16300f345c7252ad043f82a. Atlas policy revision 3 passes 37 files. Independent acceptance of the governance candidate and Tracey's visual acceptance remain pending. Publication is held. Private evidence is under C:/AEGIS_IDE_AUDIT/lumin-marker-ptag-reconciliation-20261106.

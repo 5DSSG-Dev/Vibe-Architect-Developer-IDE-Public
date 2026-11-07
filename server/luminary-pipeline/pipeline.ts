@@ -53,6 +53,7 @@ export interface ReplyPipelineOptions {
 }
 
 export type LineageEntry =
+  | { pass: number; stage: 'numeric'; direction: 'inbound' | 'outbound'; candidateHash: string; code: readonly [1, 1] | readonly [2 | 3 | 4, 0] }
   | { pass: number; stage: 'structural'; ok: boolean; code?: ShortfallCode }
   | { pass: number; stage: 'pim'; findings: PimFinding[] }
   | { pass: number; stage: 'irg'; coherent: boolean; readings: VirtueReadings; belowThreshold: Virtue[]; threshold: IrgThreshold }

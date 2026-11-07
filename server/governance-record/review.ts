@@ -35,7 +35,7 @@ export interface ArchitectEntry {
   /** Set on a resubmission from the review area: a new linked entry with a fresh count (F5). */
   resubmittedFrom?: string;
   state: ArchitectState;
-  flaggedBy?: 'structural' | 'pim' | 'irg';
+  flaggedBy?: 'structural' | 'pim' | 'irg' | 'ptag';
   observation?: IdqObservation;
   lineage: LineageEntry[];
   calls?: CallCounts;

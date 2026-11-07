@@ -19,6 +19,7 @@ import { createLuminaryTaskRouter, isLoopback } from './luminary-task-router.js'
 import type { LuminaryExecutor } from './luminary-executor.js';
 import { requireDemoKey, createIpRateLimiter } from './luminary-access.js';
 import { notConfiguredGauge, type Gauge } from './luminary-pipeline/pipeline.js';
+import type { GovernanceRuntime } from './luminary-bidirectional.js';
 import type { ReviewRecord } from './governance-record/review.js';
 import { createReviewRouter } from './review-router.js';
 
@@ -58,6 +59,7 @@ export interface CreateGatewayOptions {
   evidenceStore?: EvidenceStore;
   /** Reply source for the Luminary endpoint. Defaults to the honest not-configured placeholder. */
   askModel?: AskModel;
+  governanceRuntime?: GovernanceRuntime;
   /**
    * The separate, small gauge model that reads every reply (STP-0002 P17, N13-N15). Defaults to
    * a not-configured gauge, so no reply leaves ungauged: it fails closed as a gauge_error Shortfall.
@@ -287,7 +289,11 @@ export async function createGateway(options: CreateGatewayOptions) {
     app.use('/api/luminary', createLocalLuminarySession(config.origin, config.luminaryDemoKey));
   }
   const luminaryAskModel = options.askModel ?? notConfiguredAskModel;
-  const luminaryReplyOptions = { pipeline: { gauge: options.gauge ?? notConfiguredGauge }, record: options.record };
+  const luminaryReplyOptions = {
+    pipeline: { gauge: options.gauge ?? notConfiguredGauge },
+    record: options.record,
+    numeric: { runtime: options.governanceRuntime },
+  };
   app.use(
     '/api/luminary',
     requireDemoKey(config.luminaryDemoKey),
@@ -299,6 +305,7 @@ export async function createGateway(options: CreateGatewayOptions) {
       replySourceKind: options.askModel ? (config.luminaryReplySource ?? 'configured') : 'not_configured',
       replySource: options.askModel ? (options.replySource ?? 'configured') : 'not_configured',
       gauge: options.gauge ? 'configured' : 'not_configured',
+      governance: options.governanceRuntime && options.record ? 'bidirectional' : 'unavailable',
       codingTasks: options.executor ? (isLoopback(req) ? 'on' : 'local_only') : 'off',
       ...(options.spend ? { spend: readSpend(options.spend) } : {}),
       ...(options.instructions ? { instructions: options.instructions } : {}),

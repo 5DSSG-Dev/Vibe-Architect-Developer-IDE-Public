@@ -19,8 +19,10 @@ import { resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createMetaAskModel, parseLiveSourceEnv } from './luminary-meta.js';
 import { loadLuminaryKnowledge, systemPromptWithKnowledge } from './luminary-knowledge.js';
+import { loadProductionGovernance } from './luminary-pipeline/private-governance-loader.js';
 
 const config = loadConfig();
+const governanceRuntime = loadProductionGovernance(process.env, process.cwd());
 // A live reply source: Meta's Model API (STP-0002 P21) or Baseten's Muse Spark Open (P22). The key
 // and the Architect's ceiling come from .env. The system message is the P15 Instructions followed by
 // the P23 Knowledge Pack, the IDE's own Element descriptions.
@@ -59,6 +61,7 @@ try {
     evidenceStore,
     // The IDQ embedded model runs on the gauge's local runtime and model (STP-0005 P2).
     record,
+    governanceRuntime,
     gauge: config.luminaryGauge
       ? { ...createLocalGauge(config.luminaryGauge), idq: createLocalIdqWriter({ endpoint: config.luminaryGauge.endpoint, model: config.luminaryGauge.model }) }
       : undefined,
