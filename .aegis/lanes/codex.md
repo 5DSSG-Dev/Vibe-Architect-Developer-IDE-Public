@@ -712,3 +712,7 @@ Full build exit 0. Isolated real gateway 3183: all 34 GLBs and Basis textures lo
 
 ## 2026-11-06 | Lumin | Persistence exclusion regression
 - Grouped exclusions now recognize persistence and extra dependencies as complete list items. Both preflight entry points preserve the reported Meta wording and later affirmative search still fails. Updated the replay test's stale IDS identifiers to the active IDQ fixture. App suite 465/465 and Atlas policy revision 3 passes all 37 protected files. Publication held for independent live review.
+
+## 2026-11-06 | Lumin | Aster independent P25 pass recorded
+
+Tracey supplied Aster's final walkthrough summary for 0690e8b. The acceptance matrix records P25 and F1 as passed with the revision, runtime, generation, and manifest evidence. Full numeric Marker/PTAG mounting and Architect visual acceptance remain open. GitHub publication remains held.

@@ -247,3 +247,18 @@ Local checks passed with 464 app tests, 37 Atlas files under revision 3, and a s
 ## 2026-11-06 | Lumin | IDQ candidate live journey receipt
 - Source473da4690fbe20215985ed189ae4de0d3db902ad completed fresh live Meta interview/acceptance and generation1545563f-bd15-465d-b306-ccd68689d226 (requesta1fd83f5-63f1-4b0e-981a-c3371e937744), independentQwen3.5:4bPASS, reviewed launch, empty-required rejection, two-note newest-first and reload clearing. UIstoppassed; isolated3203/PID55204 remains for reviewer. Real local-IDQ held-message controls passed separately.
 - Evidence manifest C:/AEGIS_IDE_AUDIT/lumin-idq-restoration-20261106/final-evidence-manifest.json SHA256f55892f54a5242a01415e133b9464e35fcf79664e94daf058d2ad748eb0abfce. Aster/Linq notified directly; livewindowreleased. Independent acceptance and full numeric/PTAG mount reconciliation remain open; no push.
+
+## 2026-11-06 — Aster independent P25 walkthrough on 0690e8b
+
+Source: Tracey's supplied executive summary of `ASTER_INTEGRATED_FINAL_REVIEW_0690e8b.md`. This entry records Aster's verdict on revision `0690e8be031647e5e66b7ec61ec8ca27b51a9b33` at loopback port 3204 (Node PID 24376).
+
+| Item | Disposition | Evidence and scope |
+| --- | --- | --- |
+| P25 independent live walkthrough | PASSED | Live Meta planning and generation, Qwen assembly audit, preview build, launch, form validation, newest-first ordering, reload clearing, and preview stop |
+| F1 grouped exclusions | PASSED | Exact prior persistence wording passed both preflight entry points in regression coverage. The live proposal used persistent storage and passed preflight. Affirmative search still failed the regression check. |
+| Atlas Rev 3 and compiled artifacts | PASSED | 37 protected files and 248 compiled artifacts verified. Manifest SHA-256 `23357318251e20c4b8a1825dfb0015007d10c77ad16300f345c7252ad043f82a`. |
+| Full governance acceptance | OPEN | Full numeric Marker/PTAG mounting remains to be reconciled. |
+| Architect visual acceptance | OPEN | Tracey's visual acceptance remains separate. |
+| GitHub publication | HELD | Latest handoff holds publication until the open governance mounting items are formally resolved. |
+
+Aster reported HTTP 201 for request `9a345723-8827-427c-bc96-7d54ec171125` and generation `e4e8d83d-b3fd-4b96-88cf-8e5b17ab193a`. The live `qwen3.5:4b` assembly audit passed in 130,020 ms with the reported artifact digest prefix `561772c6`.
