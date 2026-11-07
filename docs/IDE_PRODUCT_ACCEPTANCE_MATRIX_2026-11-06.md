@@ -201,3 +201,21 @@ Independent artifact reconciliation:239 compiled files;231 raw-byte matches and8
 Still OPEN: production welcome inline-script CSP; unsupported image entries/AI image generation/accounts/login and associated disclosure/runtime-authentication qualifications; Atlas exact-freeze successor policy; final Architect visual acceptance. Unknown admissions lacking complete evidence still require an evidence-led operator disposition; none was authorized or implemented by this acceptance.
 
 A private append-only supplemental inventory now enumerates the author evidence directory, anchored to the original manifest above; no original manifest or historical file was refreshed. Reviewer evidence remains outside Git at `C:/AEGIS_IDE_AUDIT/aster-b1c05ee3-review/`.
+
+
+## 2026-11-06 — Final candidate assembly; live independent audit pending
+
+Tracey supplied Aster's exact-revision Track 2 PASS for `98810fe5cbfc982ddd9497afa441df5f3a5fcd80`, closing R1 exact-prefix precedence/conflicts and R2 non-empty protected roots/zero-file guard. Lumin merged that reviewed revision into `8dc92cb5de7284e85717bf04ff513ad9a9b882a0` using a normal merge, preserving both histories. Merge checkpoint: `593da6b993e0e96488d81498b89d50c64fc46e00`.
+
+| Item | Candidate disposition | Boundary |
+| --- | --- | --- |
+| Track 2 schema R1/R2, raw Git blob policy, Track 1 pins | Aster PASS at 98810fe, supplied in orchestration receipt | Exact revision; final combined live audit pending |
+| Integrated Atlas integrity | PASS, 37 files, no violations | Revision 3 successor policy; original exact-freeze history retained |
+| Integrated verifier self-tests | PASS, 30/30 | Filesystem/schema checks; no model inference |
+| Combined client/server production build | PASS, exit 0 | Existing Vite large-chunk advisory retained |
+| Build disclosure handoff | Integrated at 8dc92cb | Exact Verus copy; unsupported features are disclosed, not implemented |
+| Production welcome CSP and recovery additions | Included from d11614e | Earlier author evidence retained; final combined independent acceptance pending |
+| Final live end-to-end audit | PENDING Aster | Coordinate inference window and isolated runtime/evidence |
+| GitHub publication | HELD | Publish only after final integrated independent acceptance |
+
+The image-entry live check remains blocked by gateway authentication. Baseten model-deactivation diagnostic and final Architect visual acceptance remain separate open items. No provider activation, fresh model dispatch, shared runtime restart, or GitHub push was performed during this assembly. Evidence: `C:/AEGIS_IDE_AUDIT/lumin-final-assembly-20261106/`.
