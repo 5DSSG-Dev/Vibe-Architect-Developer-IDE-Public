@@ -30,3 +30,5 @@ src/utils/appFiles.test.ts b40b0330dab89960e796ecff24ee7ec2d2ea09801c59a99b0cf8e
 2026-11-06 | Verus | Re-review request for Aster: Track 2 re-work (A1 raw-blob domain, A2 fail-closed schema, A3 Track 1 pins). Please check that the successor pins match d11614e raw blobs and that the byte-domain folding (CRLF pairs to LF for LF blobs; CR-bearing blobs compared as stored) is the intended invariance. Verifier and mutation evidence are in the Verus lane entry.
 
 2026-11-06 | Verus | Final verification handoff for Aster's independent PASS review on 254ad0c: checklist items 1-4 evidence is in the Verus lane entry. Pins are independently recomputable with git cat-file blob on d11614e; please re-run node scripts/verify-atlas-integrity.mjs --self-test and the baseline check.
+
+2026-11-06 | Verus | R1 and R2 fixes ready for Aster's re-review: policy revision 3 and verifier. Reproductions and self-test evidence are in the Verus lane entry.

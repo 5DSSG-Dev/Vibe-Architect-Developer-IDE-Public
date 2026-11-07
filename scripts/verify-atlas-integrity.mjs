@@ -100,7 +100,10 @@ export function validatePolicy(policy, { commitExists, baselinePaths }) {
   else if (!HEX40.test(policy.baseline.commit ?? '')) fail('baseline.commit must be a 40-character lowercase hex SHA');
   else if (!commitExists(policy.baseline.commit)) fail('baseline.commit does not resolve in the repository');
   if (!Array.isArray(policy.protectedRoots) || policy.protectedRoots.length === 0) fail('protectedRoots must be a non-empty array');
-  else for (const r of policy.protectedRoots) if (!safeDir(r)) fail(`protectedRoots entry is not a safe directory path: ${String(r)}`);
+  else for (const r of policy.protectedRoots) {
+    if (!safeDir(r)) fail(`protectedRoots entry is not a safe directory path: ${String(r)}`);
+    else if (!baselinePaths.some((b) => b.startsWith(r))) fail(`protectedRoots entry resolves to no baseline files: ${r}`);
+  }
   if (policy.defaultMode !== 'exact') fail('defaultMode must be "exact"');
   const baseline = new Set(baselinePaths);
   const appendPaths = new Set();
@@ -119,9 +122,11 @@ export function validatePolicy(policy, { commitExists, baselinePaths }) {
     for (const p of appendPaths) if (p.startsWith(rule.prefix)) fail(`conflict: ${p} is append-only but lies under exact prefix ${rule.prefix}`);
     if (!baselinePaths.some((p) => p.startsWith(rule.prefix))) fail(`exact prefix matches no baseline file: ${rule.prefix}`);
   }
+  const exactList = Array.isArray(policy.exactPrefixes) ? policy.exactPrefixes.map((r) => r?.prefix).filter((x) => typeof x === 'string') : [];
   if (!Array.isArray(policy.successors)) fail('successors must be an array');
   else for (const rule of policy.successors) {
     if (!safeRel(rule?.path) || !baseline.has(rule.path)) { fail(`successor path must be a baseline file: ${String(rule?.path)}`); continue; }
+    if (exactList.some((pre) => rule.path.startsWith(pre))) { fail(`successor targets an exact-prefix path (exactPrefixes take precedence): ${rule.path}`); continue; }
     if (!Array.isArray(rule.permittedReplacements) || rule.permittedReplacements.length === 0) { fail(`successor ${rule.path} needs permittedReplacements`); continue; }
     for (const rep of rule.permittedReplacements) {
       if (!HEX64.test(rep?.sha256 ?? '')) fail(`successor sha256 must be 64 hex characters for ${rule.path}`);
@@ -162,19 +167,32 @@ export function checkFile({ rel, mode, maxAppendBytes = 0, baseline, current, su
   return { rel, mode: 'exact', baselineSha256: sha256(baseline), currentSha256: digest, violations };
 }
 
+// Precedence (R1): an exact prefix decides the mode before any appendOnly or successor rule is consulted.
+export function modeFor(rel, policy) {
+  if (policy.exactPrefixes.some((r) => rel.startsWith(r.prefix))) return { mode: 'exact', rule: null, successors: [] };
+  const rule = policy.appendOnly.find((r) => r.path === rel);
+  if (rule) return { mode: 'append-only', rule, successors: [] };
+  const succ = policy.successors.find((r) => r.path === rel);
+  return { mode: 'exact', rule: null, successors: succ ? succ.permittedReplacements : [] };
+}
+
+// Guard (R2): a run that evaluates no protected file is a failure, never a PASS.
+export function guardNonEmpty(results) {
+  const evaluated = results.filter((r) => r.mode !== 'new' && r.mode !== 'permitted-new');
+  return evaluated.length === 0 ? ['no protected baseline files were evaluated (filesChecked is 0)'] : [];
+}
+
 function runVerification(policy, rootDir) {
   const commit = policy.baseline.commit;
   const tree = policy.protectedRoots.flatMap((prefix) => baselineTree(commit, prefix.slice(0, -1)));
-  const appendMap = new Map(policy.appendOnly.map((r) => [r.path, r]));
-  const successorMap = new Map(policy.successors.map((r) => [r.path, r.permittedReplacements]));
   const results = [];
   for (const entry of tree) {
     const rel = entry.path;
     const raw = rawBlob(entry.blob);
     const working = fs.existsSync(path.join(rootDir, rel)) ? fs.readFileSync(path.join(rootDir, rel)) : undefined;
     const current = working === undefined ? undefined : toBlobDomain(working, raw.includes(0x0d));
-    const rule = appendMap.get(rel);
-    const result = checkFile({ rel, mode: rule ? 'append-only' : 'exact', maxAppendBytes: rule?.maxAppendBytes ?? 0, baseline: raw, current, successors: successorMap.get(rel) ?? [] });
+    const decided = modeFor(rel, policy);
+    const result = checkFile({ rel, mode: decided.mode, maxAppendBytes: decided.rule?.maxAppendBytes ?? 0, baseline: raw, current, successors: decided.successors });
     if (working !== undefined) result.workingEol = eolStyle(working);
     results.push(result);
   }
@@ -257,6 +275,17 @@ function selfTest(policy, baselinePaths) {
     record(name, false, validatePolicy(p, ctx).length === 0);
   }
   record('A2: the shipped policy validates', true, validatePolicy(good, ctx).length === 0);
+  const r1 = JSON.parse(JSON.stringify(good));
+  r1.successors.push({ path: 'public/atlas/_archive/ui-build-2026-11-03/index.html', permittedReplacements: [{ sha256: '0'.repeat(64), bytes: 1 }] });
+  record('R1: successor under an exact prefix is rejected', false, validatePolicy(r1, ctx).length === 0);
+  const r1b = JSON.parse(JSON.stringify(good));
+  r1b.successors = []; r1b.appendOnly = []; r1b.exactPrefixes.push({ prefix: 'public/atlas/atlas.js' });
+  record('R1: a file under exactPrefixes never resolves to append-only or successor mode', true, modeFor('public/atlas/atlas.js', r1b).mode === 'exact' && modeFor('public/atlas/atlas.js', r1b).successors.length === 0);
+  const r2 = JSON.parse(JSON.stringify(good));
+  r2.protectedRoots = ['does-not-exist/']; r2.appendOnly = []; r2.exactPrefixes = []; r2.successors = []; r2.permittedNewFiles = [];
+  record('R2: a root that resolves to no baseline files is rejected', false, validatePolicy(r2, ctx).length === 0);
+  record('R2: a run that evaluates zero files fails', false, guardNonEmpty([]).length === 0);
+  record('R2: a run that evaluates files passes the guard', true, guardNonEmpty([{ rel: 'a', mode: 'exact', violations: [] }]).length === 0);
   return { policy: policy.policy, selfTest: outcomes, result: outcomes.every((o) => o.ok) ? 'PASS' : 'FAIL' };
 }
 
@@ -280,6 +309,11 @@ if (schemaErrors.length) {
   process.exit(1);
 }
 const results = runVerification(policy, root);
+const guard = guardNonEmpty(results);
+if (guard.length) {
+  console.log(JSON.stringify({ policy: policy.policy, result: 'FAIL', policyErrors: guard, filesChecked: 0 }, null, 2));
+  process.exit(1);
+}
 const report = summarise(results, policy);
 const json = JSON.stringify(report, null, 2);
 if (reportFile) fs.writeFileSync(path.resolve(root, reportFile), json + '\n');

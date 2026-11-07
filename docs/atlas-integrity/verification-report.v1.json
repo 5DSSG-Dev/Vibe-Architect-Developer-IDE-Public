@@ -1,7 +1,7 @@
 {
   "policy": "atlas-integrity-successor",
   "policyVersion": 1,
-  "policyRevision": 2,
+  "policyRevision": 3,
   "baselineCommit": "9b1c988d86600521148a79f6703c6ef951e498d5",
   "byteDomain": "raw Git blob bytes; working-tree CRLF folded to LF for LF blobs",
   "filesChecked": 36,
